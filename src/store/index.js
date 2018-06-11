@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import usermodule from './modules/user'
+import membermodule from './modules/member'
 
 
 Vue.use(Vuex)
@@ -8,7 +9,8 @@ Vue.use(Vuex)
 export const store = new Vuex.Store(
     {
         modules:{
-            userstore: usermodule
+            userstore: usermodule,
+            memberstore: membermodule
         },
         state: {            
             loading: false,
@@ -22,10 +24,12 @@ export const store = new Vuex.Store(
             },
             setError(state,value){
                 state.error = value
+            },
+            clearError( state ){
+                state.error = null
             }
         },
         actions: {
-           
             clearError({commit}){
                 commit('clearError')
             }

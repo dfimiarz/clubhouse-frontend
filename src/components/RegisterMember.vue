@@ -19,7 +19,10 @@
     </div>
     <div>
         <label for="gender"> Gender:</label> 
-        <input type="text" id="gender" v-model="gender">
+        <select id="gender" v-model="gender">
+            <option value="F">F</option>
+            <option value="M">M</option>
+        </select>
     </div>
     <div>
         <label for="username"> Username:</label> 
@@ -34,8 +37,12 @@
         <input type="text" id="pin" v-model="pin">
     </div>
     <div>
-        <label for="rank"> Tenis rank: (0 - novice, 5 - pro)</label> 
-        <input type="text" id="rank" v-model="rank">
+        <label for="rank"> Tenis rank:</label> 
+        <select id="rank" v-model="rank">
+            <option value="0">Beginer</option>
+            <option value="1">Intermediate</option>
+            <option value="2">Pro</option>
+        </select>
     </div>
     <button @click="addNewMember">Sign up</button>
   </div>
@@ -59,7 +66,7 @@ export default {
   },
   methods: {
       addNewMember: function(){
-          var member = {
+          let member = {
               firstname: this.firstname,
               lastname: this.lastname,
               email: this.email,
@@ -71,7 +78,7 @@ export default {
               rank: this.rank
           }
 
-          console.log(member)
+          this.$store.dispatch('memberstore/REGISTER_MEMBER',member)
       }
   }
 }
