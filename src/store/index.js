@@ -14,8 +14,8 @@ export const store = new Vuex.Store(
         },
         state: {            
             loading: false,
-            error: null
-       
+            error: null,
+            db: null
         },
         mutations: {
            
