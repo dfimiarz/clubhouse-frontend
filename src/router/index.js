@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import CourtGrid from '@/components/CourtGrid'
 import NotFound from '@/components/NotFound'
 import RegisterMember from '@/components/RegisterMember'
+import AddSession from '@/components/AddSession'
 
 Vue.use(Router)
 
@@ -16,6 +17,11 @@ const routes = [
       path: '/members/new',
       name: 'RegisterMember',
       component: RegisterMember
+    },
+    {
+      path: '/sessions/new',
+      name: 'AddSession',
+      component: AddSession
     },
     {
         path: '*',

@@ -1,6 +1,11 @@
 <template>
   <div class="courtgrid">
-    {{ message }}
+    <div>
+      Show list of current sessions here
+    </div>
+    <div>
+      <a v-bind:href="newSessionUrl">Add new session</a>
+    </div>
   </div>
 </template>
 
@@ -9,8 +14,11 @@ export default {
   name: 'CourtGrid',
   data() {
     return {
-      message: "This is grid view"
+      message: "This is grid view",
+      newSessionUrl: './sessions/new'
     }
+  },
+  methods: {
 
   }
 }
