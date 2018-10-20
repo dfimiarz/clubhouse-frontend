@@ -1,51 +1,57 @@
 <template>
-    <v-container fluid fill-height>
+    <v-container>
         <v-layout justify-center align-baseline="">
-            <v-flex xs12 sm6 md4>
-                <div class="registermember">
-                    New Member registration
-                    <v-form>
-                        <div v-if="error" class="errcontainer">
-                        <span>Error: {{ error }}</span>
-                        </div>
-                        <v-text-field
-                            v-model="newMember.firstname"
-                            label="First Name"
-                            required>
-                        </v-text-field>
-                         <v-text-field
-                            v-model="lname"
-                            label="Last Name"
-                            required>
-                        </v-text-field>
-                         <v-text-field
-                            v-model="email"
-                            label="E-mail"
-                            required>
-                        </v-text-field>
-                         <v-text-field
-                            v-model="phone"
-                            label="Phone"
-                            required>
-                        </v-text-field>
-                        <v-select
-                        :items="genderItems"
-                        label="Gender"
-                        ></v-select>
-                        
-                        <div>
-                            <label for="age"> Age:</label> 
-                            <select id="age" v-model.number="newMember.age">
-                                <option v-bind:value="a.val" :key="a.val" v-for="a in ages">{{ a.lbl }}</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="pin">Access PIN:</label> 
-                            <input type="text" id="pin" v-model="newMember.pin" autocomplete="off" maxlength="5" size="5">
-                        </div>
-                        <button @click.prevent="addNewMember" :disabled="loading">Sign up</button>
-                    </v-form>
-                </div>
+            <v-flex xs12 sm8 md6>
+                
+                New Member registration
+                <v-form>
+                    <div v-if="error" class="errcontainer">
+                    <span>Error: {{ error }}</span>
+                    </div>
+                    <v-text-field
+                        v-model="newMember.firstname"
+                        label="First Name"
+                        autocomplete="on"
+                        required>
+                    </v-text-field>
+                    <v-text-field
+                        v-model="newMember.lastname"
+                        label="Last Name"
+                        required>
+                    </v-text-field>
+                    <v-text-field
+                        v-model="newMember.email"
+                        label="E-mail"
+                        required>
+                    </v-text-field>
+                    <v-text-field
+                        v-model="newMember.phone"
+                        label="Phone"
+                        required
+                    >
+                    </v-text-field>
+                    <v-select
+                    :items="genderItems"
+                    label="Gender"
+                    v-model="newMember.gender"
+                    ></v-select>
+                    <v-select
+                    :items="ages"
+                    label="Age"
+                    v-model="newMember.age"
+                    ></v-select>
+                    <v-text-field
+                        v-model="newMember.pin"
+                        label="PIN"
+                        maxlength="6"
+                        required
+                        autocomplete="off">
+                    </v-text-field>
+                    <v-btn :disabled="loading" @click.prevent="addNewMember">
+                        Add User
+                    </v-btn>
+                </v-form>
+                
             </v-flex>
         </v-layout>
     </v-container>
@@ -66,23 +72,23 @@ export default {
         pin: ""
       },
       ages: [
-        { val: "18", lbl: "18 +" },
-        { val: "17", lbl: "17" },
-        { val: "16", lbl: "16" },
-        { val: "15", lbl: "15" },
-        { val: "14", lbl: "14" },
-        { val: "13", lbl: "13" },
-        { val: "12", lbl: "12" },
-        { val: "11", lbl: "11" },
-        { val: "10", lbl: "10" },
-        { val: "9", lbl: "9" },
-        { val: "8", lbl: "8" },
-        { val: "7", lbl: "7" }
+        { value: "18", text: "18 +" },
+        { value: "17", text: "17" },
+        { value: "16", text: "16" },
+        { value: "15", text: "15" },
+        { value: "14", text: "14" },
+        { value: "13", text: "13" },
+        { value: "12", text: "12" },
+        { value: "11", text: "11" },
+        { value: "10", text: "10" },
+        { value: "9", text: "9" },
+        { value: "8", text: "8" },
+        { value: "7", text: "7" }
       ],
       genderItems: [
-         { value: "M", text: "Male" }, 
-         { value: "F", text: "Female" },
-         { value: "O", text: "Other" }
+        { value: "M", text: "Male" },
+        { value: "F", text: "Female" },
+        { value: "O", text: "Other" }
       ]
     };
   },
