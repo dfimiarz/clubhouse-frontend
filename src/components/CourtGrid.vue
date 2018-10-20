@@ -1,12 +1,19 @@
+
 <template>
-  <div class="courtgrid">
-    <div>
-      Show list of current sessions here
-    </div>
-    <div>
-      <a v-bind:href="newSessionUrl">Add new session</a>
-    </div>
-  </div>
+<v-container fluid fill-height>
+  <v-layout justify-center align-center="">
+    <v-flex shrink>
+       <div class="courtgrid">
+        <div>
+          Show list of current sessions here
+        </div>
+        <div>
+          <a v-bind:href="newSessionUrl">Add new session</a>
+        </div>
+      </div>
+    </v-flex>
+  </v-layout>
+</v-container>
 </template>
 
 <script>

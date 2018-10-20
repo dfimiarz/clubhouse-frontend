@@ -1,37 +1,38 @@
 <template>
     <v-container fluid fill-height>
-        <v-layout justify-center align-center>
-            <v-flex shrink>
+        <v-layout justify-center align-baseline="">
+            <v-flex xs12 sm6 md4>
                 <div class="registermember">
                     New Member registration
-                    <form>
+                    <v-form>
                         <div v-if="error" class="errcontainer">
                         <span>Error: {{ error }}</span>
                         </div>
-                        <div>
-                            <label for="firstname"> First Name:</label> 
-                            <input type="text" id="firstname" v-model="newMember.firstname" autocomplete="given-name">
-                        </div>
-                        <div>
-                            <label for="lastname"> Last Name:</label> 
-                            <input type="text" id="lastname" v-model="newMember.lastname" autocomplete="family-name">
-                        </div>
-                        <div>
-                            <label for="email"> Email:</label> 
-                            <input type="text" id="email" v-model="newMember.email" autocomplete="email">
-                        </div>
-                        <div>
-                            <label for="phone"> Phone:</label> 
-                            <input type="text" id="phone" v-model="newMember.phone">
-                        </div>
-                        <div>
-                            <label for="gender"> Gender:</label> 
-                            <select id="gender" v-model="newMember.gender">
-                                <option value="F">F</option>
-                                <option value="M">M</option>
-                                <option value="N">N</option>
-                            </select>
-                        </div>
+                        <v-text-field
+                            v-model="newMember.firstname"
+                            label="First Name"
+                            required>
+                        </v-text-field>
+                         <v-text-field
+                            v-model="lname"
+                            label="Last Name"
+                            required>
+                        </v-text-field>
+                         <v-text-field
+                            v-model="email"
+                            label="E-mail"
+                            required>
+                        </v-text-field>
+                         <v-text-field
+                            v-model="phone"
+                            label="Phone"
+                            required>
+                        </v-text-field>
+                        <v-select
+                        :items="genderItems"
+                        label="Gender"
+                        ></v-select>
+                        
                         <div>
                             <label for="age"> Age:</label> 
                             <select id="age" v-model.number="newMember.age">
@@ -43,7 +44,7 @@
                             <input type="text" id="pin" v-model="newMember.pin" autocomplete="off" maxlength="5" size="5">
                         </div>
                         <button @click.prevent="addNewMember" :disabled="loading">Sign up</button>
-                    </form>
+                    </v-form>
                 </div>
             </v-flex>
         </v-layout>
@@ -77,6 +78,11 @@ export default {
         { val: "9", lbl: "9" },
         { val: "8", lbl: "8" },
         { val: "7", lbl: "7" }
+      ],
+      genderItems: [
+         { value: "M", text: "Male" }, 
+         { value: "F", text: "Female" },
+         { value: "O", text: "Other" }
       ]
     };
   },
