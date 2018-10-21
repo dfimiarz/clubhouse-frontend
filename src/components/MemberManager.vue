@@ -1,9 +1,13 @@
 <template>
-    <v-container fluid fill-height>
-        <v-layout justify-center align-baseline="">
+    <v-container fluid="">
+        <v-layout justify-center="" align-baseline="" wrap="" fill-height="">
             <v-flex xs12>
-                Member Manager
-               <router-view></router-view>
+                <div class="headline text-xs-center">
+                    Member Management
+                </div>
+            </v-flex>
+            <v-flex xs12>
+                <router-view></router-view>
             </v-flex>
         </v-layout>
     </v-container>
@@ -14,6 +18,12 @@ export default {
   name: "MemberManager",
   data: function() {
     return {
+         items: [
+          { title: 'Manage members', icon: 'dashboard' },
+          { title: 'New member', icon: 'person' },
+          { title: 'Member statistics', icon: 'settings' }
+        ],
+        right: true
     };
   },
   methods: {

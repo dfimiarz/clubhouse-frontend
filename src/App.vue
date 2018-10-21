@@ -2,8 +2,8 @@
   <div id="app">
     <v-app dark>
       <v-navigation-drawer
-        fixed
-        temporary
+        temporary=""
+        fixed=""
         v-model="drawer"
         app
       >
@@ -18,7 +18,7 @@
           </v-list-tile>
           <v-list-tile>
             <v-list-tile-action>
-              <v-icon>settings</v-icon>
+              <v-icon>schedule</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
               <v-list-tile-title>Schedule</v-list-tile-title>
@@ -58,7 +58,7 @@
           </v-list-tile>
         </v-list>
       </v-navigation-drawer>
-      <v-toolbar app fixed clipped-left>
+      <v-toolbar app   >
         <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
         <v-toolbar-title>KnickerBocker Field Club</v-toolbar-title>
         <v-spacer></v-spacer>

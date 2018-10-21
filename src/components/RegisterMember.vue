@@ -1,58 +1,60 @@
 <template>
     <v-container>
-        <v-layout justify-center align-baseline="">
-            <v-flex xs12 sm8 md6>
-                
-                New Member registration
-                <v-form>
-                    <div v-if="error" class="errcontainer">
-                    <span>Error: {{ error }}</span>
-                    </div>
-                    <v-text-field
-                        v-model="newMember.firstname"
-                        label="First Name"
-                        autocomplete="on"
-                        required>
-                    </v-text-field>
-                    <v-text-field
-                        v-model="newMember.lastname"
-                        label="Last Name"
-                        required>
-                    </v-text-field>
-                    <v-text-field
-                        v-model="newMember.email"
-                        label="E-mail"
-                        required>
-                    </v-text-field>
-                    <v-text-field
-                        v-model="newMember.phone"
-                        label="Phone"
-                        required
-                    >
-                    </v-text-field>
-                    <v-select
-                    :items="genderItems"
-                    label="Gender"
-                    v-model="newMember.gender"
-                    ></v-select>
-                    <v-select
-                    :items="ages"
-                    label="Age"
-                    v-model="newMember.age"
-                    ></v-select>
-                    <v-text-field
-                        v-model="newMember.pin"
-                        label="PIN"
-                        maxlength="6"
-                        required
-                        autocomplete="off">
-                    </v-text-field>
-                    <v-btn :disabled="loading" @click.prevent="addNewMember">
-                        Add User
-                    </v-btn>
-                </v-form>
-                
-            </v-flex>
+        <v-layout justify-center align-start="" row="" wrap="">
+          <v-flex xs12 sm10 md8 lg6 xl4>
+            <div class="subheading">
+               Add a member
+            </div>
+             
+              <v-form>
+                  <div v-if="error" class="errcontainer">
+                  <span>Error: {{ error }}</span>
+                  </div>
+                  <v-text-field
+                      v-model="newMember.firstname"
+                      label="First Name"
+                      autocomplete="on"
+                      required>
+                  </v-text-field>
+                  <v-text-field
+                      v-model="newMember.lastname"
+                      label="Last Name"
+                      required>
+                  </v-text-field>
+                  <v-text-field
+                      v-model="newMember.email"
+                      label="E-mail"
+                      required>
+                  </v-text-field>
+                  <v-text-field
+                      v-model="newMember.phone"
+                      label="Phone"
+                      required
+                  >
+                  </v-text-field>
+                  <v-select
+                  :items="genderItems"
+                  label="Gender"
+                  v-model="newMember.gender"
+                  ></v-select>
+                  <v-select
+                  :items="ages"
+                  label="Age"
+                  v-model="newMember.age"
+                  ></v-select>
+                  <v-text-field
+                      v-model="newMember.pin"
+                      label="PIN"
+                      maxlength="6"
+                      required
+                      autocomplete="off">
+                  </v-text-field>
+                  <v-btn :disabled="loading" @click.prevent="addNewMember">
+                      Add User
+                  </v-btn>
+              </v-form>
+              
+          </v-flex>
         </v-layout>
     </v-container>
 </template>
