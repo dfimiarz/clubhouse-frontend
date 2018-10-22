@@ -7,7 +7,7 @@
         v-model="drawer"
         app
       >
-        <v-list dense>
+        <v-list>
           <v-list-tile :to="{name: 'Home'}" exact="">
             <v-list-tile-action>
               <v-icon>home</v-icon>

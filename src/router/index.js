@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import CourtGrid from '@/components/CourtGrid'
+import Home from '@/components/Home'
 import NotFound from '@/components/NotFound'
 import RegisterMember from '@/components/RegisterMember'
 import MemberManager from '@/components/MemberManager'
@@ -12,7 +12,7 @@ const routes = [
     {
       path: '/',
       name: 'Home',
-      component: CourtGrid
+      component: Home
     },
     {
       path: '/members',

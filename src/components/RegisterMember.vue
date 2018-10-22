@@ -13,7 +13,6 @@
                   <v-text-field
                       v-model="newMember.firstname"
                       label="First Name"
-                      autocomplete="on"
                       required>
                   </v-text-field>
                   <v-text-field
@@ -30,6 +29,7 @@
                       v-model="newMember.phone"
                       label="Phone"
                       required
+                      mask="phone"
                   >
                   </v-text-field>
                   <v-select
@@ -50,7 +50,7 @@
                       autocomplete="off">
                   </v-text-field>
                   <v-btn :disabled="loading" @click.prevent="addNewMember">
-                      Add User
+                      Add Member
                   </v-btn>
               </v-form>
               
@@ -62,6 +62,9 @@
 <script>
 export default {
   name: "RegisterMember",
+  created: () => {
+    console.log("Created")
+  },
   data: function() {
     return {
       newMember: {
