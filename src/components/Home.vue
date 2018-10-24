@@ -1,6 +1,6 @@
 
 <template>
-<v-container fluid fill-height="" >
+<v-container fluid >
   <v-layout justify-center align-content-space-between="" wrap="">
     <v-flex  md12 lg8 x6>
       <v-card raised="" >
@@ -58,9 +58,11 @@
 </template>
 
 <script>
+
+
 export default {
   name: 'Home',
-  data() {
+  data: () => {
     return {
       cards: [
         { title: 'Matches', text: 'View today\'s match schedule' ,src: './Matches.jpg', flexxs: 12, flexsm: 6 },
