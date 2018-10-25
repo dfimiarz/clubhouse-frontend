@@ -2,9 +2,9 @@
 <template>
 <v-container fluid fill-height="" >
   <v-layout justify-center align-start="" wrap="">
-    <v-flex  sm12 md10 lg8>
+    <v-flex  sm12 md8 lg6>
       <v-tabs
-        fixed-tabs=""        
+        centered=""
       >
         <v-tab
           v-for="tab in tabs"
@@ -15,13 +15,14 @@
   
         </v-tab>
         <v-tab-item
+          transition="fade-transition"
+          reverse-transition="fade-transition"
           v-for="tab in tabs"
           :key="tab.key"
         >
           <component v-bind:is="currentTabComponent"></component>
         </v-tab-item>
       </v-tabs>
-      {{ currentTabComponent }}
     </v-flex>
   </v-layout>
 </v-container>
