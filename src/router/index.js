@@ -5,6 +5,7 @@ import NotFound from '@/components/NotFound'
 import RegisterMember from '@/components/RegisterMember'
 import MemberManager from '@/components/MemberManager'
 import AddSession from '@/components/AddSession'
+import MatchCalendar from '@/components/MatchCalendar'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ const routes = [
           component: RegisterMember
         }
       ]
+    },
+    {
+      path: '/sessions',
+      name: 'MatchCalendar',
+      component: MatchCalendar
     },
     {
       path: '/sessions/new',
