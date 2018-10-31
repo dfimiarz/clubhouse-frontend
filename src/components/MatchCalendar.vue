@@ -2,13 +2,28 @@
 <template>
 <v-container fluid fill-height="" grid-list-xs >
   <v-layout justify-center="" align-start="" row wrap>
-    <v-flex xs12 md10 >
+    <v-flex xs12 lg10 >
         <div class="main-schedule-container" ref="scheduleContainer" @click="contClicked($event)">
-          <div style="grid-column : 1 / 7 ; grid-row : 2; overflow: auto;" class="time-grid-container">
-              <div v-for="(n) in totalCellCount" :key="n" class="cell">
-                {{ getCellLabel(n) }}
+          <div class="court-grid-container">
+
+          </div>
+          <div style="grid-column : 1 ; grid-row : 2;" class="time-grid-container">
+              <div v-for="(n) in totalCellCount" :key="n" class="cell"  v-bind:style="{ height:  + cellHeight1H + 'px' }">
+                  {{ getCellLabel(n) }}
+              </div>
+              <div class="session-grid-container">
+                <div style="grid-column : 2 ; grid-row : 1; height: 1080px ; border: 1px solid; position: relative;"> 
+                  <div style="position: absolute; top: 90px; width: 100%; height: 135px; background-color: lightgreen;">
+                    Mars
+                  </div>
+                </div>
+                <div style="grid-column : 3 ; grid-row : 1; height: 100%; border: 1px solid;"> </div>
+                <div style="grid-column : 4 ; grid-row : 1; height: 100%; border: 1px solid;"> </div>
+                <div style="grid-column : 5 ; grid-row : 1; height: 100%; border: 1px solid;"> </div>
+                <div style="grid-column : 6 ; grid-row : 1; height: 100%; border: 1px solid;"> </div>
               </div>
           </div>
+          
         </div>
     </v-flex>
     <!--
@@ -42,7 +57,8 @@ export default {
       ],
       courts: [ {id: 1} , {id : 2},  {id: 3} , {id : 4} , {id : 5} ],
       scheduleStartTime: 8,
-      scheduleEndTime: 20 
+      scheduleEndTime: 20,
+      cellHeight1H: 90
     }
   },
   methods: {
@@ -84,27 +100,40 @@ export default {
   user-select: none;
   position: relative;
   display: grid;
-  grid-template-columns: 50px repeat(5,1fr);
+  grid-template-columns: 1fr;
   grid-template-rows: 150px 650px;
-  overflow: hidden;
   
+}
+
+.court-grid-container{
+  position: relative;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 40px repeat(5,1fr) 17px;
+  grid-template-rows: 1fr;
 }
 
 .time-grid-container{
   height: 100%;
+  position: relative;
+  overflow: auto;
+  
+  
 }
 
 .session-grid-container{
-  
+  position: absolute;
+  display: grid;
+  grid-template-columns: 40px repeat(5,1fr);
+  grid-template-rows: 1fr;
+  top: 0px; 
+  left: 0px;
   height: 100%;
-  border: 1px solid;
-  
-
+  width: 100%;
 }
 
 .cell{
   border-top: 1px dotted gray;
-  height: 90px;
   box-sizing: border-box;
   font-size: small;
 }
