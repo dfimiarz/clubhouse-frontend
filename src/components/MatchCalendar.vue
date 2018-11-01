@@ -1,30 +1,56 @@
 
+import func from './vue-temp/vue-editor-bridge';
 <template>
 <v-container fluid fill-height="" grid-list-xs >
-  <v-layout justify-center="" align-start="" row wrap>
+  <v-layout justify-center="" align-content-start="" row wrap>
+    <v-flex xs12 lg10 >
+      Date: 2018/10/01
+    </v-flex>
     <v-flex xs12 lg10 >
         <div class="main-schedule-container" ref="scheduleContainer" @click="contClicked($event)">
           <div class="court-grid-container">
-
+            <div v-for="(court,index) in courts" :key="court.id" v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }">
+              <v-container fluid="" fill-height="">
+                <v-layout row wrap align-center="" justify-center="">
+                  <v-flex xs12>
+                    <div class="text-xs-center" style=" font-size: 2vmax;">
+                      {{ court.lbl }}    
+                    </div>
+                    <div class="title text-xs-center">
+                      <span class="green darken-3 px-2" style=" font-size: 1.5vmax;">{{ court.status }}</span>
+                    </div>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+              
+            </div>
+            <v-btn
+              absolute
+              fab
+              bottom
+              right
+              color="pink"
+            >
+              <v-icon>add</v-icon>
+            </v-btn>
           </div>
           <div style="grid-column : 1 ; grid-row : 2;" class="time-grid-container">
+              
               <div v-for="(n) in totalCellCount" :key="n" class="cell"  v-bind:style="{ height:  + cellHeight1H + 'px' }">
                   {{ getCellLabel(n) }}
               </div>
               <div class="session-grid-container">
-                <div style="grid-column : 2 ; grid-row : 1; height: 1080px ; border: 1px solid; position: relative;"> 
-                  <div style="position: absolute; top: 90px; width: 100%; height: 135px; background-color: lightgreen;">
-                    Mars
-                  </div>
+                <div style="grid-column : 2 ; grid-row : 1; height: 1360px ; border: 1px solid; position: relative;"> 
+                  <match v-for="match in matches" :key="match.id" :vpos="(match.startMin * cellHeight1H/60)" :height="(match.durMin * cellHeight1H/60)"></match>
                 </div>
                 <div style="grid-column : 3 ; grid-row : 1; height: 100%; border: 1px solid;"> </div>
                 <div style="grid-column : 4 ; grid-row : 1; height: 100%; border: 1px solid;"> </div>
                 <div style="grid-column : 5 ; grid-row : 1; height: 100%; border: 1px solid;"> </div>
                 <div style="grid-column : 6 ; grid-row : 1; height: 100%; border: 1px solid;"> </div>
               </div>
-          </div>
-          
+          </div>  
         </div>
+        
     </v-flex>
     <!--
     <v-flex xs2 >
@@ -44,20 +70,22 @@
 </template>
 
 <script>
+
+import Match from './Match'
+
 export default {
+  components:{
+    Match
+  },
   name: 'MatchCalendar',
-  data() {
+  data: function() {
     return {
       message: "This is grid view",
       milTimeLabels: [ '12', '1' , '2', '3', '4' , '5' , '6' , '7' , '8', '9' , '10' , '11', '12' , '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23' ],
       civTimeLabels: [ '12 am', '1 am' , '2 am', '3 am', '4 am' , '5 am' , '6 am' , '7 am' , '8 am', '9 am' , '10 am' , '11 am', '12 pm' , '1 pm', '2 pm', '3 pm', '4 pm', '5 pm', '6 pm', '7 pm', '8 pm', '9 pm', '10 pm', '11 pm' ],
-      sessions: [
-          { text: '4 players, bumpable', durMin: 120, startMin: 60, id:1, court: 1 },
-          { text: '4 players, bumpable', durMin: 120, startMin: 360, id:2, court: 1 }
-      ],
-      courts: [ {id: 1} , {id : 2},  {id: 3} , {id : 4} , {id : 5} ],
-      scheduleStartTime: 8,
-      scheduleEndTime: 20,
+      courts: [ {id: 1, lbl:"Court #1", status: "OPEN"} , {id : 2,lbl:"Court #2", status: "OPEN"},  {id: 3,lbl:"Court #3", status: "OPEN"} , {id : 4,lbl:"Court #4", status: "OPEN"} , {id : 5, lbl:"Court #5", status: "OPEN"} ],
+      scheduleStartTime: 7,
+      scheduleEndTime: 22,
       cellHeight1H: 90
     }
   },
@@ -66,11 +94,7 @@ export default {
       console.log(event.target)
     },
     getCellLabel: function(cellnumber) {
-
-     
         return this.hourLabels[cellnumber-1]
-      
-
     }
   },
   computed: {
@@ -79,6 +103,9 @@ export default {
     },
     totalCellCount: function(){
       return (this.scheduleEndTime - this.scheduleStartTime)
+    },
+    matches: function () {
+      return this.$store.getters['matchstore/loadedMatches']
     }
     
   },
@@ -101,7 +128,7 @@ export default {
   position: relative;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 150px 650px;
+  grid-template-rows: 1fr 650px;
   
 }
 
@@ -109,8 +136,9 @@ export default {
   position: relative;
   height: 100%;
   display: grid;
-  grid-template-columns: 40px repeat(5,1fr) 17px;
+  grid-template-columns: 40px repeat(5,1fr);
   grid-template-rows: 1fr;
+  border: 1px solid;
 }
 
 .time-grid-container{
@@ -138,7 +166,7 @@ export default {
   font-size: small;
 }
 
-.session{
+.session_cell {
   position: absolute;
   border: 2 px solid;
   background-color: lightgreen;

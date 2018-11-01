@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import usermodule from './modules/user'
 import membermodule from './modules/member'
+import matchmodule from './modules/matches'
 
 
 Vue.use(Vuex)
@@ -10,7 +11,8 @@ export const store = new Vuex.Store(
     {
         modules:{
             userstore: usermodule,
-            memberstore: membermodule
+            memberstore: membermodule,
+            matchstore: matchmodule
         },
         state: {            
             loading: false,
