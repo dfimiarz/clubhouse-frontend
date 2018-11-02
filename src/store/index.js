@@ -17,7 +17,8 @@ export const store = new Vuex.Store(
         state: {            
             loading: false,
             error: null,
-            db: null
+            db: null,
+            cellHeight1H: 60
         },
         mutations: {
            
@@ -42,6 +43,9 @@ export const store = new Vuex.Store(
             },
             loading (state) {
                 return state.loading
+            },
+            calCellHeight1H(state){
+                return state.cellHeight1H;
             }
         }
     }

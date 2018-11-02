@@ -11,11 +11,11 @@ import func from './vue-temp/vue-editor-bridge';
           <div class="main-schedule-container" ref="scheduleContainer" @click="contClicked($event)">
             <div class="court-grid-container">
               <div v-for="(court,index) in courts" :key="court.id" class="pa-1" v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }">
-                <div class="text-xs-center" style=" font-size: 1.5vw;">
+                <div class="text-xs-center">
                   {{ court.lbl }}    
                 </div>
-                <div class="title text-xs-center">
-                  <span class="green darken-3 px-2" style=" font-size: 1.5vw;">{{ court.status }}</span>
+                <div class="text-xs-center" style="font-size: .7em;">
+                  <span class="green darken-3">{{ court.status }}</span>
                 </div>
               </div>
             </div>
@@ -26,7 +26,9 @@ import func from './vue-temp/vue-editor-bridge';
                 <div class="session-grid-container">
                   
                   <div style="grid-column : 2 ; grid-row : 1; height: 720px ; border: 1px solid; position: relative;">
-                    <match v-for="match in matches" :key="match.id" :vpos="(match.startMin * cellHeight1H/60)" :height="(match.durMin * cellHeight1H/60)"></match>
+                    <session v-for="match in matches" :key="match.id" :session=match>
+                      
+                    </session>
                   </div>
                   <div style="grid-column : 3 ; grid-row : 1; height: 100%; border: 1px solid;"> </div>
                   <div style="grid-column : 4 ; grid-row : 1; height: 100%; border: 1px solid;"> </div>
@@ -55,11 +57,11 @@ import func from './vue-temp/vue-editor-bridge';
 
 <script>
 
-import Match from './Match'
+import Session from './Session'
 
 export default {
   components:{
-    Match
+    'session' : Session
   },
   name: 'MatchCalendar',
   data: function() {
@@ -69,8 +71,7 @@ export default {
       civTimeLabels: [ '12 am', '1 am' , '2 am', '3 am', '4 am' , '5 am' , '6 am' , '7 am' , '8 am', '9 am' , '10 am' , '11 am', '12 pm' , '1 pm', '2 pm', '3 pm', '4 pm', '5 pm', '6 pm', '7 pm', '8 pm', '9 pm', '10 pm', '11 pm' ],
       courts: [ {id: 1, lbl:"Court #1", status: "OPEN"} , {id : 2,lbl:"Court #2", status: "OPEN"},  {id: 3,lbl:"Court #3", status: "OPEN"} , {id : 4,lbl:"Court #4", status: "OPEN"} , {id : 5, lbl:"Court #5", status: "OPEN"} ],
       scheduleStartTime: 8,
-      scheduleEndTime: 20,
-      cellHeight1H: 60
+      scheduleEndTime: 20
     }
   },
   methods: {
@@ -90,6 +91,9 @@ export default {
     },
     matches: function () {
       return this.$store.getters['matchstore/loadedMatches']
+    },
+    cellHeight1H: function(){
+      return this.$store.getters['calCellHeight1H'];
     }
     
   },
@@ -113,6 +117,7 @@ export default {
   display: grid;
   grid-template-columns: auto;
   grid-template-rows: 1fr 650px;
+  font-size: calc(10px + 1vw);
   
 }
 
