@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     cardClicked: () => {
-      console.log("CardClicked")
+      //console.log("CardClicked")
     }
 
   }

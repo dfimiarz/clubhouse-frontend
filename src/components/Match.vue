@@ -19,7 +19,7 @@ export default {
 .matchcell {
   position: absolute;
   border: 2 px solid;
-  background-color: lightgreen;
+  background-color: rgba(139,195,74,0.8);
   width: 100%;
   box-sizing: border-box;
   border-radius: 3px;

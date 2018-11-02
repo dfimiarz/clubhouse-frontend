@@ -11,7 +11,7 @@ import func from './vue-temp/vue-editor-bridge';
           <div class="main-schedule-container" ref="scheduleContainer" @click="contClicked($event)">
             <div class="court-grid-container">
               <div v-for="(court,index) in courts" :key="court.id" class="pa-1" v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }">
-                <div class="text-xs-center" style=" font-size: 2vw;">
+                <div class="text-xs-center" style=" font-size: 1.5vw;">
                   {{ court.lbl }}    
                 </div>
                 <div class="title text-xs-center">
@@ -24,6 +24,7 @@ import func from './vue-temp/vue-editor-bridge';
                     {{ getCellLabel(n) }}
                 </div>
                 <div class="session-grid-container">
+                  
                   <div style="grid-column : 2 ; grid-row : 1; height: 720px ; border: 1px solid; position: relative;">
                     <match v-for="match in matches" :key="match.id" :vpos="(match.startMin * cellHeight1H/60)" :height="(match.durMin * cellHeight1H/60)"></match>
                   </div>
@@ -32,6 +33,7 @@ import func from './vue-temp/vue-editor-bridge';
                   <div style="grid-column : 5 ; grid-row : 1; height: 100%; border: 1px solid;"> </div>
                   <div style="grid-column : 6 ; grid-row : 1; height: 100%; border: 1px solid;"> </div>
                 </div>
+                
                 
             </div> 
            
@@ -72,8 +74,8 @@ export default {
     }
   },
   methods: {
-    contClicked: function(event){
-      console.log(event.target)
+    contClicked: function(){
+      //console.log(event.target)
     },
     getCellLabel: function(cellnumber) {
         return this.hourLabels[cellnumber-1]
@@ -95,7 +97,7 @@ export default {
       
   },
   mounted: function(){
-    console.log("Mounted")
+    //console.log("Mounted")
   }
 }
 </script>

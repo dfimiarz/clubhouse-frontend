@@ -63,7 +63,7 @@
 export default {
   name: "RegisterMember",
   created: () => {
-    console.log("Created")
+    //console.log("Created")
   },
   data: function() {
     return {
@@ -99,7 +99,7 @@ export default {
   },
   methods: {
     addNewMember: function() {
-      console.log(this.newMember);
+      //console.log(this.newMember);
       this.$store.dispatch("memberstore/REGISTER_MEMBER", this.newMember);
     }
   },
