@@ -14,7 +14,7 @@
         return-object
         >
         </v-autocomplete>
-        <v-btn color="pink" fab shrink :disabled="player == null" small @click="addPlayer()">
+        <v-btn color="pink" fab shrink small @click="addPlayer()">
           Add
         </v-btn>
       </v-layout>
