@@ -65,7 +65,7 @@
         <v-toolbar-items class="hidden-sm-and-down">
           <v-btn flat :to="{name: 'Home'}" exact>Home</v-btn>
           <v-btn flat :to="{name: 'MatchCalendar'}" exact="">Schedule</v-btn>
-          <v-btn flat :to="{name: 'NewBooking'}" exact>Book Court</v-btn>
+          <v-btn flat :to="{name: 'NewBooking'}" exact>Quick book</v-btn>
         </v-toolbar-items>
       </v-toolbar>
      <v-content>

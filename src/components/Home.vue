@@ -31,7 +31,7 @@
                         [`sm${card.flexsm}`]: true }"
               :key="card.title"
             >
-              <v-card :to="{name: 'NewBooking'}" raised="" >
+              <v-card :to="{name: card.dest}" raised="" >
                 <v-img
                   :src="card.src"
                   height="250px"  
@@ -65,10 +65,11 @@ export default {
   data: () => {
     return {
       cards: [
-        { title: 'Matches', text: 'View today\'s match schedule' ,src: './Matches.jpg', flexxs: 12, flexsm: 6 },
-        { title: 'Booking', text: 'Reserve a court', src: './Booking700x325.jpg', flexxs: 12, flexsm: 6 },
+        { title: 'Schedule', text: 'View today\'s match schedule' ,src: './Matches.jpg', flexxs: 12, flexsm: 6 , dest: "MatchCalendar" },
+        { title: 'Quick Match', text: 'Fast court booking', src: './Booking700x325.jpg', flexxs: 12, flexsm: 6, dest: "NewBooking" },
+        { title: 'Who is playing', text: 'Current games', src: './Manage.jpg', flexxs: 12, flexsm: 6 },
         { title: 'Club Admin', text: 'Administrative features',  src: './Manage.jpg', flexxs: 12, flexsm: 6 },
-        { title: 'Club Info', text: 'Clud information', src: './Manage.jpg', flexxs: 12, flexsm: 6 }
+        
       ]
       
     }

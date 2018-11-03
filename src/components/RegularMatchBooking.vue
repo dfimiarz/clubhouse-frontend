@@ -1,32 +1,46 @@
 <template>
 <v-container fluid fill-height>
-  <v-layout >
-    <v-flex xs12 xl10>
-      <v-form>
-       
-       <v-layout justify-center="" align-center="">
-          <v-autocomplete
-          
-          :items="members"
-          item-text="name"
-          item-value="id"
-          v-model="player"
-          label="Choose a member"
-          :disabled="! canAddPlayer()"
-          return-object
-          
-          >
-          </v-autocomplete>
-          <v-btn small @click="addPlayer()">Add Selected</v-btn>
+  <v-layout justify-center="" align-center="">
+    <v-flex xs12 lg8>
+      <v-layout justify-center="" align-baseline="" v-if="canAddPlayer()">
+        <v-autocomplete
+        
+        :items="members"
+        item-text="name"
+        item-value="id"
+        v-model="player"
+        label="Find a member"
+        :disabled="! canAddPlayer()"
+        return-object
+        >
+        </v-autocomplete>
+        <v-btn color="pink" fab shrink :disabled="player == null" small @click="addPlayer()">
+          Add
+        </v-btn>
       </v-layout>
         
-      <div v-if="! playersAdded()" class="title my-3 red--text">No players selected</div>
-      <v-container fluid fill-height grid-list-md v-else>
+
+      <div v-if="! playersAdded()" class="title my-3 red--text">0 players selected</div>
+      <!--
+      <v-layout justify-start="" align-baseline="">
+        <v-flex xs6>
+          Player 1: John Smith
+        </v-flex>
+        <div class="px-2">
+          <v-select
+          single-line=""
+          :items="repeaterstatus"
+          label="Repeating?"
+          ></v-select>
+        </div>
+      </v-layout>-->
+     
         <v-layout wrap="" row justify-space-between="" align-center="">
           <v-flex 
             v-for="(p, index) in players"
             :key=p.id
-            xs12 sm8 md6
+            xs12
+            class="mb-2"
           >
           <v-card 
             raised=""
@@ -35,29 +49,30 @@
               <v-card-title primary-title>
                 
                   <v-layout wrap="" row justify-center="" align-baseline="">
-                    <v-flex xs12>
+                    <v-flex xs12 lg6>
                       <div class="title">Player # {{ index + 1}}: {{ p.name }}</div>
-                      
                     </v-flex>
-                    <!--
-                    <v-flex xs12>
-                      <div class="caption">Played today for: 0 min. Repeater: No</div>
-                    </v-flex>-->
+                    <v-flex xs12 lg6>
+                      <v-select class="shrink"
+                        :items="rstatus"
+                        label="Repeating?"
+                      ></v-select>
+                    </v-flex>
                   </v-layout>
               
               </v-card-title>
               <v-divider></v-divider>
               <v-card-actions>
-                <!--<v-btn small v-if="canAddPlayer()">Add Guest*</v-btn>-->
+                <v-btn small v-if="canAddPlayer()">Add Guest*</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn @click="removePlayer(p)" small icon>
-                  <v-icon>removecircle</v-icon>
+                <v-btn fab @click="removePlayer(p)" small>
+                  <v-icon>remove</v-icon>
                 </v-btn>
               </v-card-actions>
           </v-card>
           </v-flex>
         </v-layout>
-      </v-container>
+      
         
       <v-select
         :items="courts"
@@ -80,7 +95,6 @@
       <v-btn :disabled="! playersAdded()">
           Start Match
       </v-btn>
-    </v-form>
     </v-flex>
   </v-layout>
 </v-container>
@@ -99,6 +113,7 @@ export default {
         {name: 'Boris Alter', id: 5, role: 'member'}
       ],
       courts: ['# 1','# 2','# 3','# 4','# 5'],
+      rstatus: ['No','R1','R2'],
       startOptions: ["Now","5 min"],
       startTime: "Now",
       player: null,
