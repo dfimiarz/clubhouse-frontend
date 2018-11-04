@@ -1,8 +1,8 @@
 <template>
 <v-container fluid fill-height>
-  <v-layout justify-center="" align-center="">
+  <v-layout justify-start="" align-center="">
     <v-flex xs12 lg8>
-      <v-layout justify-center="" align-baseline="" v-if="canAddPlayer()">
+      <v-layout justify-center="" align-baseline="" v-if="canAddPlayer()" class="my-4">
         <v-autocomplete
         
         :items="members"
@@ -21,57 +21,42 @@
         
 
       <div v-if="! playersAdded()" class="title my-3 red--text">0 players selected</div>
-      <!--
-      <v-layout justify-start="" align-baseline="">
-        <v-flex xs6>
-          Player 1: John Smith
+      <v-layout wrap="" row justify-space-between="" align-center="">
+        <v-flex 
+          v-for="(p, index) in players"
+          :key=p.id
+          xs12
+          class="mb-2"
+        >
+        <v-card 
+          raised=""
+        
+        >
+          <v-card-title primary-title>
+            <v-layout wrap="" row justify-start="" align-baseline="">
+              <v-flex xs12>
+                <div class="title">Player # {{ index + 1}}: {{ p.name }}</div>
+              </v-flex>
+              <v-flex xs12>
+                <v-radio-group v-model="row" row>
+                  <v-radio label="New" value="0"></v-radio>
+                  <v-radio label="R1" value="1"></v-radio>
+                  <v-radio label="R2" value="2"></v-radio>
+                </v-radio-group>
+              </v-flex>
+            </v-layout>
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-actions>
+
+            <v-spacer></v-spacer>
+            <v-btn @click="removePlayer(p)" small>
+              Remove
+            </v-btn>
+          </v-card-actions>
+        </v-card>
         </v-flex>
-        <div class="px-2">
-          <v-select
-          single-line=""
-          :items="repeaterstatus"
-          label="Repeating?"
-          ></v-select>
-        </div>
-      </v-layout>-->
-     
-        <v-layout wrap="" row justify-space-between="" align-center="">
-          <v-flex 
-            v-for="(p, index) in players"
-            :key=p.id
-            xs12
-            class="mb-2"
-          >
-          <v-card 
-            raised=""
-          
-            >
-              <v-card-title primary-title>
-                
-                  <v-layout wrap="" row justify-center="" align-baseline="">
-                    <v-flex xs12 lg6>
-                      <div class="title">Player # {{ index + 1}}: {{ p.name }}</div>
-                    </v-flex>
-                    <v-flex xs12 lg6>
-                      <v-select class="shrink"
-                        :items="rstatus"
-                        label="Repeating?"
-                      ></v-select>
-                    </v-flex>
-                  </v-layout>
-              
-              </v-card-title>
-              <v-divider></v-divider>
-              <v-card-actions>
-                <v-btn small v-if="canAddPlayer()">Add Guest*</v-btn>
-                <v-spacer></v-spacer>
-                <v-btn fab @click="removePlayer(p)" small>
-                  <v-icon>remove</v-icon>
-                </v-btn>
-              </v-card-actions>
-          </v-card>
-          </v-flex>
-        </v-layout>
+      </v-layout>
       
         
       <v-select
@@ -150,4 +135,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+.player_container{
+  /*font-size: calc(10px + 1vw);*/
+  border: 1px dashed;
+}
 </style>

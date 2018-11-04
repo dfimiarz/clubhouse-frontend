@@ -2,7 +2,7 @@
 <template>
   <v-container fluid fill-height="" >
     <v-layout justify-space-around="" align-start wrap="">
-      <v-flex  sm12 md10 lg6>
+      <v-flex  sm12 md8 lg6>
         <v-tabs
           
         >
