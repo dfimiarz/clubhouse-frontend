@@ -2,7 +2,9 @@
 <template>
   <v-container fluid fill-height="" >
     <v-layout justify-space-around="" align-start wrap="">
-      <v-flex  sm12 md8 lg6>
+      <v-flex  sm12 md10 lg8 xl6>
+        <regular-match-booking></regular-match-booking>
+        <!--
         <v-tabs
           
         >
@@ -23,6 +25,7 @@
             <component v-bind:is="currentTabComponent"></component>
           </v-tab-item>
         </v-tabs>
+        -->
       </v-flex>
     </v-layout>
   </v-container>
