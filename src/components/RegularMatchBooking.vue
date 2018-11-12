@@ -10,22 +10,19 @@
             <v-flex xs12>
               <v-card>
                 <v-card-text>
-                  <v-layout v-for="(p, index) in players" :key="p.id" justify-space-around="" align-baseline="" row wrap class="my-3">
-                    <v-flex xs12 lg2 class="px-2">
-                      Player # {{ index + 1}}
-                    </v-flex>
-                    <v-flex xs12 lg6 class="px-2">
+                  <v-layout justify-space-around="" align-baseline="" row wrap class="my-3">
+                    <v-flex xs12 md8 class="px-2">
                       <v-autocomplete
                       :items="members"
                       item-text="name"
                       item-value="id"
-                      v-model="players[i]"
+                      v-model="selectedMember"
                       return-object
                       >
                       </v-autocomplete>
                     </v-flex>
-                    <v-flex xs12 lg4 class="px-2">
-                      <v-btn-toggle v-model="p.repeater" >
+                    <v-flex xs12 md4  class="px-2">
+                      <v-btn-toggle v-model="repeater" >
                         <v-btn large="" color='green'>
                           R-1
                         </v-btn>
@@ -65,7 +62,7 @@
               <v-card-text primary-title>
                 <v-layout wrap="" row justify-start="" align-baseline="">
                   <v-flex xs12>
-                    <div class="title">Player # {{ index + 1}}: {{ p.name }}</div>
+                    <div class="title">Player # {{ index + 1}}: {{ p.name }} - {{ p.repeater }}</div>
                   </v-flex>
                 </v-layout>
               </v-card-text>
@@ -131,17 +128,20 @@ export default {
       rstatus: ['No','R1','R2'],
       startOptions: ["Now","5 min"],
       startTime: "Now",
-      nullplayer: {name: null, id: 0, role: null, repeater: null},
+      selectedMember: null,
       players: [],
       bookingStep: 1,
       title: "",
-      repeater: null
+      repeater: 0
     }
   },
   methods:{
     addPlayer: function (){
       if( this.players.length < 4 ){
-        this.players.push(this.nullplayer)
+        var player = { repeater : this.repeater }
+        this.players.push(Object.assign(player,this.selectedMember))
+        this.selectedMember = null
+        this.repeater = null
       }
     },
     removePlayer: function (player){
@@ -170,7 +170,7 @@ export default {
     }
   },
   created: function(){
-    this.players.push(this.nullplayer);
+    
   }
 };
 </script>
