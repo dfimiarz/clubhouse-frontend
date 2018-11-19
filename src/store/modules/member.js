@@ -12,7 +12,14 @@ const state = {
         password: null,
         pin: null,
         rank: null
-    }
+    },
+    members: [
+        {name: 'Todd Snyder', id: 1, role: 'member'},
+        {name: 'Laurent Mars', id: 2, role: 'member'},
+        {name: 'Jun Tsuchiya', id: 3, role: 'member'},
+        {name: 'Ardis Burfield', id: 4, role: 'member'},
+        {name: 'Boris Alter', id: 5, role: 'member'}
+      ],
 
 }
 
@@ -51,7 +58,12 @@ const actions = {
 }
 
 const getters = {
-   
+   clubMembers: state => {
+       return state.members
+   },
+   getMemberById: (state) => (id) => {
+       return state.members.find( member => member.id == id )
+   }
 }
 
 export default {
