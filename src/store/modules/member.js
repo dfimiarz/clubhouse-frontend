@@ -18,7 +18,9 @@ const state = {
         {name: 'Laurent Mars', id: 2, role: 'member'},
         {name: 'Jun Tsuchiya', id: 3, role: 'member'},
         {name: 'Ardis Burfield', id: 4, role: 'member'},
-        {name: 'Boris Alter', id: 5, role: 'member'}
+        {name: 'Boris Alter', id: 5, role: 'member'},
+        {name: 'Daniel Fmith (Guest)', id: 6, role: 'guest'},
+        {name: 'Erick Tester (Guest)', id: 7, role: 'guest'}
       ],
 
 }

@@ -2,72 +2,57 @@
 <v-container fluid fill-height>
   <v-layout justify-center="" align-center="">
     <v-flex xs12 lg10>
-      <div class="title my-3"> {{ currentTitle }} </div>
-          <v-layout wrap="" row justify-start="" align-center="">
-            <v-flex 
-              v-for="(player, index) in match.players"
-              :key="index"
-              xs12 sm6 
-              class="mb-2"
-            >
-              <!--<player-booking :player="match.players[n-1]" v-on:remove-player="removePlayer" v-if="match.players[n-1] != null"></player-booking>-->
-              <player-selector :index="index" :player="player" v-on:player-updated="updatePlayer" v-on:repeat-status-updated="updateRepeaterStatus"></player-selector>
-            </v-flex>
-            <!--
-            <v-flex xs12 md6 class="mb-2" v-if="canAddPlayer()" >
-              <v-card
-                raised=""
-                class="mx-2"
+      <v-stepper v-model="bookingStep">
+        <v-stepper-header>
+          <v-stepper-step :complete="e1 > 1" step="1">Player Selection</v-stepper-step>
+          <v-divider></v-divider>
+          <v-stepper-step :complete="e1 > 2" step="2">Court Selection</v-stepper-step>
+          <v-divider></v-divider>
+          <v-stepper-step step="3">Confirm Booking</v-stepper-step>
+        </v-stepper-header>
+        <v-stepper-items>
+          <v-stepper-content step="1">
+            <v-layout wrap="" row justify-start="" align-center="">
+              <v-flex 
+                v-for="(player, index) in match.players"
+                :key="index"
+                xs12 sm6 
+                class="mb-2"
               >
-                <v-card-text>
-                  <v-layout justify-start="" align-center="" row wrap >
-                    <v-flex xs12 class="px-2">
-                      <v-autocomplete
-                      :items="clubMembers"
-                      item-text="name"
-                      item-value="id"
-                      v-model="selectedMember"
-                      return-object
-                      label="Add a player"
-                     
-                      >
-                      </v-autocomplete>
-                    </v-flex>
-                  </v-layout>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn :disabled="! canAddPlayer()" @click="addPlayer()">
-                      Add
-                    </v-btn>
-                  </v-card-actions>
-                
-              </v-card>
-            </v-flex>
-          -->
+                <!--<player-booking :player="match.players[n-1]" v-on:remove-player="removePlayer" v-if="match.players[n-1] != null"></player-booking>-->
+                <player-selector :index="index" :player="player" v-on:player-updated="updatePlayer" v-on:repeat-status-updated="updateRepeaterStatus"></player-selector>
+              </v-flex>
+              <v-btn @click="bookingStep = 2">
+                Next
+              </v-btn>
           </v-layout>
+          </v-stepper-content>
+          <v-stepper-content step="2">
+            Court selection step
+            <v-btn @click="bookingStep = 1">
+                Players
+              </v-btn>
+            <v-btn @click="bookingStep = 3">
+                Next
+              </v-btn>
+          </v-stepper-content>
+          <v-stepper-content step="3">
+            Confirm Step
+            <v-btn @click="bookingStep = 1">
+                Restart
+            </v-btn>
+            <v-btn>
+                Complete
+              </v-btn>
+          </v-stepper-content>
+        </v-stepper-items>
+      </v-stepper>
+
+          
           
           <div v-if="! playersAdded()" class="title my-4 red--text">No players added!</div>
+        
           
-          <!--
-          <v-select
-          v-model="startTime"
-          :items="startOptions"
-          label="Start Time:"
-          ></v-select>
-       
-          <v-text-field
-          label="Player #1 PIN"
-          type="password"
-          class="shrink"
-          ></v-text-field>
-          <div class="my-2" v-if="playersAdded()">
-            <div class="headline">Maximum time: {{maxGameTime}} min. Bumpable</div>
-          </div>
-          -->
-          <v-btn :disabled="! playersAdded()">
-              Next
-          </v-btn>
 
     </v-flex>
   </v-layout>
@@ -101,7 +86,7 @@ export default {
         court: null,
         start: null
       },
-      bookingStep: 1,
+      bookingStep: 0,
       title: "",
     }
   },

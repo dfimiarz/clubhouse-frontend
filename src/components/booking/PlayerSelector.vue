@@ -5,20 +5,22 @@
     >
         <v-card-text>
             <v-layout justify-start="" align-center="" row wrap >
-            <v-flex xs12 class="px-2">
-                <v-autocomplete
-                :items="clubMembers"
-                item-text="name"
-                item-value="id"
-                v-model="memberId"
-                label="Select a player"
-                clearable
-                >
-                </v-autocomplete>
-            </v-flex>
+                <v-flex xs12 class="px-2">
+                    Player {{ index + 1 }}
+                    <v-autocomplete
+                    :items="clubMembers"
+                    item-text="name"
+                    item-value="id"
+                    v-model="memberId"
+                    label="Select a player"
+                    clearable
+                    >
+                    </v-autocomplete>
+                </v-flex>
             </v-layout>
         </v-card-text>
         <v-card-actions>
+            <v-spacer></v-spacer>
             <v-btn-toggle v-model="repeatStatus" >
                 <v-btn large="" color='green' value="1">
                     R-1
