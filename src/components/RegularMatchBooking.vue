@@ -4,23 +4,22 @@
     <v-flex xs12 lg10>
       <v-stepper v-model="bookingStep">
         <v-stepper-header>
-          <v-stepper-step :complete="e1 > 1" step="1">Player Selection</v-stepper-step>
+          <v-stepper-step :complete="bookingStep > 1" step="1">Player Selection</v-stepper-step>
           <v-divider></v-divider>
-          <v-stepper-step :complete="e1 > 2" step="2">Court Selection</v-stepper-step>
+          <v-stepper-step :complete="bookingStep > 2" step="2">Court Selection</v-stepper-step>
           <v-divider></v-divider>
           <v-stepper-step step="3">Confirm Booking</v-stepper-step>
         </v-stepper-header>
         <v-stepper-items>
           <v-stepper-content step="1">
-            <v-layout wrap="" row justify-start="" align-center="">
+            <v-layout wrap="" row justify-start="" align-baseline="">
               <v-flex 
                 v-for="(player, index) in match.players"
                 :key="index"
-                xs12 sm6 
+                xs12 md6 
                 class="mb-2"
               >
-                <!--<player-booking :player="match.players[n-1]" v-on:remove-player="removePlayer" v-if="match.players[n-1] != null"></player-booking>-->
-                <player-selector :index="index" :player="player" v-on:player-updated="updatePlayer" v-on:repeat-status-updated="updateRepeaterStatus"></player-selector>
+                <player-selector :index="index" :player="player" v-on:update:player="updatePlayer"></player-selector>
               </v-flex>
               <v-btn @click="bookingStep = 2">
                 Next
@@ -78,10 +77,10 @@ export default {
       players: [],
       match: { 
         players: [
-            { memberid: 1, repeater: '1'},
-            { memberid: 2, repeater: null},
-            { memberid: null, repeater: null},
-            { memberid: null, repeater: null}
+            { memberid: 1, repeater: '1', errors: []},
+            { memberid: 2, repeater: undefined, errors: []},
+            { memberid: undefined, repeater: undefined, errors: []},
+            { memberid: undefined, repeater: undefined, errors: []}
           ],
         court: null,
         start: null
@@ -93,19 +92,17 @@ export default {
   methods:{
     updatePlayer: function (updatePlayerInfo){
 
+      console.log("updating player in parent")
+
       var index = updatePlayerInfo.index
-      var newid = updatePlayerInfo.id
+      var newId = updatePlayerInfo.id
+      var repeater = updatePlayerInfo.repeater
 
-      var newplayer = { memberid: newid, repeater : null }
+      //var newplayer = { memberid: newId, repeater : repeater, errors: [] }
 
-      this.match.players.splice(index,1,newplayer)
-    },
-    updateRepeaterStatus: function(updatedRepeaterStatus){
-
-      var index = updatedRepeaterStatus.index
-      var newStatus = updatedRepeaterStatus.repeater
-
-      this.match.players[index].repeater = newStatus
+      //this.match.players.splice(index,1,newplayer)
+      this.match.players[index].memberid = newId
+      this.match.players[index].repeater = repeater
 
     },
     addPlayer: function (){

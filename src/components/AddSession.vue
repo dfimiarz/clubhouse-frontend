@@ -4,28 +4,6 @@
     <v-layout justify-space-around="" align-start wrap="">
       <v-flex  sm12 lg10 xl8>
         <regular-match-booking></regular-match-booking>
-        <!--
-        <v-tabs
-          
-        >
-          <v-tab
-            v-for="tab in tabs"
-            :key="tab.key"
-            @click="currentTab = tab.component"
-          >
-            <div class="header"> {{ tab.name }}</div>
-    
-          </v-tab>
-          <v-tab-item
-            transition="fade-transition"
-            reverse-transition="fade-transition"
-            v-for="tab in tabs"
-            :key="tab.key"
-          >
-            <component v-bind:is="currentTabComponent"></component>
-          </v-tab-item>
-        </v-tabs>
-        -->
       </v-flex>
     </v-layout>
   </v-container>

@@ -21,7 +21,7 @@ const state = {
         {name: 'Boris Alter', id: 5, role: 'member'},
         {name: 'Daniel Fmith (Guest)', id: 6, role: 'guest'},
         {name: 'Erick Tester (Guest)', id: 7, role: 'guest'}
-      ],
+      ]
 
 }
 
