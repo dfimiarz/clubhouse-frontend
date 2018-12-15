@@ -29,6 +29,7 @@
                 <player-selector 
                   :index="index" 
                   :player="player"
+                  v-on:update:remove="removeSlot"
                   v-on:update:active="updateActiveSlot"
                   v-on:update:player="updatePlayer" 
                   v-on:update:repeater="updateRepeater">
@@ -126,6 +127,23 @@ export default {
     }
   },
   methods:{
+    removeSlot: function(index){
+
+     
+
+      let len = this.match.players.length
+
+      if( len > 2 ){
+        this.match.players.splice(index,1)
+      } 
+      
+      len = this.match.players.length
+
+      if( this.activeSlots == len  ){
+        this.match.players.push({ memberid: undefined, repeater: undefined, errors: [], active: false})
+      }
+     
+    },
     updateActiveSlot: function( activeInfo ){
       console.log("updating active in parent")
 
@@ -167,6 +185,22 @@ export default {
   computed: {
     visablePlayerSlots: function(){
       return []
+    },
+    activeSlots: function(){
+      //var active =  this.match.players.filter( slotProp => slotProp.active == true )
+      //return active.length
+
+      let count = 0;
+
+      let len = this.match.players.length
+
+      for( var i = 0; i < len; i++){
+        if (this.match.players[i].active == true )
+          count++
+      }
+
+      return count
+
     }
   },
   created: function(){

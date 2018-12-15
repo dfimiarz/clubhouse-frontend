@@ -10,7 +10,7 @@
                     <div class="d-flex" style="align-items: center">
                         <div class="headline">Player #: {{ index + 1 }}</div>
                         <div class="text-xs-right">
-                            <v-btn fab small>
+                            <v-btn fab small @click="removeSlot()">
                                 <v-icon>remove</v-icon>
                             </v-btn>
                         </div>
@@ -79,7 +79,10 @@ export default {
      
   },
   methods: {
-    
+      removeSlot: function(){
+          
+          this.$emit('update:remove', this.index )
+      }
   },
   computed: {
     clubMembers: function(){
