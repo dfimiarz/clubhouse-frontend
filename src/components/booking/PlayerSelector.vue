@@ -2,11 +2,19 @@
     <v-card
     raised=""
     class="mx-2"
+    height="320"
     >
-        <v-card-text>
+        <v-card-text v-if="active">
             <v-layout justify-start="" align-baseline="" row wrap >
                 <v-flex xs12 >
-                     <div class="headline">Player #: {{ index + 1 }}</div>
+                    <div class="d-flex" style="align-items: center">
+                        <div class="headline">Player #: {{ index + 1 }}</div>
+                        <div class="text-xs-right">
+                            <v-btn fab small>
+                                <v-icon>remove</v-icon>
+                            </v-btn>
+                        </div>
+                    </div>
                 </v-flex>
                 <v-flex xs12 class="pt-2">
                     <v-autocomplete
@@ -33,9 +41,16 @@
                              </transition>
                          </v-flex>
                      </v-layout>
+                     
                 </v-flex>
             </v-layout>
         </v-card-text>
+        <v-layout v-else justify-center="" align-center="" row fill-height="" @click="active = true">
+            <div class="text-xs-center display-3">
+                +
+            </div>
+        </v-layout>
+               
     </v-card>
 </template>
 
@@ -51,7 +66,7 @@ export default {
           type: Object,
           required: true,
           default: function(){
-              return { memberid: undefined, repeater: undefined, errors: [] }
+              return { memberid: undefined, repeater: undefined, errors: [], active: true }
           }
       }
     },
@@ -69,6 +84,15 @@ export default {
   computed: {
     clubMembers: function(){
        return this.$store.getters['memberstore/clubMembers'] 
+    },
+    active: {
+        get: function() {
+            return this.player.active
+        },
+        set: function(newActiveVal){
+           var activeInfo = { index: this.index, active: newActiveVal }
+           this.$emit('update:active', activeInfo )
+        }
     },
     memberid: {
         get: function(){
