@@ -1,56 +1,52 @@
 <template>
     <v-card
     raised=""
-    class="mx-2"
-    height="320"
+    class="mx-2" 
+    height="300"
     >
-        <v-card-text v-if="active">
-            <v-layout justify-start="" align-baseline="" row wrap >
-                <v-flex xs12 >
-                    <div class="d-flex" style="align-items: center">
-                        <div class="headline">Player #: {{ index + 1 }}</div>
-                        <div class="text-xs-right">
-                            <v-btn fab small @click="removeSlot()">
-                                <v-icon>remove</v-icon>
-                            </v-btn>
-                        </div>
-                    </div>
-                </v-flex>
-                <v-flex xs12 class="pt-2">
-                    <v-autocomplete
-                    :items="clubMembers"
-                    item-text="name"
-                    item-value="id"
-                    v-model="memberid"
-                    label="Select a player"
-                    clearable
-                    :error-messages="player.errors"
-                    single-line
-                    >
-                    </v-autocomplete>
-                </v-flex>
-                <v-flex xs12>
-                     <v-layout justify-end="" align-end="" align-content-end="" >
-                         <v-flex xs12 class="text-xs-right">
-                             <transition name="slide-fade">
-                                <v-radio-group v-model="repeater" column="" label="Repeater:">
-                                    <v-radio label="Non-Repeater" value="0"></v-radio>
-                                    <v-radio label="R-1" value="1"></v-radio>
-                                    <v-radio label="R-2" value="2"></v-radio>
-                                </v-radio-group>
-                             </transition>
-                         </v-flex>
-                     </v-layout>
-                     
-                </v-flex>
-            </v-layout>
-        </v-card-text>
-        <v-layout v-else justify-center="" align-center="" row fill-height="" @click="active = true">
-            <div class="text-xs-center display-3">
-                +
-            </div>
+        <v-layout fill-height="" align-center="" row wrap>
+            <v-flex xs12>
+                <v-card-text>
+                    <v-layout justify-start="" align-baseline="" row wrap >
+                        <v-flex xs12 >
+                            <div class="headline">Player #: {{ index + 1 }}</div>
+                        </v-flex>
+                        <v-flex xs12 class="pt-2">
+                            <v-autocomplete
+                            :items="clubMembers"
+                            item-text="name"
+                            item-value="id"
+                            v-model="memberid"
+                            label="Player name:"
+                            clearable
+                            :error-messages="this.errors"
+                            solo
+                            >
+                            </v-autocomplete>
+                        </v-flex>
+                        <v-flex xs12>
+                            <v-select
+                            v-model="repeater"
+                            :items="items"
+                            label="Repeater status:"
+                            item-text="label"
+                            item-value="value"
+                            solo
+                            ></v-select>
+                        </v-flex>
+                    </v-layout>
+                </v-card-text>
+            </v-flex>
+            <v-flex xs12>
+                <v-divider></v-divider>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn fab small @click="removeSlot()">
+                        <v-icon>remove</v-icon>
+                    </v-btn>
+                </v-card-actions>
+            </v-flex>
         </v-layout>
-               
     </v-card>
 </template>
 
@@ -64,15 +60,24 @@ export default {
         },
         player: {
           type: Object,
-          required: true,
           default: function(){
-              return { memberid: undefined, repeater: undefined, errors: [], active: true }
+              return { memberid: undefined, repeater: undefined }
           }
-      }
+        },
+        errors: {
+            type: Array,
+            default: function(){
+                return []
+            }
+        }
     },
   data: function() {
     return {
-       
+        items: [
+            {value: 0, label: 'Non-repeater'},
+            {value: 1, label: 'First repeater'},
+            {value: 2, label: 'Second repeater'}
+        ]
     }
   },
   watch: {
@@ -87,15 +92,6 @@ export default {
   computed: {
     clubMembers: function(){
        return this.$store.getters['memberstore/clubMembers'] 
-    },
-    active: {
-        get: function() {
-            return this.player.active
-        },
-        set: function(newActiveVal){
-           var activeInfo = { index: this.index, active: newActiveVal }
-           this.$emit('update:active', activeInfo )
-        }
     },
     memberid: {
         get: function(){

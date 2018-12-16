@@ -12,30 +12,42 @@
         </v-stepper-header>
         <v-stepper-items>
           <v-stepper-content step="2">
-            <v-layout wrap="" row justify-start="" align-start="">
+            <v-layout justify-start="" align-start="" fill-height="" wrap="" row >
               <v-flex xs12>
-                <div class="my-2">
-                   <v-btn @click="bookingStep = 1">
-                      <span> Back to courts</span>
-                   </v-btn>    
-                </div>
+                <v-btn depressed="" @click="bookingStep = 1">
+                    <v-icon>arrow_back</v-icon>
+                  </v-btn>
+                  <v-btn depressed="" @click="bookingStep = 3">
+                    <v-icon>arrow_forward</v-icon>
+                  </v-btn>
               </v-flex>
               <v-flex 
-                v-for="(player, index) in match.players"
+                v-for="(slot, index) in playerSlots"
                 :key="index"
-                xs12 sm6 
+                xs12 sm6
                 class="mb-2"
               >
                 <player-selector 
                   :index="index" 
-                  :player="player"
+                  v-bind="slot"
+                  
                   v-on:update:remove="removeSlot"
-                  v-on:update:active="updateActiveSlot"
                   v-on:update:player="updatePlayer" 
                   v-on:update:repeater="updateRepeater">
                 </player-selector>
               </v-flex>
-              
+              <v-flex xs12 sm6 v-if="canAddSlots">
+                <v-card
+                height="300"
+                class="mx-2"
+                >
+                  <v-layout fill-height="" align-center="" justify-center="" >
+                    <v-btn fab large @click="addSlot()">
+                      <v-icon>add</v-icon>
+                    </v-btn>
+                  </v-layout>
+                </v-card>
+              </v-flex>
              
           </v-layout>
           </v-stepper-content>
@@ -82,13 +94,17 @@
             
           </v-stepper-content>
           <v-stepper-content step="3">
-            Confirm Step
-            <v-btn @click="bookingStep = 1">
-                Restart
-            </v-btn>
-            <v-btn>
-                Complete
-              </v-btn>
+             <v-layout wrap="" row justify-start="" align-start="">
+              <v-flex xs12>
+                <v-btn depressed="" @click="bookingStep = 2">
+                  <v-icon>arrow_back</v-icon>
+                </v-btn>
+              </v-flex>
+              <v-flex xs12>
+                Court:
+                Players:
+              </v-flex>
+             </v-layout>
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
@@ -98,110 +114,58 @@
 </template>
 
 <script>
-import PlayerBooking from './booking/PlayerBooking'
+
 import PlayerSelector from './booking/PlayerSelector'
 
 export default {
   name: "RegularMatchBooking",
   components:{
-    PlayerBooking,
     PlayerSelector
   },
   data: function() {
     return {
-      courts: ['# 1','# 2','# 3','# 4','# 5'],
-      startOptions: ["Now","5 min"],
-      startTime: "Now",
-      selectedMember: null,
-      players: [],
-      match: { 
-        players: [
-            { memberid: undefined, repeater: undefined, errors: [], active: true},
-            { memberid: undefined, repeater: undefined, errors: [], active: false}
-          ],
-        court: null,
-        start: null
-      },
-      bookingStep: 0,
-      title: "",
+      playerSlots : [
+        { player: {memberid: undefined, repeater: undefined}, errors: []}
+      ],
+      bookingStep: 0
     }
   },
   methods:{
     removeSlot: function(index){
 
-     
+      let len = this.playerSlots.length
 
-      let len = this.match.players.length
-
-      if( len > 2 ){
-        this.match.players.splice(index,1)
+      if( len > 1 ){
+        this.playerSlots.splice(index,1)
       } 
-      
-      len = this.match.players.length
-
-      if( this.activeSlots == len  ){
-        this.match.players.push({ memberid: undefined, repeater: undefined, errors: [], active: false})
-      }
-     
-    },
-    updateActiveSlot: function( activeInfo ){
-      console.log("updating active in parent")
-
-      var index = activeInfo.index
-      var newActive = activeInfo.active
-      
-
-      this.match.players[index].active = newActive
-
-      if( this.match.players.length < 4 )
-        this.match.players.push({ memberid: undefined, repeater: undefined, errors: [], active: false})
     },
     updatePlayer: function (updatePlayerInfo){
-
-      console.log("updating player in parent")
 
       var index = updatePlayerInfo.index
       var newId = updatePlayerInfo.id
       
 
-      this.match.players[index].memberid = newId
-      this.match.players[index].repeater = undefined
+      this.playerSlots[index].player.memberid = newId
+      this.playerSlots[index].player.repeater = undefined
 
     },
     updateRepeater: function ( repeaterInfo ){
 
-      console.log("updating repeater in parent")
-
       var index = repeaterInfo.index
       var repeater = repeaterInfo.repeater
 
-      this.match.players[index].repeater = repeater
+      this.playerSlots[index].player.repeater = repeater
 
     },
-    playersAdded: function() {
-      return  this.players.length > 0
+    addSlot: function(){
+      this.playerSlots.push({ player: {memberid: undefined, repeater: undefined}, errors: []})
     }
   },
   computed: {
-    visablePlayerSlots: function(){
-      return []
-    },
-    activeSlots: function(){
-      //var active =  this.match.players.filter( slotProp => slotProp.active == true )
-      //return active.length
-
-      let count = 0;
-
-      let len = this.match.players.length
-
-      for( var i = 0; i < len; i++){
-        if (this.match.players[i].active == true )
-          count++
-      }
-
-      return count
-
+    canAddSlots: function(){
+      return this.playerSlots.length < 4
     }
+    
   },
   created: function(){
     
