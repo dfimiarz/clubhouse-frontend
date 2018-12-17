@@ -66,7 +66,7 @@ export default {
     return {
       cards: [
         { title: 'Schedule', text: 'View today\'s match schedule' ,src: './match_700_325.jpg', flexxs: 12, flexsm: 6 , dest: "MatchCalendar" },
-        { title: 'Quick Match', text: 'Fast court booking', src: './booking_700_325.jpg', flexxs: 12, flexsm: 6, dest: "NewBooking" },
+        { title: 'Quick Match', text: 'Fast court booking', src: './booking_700_325.jpg', flexxs: 12, flexsm: 6, dest: "QuickBooking" },
         { title: 'Who is playing', text: 'Current games', src: './manage_700_325.jpg', flexxs: 12, flexsm: 6 },
         { title: 'Club Admin', text: 'Administrative features',  src: './manage_700_325.jpg', flexxs: 12, flexsm: 6 },
         

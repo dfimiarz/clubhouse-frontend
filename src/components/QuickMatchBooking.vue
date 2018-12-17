@@ -1,7 +1,7 @@
 <template>
 <v-container fluid fill-height>
-  <v-layout justify-center="" align-center="">
-    <v-flex xs12 lg10>
+  <v-layout justify-center="" align-start="">
+    <v-flex xs12 md10 lg8 xl6>
       <v-stepper v-model="bookingStep">
         <v-stepper-header>
           <v-stepper-step :complete="bookingStep > 1" step="1">Court Selection</v-stepper-step>
@@ -101,8 +101,42 @@
                 </v-btn>
               </v-flex>
               <v-flex xs12>
-                Court:
-                Players:
+                <v-layout fill-height="" row wrap="">
+                  <v-flex xs12 sm6 >
+                    <div class="my-2">
+                      <div class="headline">
+                      Court #1
+                      </div>
+                      <div class="subheading">
+                        Available now
+                      </div>
+                      <div class="subheading">
+                        Max play time: 60min
+                      </div>
+                      <div class="subheading px-3">
+                        <v-slider
+                          v-model="slider"
+                          :max="60"
+                          :min="10"
+                          thumb-label
+                          step="10"
+                          ticks
+                        ></v-slider>
+                      </div>
+                    </div>
+                  </v-flex>
+                  <v-flex xs12 sm6>
+                    <div class="headline my-2">
+                      Players:
+                      <div v-for="p in playerDetails" :key="p.index">
+                        <span class="subheading">
+                          #{{ p.number }} - Name: {{ p.name }}, Repeater: {{ p.repeater }}
+                        </span>
+                      </div>
+                    </div>    
+                  </v-flex>
+                </v-layout>
+                
               </v-flex>
              </v-layout>
           </v-stepper-content>
@@ -118,15 +152,13 @@
 import PlayerSelector from './booking/PlayerSelector'
 
 export default {
-  name: "RegularMatchBooking",
+  name: "QuickMatchBooking",
   components:{
     PlayerSelector
   },
   data: function() {
     return {
-      playerSlots : [
-        { player: {memberid: undefined, repeater: undefined}, errors: []}
-      ],
+      playerSlots : [],
       bookingStep: 0
     }
   },
@@ -164,11 +196,24 @@ export default {
   computed: {
     canAddSlots: function(){
       return this.playerSlots.length < 4
+    },
+    playerDetails: function(){
+      return this.playerSlots.map( (slot,index) => {
+          var {memberid,repeater} = slot.player
+          var member = this.$store.getters['memberstore/getMemberById'](memberid)
+
+          if( member === undefined){
+            return {}
+          }
+          member.repeater = repeater
+          member.number = index + 1
+          return member
+        })
     }
     
   },
   created: function(){
-    
+    this.playerSlots.push({ player: {memberid: undefined, repeater: undefined}, errors: []})
   }
 };
 </script>
