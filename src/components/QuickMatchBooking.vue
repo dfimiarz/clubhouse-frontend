@@ -102,7 +102,7 @@
               </v-flex>
               <v-flex xs12>
                 <v-layout fill-height="" row wrap="">
-                  <v-flex xs12 sm6 >
+                  <v-flex xs12 sm6 class="mb-2" >
                     <div class="my-2">
                       <div class="headline">
                       Court #1
@@ -111,11 +111,14 @@
                         Available now
                       </div>
                       <div class="subheading">
-                        Max play time: 60min
+                        Max session duration: 60min
+                      </div>
+                      <div class="subheading">
+                        Session duration: {{ sessionLenght }}min
                       </div>
                       <div class="subheading px-3">
                         <v-slider
-                          v-model="slider"
+                          v-model="sessionLenght"
                           :max="60"
                           :min="10"
                           thumb-label
@@ -125,7 +128,7 @@
                       </div>
                     </div>
                   </v-flex>
-                  <v-flex xs12 sm6>
+                  <v-flex xs12 sm6 class="mb-2">
                     <div class="headline my-2">
                       Players:
                       <div v-for="p in playerDetails" :key="p.index">
@@ -159,7 +162,8 @@ export default {
   data: function() {
     return {
       playerSlots : [],
-      bookingStep: 0
+      bookingStep: 0,
+      sessionLenght: 10
     }
   },
   methods:{
