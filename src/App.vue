@@ -29,7 +29,7 @@
               <v-icon>home</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
-              <v-list-tile-title>Quick Booking</v-list-tile-title>
+              <v-list-tile-title>Book a court</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
           <v-list-tile  :to="{name: 'ManageMembers'}">
@@ -65,10 +65,10 @@
         <v-toolbar-items class="hidden-sm-and-down">
           <v-btn flat :to="{name: 'Home'}" exact>Home</v-btn>
           <v-btn flat :to="{name: 'MatchCalendar'}" exact="">Schedule</v-btn>
-          <v-btn flat :to="{name: 'QuickBooking'}" exact>Quick book</v-btn>
+          <v-btn flat :to="{name: 'QuickBooking'}" exact>Book a Court</v-btn>
         </v-toolbar-items>
       </v-toolbar>
-     <v-content>
+      <v-content>
        <router-view></router-view>
       </v-content>
       <v-footer app>

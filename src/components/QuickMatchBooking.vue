@@ -13,13 +13,13 @@
         <v-stepper-items>
           <v-stepper-content step="2">
             <v-layout justify-start="" align-start="" fill-height="" wrap="" row >
-              <v-flex xs12>
-                <v-btn depressed="" @click="bookingStep = 1">
-                    <v-icon>arrow_back</v-icon>
-                  </v-btn>
-                  <v-btn depressed="" @click="bookingStep = 3">
-                    <v-icon>arrow_forward</v-icon>
-                  </v-btn>
+              <v-flex xs12 class="py-2">
+                <v-btn large depressed="" @click="bookingStep = 1">
+                  <v-icon>arrow_back</v-icon>
+                </v-btn>
+                <v-btn large depressed="" @click="bookingStep = 3">
+                  <v-icon>arrow_forward</v-icon>
+                </v-btn>
               </v-flex>
               <v-flex 
                 v-for="(slot, index) in playerSlots"
@@ -94,16 +94,54 @@
             
           </v-stepper-content>
           <v-stepper-content step="3">
-             <v-layout wrap="" row justify-start="" align-start="">
-              <v-flex xs12>
-                <v-btn depressed="" @click="bookingStep = 2">
+             <v-layout row wrap align-center="" justify-center="" fill-height="">
+              <v-flex xs12 class="py-2">
+                <v-btn large depressed="" @click="bookingStep = 2">
                   <v-icon>arrow_back</v-icon>
                 </v-btn>
               </v-flex>
               <v-flex xs12>
-                <v-layout fill-height="" row wrap="">
-                  <v-flex xs12 sm6 class="mb-2" >
-                    <div class="my-2">
+                <v-layout justify-center=""  fill-height="" row wrap="">
+                  <v-flex xs12 sm6 class="pa-2" >
+                    <v-card>
+                      <v-img
+                        class="white--text"
+                        height="150px"
+                        src="/court.jpg"
+                        
+                      >
+                      </v-img>
+                      <v-card-title>
+                        <div class="headline">Court #1</div>
+                      </v-card-title>
+                      <v-card-text>
+                        <div class="subheading">
+                          Available now
+                        </div>
+                        <div class="subheading">
+                          Bumpable: No
+                        </div>
+                        <div class="subheading">
+                          Max session duration: 60min
+                        </div>
+                        <div class="subheading">
+                          Session duration: {{ sessionLenght }}min
+                        </div>
+                        <div class="subheading px-3">
+                          <v-slider
+                            v-model="sessionLenght"
+                            :max="60"
+                            :min="10"
+                            thumb-label
+                            step="10"
+                            ticks
+                          ></v-slider>
+                        </div>
+                        
+                      </v-card-text>
+                      
+                    </v-card>
+                    <!--<div class="my-2">
                       <div class="headline">
                       Court #1
                       </div>
@@ -126,17 +164,25 @@
                           ticks
                         ></v-slider>
                       </div>
-                    </div>
+                    </div>-->
                   </v-flex>
-                  <v-flex xs12 sm6 class="mb-2">
-                    <div class="headline my-2">
-                      Players:
-                      <div v-for="p in playerDetails" :key="p.index">
-                        <span class="subheading">
-                          #{{ p.number }} - Name: {{ p.name }}, Repeater: {{ p.repeater }}
-                        </span>
-                      </div>
-                    </div>    
+                  <v-flex xs12 sm6 class="pa-2">
+                    <v-card height="100%">
+                      <v-card-title class="py-3">
+                        <div class="headline">Selected Players</div>
+                      </v-card-title>
+                      <v-list>
+                        <template v-for="p in playerDetails">
+                          <v-list-tile :key="p.index">
+                            <v-list-tile-content>
+                              <v-list-tile-title>{{ p.name }}</v-list-tile-title>
+                                <v-list-tile-sub-title>Repeater: {{ p.repeater }}</v-list-tile-sub-title>
+                            </v-list-tile-content>
+                          </v-list-tile>
+                          <v-divider :key="p.index"></v-divider>
+                        </template>
+                      </v-list>
+                    </v-card>
                   </v-flex>
                 </v-layout>
                 

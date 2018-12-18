@@ -1,30 +1,17 @@
 
 <template>
-<v-container fluid >
-  <v-layout justify-center align-content-space-between="" wrap="">
-    <v-flex  md12 lg8 x6>
-      <v-card raised="" >
-        <v-card-title primary-title>
-          <v-container fluid="">
-            <v-layout wrap="">
-              <v-flex xs12>
+<v-container fluid fill-height="">
+  <v-layout justify-center="" align-center="" wrap="" row>
+    <v-flex xm12 md10 lg8>
+        <v-container fluid="" grid-list-lg fill-height="">
+          <v-layout row wrap justify-center="" align-center="">
+            <v-flex xs12>
+              
                 <div class="main-title text-xs-center">
                   Knickerbocker Tennis
                 </div>
-              </v-flex>
-              <v-flex xs12>
-                <div class="main-text text-xs-center">
-                  Please choose one of the options below...
-                </div>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-title>
-      </v-card>
-    </v-flex>
-    <v-flex md12 lg8 x6>
-        <v-container fluid="" grid-list-lg >
-          <v-layout row wrap>
+              
+            </v-flex>
             <v-flex
               v-for="card in cards"
               v-bind="{ [`xs${card.flexxs}`]: true,
@@ -34,7 +21,6 @@
               <v-card :to="{name: card.dest}" raised="" >
                 <v-img
                   :src="card.src"
-                  height="250px"  
                 >
                   
                   <v-container fill-height fluid>
@@ -65,8 +51,8 @@ export default {
   data: () => {
     return {
       cards: [
-        { title: 'Schedule', text: 'View today\'s match schedule' ,src: './match_700_325.jpg', flexxs: 12, flexsm: 6 , dest: "MatchCalendar" },
-        { title: 'Quick Match', text: 'Fast court booking', src: './booking_700_325.jpg', flexxs: 12, flexsm: 6, dest: "QuickBooking" },
+        { title: 'Schedule', text: 'View full schedule' ,src: './match_700_325.jpg', flexxs: 12, flexsm: 6 , dest: "MatchCalendar" },
+        { title: 'Book court', text: 'Regular court booking', src: './booking_700_325.jpg', flexxs: 12, flexsm: 6, dest: "QuickBooking" },
         { title: 'Who is playing', text: 'Current games', src: './manage_700_325.jpg', flexxs: 12, flexsm: 6 },
         { title: 'Club Admin', text: 'Administrative features',  src: './manage_700_325.jpg', flexxs: 12, flexsm: 6 },
         
@@ -94,12 +80,12 @@ export default {
 
 .tile-title  {
   text-shadow: 3px 3px #000000;
-  font-size: 2.5vmax;
+  font-size: calc(10px + 1.5vmax);
   
 }
 
 .main-title{
-  font-size: 4vmax;
+  font-size: calc(12px + 3.5vmax);
 }
 
 .main-text{
