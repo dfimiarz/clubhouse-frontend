@@ -95,14 +95,14 @@
           </v-stepper-content>
           <v-stepper-content step="3">
              <v-layout row wrap align-center="" justify-center="" fill-height="">
-              <v-flex xs12 class="py-2">
+              <v-flex xs12 sm10 class="py-2">
                 <v-btn large depressed="" @click="bookingStep = 2">
                   <v-icon>arrow_back</v-icon>
                 </v-btn>
               </v-flex>
               <v-flex xs12>
                 <v-layout justify-center=""  fill-height="" row wrap="">
-                  <v-flex xs12 sm6 class="pa-2" >
+                  <v-flex xs12 sm10  class="pa-2" >
                     <v-card>
                       <v-img
                         class="white--text"
@@ -110,82 +110,84 @@
                         src="/court.jpg"
                         
                       >
+                        <v-layout justify-center="" fill-height="">
+                          <v-card-title>
+                            <div class="display-1"> Court #1 </div>
+                          </v-card-title>      
+                        </v-layout>
                       </v-img>
                       <v-card-title>
-                        <div class="headline">Court #1</div>
+                        <div>
+                          <div class="title">Booking summary:</div>
+                          <span class="grey--text">Review booking details</span>
+                        </div>
                       </v-card-title>
                       <v-card-text>
-                        <div class="subheading">
-                          Available now
-                        </div>
-                        <div class="subheading">
-                          Bumpable: No
-                        </div>
-                        <div class="subheading">
-                          Max session duration: 60min
-                        </div>
-                        <div class="subheading">
-                          Session duration: {{ sessionLenght }}min
-                        </div>
-                        <div class="subheading px-3">
-                          <v-slider
-                            v-model="sessionLenght"
-                            :max="60"
-                            :min="10"
-                            thumb-label
-                            step="10"
-                            ticks
-                          ></v-slider>
-                        </div>
-                        
+                        <v-layout fill-height="" row wrap justify-center="" align-start="">
+                          <v-flex xs12 sm6 >
+                              <v-layout fill-height="" align-center="" align-start="" row wrap>
+                                <v-flex xs12 >
+                                  <div class="headline">Players:</div>
+                                </v-flex>
+                                <v-flex xs12 v-for="p in playerDetails" :key="p.number" class="py-1">
+                                  <div class="subheading">{{p.name}}</div>
+                                  <span class="body-1">Non-repeater{{ p.repeater }}</span>
+                                </v-flex>
+                              </v-layout>
+                          </v-flex>
+                          <v-flex xs12 sm6 >
+                            <v-layout fill-height="" align-center="" align-start="" row wrap>
+                              <v-flex xs12 class="py-1">
+                                <div class="body-1">Bumpable</div>
+                                <span class="subheading">No</span>
+                              </v-flex>
+                              <v-flex xs12 class="py-1">
+                                <div class="body-1">Maximum duration</div>
+                                <span class="subheading">60 minutes</span>
+                              </v-flex>
+                              <v-flex xs12 class="py-1">
+                                <v-slider
+                                  v-model="value"
+                                  step="10"
+                                  thumb-label="always"
+                                  min="10"
+                                  max="60"
+                                ></v-slider>
+                              </v-flex>
+                              <v-flex xs12 class="py-1">
+                                <v-radio-group v-model="radios" :mandatory="false" row="" >
+                                  <v-radio label="Start now" value="radio-1"></v-radio>
+                                  <v-radio label="Start in 5 min" value="radio-2"></v-radio>
+                                </v-radio-group>
+                              </v-flex>
+                            </v-layout>
+                            <!--
+                            <v-list>
+                              <v-subheader>Session properties</v-subheader>
+                              <v-list-tile>
+                                <v-list-tile-content>
+                                  <v-list-tile-title>Bumpable:</v-list-tile-title>
+                                  <v-list-tile-sub-title>No</v-list-tile-sub-title>
+                                </v-list-tile-content>
+                              </v-list-tile>
+                              
+                              <v-list-tile>
+                                <v-list-tile-content>
+                                  <v-list-tile-title>Maximum  duration:</v-list-tile-title>
+                                  <v-list-tile-sub-title>60</v-list-tile-sub-title>
+                                </v-list-tile-content>
+                              </v-list-tile>
+                            </v-list>--> 
+                          </v-flex>
+                        </v-layout>
                       </v-card-text>
-                      
-                    </v-card>
-                    <!--<div class="my-2">
-                      <div class="headline">
-                      Court #1
-                      </div>
-                      <div class="subheading">
-                        Available now
-                      </div>
-                      <div class="subheading">
-                        Max session duration: 60min
-                      </div>
-                      <div class="subheading">
-                        Session duration: {{ sessionLenght }}min
-                      </div>
-                      <div class="subheading px-3">
-                        <v-slider
-                          v-model="sessionLenght"
-                          :max="60"
-                          :min="10"
-                          thumb-label
-                          step="10"
-                          ticks
-                        ></v-slider>
-                      </div>
-                    </div>-->
-                  </v-flex>
-                  <v-flex xs12 sm6 class="pa-2">
-                    <v-card height="100%">
-                      <v-card-title class="py-3">
-                        <div class="headline">Selected Players</div>
-                      </v-card-title>
-                      <v-list>
-                        <template v-for="p in playerDetails">
-                          <v-list-tile :key="p.index">
-                            <v-list-tile-content>
-                              <v-list-tile-title>{{ p.name }}</v-list-tile-title>
-                                <v-list-tile-sub-title>Repeater: {{ p.repeater }}</v-list-tile-sub-title>
-                            </v-list-tile-content>
-                          </v-list-tile>
-                          <v-divider :key="p.index"></v-divider>
-                        </template>
-                      </v-list>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="green">Book</v-btn>
+                      </v-card-actions>
                     </v-card>
                   </v-flex>
                 </v-layout>
-                
               </v-flex>
              </v-layout>
           </v-stepper-content>
