@@ -54,8 +54,8 @@
           <v-stepper-content step="1">
             <v-layout wrap="" row justify-start="" align-baseline="">
               <v-flex 
-                v-for="i in 5"
-                :key=i
+                v-for="c in courts"
+                :key=c.id
                 xs12 sm6 md4 
                 class="mb-2"
               >
@@ -71,7 +71,7 @@
                     <v-container fill-height fluid>
                       <v-layout justify-start="" align-start="">
                         <v-flex xs12>
-                          <div class="display-1 text-xs-center">Court # {{ i }}</div>
+                          <div class="display-1 text-xs-center">Court {{ c.label }}</div>
                         </v-flex>
                       </v-layout>
                     </v-container>
@@ -104,6 +104,7 @@
                 <v-layout justify-center=""  fill-height="" row wrap="">
                   <v-flex xs12 sm10  class="pa-2" >
                     <v-card>
+                      <!--
                       <v-img
                         class="white--text"
                         height="150px"
@@ -116,68 +117,53 @@
                           </v-card-title>      
                         </v-layout>
                       </v-img>
+                      -->
                       <v-card-title>
-                        <div>
-                          <div class="title">Booking summary:</div>
-                          <span class="grey--text">Review booking details</span>
-                        </div>
+                          <div class="display-1 text-xs-center">Booking Details</div>
                       </v-card-title>
                       <v-card-text>
                         <v-layout fill-height="" row wrap justify-center="" align-start="">
                           <v-flex xs12 sm6 >
                               <v-layout fill-height="" align-center="" align-start="" row wrap>
-                                <v-flex xs12 >
+                                <v-flex xs12 class='py-3'>
                                   <div class="headline">Players:</div>
                                 </v-flex>
-                                <v-flex xs12 v-for="p in playerDetails" :key="p.number" class="py-1">
-                                  <div class="subheading">{{p.name}}</div>
-                                  <span class="body-1">Non-repeater{{ p.repeater }}</span>
+                                <v-flex xs12>
+                                  <v-flex xs12 v-for="p in playerDetails" :key="p.number" class="py-1">
+                                    <div class="title">{{p.name}}</div>
+                                    <span class="caption">Non-repeater{{ p.repeater }}</span>
+                                  </v-flex>
                                 </v-flex>
                               </v-layout>
                           </v-flex>
                           <v-flex xs12 sm6 >
                             <v-layout fill-height="" align-center="" align-start="" row wrap>
+                              <v-flex xs12 class="py-3" >
+                                  <div class="headline">Session:</div>
+                                </v-flex>
                               <v-flex xs12 class="py-1">
-                                <div class="body-1">Bumpable</div>
-                                <span class="subheading">No</span>
+                                <div class="caption">Court</div>
+                                <span class="title">#1</span>
                               </v-flex>
                               <v-flex xs12 class="py-1">
-                                <div class="body-1">Maximum duration</div>
-                                <span class="subheading">60 minutes</span>
+                                <div class="caption">Bumpable</div>
+                                <span class="title">No</span>
                               </v-flex>
-                              <v-flex xs12 class="py-1">
-                                <v-slider
-                                  v-model="value"
-                                  step="10"
-                                  thumb-label="always"
-                                  min="10"
-                                  max="60"
-                                ></v-slider>
+                              <v-flex xs12>
+                                <v-select
+                                  :items = sessionDurations
+                                  item-text="label"
+                                  item-value="value"
+                                  label="Desired duration"
+                                ></v-select>
                               </v-flex>
-                              <v-flex xs12 class="py-1">
-                                <v-radio-group v-model="radios" :mandatory="false" row="" >
-                                  <v-radio label="Start now" value="radio-1"></v-radio>
-                                  <v-radio label="Start in 5 min" value="radio-2"></v-radio>
-                                </v-radio-group>
+                              <v-flex xs12>
+                                <v-select
+                                  :items = sessionStarts
+                                  label="Start"
+                                ></v-select>
                               </v-flex>
                             </v-layout>
-                            <!--
-                            <v-list>
-                              <v-subheader>Session properties</v-subheader>
-                              <v-list-tile>
-                                <v-list-tile-content>
-                                  <v-list-tile-title>Bumpable:</v-list-tile-title>
-                                  <v-list-tile-sub-title>No</v-list-tile-sub-title>
-                                </v-list-tile-content>
-                              </v-list-tile>
-                              
-                              <v-list-tile>
-                                <v-list-tile-content>
-                                  <v-list-tile-title>Maximum  duration:</v-list-tile-title>
-                                  <v-list-tile-sub-title>60</v-list-tile-sub-title>
-                                </v-list-tile-content>
-                              </v-list-tile>
-                            </v-list>--> 
                           </v-flex>
                         </v-layout>
                       </v-card-text>
@@ -261,11 +247,26 @@ export default {
           member.number = index + 1
           return member
         })
+    },
+    sessionDurations: function(){
+      return [{"value":60,"label":"60 min"},
+              {"value":50,"label":"50 min"},
+              {"value":40,"label":"40 min"},
+              {"value":30,"label":"30 min"},
+              {"value":20,"label":"20 min"},
+              {"value":10,"label":"10 min"}]
+    },
+    sessionStarts: function(){
+      return ['Now', 'In 5 min']
+    },
+    courts: function(){
+      return this.$store.getters['courtstore/getCourts']
     }
     
   },
   created: function(){
     this.playerSlots.push({ player: {memberid: undefined, repeater: undefined}, errors: []})
+    this.$store.dispatch('courtstore/loadCourtInfo')
   }
 };
 </script>
