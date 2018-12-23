@@ -2,7 +2,7 @@
 <v-container fluid fill-height>
   <v-layout justify-center="" align-start="">
     <v-flex xs12 md10 lg8 xl6>
-      <v-stepper v-model="bookingStep">
+      <v-stepper v-model="bookingStep" v-if="! loading">
         <v-stepper-header>
           <v-stepper-step :complete="bookingStep > 1" step="1">Court Selection</v-stepper-step>
           <v-divider></v-divider>
@@ -104,20 +104,6 @@
                 <v-layout justify-center=""  fill-height="" row wrap="">
                   <v-flex xs12 sm10  class="pa-2" >
                     <v-card>
-                      <!--
-                      <v-img
-                        class="white--text"
-                        height="150px"
-                        src="/court.jpg"
-                        
-                      >
-                        <v-layout justify-center="" fill-height="">
-                          <v-card-title>
-                            <div class="display-1"> Court #1 </div>
-                          </v-card-title>      
-                        </v-layout>
-                      </v-img>
-                      -->
                       <v-card-title>
                           <div class="display-1 text-xs-center">Booking Details</div>
                       </v-card-title>
@@ -131,7 +117,7 @@
                                 <v-flex xs12>
                                   <v-flex xs12 v-for="p in playerDetails" :key="p.number" class="py-1">
                                     <div class="title">{{p.name}}</div>
-                                    <span class="caption">Non-repeater{{ p.repeater }}</span>
+                                    <span class="body-1">{{ p.repeater }}</span>
                                   </v-flex>
                                 </v-flex>
                               </v-layout>
@@ -181,6 +167,25 @@
       </v-stepper>
     </v-flex>
   </v-layout>
+  <v-dialog
+    v-model="loading"
+    hide-overlay
+    persistent
+    width="300"
+  >
+    <v-card
+      dark
+    >
+      <v-card-text>
+        Please stand by
+        <v-progress-linear
+          indeterminate
+          color="white"
+          class="mb-0"
+        ></v-progress-linear>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </v-container>
 </template>
 
@@ -197,6 +202,7 @@ export default {
     return {
       playerSlots : [],
       bookingStep: 0,
+      court: undefined,
       sessionLenght: 10
     }
   },
@@ -236,17 +242,23 @@ export default {
       return this.playerSlots.length < 4
     },
     playerDetails: function(){
-      return this.playerSlots.map( (slot,index) => {
-          var {memberid,repeater} = slot.player
-          var member = this.$store.getters['memberstore/getMemberById'](memberid)
 
-          if( member === undefined){
-            return {}
+      return this.playerSlots.map( (slot,index) => {
+          const {memberid,repeater} = slot.player
+
+          const member = this.$store.getters['memberstore/getMemberById'](memberid)
+          const repeaterDetails = this.$store.getters['getRepeaterType'](repeater)
+
+          if( ! (member && repeaterDetails) ){
+            
+            return { name: "NA", id : null , repeater: "NA", number: index+1 }
           }
-          member.repeater = repeater
-          member.number = index + 1
-          return member
+
+          return { name: member.name, id: member.id , repeater: repeaterDetails.label, number: index + 1 }
+          
+          
         })
+       
     },
     sessionDurations: function(){
       return [{"value":60,"label":"60 min"},
@@ -261,6 +273,9 @@ export default {
     },
     courts: function(){
       return this.$store.getters['courtstore/getCourts']
+    },
+    loading: function(){
+      return this.$store.getters['loading']
     }
     
   },

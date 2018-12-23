@@ -20,7 +20,12 @@ export const store = new Vuex.Store(
             loading: false,
             error: null,
             db: null,
-            cellHeight1H: 60
+            cellHeight1H: 60,
+            possRepeaterTypes: [
+                { id : 0 , label : "Non-repeater"},
+                { id : 1 , label : "First Repeater"},
+                { id : 2 , label : "Second Repeater"}
+            ]
         },
         mutations: {
            
@@ -48,6 +53,16 @@ export const store = new Vuex.Store(
             },
             calCellHeight1H(state){
                 return state.cellHeight1H;
+            },
+            repeaterTypes(state){
+                return state.possRepeaterTypes
+            },
+            getRepeaterType(state ){
+                return (id) => {
+                    return state.possRepeaterTypes.find((rtype) => {
+                        return rtype.id == id
+                    })
+                }
             }
         }
     }

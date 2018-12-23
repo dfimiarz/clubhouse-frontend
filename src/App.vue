@@ -88,7 +88,10 @@ export default {
   name: "app",
   data: () => ({
     drawer: false
-  })
+  }),
+  created: function(){
+    console.log("Loading main app")
+  }
 };
 </script>
 

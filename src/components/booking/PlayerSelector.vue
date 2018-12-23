@@ -26,11 +26,11 @@
                         </v-flex>
                         <v-flex xs12>
                             <v-select
-                            v-model="repeater"
-                            :items="items"
+                            v-model="repeaterid"
+                            :items="repeaterTypes"
                             label="Repeater status:"
                             item-text="label"
-                            item-value="value"
+                            item-value="id"
                             solo
                             ></v-select>
                         </v-flex>
@@ -73,11 +73,7 @@ export default {
     },
   data: function() {
     return {
-        items: [
-            {value: 0, label: 'Non-repeater'},
-            {value: 1, label: 'First repeater'},
-            {value: 2, label: 'Second repeater'}
-        ]
+        
     }
   },
   watch: {
@@ -102,7 +98,7 @@ export default {
            this.$emit('update:player', updatedPlayer )
         }
     },
-    repeater: {
+    repeaterid: {
         get: function(){
             return this.player.repeater
         },
@@ -110,7 +106,10 @@ export default {
            var repeaterInfo = { index: this.index, repeater: newRepeaterValue }
            this.$emit('update:repeater', repeaterInfo )
         }
-    } 
+    },
+    repeaterTypes: function(){
+        return this.$store.getters['repeaterTypes']
+    }
   }
 }
 </script>
