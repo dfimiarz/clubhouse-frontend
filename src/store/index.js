@@ -21,11 +21,48 @@ export const store = new Vuex.Store(
             error: null,
             db: null,
             cellHeight1H: 60,
-            possRepeaterTypes: [
+            repeaterTypes: [
                 { id : 0 , label : "Non-repeater"},
                 { id : 1 , label : "First Repeater"},
                 { id : 2 , label : "Second Repeater"}
+            ],
+            bookingRules:[
+                { id: 100, bumpable: false, duration: 30},
+                { id: 10, bumpable: false, duration: 15},
+                { id: 1, bumpable: true, duration: 15},
+                { id: 200, bumpable: false, duration: 60},
+                { id: 110, bumpable: false, duration: 30},
+                { id: 20, bumpable: false, duration: 30},
+                { id: 101, bumpable: true, duration: 30},
+                { id: 11, bumpable: true, duration: 30},
+                { id: 2, bumpable: true, duration: 30},
+                { id: 300, bumpable: false, duration: 60}, 
+                { id: 210, bumpable: false, duration: 60},
+                { id: 120, bumpable: false, duration: 30},
+                { id: 201, bumpable: true, duration: 30},
+                { id: 30, bumpable: false, duration: 30},
+                { id: 111, bumpable: true, duration: 30},
+                { id: 21, bumpable: true, duration: 30},
+                { id: 102, bumpable: true, duration: 30},
+                { id: 12, bumpable: true, duration: 30},
+                { id: 3, bumpable: true, duration: 30},
+                { id: 400, bumpable: false, duration: 90},
+                { id: 310, bumpable: false, duration: 60},
+                { id: 220, bumpable: false, duration: 60},
+                { id: 301, bumpable: true, duration: 60},
+                { id: 130, bumpable: false, duration: 60},
+                { id: 211, bumpable: true, duration: 60},
+                { id: 40, bumpable: false, duration: 60},
+                { id: 121, bumpable: true, duration: 60},
+                { id: 202, bumpable: true, duration: 60},
+                { id: 31, bumpable: true, duration: 60},
+                { id: 112, bumpable: true, duration: 60},
+                { id: 22, bumpable: true, duration: 60},
+                { id: 103, bumpable: true, duration: 60},
+                { id: 13, bumpable: true, duration: 60},
+                { id: 4, bumpable: true, duration: 60}
             ]
+
         },
         mutations: {
            
@@ -55,12 +92,19 @@ export const store = new Vuex.Store(
                 return state.cellHeight1H;
             },
             repeaterTypes(state){
-                return state.possRepeaterTypes
+                return state.repeaterTypes
             },
-            getRepeaterType(state ){
+            getRepeaterType(state){
                 return (id) => {
-                    return state.possRepeaterTypes.find((rtype) => {
+                    return state.repeaterTypes.find((rtype) => {
                         return rtype.id == id
+                    })
+                }
+            },
+            getBookingRule(state){
+                return (id) => {
+                    return state.bookingRules.find((rule) => {
+                        return rule.id == id
                     })
                 }
             }

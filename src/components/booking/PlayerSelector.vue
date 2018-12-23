@@ -19,8 +19,7 @@
                             v-model="memberid"
                             label="Player name:"
                             clearable
-                            :error-messages="this.errors"
-                            solo
+                            :error="playererror"
                             >
                             </v-autocomplete>
                         </v-flex>
@@ -31,7 +30,7 @@
                             label="Repeater status:"
                             item-text="label"
                             item-value="id"
-                            solo
+                            :error="repeatererr"
                             ></v-select>
                         </v-flex>
                     </v-layout>
@@ -109,6 +108,12 @@ export default {
     },
     repeaterTypes: function(){
         return this.$store.getters['repeaterTypes']
+    },
+    repeatererr: function(){
+        return undefined
+    },
+    playererror: function(){
+        return undefined
     }
   }
 }

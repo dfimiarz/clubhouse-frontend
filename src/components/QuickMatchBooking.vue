@@ -2,7 +2,7 @@
 <v-container fluid fill-height>
   <v-layout justify-center="" align-start="">
     <v-flex xs12 md10 lg8 xl6>
-      <v-stepper v-model="bookingStep" v-if="! loading">
+      <v-stepper v-model="bookingStep" v-show="! loading">
         <v-stepper-header>
           <v-stepper-step :complete="bookingStep > 1" step="1">Court Selection</v-stepper-step>
           <v-divider></v-divider>
@@ -17,7 +17,7 @@
                 <v-btn large depressed="" @click="bookingStep = 1">
                   <v-icon>arrow_back</v-icon>
                 </v-btn>
-                <v-btn large depressed="" @click="bookingStep = 3">
+                <v-btn large depressed="" @click="bookingStep = 3" :disabled="! playersSelected">
                   <v-icon>arrow_forward</v-icon>
                 </v-btn>
               </v-flex>
@@ -207,6 +207,15 @@ export default {
     }
   },
   methods:{
+    validatePlayers: function(){
+      this.playerSlots.forEach(slot => {
+        
+        if( slot.player.memberid === undefined || slot.player.repeater === undefined ){
+          slot.errors.push("Fields are empty")
+        }
+          
+      })
+    },
     removeSlot: function(index){
 
       let len = this.playerSlots.length
@@ -276,6 +285,13 @@ export default {
     },
     loading: function(){
       return this.$store.getters['loading']
+    },
+    playersSelected: function(){
+
+      return this.playerSlots.reduce((selected,slot) => {
+        return selected &&  ! (slot.player.memberid === undefined || slot.player.repeater === undefined )
+      },true)
+
     }
     
   },
