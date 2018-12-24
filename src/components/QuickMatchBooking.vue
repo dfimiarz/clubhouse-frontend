@@ -17,7 +17,7 @@
                 <v-btn large depressed="" @click="bookingStep = 1">
                   <v-icon>arrow_back</v-icon>
                 </v-btn>
-                <v-btn large depressed="" @click="bookingStep = 3" :disabled="! playersSelected">
+                <v-btn large depressed="" @click="validatePlayers()" :disabled="! playersSelected">
                   <v-icon>arrow_forward</v-icon>
                 </v-btn>
               </v-flex>
@@ -207,14 +207,19 @@ export default {
     }
   },
   methods:{
+
     validatePlayers: function(){
+
+      this.bookingStep = 3
+    },
+    clearSlotErrors: function(){
+      //Clear all errors from all player slots
       this.playerSlots.forEach(slot => {
-        
-        if( slot.player.memberid === undefined || slot.player.repeater === undefined ){
-          slot.errors.push("Fields are empty")
-        }
-          
-      })
+        let count = slot.errors.length
+        console.log(count)
+        slot.errors.splice(0,count)        
+      });
+
     },
     removeSlot: function(index){
 
@@ -228,10 +233,15 @@ export default {
 
       var index = updatePlayerInfo.index
       var newId = updatePlayerInfo.id
-      
 
-      this.playerSlots[index].player.memberid = newId
-      this.playerSlots[index].player.repeater = undefined
+      this.clearSlotErrors()
+      
+      if( this.playerSlots.some( (slot,slotindex) => slot.player.memberid == newId && slotindex != index) ){
+        this.playerSlots[index].errors.push({ field: "player", msg : "Member already added" })
+      } else {
+        this.playerSlots[index].player.memberid = newId
+        this.playerSlots[index].player.repeater = undefined
+      }
 
     },
     updateRepeater: function ( repeaterInfo ){

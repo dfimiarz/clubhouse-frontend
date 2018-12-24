@@ -11,7 +11,7 @@
                         <v-flex xs12 >
                             <div class="headline">Player #: {{ index + 1 }}</div>
                         </v-flex>
-                        <v-flex xs12 class="pt-2">
+                        <v-flex xs12 class="px-2">
                             <v-autocomplete
                             :items="clubMembers"
                             item-text="name"
@@ -19,18 +19,18 @@
                             v-model="memberid"
                             label="Player name:"
                             clearable
-                            :error="playererror"
+                            :error-messages="playererr"
                             >
                             </v-autocomplete>
                         </v-flex>
-                        <v-flex xs12>
+                        <v-flex xs12 class="px-2">
                             <v-select
                             v-model="repeaterid"
                             :items="repeaterTypes"
                             label="Repeater status:"
                             item-text="label"
                             item-value="id"
-                            :error="repeatererr"
+                            :error-messages="repeatererr"
                             ></v-select>
                         </v-flex>
                     </v-layout>
@@ -110,10 +110,20 @@ export default {
         return this.$store.getters['repeaterTypes']
     },
     repeatererr: function(){
-        return undefined
+        //Find errors followin format: {field:'repeater',msg:'Error string'}
+
+       return this.errors.filter((error) => error.field == "repeater").reduce((errarr,errorobj)=> {
+           errarr.push(errorobj.msg)
+           return errarr
+           },[])
     },
-    playererror: function(){
-        return undefined
+    playererr: function(){
+        //Find errors followin format: {field:'player',msg:'Error string'}
+
+       return this.errors.filter((error) => error.field == "player").reduce((errarr,errorobj)=> {
+           errarr.push(errorobj.msg)
+           return errarr
+           },[])
     }
   }
 }
