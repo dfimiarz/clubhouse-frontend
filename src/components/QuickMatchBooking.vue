@@ -236,7 +236,7 @@ export default {
 
       this.clearSlotErrors()
       
-      if( this.playerSlots.some( (slot,slotindex) => slot.player.memberid == newId && slotindex != index) ){
+      if( this.playerSlots.some( (slot,slotindex) => slot.player.memberid == newId && slotindex != index && slot.player.memberid !== undefined) ){
         this.playerSlots[index].errors.push({ field: "player", msg : "Member already added" })
       } else {
         this.playerSlots[index].player.memberid = newId
