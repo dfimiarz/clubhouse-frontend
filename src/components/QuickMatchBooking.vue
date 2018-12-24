@@ -17,7 +17,7 @@
                 <v-btn large depressed="" @click="bookingStep = 1">
                   <v-icon>arrow_back</v-icon>
                 </v-btn>
-                <v-btn large depressed="" @click="validatePlayers()" :disabled="! playersSelected">
+                <v-btn large depressed="" @click="validatePlayers()">
                   <v-icon>arrow_forward</v-icon>
                 </v-btn>
               </v-flex>
@@ -207,16 +207,72 @@ export default {
     }
   },
   methods:{
+    checkForDuplicatePlayers: function(){
 
+      //Find all player duplicates in playerSlots
+      this.playerSlots.forEach( (slot,index, array) =>  {
+          let playerid = slot.player.memberid;
+          if( array.some( (slot,slotindex) => slot.player.memberid == playerid && slotindex != index && slot.player.memberid !== undefined) ){
+            this.playerSlots[index].errors.push({ field: "player", msg : "Duplicate players" })
+          }
+      })
+      
+      /*
+      //This version finds the first duplicate only
+
+      return this.playerSlots.some( (slot , index, array) =>  {
+          let playerid = slot.player.memberid;
+
+          return array.some( (slot, slotindex) => {
+            if( slot.player.memberid == playerid && slotindex != index && slot.player.memberid !== undefined) 
+            {
+              this.playerSlots[slotindex].errors.push({ field: "player", msg : "Player already added" })
+              return true
+            }
+            return false
+          })
+      })
+      */
+      
+    },
+    checkForUndefinedPlayers: function(){
+
+      this.playerSlots.forEach((slot) => {
+        if( slot.player.memberid === undefined ){
+          slot.errors.push({ field: "player", msg : "Please select a player" })
+        }
+
+        if( slot.player.repeater === undefined ){
+          slot.errors.push({ field: "repeater", msg : "Please select a repeater type" })
+        }
+      })
+
+
+    },
     validatePlayers: function(){
 
-      this.bookingStep = 3
+      this.clearAllSlotErrors()
+
+      this.checkForDuplicatePlayers()  
+      
+      this.checkForUndefinedPlayers()
+
+      if( ! this.hasErrors ){
+        this.bookingStep = 3
+      }
+
     },
-    clearSlotErrors: function(){
+    clearSlotErrors( index ){
+      //Clear error from a specific player slot
+      if( this.playerSlots[index] != null ){
+        let count = this.playerSlots[index].errors.length
+        this.playerSlots[index].errors.splice(0,count)
+      }
+    },
+    clearAllSlotErrors: function(){
       //Clear all errors from all player slots
       this.playerSlots.forEach(slot => {
         let count = slot.errors.length
-        console.log(count)
         slot.errors.splice(0,count)        
       });
 
@@ -233,21 +289,16 @@ export default {
 
       var index = updatePlayerInfo.index
       var newId = updatePlayerInfo.id
-
-      this.clearSlotErrors()
-      
-      if( this.playerSlots.some( (slot,slotindex) => slot.player.memberid == newId && slotindex != index && slot.player.memberid !== undefined) ){
-        this.playerSlots[index].errors.push({ field: "player", msg : "Member already added" })
-      } else {
-        this.playerSlots[index].player.memberid = newId
-        this.playerSlots[index].player.repeater = undefined
-      }
+     
+      this.playerSlots[index].player.memberid = newId
+      this.playerSlots[index].player.repeater = undefined
+     
 
     },
     updateRepeater: function ( repeaterInfo ){
 
       var index = repeaterInfo.index
-      var repeater = repeaterInfo.repeater
+      var repeater = repeaterInfo.repeater 
 
       this.playerSlots[index].player.repeater = repeater
 
@@ -296,12 +347,8 @@ export default {
     loading: function(){
       return this.$store.getters['loading']
     },
-    playersSelected: function(){
-
-      return this.playerSlots.reduce((selected,slot) => {
-        return selected &&  ! (slot.player.memberid === undefined || slot.player.repeater === undefined )
-      },true)
-
+    hasErrors: function(){
+      return this.playerSlots.some( slot => slot.errors.length != 0 )
     }
     
   },
