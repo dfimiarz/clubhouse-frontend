@@ -1,5 +1,7 @@
 import Axios from "axios";
 
+//Expected court format {label:"#1",id:1,state:1,,msg:"",busyat:timems|null,freeat: timems|null},
+
 const state = {
     courts: []
 }

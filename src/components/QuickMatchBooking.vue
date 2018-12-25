@@ -82,61 +82,7 @@
               <v-flex xs12>
                 <v-layout justify-center=""  fill-height="" row wrap="">
                   <v-flex xs12 sm10  class="pa-2" >
-                    <v-card>
-                      <v-card-title>
-                          <div class="display-1 text-xs-center">Booking Details</div>
-                      </v-card-title>
-                      <v-card-text>
-                        <v-layout fill-height="" row wrap justify-center="" align-start="">
-                          <v-flex xs12 sm6 >
-                              <v-layout fill-height="" align-center="" align-start="" row wrap>
-                                <v-flex xs12 class='py-3'>
-                                  <div class="headline">Players:</div>
-                                </v-flex>
-                                <v-flex xs12>
-                                  <v-flex xs12 v-for="p in playerDetails" :key="p.number" class="py-1">
-                                    <div class="title">{{p.name}}</div>
-                                    <span class="body-1">{{ p.repeater }}</span>
-                                  </v-flex>
-                                </v-flex>
-                              </v-layout>
-                          </v-flex>
-                          <v-flex xs12 sm6 >
-                            <v-layout fill-height="" align-center="" align-start="" row wrap>
-                              <v-flex xs12 class="py-3" >
-                                  <div class="headline">Session:</div>
-                                </v-flex>
-                              <v-flex xs12 class="py-1">
-                                <div class="caption">Court</div>
-                                <span class="title">{{ selectedCourt }}</span>
-                              </v-flex>
-                              <v-flex xs12 class="py-1">
-                                <div class="caption">Bumpable</div>
-                                <span class="title">No</span>
-                              </v-flex>
-                              <v-flex xs12>
-                                <v-select
-                                  :items = sessionDurations
-                                  item-text="label"
-                                  item-value="value"
-                                  label="Desired duration"
-                                ></v-select>
-                              </v-flex>
-                              <v-flex xs12>
-                                <v-select
-                                  :items = sessionStarts
-                                  label="Start"
-                                ></v-select>
-                              </v-flex>
-                            </v-layout>
-                          </v-flex>
-                        </v-layout>
-                      </v-card-text>
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="green">Book</v-btn>
-                      </v-card-actions>
-                    </v-card>
+                    <session-booker :playerdetails="playerDetails" :courtid="selectedCourt"></session-booker>
                   </v-flex>
                 </v-layout>
               </v-flex>
@@ -172,12 +118,14 @@
 
 import PlayerSelector from './booking/PlayerSelector'
 import CourtSelector from './booking/CourtSelector'
+import SessionBooker from './booking/SessionBooker'
 
 export default {
   name: "QuickMatchBooking",
   components:{
     PlayerSelector,
-    CourtSelector
+    CourtSelector,
+    SessionBooker
   },
   data: function() {
     return {
@@ -185,6 +133,13 @@ export default {
       bookingStep: 0,
       selectedCourt: undefined,
       sessionLenght: 10
+    }
+  },
+  watch: {
+    bookingStep: function(newval,oldval){
+      if( newval === 1 || oldval === 0){
+        this.$store.dispatch('courtstore/loadCourtInfo')
+      }
     }
   },
   methods:{
@@ -315,17 +270,6 @@ export default {
         })
        
     },
-    sessionDurations: function(){
-      return [{"value":60,"label":"60 min"},
-              {"value":50,"label":"50 min"},
-              {"value":40,"label":"40 min"},
-              {"value":30,"label":"30 min"},
-              {"value":20,"label":"20 min"},
-              {"value":10,"label":"10 min"}]
-    },
-    sessionStarts: function(){
-      return ['Now', 'In 5 min']
-    },
     courts: function(){
       return this.$store.getters['courtstore/getCourts']
     },
@@ -339,7 +283,6 @@ export default {
   },
   created: function(){
     this.playerSlots.push({ player: {memberid: undefined, repeater: undefined}, errors: []})
-    this.$store.dispatch('courtstore/loadCourtInfo')
   }
 };
 </script>
