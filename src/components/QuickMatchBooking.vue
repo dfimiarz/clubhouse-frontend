@@ -59,35 +59,14 @@
                 xs12 sm6 md4 
                 class="mb-2"
               >
-                <v-card
-                  raised=""
-                  class="mx-2"
+                <court-selector 
+                  :id="c.id"
+                  :label="c.label"
+
+                  v-on:update:court="selectCourt"  
                 >
-                  <v-img
-                    class="white--text"
-                    height="150px"
-                    src="/court.jpg"
-                  >
-                    <v-container fill-height fluid>
-                      <v-layout justify-start="" align-start="">
-                        <v-flex xs12>
-                          <div class="display-1 text-xs-center">Court {{ c.label }}</div>
-                        </v-flex>
-                      </v-layout>
-                    </v-container>
-                  </v-img>
-                  <v-card-title primary-title>
-                    <div>
-                      <div class="headline">Available now</div>
-                      <div class="body-1">Free for next 2 hours</div>
-                    </div>
-                  </v-card-title>
-                  <v-divider light></v-divider>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn @click="bookingStep = 2" large="">Select</v-btn>
-                  </v-card-actions>
-                </v-card>
+                
+                </court-selector>
               </v-flex>
             </v-layout>
             
@@ -129,7 +108,7 @@
                                 </v-flex>
                               <v-flex xs12 class="py-1">
                                 <div class="caption">Court</div>
-                                <span class="title">#1</span>
+                                <span class="title">{{ selectedCourt }}</span>
                               </v-flex>
                               <v-flex xs12 class="py-1">
                                 <div class="caption">Bumpable</div>
@@ -192,17 +171,19 @@
 <script>
 
 import PlayerSelector from './booking/PlayerSelector'
+import CourtSelector from './booking/CourtSelector'
 
 export default {
   name: "QuickMatchBooking",
   components:{
-    PlayerSelector
+    PlayerSelector,
+    CourtSelector
   },
   data: function() {
     return {
       playerSlots : [],
       bookingStep: 0,
-      court: undefined,
+      selectedCourt: undefined,
       sessionLenght: 10
     }
   },
@@ -305,6 +286,10 @@ export default {
     },
     addSlot: function(){
       this.playerSlots.push({ player: {memberid: undefined, repeater: undefined}, errors: []})
+    },
+    selectCourt: function(courtid){
+      this.selectedCourt = courtid
+      this.bookingStep = 2
     }
   },
   computed: {
