@@ -52,7 +52,7 @@
           </v-layout>
           </v-stepper-content>
           <v-stepper-content step="1">
-            <v-layout wrap="" row justify-start="" align-baseline="">
+            <v-layout wrap="" row fill-height="">
               <v-flex 
                 v-for="c in courts"
                 :key=c.id
@@ -60,8 +60,7 @@
                 class="mb-2"
               >
                 <court-selector 
-                  :id="c.id"
-                  :label="c.label"
+                  :court=c
 
                   v-on:update:court="selectCourt"  
                 >

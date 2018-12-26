@@ -4,7 +4,7 @@
     class="mx-2" 
     height="300"
     >
-        <v-layout fill-height="" align-center="" row wrap>
+        <v-layout fill-height="" align-center="" row wrap="">
             <v-flex xs12>
                 <v-card-text>
                     <v-layout justify-start="" align-baseline="" row wrap >
