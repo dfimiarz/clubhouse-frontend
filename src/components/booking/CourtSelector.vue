@@ -28,8 +28,7 @@
                 <v-card-title primary-title>
                     <div>
                         <div class="headline">{{ court.status.label }}</div> 
-                        <div class="caption">{{ court.status.caption }}</div>
-                        <div class="caption" v-if="court.maxtime > 0">Max play time: {{ court.maxtime / 1000 }} min </div>     
+                        <div class="caption">{{ court.status.caption }}</div>     
                     </div>
                 </v-card-title>
                 <v-card-text v-show="court.msg" class="caption">
