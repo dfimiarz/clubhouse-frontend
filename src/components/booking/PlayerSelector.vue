@@ -9,7 +9,7 @@
                 <v-card-text>
                     <v-layout justify-start="" align-baseline="" row wrap >
                         <v-flex xs12 >
-                            <div class="headline">Player #: {{ index + 1 }}</div>
+                            <div class="headline mb-1 text-xs-center">Player #: {{ index + 1 }}</div>
                         </v-flex>
                         <v-flex xs12 class="px-2">
                             <v-autocomplete
@@ -20,6 +20,7 @@
                             label="Player name:"
                             clearable
                             :error-messages="playererr"
+                            outline
                             >
                             </v-autocomplete>
                         </v-flex>
@@ -31,6 +32,7 @@
                             item-text="label"
                             item-value="id"
                             :error-messages="repeatererr"
+                            outline
                             ></v-select>
                         </v-flex>
                     </v-layout>

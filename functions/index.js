@@ -17,11 +17,11 @@ exports.getCourts = functions.https.onRequest((req,res) => {
             state:1,
             statelbl:"OPEN",
             status:{label:"Available",caption:"Free for 1 hour"},
-            maxtime: 60 * 1000,
+            freefor: 1 * 3600 * 1000,
+            freein:0,
             bookable: true,
-            msg:[],
-            busyat:now_ms + 2 * 60 * 1000,
-            freeat:0
+            msg:[]
+            
         },
         {
             label:"#2",
@@ -29,11 +29,10 @@ exports.getCourts = functions.https.onRequest((req,res) => {
             state:1,
             statelbl:"OPEN",
             status:{label:"Available",caption:"Free for 2 hours"},
-            maxtime: 2 * 60 * 1000,
+            freefor: 2 * 3600 * 1000,
+            freein:0,
             bookable: true,
-            msg:["12/15/18 8 am - Doubles only on this court today"],
-            busyat:now_ms + 60 * 1000,
-            freeat:0
+            msg:["12/15/18 8 am - Doubles only on this court today"]
         },
         {
             label:"#3",
@@ -41,11 +40,11 @@ exports.getCourts = functions.https.onRequest((req,res) => {
             state:1,
             statelbl:"OPEN",
             status:{label:"Available",caption:"Free for 3 hours"},
-            maxtime: 3 * 60 * 1000,
+            freefor: 3 * 3600 * 1000,
+            freein:0,
             bookable: true,
-            msg:[],
-            busyat:now_ms + 10 * 1000,
-            freeat:0
+            msg:[]
+            
         },
         {
             label:"#4",
@@ -53,11 +52,10 @@ exports.getCourts = functions.https.onRequest((req,res) => {
             state:1,
             statelbl:"OPEN",
             status:{label:"Occupied",caption:"Busy for 1 hour. Bumpable in 20 min"},
-            maxtime: 0,
+            freefor: 0,
+            freein: 1 * 3600 * 1000,
             bookable: false,
-            msg:[],
-            busyat:0,
-            freeat:now_ms + 10 * 1000
+            msg:[]
         },
         {
             label:"#5",
@@ -65,11 +63,11 @@ exports.getCourts = functions.https.onRequest((req,res) => {
             state:0,
             statelbl:"CLOSED",
             status:{label:"Unavailable",caption:"Cannot be booked"},
-            maxtime: 0,
+            freefor:0,
+            freein:0,
             bookable: false,
             msg:["12/15/18 8 am - Maintenance. Should be able to reopen at 12pm"],
-            busyat:0,
-            freeat:0
+            
         }
     ];
 

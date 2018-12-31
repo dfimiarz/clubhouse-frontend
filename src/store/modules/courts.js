@@ -1,6 +1,20 @@
 import Axios from "axios";
 
-//Expected court format {label:"#1",id:1,state:1,msg:"",busyat:timems|null,freeat: timems|null},
+/*
+
+Expected court format
+
+label:"#1",
+id:1,
+state:1,
+statelbl:"OPEN",
+status:{label:"Available",caption:"Free for 1 hour"},
+freefor: 1 * 3600 * 1000,
+freein:0,
+bookable: true,
+msg:[]
+
+*/
 
 const state = {
     courts: []
@@ -41,6 +55,11 @@ const actions = {
 const getters = {
     getCourts: state => {
         return state.courts
+    },
+    getCourtInfo: state => {
+        return courtid => {
+            return state.courts.find( court => court.id == courtid)
+        }
     }
 }
 
