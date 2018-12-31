@@ -81,7 +81,7 @@
               <v-flex xs12>
                 <v-layout justify-center=""  fill-height="" row wrap="">
                   <v-flex xs12 sm10  class="pa-2" >
-                    <session-booker :playerdetails="playerDetails" :courtid="selectedCourt"></session-booker>
+                    <session-booker :players="players" :courtid="selectedCourt"></session-booker>
                   </v-flex>
                 </v-layout>
               </v-flex>
@@ -130,8 +130,7 @@ export default {
     return {
       playerSlots : [],
       bookingStep: 0,
-      selectedCourt: undefined,
-      sessionLenght: 10
+      selectedCourt: null
     }
   },
   watch: {
@@ -250,24 +249,12 @@ export default {
     canAddSlots: function(){
       return this.playerSlots.length < 4
     },
-    playerDetails: function(){
-
-      return this.playerSlots.map( (slot,index) => {
+    players: function(){
+       return this.playerSlots.map( (slot,index) => {
           const {memberid,repeater} = slot.player
 
-          const member = this.$store.getters['memberstore/getMemberById'](memberid)
-          const repeaterDetails = this.$store.getters['getRepeaterType'](repeater)
-
-          if( ! (member && repeaterDetails) ){
-            
-            return { name: "NA", id : null , repeater: "NA", number: index+1 }
-          }
-
-          return { name: member.name, id: member.id , repeater: repeaterDetails.label, number: index + 1 }
-          
-          
-        })
-       
+          return { id: memberid , repeater: repeater, number: index + 1 }          
+       })
     },
     courts: function(){
       return this.$store.getters['courtstore/getCourts']

@@ -10,11 +10,9 @@
                     <v-flex xs12 class='py-2'>
                         <div class="headline">Players:</div>
                     </v-flex>
-                    <v-flex xs12>
-                        <v-flex xs12 v-for="p in playerdetails" :key="p.number" class="py-1">
-                            <div class="title">{{p.name}}</div>
-                            <span class="body-1">{{ p.repeater }}</span>
-                        </v-flex>
+                    <v-flex xs12 v-for="p in playerDetails" :key="p.number" class="py-1">
+                        <div class="title">#{{p.number}}: {{p.name}}</div>
+                        <span class="body-1">{{ p.repeater }}</span>
                     </v-flex>
                 </v-layout>
             </v-flex>
@@ -39,11 +37,11 @@
                         <v-layout fill-height="" justify-start="">
                             <v-flex xs6>
                                 <div class="caption">Bumpable</div>
-                                <span class="title">{{ bumpable ? 'Yes' : 'No' }}</span>
+                                <span class="title">{{ sessionrules.bumpable ? 'Yes' : 'No' }}</span>
                             </v-flex>
                             <v-flex xs6>
                                 <div class="caption">Max allowed time:</div>
-                                <span class="title">{{ maxallowedtime / 60000 }} min</span>
+                                <span class="title">{{ sessionrules.maxduration / 60000 }} min</span>
                             </v-flex>
                         </v-layout>
                     </v-flex>
@@ -79,7 +77,7 @@
 export default {
   name: "SesssionBooker",
   props: {
-      playerdetails:{
+      players:{
           type: Array,
           required: true
       },
@@ -106,13 +104,24 @@ export default {
       
   },
   computed: {
-    sessionDurations: function(){
-      return [{"value":60,"label":"60 min"},
-              {"value":50,"label":"50 min"},
-              {"value":40,"label":"40 min"},
-              {"value":30,"label":"30 min"},
-              {"value":20,"label":"20 min"},
-              {"value":10,"label":"10 min"}]
+    playerDetails: function(){
+
+      return this.players.map( (player) => {
+          
+
+          const member = this.$store.getters['memberstore/getMemberById'](player.id)
+          const repeaterDetails = this.$store.getters['getRepeaterType'](player.repeater)
+
+          if( ! (member && repeaterDetails) ){
+            
+            return { name: null, repeater: null, number: null }
+          }
+
+          return { name: member.name, repeater: repeaterDetails.label, number: player.number }
+          
+          
+        })
+       
     },
     sessionStarts: function(){
       return ['Now', 'In 5 min']
@@ -126,7 +135,7 @@ export default {
         }
     },
     maxplaytime: function(){
-        return Math.min(this.courtdetails.freefor,this.maxallowedtime)
+        return Math.min(this.courtdetails.freefor,this.sessionrules.maxduration)
     },
     durations: function(){
 
@@ -150,6 +159,40 @@ export default {
 
         //Returned revsersed array
         return choices.reverse()
+    },
+    configCode: function(){
+        return this.players.reduce( (cur_val,player) => {
+            
+            let val = 0
+
+            switch (player.repeater) {
+                case 0:
+                    val = 100
+                    break;
+                case 1:
+                    val = 10
+                    break;
+                case 2:
+                    val = 1
+                    break;
+                default:
+                    val = 0
+                    break;
+            }
+
+            return val + cur_val
+        },0)
+    },
+    sessionrules: function(){
+        const rule = this.$store.getters['getBookingRule'](this.configCode)
+
+        if( rule == null ){
+           return { bumpable: 'NA', maxduration : 0 } 
+        }
+        else
+        {
+            return { bumpable: rule.bumpable, maxduration : rule.maxduration }
+        }
     }
     
 
