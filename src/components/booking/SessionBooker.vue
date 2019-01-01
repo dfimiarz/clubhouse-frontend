@@ -25,11 +25,11 @@
                         <v-layout fill-height="" justify-start="">
                             <v-flex xs6>
                                 <div class="caption">Available at:</div>
-                                <span class="title">{{ getTimeString(courtdetails.startat) }}</span>
+                                <span class="title">{{ courtdetails.startat | relativetime }}</span>
                             </v-flex>
                             <v-flex xs6>
                                 <div class="caption">Free untill:</div>
-                                <span class="title">{{ getTimeString(courtdetails.endat) }}</span>
+                                <span class="title">{{ courtdetails.endat | ustime }}</span>
                             </v-flex>
                         </v-layout>
                     </v-flex>
@@ -58,10 +58,10 @@
                             outline
                         ></v-select>
                         <div>
-                            Est. Start Time: {{ getTimeString(sessionStartTime) }}
+                            Est. Start Time: {{ sessionStartTime | ustime }}
                         </div>
                         <div>
-                            Est. End Time: {{ getTimeString(sessionEndTime) }}
+                            Est. End Time: {{ sessionEndTime | ustime }}
                         </div>
                         
                     </v-flex>
@@ -91,6 +91,23 @@ export default {
       }
         
     },
+  filters: {
+        ustime: function(time_ms){
+            const date = new Date(time_ms)
+            return date.toLocaleTimeString('en-US');
+        },
+        relativetime: function(time_ms){
+            const now_ms = new Date()
+            const date = new Date(time_ms)
+
+            if( time_ms <= now_ms  ){
+                return "Now"
+            }
+            else{
+                return date.toLocaleTimeString('en-US')
+            }
+        }
+  },
   data: function() {
     return {
         startdelay: 0
@@ -100,20 +117,7 @@ export default {
     
   },
   methods: {
-      getTimeString(timems){ 
-
-        const now_ms = new Date()
-        
-        if( timems <= now_ms  ){
-            return now_ms.toLocaleTimeString('en-US')
-        }
-        
-        const date = new Date(timems)
-
-        return date.toLocaleTimeString('en-US');
-
-      }
-    },
+  },
   computed: {
     playerDetails: function(){
 
@@ -194,7 +198,8 @@ export default {
         const startTime =  nowms + this.startdelay
         const availabletime = this.courtdetails.startat
         return startTime < availabletime ? availabletime : startTime  
-    }
+    },
+
     
 
     

@@ -10,8 +10,8 @@ exports.getCourts = functions.https.onRequest((req,res) => {
     today.setHours(0,0,0,0)
     t_md_ms = today.getTime()
 
-    let fakeStartTime = new Date('January 1, 2019 0:00:00')
-    let fakeEndTime = new Date('January 1, 2019 2:00:00')
+    let fakeStartTime = new Date('January 1, 2019 7:00:00')
+    let fakeEndTime = new Date('January 1, 2019 9:00:00')
 
     let fakeStartTimeMs = fakeStartTime.getTime()
     let fakeEndTimeMs = fakeEndTime.getTime()
