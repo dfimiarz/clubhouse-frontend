@@ -7,8 +7,16 @@ exports.getCourts = functions.https.onRequest((req,res) => {
     
     var today = new Date()
     now_ms = today.getTime()
-    today.setHours(0,0,0,0);
+    today.setHours(0,0,0,0)
     t_md_ms = today.getTime()
+
+    let fakeStartTime = new Date('January 1, 2019 0:00:00')
+    let fakeEndTime = new Date('January 1, 2019 2:00:00')
+
+    let fakeStartTimeMs = fakeStartTime.getTime()
+    let fakeEndTimeMs = fakeEndTime.getTime()
+
+    console.log( fakeStartTime.toLocaleString() )
 
     const courts = [
         {
@@ -17,8 +25,9 @@ exports.getCourts = functions.https.onRequest((req,res) => {
             state:1,
             statelbl:"OPEN",
             status:{label:"Available",caption:"Free for 1 hour"},
-            freefor: 1 * 3600 * 1000,
-            freein:0,
+            startat: fakeStartTimeMs,
+            endat: fakeStartTimeMs + 1 * 3600 * 1000,
+            serverTime: now_ms,
             bookable: true,
             msg:[]
             
@@ -29,8 +38,9 @@ exports.getCourts = functions.https.onRequest((req,res) => {
             state:1,
             statelbl:"OPEN",
             status:{label:"Available",caption:"Free for 2 hours"},
-            freefor: 2 * 3600 * 1000,
-            freein:0,
+            startat: fakeStartTimeMs,
+            endat: fakeStartTimeMs + 2 * 3600 * 1000,
+            serverTime: now_ms,
             bookable: true,
             msg:["12/15/18 8 am - Doubles only on this court today"]
         },
@@ -40,8 +50,9 @@ exports.getCourts = functions.https.onRequest((req,res) => {
             state:1,
             statelbl:"OPEN",
             status:{label:"Available",caption:"Free for 3 hours"},
-            freefor: 3 * 3600 * 1000,
-            freein:0,
+            startat: fakeStartTimeMs,
+            endat: fakeStartTimeMs + 3 * 3600 * 1000,
+            serverTime: now_ms,
             bookable: true,
             msg:[]
             
@@ -52,9 +63,10 @@ exports.getCourts = functions.https.onRequest((req,res) => {
             state:1,
             statelbl:"OPEN",
             status:{label:"Occupied",caption:"Busy for 1 hour. Bumpable in 20 min"},
-            freefor: 0,
-            freein: 1 * 3600 * 1000,
-            bookable: false,
+            startat: fakeEndTimeMs,
+            endat: fakeEndTimeMs + 1 * 3600 * 1000,
+            serverTime: now_ms,
+            bookable: true,
             msg:[]
         },
         {
@@ -63,8 +75,9 @@ exports.getCourts = functions.https.onRequest((req,res) => {
             state:0,
             statelbl:"CLOSED",
             status:{label:"Unavailable",caption:"Cannot be booked"},
-            freefor:0,
-            freein:0,
+            startat: now_ms,
+            endat: now_ms,
+            serverTime: now_ms,
             bookable: false,
             msg:["12/15/18 8 am - Maintenance. Should be able to reopen at 12pm"],
             

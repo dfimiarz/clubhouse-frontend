@@ -130,7 +130,8 @@ export default {
     return {
       playerSlots : [],
       bookingStep: 0,
-      selectedCourt: null
+      selectedCourt: null,
+      timerhandle: null
     }
   },
   watch: {
@@ -141,6 +142,12 @@ export default {
     }
   },
   methods:{
+    startPolling: function()
+    {
+      this.timerhandle = setInterval( () => {
+        this.$store.dispatch('courtstore/updateCourtInfo')
+      },10000)
+    },
     checkForDuplicatePlayers: function(){
 
       //Find all player duplicates in playerSlots
@@ -269,6 +276,10 @@ export default {
   },
   created: function(){
     this.playerSlots.push({ player: {memberid: undefined, repeater: undefined}, errors: []})
+    //this.startPolling()
+  },
+  beforeDestroy(){
+    clearInterval(this.timerhandle)
   }
 };
 </script>
