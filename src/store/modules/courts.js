@@ -9,10 +9,9 @@ id:1,
 state:1,
 statelbl:"OPEN",
 status:{label:"Available",caption:"Free for 1 hour"},
-busytime: now_ms + 1 * 3600 * 1000,
-freetime: 0,
-freefor: 1 * 3600 * 1000,
-freein:0,
+startat: fakeStartTimeMs,
+endat: fakeStartTimeMs + 1 * 3600 * 1000, 
+serverTime: now_ms,
 bookable: true,
 msg:[]
 

@@ -2,19 +2,50 @@ const functions = require('firebase-functions');
 const cors = require('cors')({
     origin: true,
   });
+  
+const admin = require('firebase-admin')
+//const db = require('./dbqueries')
+
+admin.initializeApp(functions.config().firebase);
+admin.firestore().settings({ timestampsInSnapshots: true })
+
+exports.getMembers = functions.https.onRequest((req,res) => { 
+    let members = []
+
+    const db = admin.firestore()
+
+    db.collection('/members').get()
+    .then( (snap) => {
+        snap.forEach( doc => {
+            const data = doc.data()
+            const id = doc.id
+            members.push({ id: id, name: data.firstname + " " + data.lastname, role: data.role })
+        })
+        return cors(req,res, () => {
+            res.json(members)
+        })
+    })
+    .catch( err => { 
+        return cors(req,res, () => {
+            res.status(500).json(err)
+        })
+    })
+
+})
+
 
 exports.getCourts = functions.https.onRequest((req,res) => {
-    
+
     var today = new Date()
-    now_ms = today.getTime()
+    now_ms = today.getTime() + (today.getTimezoneOffset() * 60000)
     today.setHours(0,0,0,0)
-    t_md_ms = today.getTime()
+    t_md_ms = today.getTime() +  (today.getTimezoneOffset() * 60000)
 
     let fakeStartTime = new Date('January 1, 2019 7:00:00')
     let fakeEndTime = new Date('January 1, 2019 9:00:00')
 
-    let fakeStartTimeMs = fakeStartTime.getTime()
-    let fakeEndTimeMs = fakeEndTime.getTime()
+    let fakeStartTimeMs = fakeStartTime.getTime() + (fakeStartTime.getTimezoneOffset() * 60000)
+    let fakeEndTimeMs = fakeEndTime.getTime() + (fakeEndTime.getTimezoneOffset() * 60000)
 
     console.log( fakeStartTime.toLocaleString() )
 

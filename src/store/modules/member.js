@@ -14,19 +14,14 @@ const state = {
         rank: null
     },
     members: [
-        {name: 'Todd Snyder', id: 1, role: 'member'},
-        {name: 'Laurent Mars', id: 2, role: 'member'},
-        {name: 'Jun Tsuchiya', id: 3, role: 'member'},
-        {name: 'Ardis Burfield', id: 4, role: 'member'},
-        {name: 'Boris Alter', id: 5, role: 'member'},
-        {name: 'Daniel Fmith (Guest)', id: 6, role: 'guest'},
-        {name: 'Erick Tester (Guest)', id: 7, role: 'guest'}
       ]
 
 }
 
 const mutations = {
-    
+    ADD_MEMBER(state, member ){
+        state.members.push(member)
+    }
 }
 
 const actions = {
@@ -35,7 +30,36 @@ const actions = {
         commit('setLoading', true, { root: true })
         axios.post('http://localhost:3000/members',newMemberInfo)
             .then(function (response) {
-                console.log(response);
+                console.log(response)
+            })
+            .catch(function (error) {
+
+                console.log("Error", error)
+                if( error.response ){
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                    commit('setError', error.response.data,  { root: true })
+
+                }
+                else{
+                    console.log('Error: ', error.message);
+                    commit('setError', "Connection failed",  { root: true })
+                }
+                
+            })
+            .finally(() => {
+                commit('setLoading',false,  { root: true });
+            });
+    },
+    loadMembers({commit}){
+        
+        axios.post(process.env.VUE_APP_FUNCTION_ENDPOINT + '/getMembers')
+            .then(function (response) {
+                const members = response.data
+                members.forEach((member) => {
+                    commit('ADD_MEMBER',member)
+                })
             })
             .catch(function (error) {
 
@@ -54,7 +78,8 @@ const actions = {
                 
             })
             .finally(() => {
-                commit('setLoading',false,  { root: true });
+                
+                commit('setLoading',false,  { root: true })
             });
     }
 }
