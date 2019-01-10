@@ -7,9 +7,19 @@ admin.firestore().settings({ timestampsInSnapshots: true })
 exports.getAllMembers = function(){
     
     const db = admin.firestore()
-    let members = []
 
     return db.collection('/members').get()
+    .then((snap) => {
+        
+        members = []
+         
+        snap.forEach( doc => {
+            const data = doc.data()
+            const id = doc.id
+            members.push({ id: id, name: data.firstname + " " + data.lastname, role: data.role })
+        })
 
+        return members
+    })
 
 } 

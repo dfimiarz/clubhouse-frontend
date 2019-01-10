@@ -4,23 +4,17 @@ const cors = require('cors')({
   });
   
 const admin = require('firebase-admin')
-//const db = require('./dbqueries')
+const db = require('./dbqueries')
 
-admin.initializeApp(functions.config().firebase);
-admin.firestore().settings({ timestampsInSnapshots: true })
+//admin.initializeApp(functions.config().firebase);
+//admin.firestore().settings({ timestampsInSnapshots: true })
 
 exports.getMembers = functions.https.onRequest((req,res) => { 
-    let members = []
+    
 
-    const db = admin.firestore()
+    ///const db = admin.firestore()
 
-    db.collection('/members').get()
-    .then( (snap) => {
-        snap.forEach( doc => {
-            const data = doc.data()
-            const id = doc.id
-            members.push({ id: id, name: data.firstname + " " + data.lastname, role: data.role })
-        })
+    db.getAllMembers().then( (members) => {
         return cors(req,res, () => {
             res.json(members)
         })

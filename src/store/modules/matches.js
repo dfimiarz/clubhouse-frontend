@@ -2,7 +2,8 @@ const state = {
 
     loadedMatches: [
         { text: '4 players, bumpable', durMin: 120, startMin: 60, id:1, court: 1 },
-        { text: '4 players, bumpable', durMin: 120, startMin: 360, id:2, court: 1 }
+        { text: '4 players, bumpable', durMin: 120, startMin: 300, id:1, court: 1 },
+        { text: '4 players, bumpable', durMin: 120, startMin: 500, id:1, court: 1 }
     ]
 }
 

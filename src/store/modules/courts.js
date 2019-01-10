@@ -18,7 +18,8 @@ msg:[]
 */
 
 const state = {
-    courts: []
+    courts: [],
+    courtstatus: []
 }
 
 const mutations = {
@@ -82,6 +83,9 @@ const getters = {
         return courtid => {
             return state.courts.find( court => court.id == courtid)
         }
+    },
+    getCourtStatus: state => {
+        return state.courtstatus
     }
 }
 
