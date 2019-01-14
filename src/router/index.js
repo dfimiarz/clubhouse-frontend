@@ -36,6 +36,11 @@ const routes = [
       component: MatchCalendar
     },
     {
+      path: '/schedule',
+      name: 'MatchCalendar',
+      component: MatchCalendar
+    },
+    {
       path: '/sessions/quickbook',
       name: 'QuickBooking',
       component: QuickMatchBooking
