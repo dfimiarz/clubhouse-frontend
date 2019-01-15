@@ -6,6 +6,8 @@ const RegisterMember = () => import('@/components/RegisterMember')
 const MemberManager = () => import('@/components/MemberManager')
 const QuickMatchBooking = () => import ('@/components/QuickMatchBooking')
 const MatchCalendar = () => import ('@/components/MatchCalendar')
+const MatchCalendar2 = () => import ('@/components/MatchCalendar2')
+const AdminBooking = () => import ('@/components/AdminBooking')
 
 Vue.use(Router)
 
@@ -36,9 +38,14 @@ const routes = [
       component: MatchCalendar
     },
     {
+      path: '/sessions/new',
+      name: 'AdminBooking',
+      component: AdminBooking
+    },
+    {
       path: '/schedule',
-      name: 'MatchCalendar',
-      component: MatchCalendar
+      name: 'MatchCalendar2',
+      component: MatchCalendar2
     },
     {
       path: '/sessions/quickbook',

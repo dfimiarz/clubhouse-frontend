@@ -9,11 +9,6 @@
           <span class="title">{{ this.getTimeString()}}</span> 
           <v-btn icon @click="changeDay(1)"> <v-icon> arrow_forward </v-icon></v-btn>
         </div>
-        <div>
-          <v-btn icon @click="changeDisplayedCourts(-1)" > <v-icon> arrow_back </v-icon> </v-btn>
-          <span class="title">Courts</span>
-          <v-btn icon @click="changeDisplayedCourts(1)"> <v-icon> arrow_forward </v-icon></v-btn>
-        </div>
       </v-layout>
     </v-flex>
     <v-flex xs12 lg10 >
@@ -36,10 +31,10 @@
                 
                 <div 
                   class="session-grid-container" 
-                  v-bind:style="{ 'grid-template-columns': '40px repeat(' + displayableCourts.length  + ',1fr)' }">
+                  v-bind:style="{ 'grid-template-columns': '40px repeat(' + courts.length  + ',250px)' }">
                   
                   <div 
-                    v-for="(court,index) in displayableCourts" 
+                    v-for="(court,index) in courts" 
                     :key="court.id" 
                     class="court-sessions-container" 
                     v-bind:style="{ 'grid-column' : index + 2, 'grid-row': 1, 'height' : (totalCellCount * cellHeight1H) + 'px'  }">
@@ -56,16 +51,36 @@
             </div> 
            
           </div>
-           <v-btn
+          <v-dialog v-model="dialog" max-width="600px">
+            <v-btn
               fixed=""
               fab
               bottom
               right
               color="pink"
-              :to="{name: 'AdminBooking'}"
+              slot="activator"
             >
               <v-icon>add</v-icon>
             </v-btn>
+            <v-card>
+              <v-card-title>
+                <span class="headline">Add Match</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container grid-list-md>
+                  <v-layout wrap>
+                  </v-layout>
+                </v-container>    
+                <small>*indicates required field</small>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" flat @click="dialog = false">Close</v-btn>
+                <v-btn color="blue darken-1" flat @click="dialog = false">Save</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+           
     </v-flex>
   </v-layout>
 </v-container>
@@ -105,9 +120,7 @@ export default {
       maxDisplayableCourts: 5,
       firstCourt: 0,
       lastCourt: 5,
-      resizeTimeout: null,
-      time: null,
-      menu2: false
+      resizeTimeout: null
       
     }
   },
