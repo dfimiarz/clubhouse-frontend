@@ -38,17 +38,19 @@
                   class="session-grid-container" 
                   v-bind:style="{ 'grid-template-columns': '40px repeat(' + displayableCourts.length  + ',1fr)' }">
                   
-                  <div 
-                    v-for="(court,index) in displayableCourts" 
-                    :key="court.id" 
-                    class="court-sessions-container" 
-                    v-bind:style="{ 'grid-column' : index + 2, 'grid-row': 1, 'height' : (totalCellCount * cellHeight1H) + 'px'  }">
+                  <template 
+                    v-for="(court,index) in displayableCourts">
+                    <div 
+                      :key="court.id" 
+                      class="court-sessions-container" 
+                      v-bind:style="{ 'grid-column' : index + 2, 'grid-row': 1, 'height' : (totalCellCount * cellHeight1H) + 'px'  }">
                     
-                    <session v-for="match in matches" :key="match.id" :session=match>
-                      
-                    </session>
+                      <session v-for="match in getMachesForCourt(court.id)" :key="match.id" :session=match>
+                        
+                      </session>
                     
-                  </div>
+                    </div>  
+                  </template>
                 </div>
                 
                 
@@ -140,7 +142,13 @@ export default {
       }
         
 
+    },
+    getMachesForCourt(courtid){
+      
+      //return this.$store.getters['matchstore/loadedMatches']
+      return this.$store.getters['matchstore/matchesForCourt'](courtid)
     }
+    
   },
   computed: {
     hourLabels: function(){
