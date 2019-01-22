@@ -23,3 +23,31 @@ exports.getAllMembers = function(){
     })
 
 } 
+
+exports.getAllSessionsForDate = function(date){
+    const reqdate = new Date(date)
+
+    const datestr = String(reqdate.getFullYear() + pad(reqdate.getMonth()+1) + pad(reqdate.getDate())) 
+
+    const db = admin.firestore()
+
+    return db.collection('/schedule/' + datestr + '/matches').get()
+    .then((snap) => {
+        sessions = []
+
+        snap.forEach( doc => {
+            const data = doc.data()
+            const id = doc.id
+            sessions.push(id)
+        })
+
+        return sessions
+    })
+}
+
+function pad(number){
+    if (number < 10) {
+        return '0' + number;
+      }
+      return number;
+}

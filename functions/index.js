@@ -3,20 +3,28 @@ const cors = require('cors')({
     origin: true,
   });
   
-const admin = require('firebase-admin')
 const db = require('./dbqueries')
-
-//admin.initializeApp(functions.config().firebase);
-//admin.firestore().settings({ timestampsInSnapshots: true })
 
 exports.getMembers = functions.https.onRequest((req,res) => { 
     
-
-    ///const db = admin.firestore()
-
     db.getAllMembers().then( (members) => {
         return cors(req,res, () => {
             res.json(members)
+        })
+    })
+    .catch( err => { 
+        return cors(req,res, () => {
+            res.status(500).json(err)
+        })
+    })
+
+})
+
+exports.getSessions = functions.https.onRequest((req,res) => { 
+    
+    db.getAllSessionsForDate(parseInt(req.query.date)).then( (sessions) => {
+        return cors(req,res, () => {
+            res.json(sessions)
         })
     })
     .catch( err => { 
