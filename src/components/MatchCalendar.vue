@@ -25,7 +25,7 @@
                   {{ court.lbl }}    
                 </div>
                 <div class="text-xs-center">
-                  <span class="green darken-3">{{ court.status }}</span>
+                  <span class="green darken-3">{{ court.statelbl }}</span>
                 </div>
               </div>
             </div>
@@ -87,18 +87,6 @@ export default {
       message: "This is grid view",
       milTimeLabels: [ '12', '1' , '2', '3', '4' , '5' , '6' , '7' , '8', '9' , '10' , '11', '12' , '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23' ],
       civTimeLabels: [ '12 am', '1 am' , '2 am', '3 am', '4 am' , '5 am' , '6 am' , '7 am' , '8 am', '9 am' , '10 am' , '11 am', '12 pm' , '1 pm', '2 pm', '3 pm', '4 pm', '5 pm', '6 pm', '7 pm', '8 pm', '9 pm', '10 pm', '11 pm' ],
-      courts: [ 
-        {id: 1, lbl:"Court #1", status: "OPEN"} , 
-        {id : 2,lbl:"Court #2", status: "OPEN"},  
-        {id: 3,lbl:"Court #3", status: "OPEN"} ,
-        {id : 4,lbl:"Court #4", status: "OPEN"} ,
-        {id : 5, lbl:"Court #5", status: "OPEN"},
-        {id: 6, lbl:"Court #6", status: "OPEN"} , 
-        {id : 7,lbl:"Court #7", status: "OPEN"},  
-        {id: 8,lbl:"Court #8", status: "OPEN"} ,
-        {id : 9,lbl:"Court #9", status: "OPEN"} ,
-        {id : 10, lbl:"Court #10", status: "OPEN"}
-      ],
       scheduleStartTime: 8,
       scheduleEndTime: 20,
       dialog: false,
@@ -136,6 +124,8 @@ export default {
 
       const end = tempFirstCourt + this.maxCourtCount
 
+      console.log(this.firstCourt,tempFirstCourt,this.maxCourtCount)
+
       if( end <= this.courts.length && tempFirstCourt >= 0 ){
         
         this.firstCourt = tempFirstCourt
@@ -151,6 +141,9 @@ export default {
     
   },
   computed: {
+    courts: function(){
+      return this.$store.getters['courtstore/getCourts']
+    },
     hourLabels: function(){
       return this.civTimeLabels.slice(this.scheduleStartTime,this.scheduleEndTime)
     },

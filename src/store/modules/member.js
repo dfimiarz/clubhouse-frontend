@@ -1,4 +1,5 @@
 import axios from 'axios'
+import db from '../../firebase'
 
 const state = {
     
@@ -54,6 +55,7 @@ const actions = {
     },
     loadMembers({commit}){
         
+        /*
         axios.post(process.env.VUE_APP_FUNCTION_ENDPOINT + '/getMembers')
             .then(function (response) {
                 const members = response.data
@@ -81,6 +83,16 @@ const actions = {
                 
                 commit('setLoading',false,  { root: true })
             });
+        */
+        return db.collection('/members').get()
+        .then((snap) => {
+            snap.forEach( doc => {
+                const data = doc.data()
+                const id = doc.id
+                commit('ADD_MEMBER',{ id: id, name: data.firstname + " " + data.lastname, role: data.role })
+            })
+        })
+        
     }
 }
 

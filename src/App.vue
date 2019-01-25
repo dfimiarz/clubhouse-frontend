@@ -91,7 +91,7 @@ export default {
   }),
   created: function(){
     console.log("Loading main app")
-    this.$store.dispatch('memberstore/loadMembers')
+    this.$store.dispatch('loadAppInfo')
   }
 };
 </script>

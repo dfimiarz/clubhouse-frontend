@@ -5,7 +5,9 @@ import membermodule from './modules/member'
 import matchmodule from './modules/matches'
 import courtmodule from './modules/courts'
 
-import Axios from "axios";
+//import Axios from "axios";
+
+//import db from '../firebase'
 
 
 Vue.use(Vuex)
@@ -82,27 +84,15 @@ export const store = new Vuex.Store(
             clearError({commit}){
                 commit('clearError')
             },
-            loadAppInfo({commit}){
-                commit('clearError', null)
-                commit('setLoading', true)
-                Axios.get(process.env.VUE_APP_FUNCTION_ENDPOINT + '/getAppInfo')
-                .then(
-                    appinfo => {
-                        commit('setLoading',false )
-                        console.log(appinfo)
-                        /*
-                        courts.data.forEach(function(c) {
-                            commit('ADD_COURT_INFO',c)
-                        });
-                        */
-                    }  
-                )
-                .catch(
-                    error => {
-                        commit('setLoading',false, { root: true })
-                        commit('setError', error.message, { root: true })
-                    }
-                )
+            loadAppInfo({ dispatch }){
+                Promise.all([dispatch('memberstore/loadMembers'),dispatch('courtstore/loadCourts')])
+                .then( () =>{
+                    console.log("Info loaded")
+                })
+                .catch( (err) =>{
+                    console.log(err)
+                })
+                
             }
         },
         getters: {
