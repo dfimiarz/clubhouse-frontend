@@ -19,7 +19,7 @@
     <v-flex xs12 lg10 >
      
           <div class="main-schedule-container" ref="scheduleContainer" @click="contClicked($event)">
-            <div class="court-grid-container" v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.maxCourtCount + ',1fr)' }">
+            <div class="court-grid-container" v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length + ',1fr)' }">
               <div v-for="(court,index) in displayableCourts" :key="court.id" class="pa-1" v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }">
                 <div class="text-xs-center headline">
                   {{ court.lbl }}    
@@ -36,7 +36,7 @@
                 
                 <div 
                   class="session-grid-container" 
-                  v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.maxCourtCount  + ',1fr)' }">
+                  v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length  + ',1fr)' }">
                   
                   <template 
                     v-for="(court,index) in displayableCourts">
@@ -121,7 +121,7 @@ export default {
     changeDisplayedCourts: function (step){
     
       //Compute next first court to display
-      let nextFirstCourt = this.firstCourt + this.maxCourtCount * step
+      let nextFirstCourt = this.firstCourt + /*this.maxCourtCount **/ step
       
       if( nextFirstCourt < 0 ){
         nextFirstCourt = 0
@@ -190,6 +190,18 @@ export default {
   mounted: function(){
     this.resetDate()
     //console.log("Mounted")
+  },
+  watch: {
+    maxCourtCount: function(val){
+
+      let newFirstCourt = this.firstCourt - val + 1
+
+      if( newFirstCourt < 0 )
+        newFirstCourt = 0
+
+      this.firstCourt = newFirstCourt
+
+    }
   },
   beforeDestroy () {
    
