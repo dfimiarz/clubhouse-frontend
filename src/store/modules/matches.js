@@ -4,7 +4,10 @@ const state = {
         { text: '4 players, bumpable', durMin: 120, startMin: 60, id:1, court: 1 },
         { text: '4 players, bumpable', durMin: 120, startMin: 300, id:2, court: 1 },
         { text: '4 players, bumpable', durMin: 120, startMin: 480, id:3, court: 1 },
-        { text: '4 players, bumpable', durMin: 120, startMin: 480, id:4, court: 2 }
+        { text: '4 players, bumpable', durMin: 120, startMin: 480, id:4, court: 2 },
+        { text: '4 players, bumpable', durMin: 120, startMin: 480, id:4, court: 7 },
+        { text: '4 players, bumpable', durMin: 120, startMin: 480, id:4, court: 6 },
+        { text: '4 players, bumpable', durMin: 120, startMin: 480, id:4, court: 4 }
     ]
 }
 

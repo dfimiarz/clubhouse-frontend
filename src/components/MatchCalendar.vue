@@ -19,7 +19,7 @@
     <v-flex xs12 lg10 >
      
           <div class="main-schedule-container" ref="scheduleContainer" @click="contClicked($event)">
-            <div class="court-grid-container" v-bind:style="{ 'grid-template-columns': '40px repeat(' + displayableCourts.length + ',1fr)' }">
+            <div class="court-grid-container" v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.maxCourtCount + ',1fr)' }">
               <div v-for="(court,index) in displayableCourts" :key="court.id" class="pa-1" v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }">
                 <div class="text-xs-center headline">
                   {{ court.lbl }}    
@@ -36,7 +36,7 @@
                 
                 <div 
                   class="session-grid-container" 
-                  v-bind:style="{ 'grid-template-columns': '40px repeat(' + displayableCourts.length  + ',1fr)' }">
+                  v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.maxCourtCount  + ',1fr)' }">
                   
                   <template 
                     v-for="(court,index) in displayableCourts">
@@ -120,22 +120,24 @@ export default {
     },
     changeDisplayedCourts: function (step){
     
-      const tempFirstCourt = this.firstCourt + step
+      //Compute next first court to display
+      let nextFirstCourt = this.firstCourt + this.maxCourtCount * step
+      
+      if( nextFirstCourt < 0 ){
+        nextFirstCourt = 0
+      } 
 
-      const end = tempFirstCourt + this.maxCourtCount
+      let nextLimit = nextFirstCourt + this.maxCourtCount
 
-      console.log(this.firstCourt,tempFirstCourt,this.maxCourtCount)
-
-      if( end <= this.courts.length && tempFirstCourt >= 0 ){
-        
-        this.firstCourt = tempFirstCourt
+      if( nextLimit > this.courts.length ){
+        nextFirstCourt -= nextLimit - this.courts.length
       }
         
+      this.firstCourt = nextFirstCourt
 
     },
     getMachesForCourt(courtid){
       
-      //return this.$store.getters['matchstore/loadedMatches']
       return this.$store.getters['matchstore/matchesForCourt'](courtid)
     }
     
@@ -171,18 +173,13 @@ export default {
     },
     displayableCourts:function(){  
 
-      
-      const diff = this.firstCourt + this.maxCourtCount - this.courts.length
-
-      let firstCourt = this.firstCourt
-
-      if( diff > 0 ){
-        firstCourt -= diff
-        
-      }
-      
-
-      return this.courts.slice(firstCourt,firstCourt+this.maxCourtCount/*Math.min(this.lastCourt,this.courts.length,this.maxDisplayableCourts)*/)
+      const lastIndex = this.firstCourt + this.maxCourtCount
+      /* 
+        From docs
+        If end [here lastIndex] is greater than the length of the sequence, slice extracts through to the end of the sequence (arr.length).
+      */
+      return this.courts.slice(this.firstCourt,lastIndex)
+    
     }
   
     
