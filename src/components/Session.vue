@@ -4,10 +4,13 @@
         <v-flex xs6 >
           <v-layout row wrap fill-height="" align-content-space-between="">
             <v-flex xs12>
-              <div class="title">Match</div>
+              <div class="body-2">Match</div>
             </v-flex>
-            <v-flex>
-              <div>Bumpable at: 10:15</div>
+            <v-flex xs12>
+              <div class="caption">9:00 am - 10:30 am</div>
+            </v-flex>
+            <v-flex xs12>
+              <div class="caption">Bumpable at: 10:15</div>
             </v-flex>
           </v-layout>
 
@@ -15,11 +18,14 @@
         <v-flex xs6 >
           <v-layout row wrap fill-height="" align-content-space-between="">
             <v-flex xs12>
-              <div class="title">Players:</div>
+              <div class="body-2">Players:</div>
+              <div>
+                <span v-for="player in players" :key="player.id" class="caption">
+                  {{ player.name }} - {{ player.repeater }},
+                </span>
+              </div>
             </v-flex>
-            <v-flex xs12 v-for="player in players" :key="player.id" class="caption">
-              {{ player.name }} - 1R
-            </v-flex>
+            
           </v-layout>
         </v-flex>
         
@@ -40,10 +46,10 @@ export default {
   data: function() {
     return {
       players: [
-        { name: "L. Mars", repeater:"R1", id:1},
-        { name: "J. Tsuchiya", repeater:"R1", id:2},
-        { name: "T. Snyder", repeater:"R1", id:3},
-        { name: "J. Doe", repeater:"R1", id:4},
+        { name: "L.M.", repeater:"R1", id:1},
+        { name: "J.T", repeater:"R1", id:2},
+        { name: "T.S", repeater:"R1", id:3},
+        { name: "J.D", repeater:"R1", id:4},
       ]
     }
   },
@@ -52,7 +58,7 @@ export default {
       return this.cellHeight1H / 60 * this.session.durMin
     },
     getVpos: function(){
-      return this.cellHeight1H / 60 * this.session.startMin
+      return this.cellHeight1H / 60 * (this.session.startMin - 480)
     }
   },
   computed:{
@@ -69,8 +75,7 @@ export default {
   position: absolute;
   width: 100%;
   box-sizing: border-box;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding: 2px 5px;
 
 }
 

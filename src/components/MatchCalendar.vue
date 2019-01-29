@@ -2,14 +2,14 @@
 <v-container fluid fill-height="" grid-list-xs >
   <v-layout justify-center="" align-content-start="" row wrap>
     <v-flex xs12 lg10 >
-      <v-layout align-center="" justify-space-between="" row wrap>
+      <v-layout justify-space-between="" align-end="" row wrap fill-height="">
         <div>
           <v-btn icon @click="resetDate()"> <v-icon> today </v-icon></v-btn>
           <v-btn icon @click="changeDay(-1)"> <v-icon> arrow_back </v-icon> </v-btn>
           <span class="title">{{ this.getTimeString()}}</span> 
           <v-btn icon @click="changeDay(1)"> <v-icon> arrow_forward </v-icon></v-btn>
         </div>
-        <div>
+        <div class="text-xs-right">
           <v-btn icon @click="changeDisplayedCourts(-1)" > <v-icon> arrow_back </v-icon> </v-btn>
           <span class="title">Courts</span>
           <v-btn icon @click="changeDisplayedCourts(1)"> <v-icon> arrow_forward </v-icon></v-btn>
@@ -94,7 +94,6 @@ export default {
       courtSlots: null,
       maxDisplayableCourts: 5,
       firstCourt: 0,
-      lastCourt: 5,
       resizeTimeout: null,
       time: null,
       menu2: false
@@ -185,7 +184,7 @@ export default {
     
   },
   created: function() {
-    
+    this.$store.dispatch('matchstore/watchCourts')
   },
   mounted: function(){
     this.resetDate()
@@ -204,7 +203,7 @@ export default {
     }
   },
   beforeDestroy () {
-   
+    this.$store.dispatch('matchstore/stopWatching')
   }
 }
 </script>
