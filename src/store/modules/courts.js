@@ -1,4 +1,4 @@
-//import Axios from "axios";
+import Axios from "axios";
 import db from '../../firebase'
 
 /*
@@ -26,20 +26,29 @@ const state = {
 const mutations = {
     ADD_COURT(state, court){
         state.courts.push(court)
+    },
+    ADD_COURT_INFO( state, info){
+        state.courtstatus.push(info)
+    },
+    CLEAR_COURT_STATUS( state ){
+        state.courtstatus.splice(0)
+    },
+    CLEAR_COURTS( state ){
+        state.courts.splice(0)
     }
 }
 
 const actions = {
-    /*
-    loadCourtInfo({commit,state,root}){
-        commit('REMOVE_ALL_COURTS')
+    
+    loadCourtStatus({commit}){
+        commit('CLEAR_COURT_STATUS')
         commit('clearError', null, { root: true })
         commit('setLoading', true, { root: true })
         Axios.get(process.env.VUE_APP_FUNCTION_ENDPOINT + '/getCourts')
         .then(
-            courts => {
+            courtstatus => {
                 commit('setLoading',false, { root: true })
-                courts.data.forEach(function(c) {
+                courtstatus.data.forEach(function(c) {
                     commit('ADD_COURT_INFO',c)
                 });
             }  
@@ -51,8 +60,10 @@ const actions = {
             }
         )
     },
-    */
     loadCourts({commit}){
+        commit('CLEAR_COURTS')
+        commit('clearError', null, { root: true })
+        commit('setLoading', true, { root: true })
         return db.collection('/courts').get()
         .then((snap) => {
             snap.forEach( doc => {

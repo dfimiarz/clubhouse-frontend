@@ -35,8 +35,22 @@ exports.getSessions = functions.https.onRequest((req,res) => {
 
 })
 
-
 exports.getCourts = functions.https.onRequest((req,res) => {
+
+        db.getCourts().then( courts => {
+            return cors(req,res, () => {
+                res.json(courts)
+            })
+        })
+        .catch( err => { 
+            return cors(req,res, () => {
+                res.status(500).json(err)
+            })
+        })
+})
+
+
+exports.getCourtStatus = functions.https.onRequest((req,res) => {
 
     var today = new Date()
     now_ms = today.getTime() + (today.getTimezoneOffset() * 60000)

@@ -137,7 +137,7 @@ export default {
   watch: {
     bookingStep: function(newval,oldval){
       if( newval === 1 || oldval === 0){
-        this.$store.dispatch('courtstore/loadCourtInfo')
+        this.$store.dispatch('courtstore/loadCourtStatus')
       }
     }
   },
@@ -264,7 +264,7 @@ export default {
        })
     },
     courts: function(){
-      return this.$store.getters['courtstore/getCourts']
+      return this.$store.getters['courtstore/getCourtStatus']
     },
     loading: function(){
       return this.$store.getters['loading']
@@ -276,6 +276,7 @@ export default {
   },
   created: function(){
     this.playerSlots.push({ player: {memberid: undefined, repeater: undefined}, errors: []})
+    this.$store.dispatch('courtstore/loadCourtStatus')
     //this.startPolling()
   },
   beforeDestroy(){

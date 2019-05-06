@@ -20,14 +20,24 @@
      
           <div class="main-schedule-container" ref="scheduleContainer" @click="contClicked($event)">
             <div class="court-grid-container" v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length + ',1fr)' }">
-              <div v-for="(court,index) in displayableCourts" :key="court.id" class="pa-1" v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }">
-                <div class="text-xs-center headline">
+              
+              <div class="pa-1" v-for="(court,index) in displayableCourts" :key="court.id"  v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }" >
+                <div class="text-xs-center headline" style="background: green; height: 100%; display: flex; align-items: center; justify-content: center;">
                   {{ court.lbl }}    
                 </div>
+                <!--
                 <div class="text-xs-center">
                   <span class="green darken-3">{{ court.statelbl }}</span>
                 </div>
+                -->
               </div>
+              <div v-bind:style="{ 'grid-column' : 2, 'grid-row' : 1 }" class="change_court_btn change_court_btn_back">
+                  <v-btn small=""><v-icon> arrow_back </v-icon> </v-btn>
+              </div>
+              <div v-bind:style="{ 'grid-column' : this.displayableCourts.length - 1, 'grid-row' : 1 }" class="change_court_btn change_court_btn_forward">
+                  <v-btn small=""><v-icon> arrow_forward </v-icon> </v-btn>
+              </div>
+          
             </div>
             <div class="time-grid-container">
                 <div v-for="(n) in totalCellCount" :key="n" class="cell"  v-bind:style="{ 'height':  cellHeight1H + 'px' }">
@@ -38,19 +48,17 @@
                   class="session-grid-container" 
                   v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length  + ',1fr)' }">
                   
-                  <template 
-                    v-for="(court,index) in displayableCourts">
-                    <div 
-                      :key="court.id" 
-                      class="court-sessions-container" 
-                      v-bind:style="{ 'grid-column' : index + 2, 'grid-row': 1, 'height' : (totalCellCount * cellHeight1H) + 'px'  }">
-                    
-                      <session v-for="match in getMachesForCourt(court.id)" :key="match.id" :session=match>
-                        
-                      </session>
-                    
-                    </div>  
-                  </template>
+                  <div 
+                    v-for="(court,index) in displayableCourts"
+                    :key="court.id" 
+                    class="court-sessions-container" 
+                    v-bind:style="{ 'grid-column' : index + 2, 'grid-row': 1, 'height' : (totalCellCount * cellHeight1H) + 'px'  }">
+                  
+                    <session v-for="match in getMachesForCourt(court.id)" :key="match.id" :session=match>
+                      
+                    </session>
+                  
+                  </div>  
                 </div>
                 
                 
@@ -227,9 +235,8 @@ export default {
   position: relative;
   display: grid;
   /* grid-template-columns: 40px repeat(5,1fr); */
-  grid-template-rows: 1fr;
+  grid-template-rows: 50px;
   border: 1px solid;
-  /*height: 100%;*/
 }
 
 .time-grid-container{
@@ -237,7 +244,6 @@ export default {
   grid-column : 1;
   grid-row : 2;
   overflow: auto;
-  
   
 }
 
@@ -269,4 +275,27 @@ export default {
   height: 100%;
   border: 1px solid;
 }
+
+.change_court_btn {
+  position: absolute; 
+  grid-column: 6; 
+  grid-row: 1; 
+  height: 100%; 
+  width: 100%; 
+  display: flex; 
+  align-items: center; 
+  
+}
+
+.change_court_btn_forward{
+
+  justify-content: flex-end;
+
+}
+
+.change_court_btn_back{
+  justify-content: flex-start;
+}
+
+
 </style>

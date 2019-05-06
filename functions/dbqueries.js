@@ -22,7 +22,22 @@ exports.getAllMembers = function(){
         return members
     })
 
-} 
+}
+
+exports.getCourts = async function(){
+
+    const db = admin.firestore()
+
+    const snap = await db.collection('/courts').get();
+    courts = [];
+    snap.forEach(doc => {
+        const data = doc.data();
+        const id = doc.id;
+        courts.push({ id: id, lbl: data.lbl, msg: data.msg, state: data.state, statelbl: data.statelbl });
+    });
+    return courts;
+
+}
 
 exports.getAllSessionsForDate = function(date){
     const reqdate = new Date(date)
