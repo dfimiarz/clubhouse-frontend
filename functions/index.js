@@ -21,7 +21,7 @@ exports.getMembers = functions.https.onRequest((req,res) => {
 })
 
 exports.getSessions = functions.https.onRequest((req,res) => { 
-    
+
     db.getAllSessionsForDate(parseInt(req.query.date)).then( (sessions) => {
         return cors(req,res, () => {
             res.json(sessions)
@@ -52,6 +52,24 @@ exports.getCourts = functions.https.onRequest((req,res) => {
 
 exports.getCourtStatus = functions.https.onRequest((req,res) => {
 
+    Promise.all([db.getCourts(),db.getAllSessionsForDate(1548306000000)]).then((vals) => {
+
+        return cors(req,res, () => {
+            res.json(vals)
+        })
+
+    }).catch(() => {
+        return cors(req,res, () => {
+            res.json(courts)
+        })
+    })
+
+
+        
+
+
+    
+    /*
     var today = new Date()
     now_ms = today.getTime() + (today.getTimezoneOffset() * 60000)
     today.setHours(0,0,0,0)
@@ -135,4 +153,13 @@ exports.getCourtStatus = functions.https.onRequest((req,res) => {
             res.json(courts);
         }
     );
+    */
+})
+
+exports.signIn = functions.https.onRequest((req,res) => {
+
+    const username = "test"
+
+    
+
 })

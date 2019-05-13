@@ -10,7 +10,7 @@
           <v-btn icon @click="changeDay(1)"> <v-icon> arrow_forward </v-icon></v-btn>
         </div>
         <div class="text-xs-right">
-          <v-btn icon @click="changeDisplayedCourts(-1)" > <v-icon> arrow_back </v-icon> </v-btn>
+          <v-btn icon @click="changeDisplayedCourts(-1)"> <v-icon> arrow_back </v-icon> </v-btn>
           <span class="title">Courts</span>
           <v-btn icon @click="changeDisplayedCourts(1)"> <v-icon> arrow_forward </v-icon></v-btn>
         </div>
@@ -32,10 +32,10 @@
                 -->
               </div>
               <div v-bind:style="{ 'grid-column' : 2, 'grid-row' : 1 }" class="change_court_btn change_court_btn_back">
-                  <v-btn small=""><v-icon> arrow_back </v-icon> </v-btn>
+                  <v-btn small="" @click="changeDisplayedCourts(-1)"><v-icon> arrow_back </v-icon> </v-btn>
               </div>
               <div v-bind:style="{ 'grid-column' : this.displayableCourts.length - 1, 'grid-row' : 1 }" class="change_court_btn change_court_btn_forward">
-                  <v-btn small=""><v-icon> arrow_forward </v-icon> </v-btn>
+                  <v-btn small="" @click="changeDisplayedCourts(1)"><v-icon> arrow_forward </v-icon> </v-btn>
               </div>
           
             </div>

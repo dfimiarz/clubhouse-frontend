@@ -276,7 +276,7 @@ export default {
   },
   created: function(){
     this.playerSlots.push({ player: {memberid: undefined, repeater: undefined}, errors: []})
-    this.$store.dispatch('courtstore/loadCourtStatus')
+    //this.$store.dispatch('courtstore/loadCourtStatus')
     //this.startPolling()
   },
   beforeDestroy(){

@@ -29,12 +29,15 @@ exports.getCourts = async function(){
     const db = admin.firestore()
 
     const snap = await db.collection('/courts').get();
-    courts = [];
+    
+    let courts = [];
+    
     snap.forEach(doc => {
         const data = doc.data();
         const id = doc.id;
         courts.push({ id: id, lbl: data.lbl, msg: data.msg, state: data.state, statelbl: data.statelbl });
     });
+    
     return courts;
 
 }
@@ -45,6 +48,8 @@ exports.getAllSessionsForDate = function(date){
     const datestr = String(reqdate.getFullYear() + pad(reqdate.getMonth()+1) + pad(reqdate.getDate())) 
 
     const db = admin.firestore()
+
+    console.log('/schedule/' + datestr + '/matches')
 
     return db.collection('/schedule/' + datestr + '/matches').get()
     .then((snap) => {
@@ -58,6 +63,10 @@ exports.getAllSessionsForDate = function(date){
 
         return sessions
     })
+}
+
+exports.auth = function(){
+    admin.auth().createSessionCookie("test",)
 }
 
 function pad(number){
