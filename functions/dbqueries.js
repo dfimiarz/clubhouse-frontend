@@ -1,8 +1,8 @@
 const admin = require('firebase-admin')
 const functions = require('firebase-functions');
 
-admin.initializeApp(functions.config().firebase);
-admin.firestore().settings({ timestampsInSnapshots: true })
+admin.initializeApp();
+
 
 exports.getAllMembers = function(){
     
@@ -66,7 +66,7 @@ exports.getAllSessionsForDate = function(date){
 }
 
 exports.auth = function(){
-    admin.auth().createSessionCookie("test",)
+    // TO DO. Write auth function
 }
 
 function pad(number){
