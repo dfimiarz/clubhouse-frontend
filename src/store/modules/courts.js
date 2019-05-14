@@ -1,5 +1,5 @@
 import Axios from "axios";
-import db from '../../firebase'
+/*import db from '../../firebase'*/
 
 /*
 
@@ -64,6 +64,24 @@ const actions = {
         commit('CLEAR_COURTS')
         commit('clearError', null, { root: true })
         commit('setLoading', true, { root: true })
+
+        Axios.get(process.env.VUE_APP_FUNCTION_ENDPOINT + '/getCourts')
+        .then(
+            courtinfo => {
+                commit('setLoading',false, { root: true })
+                courtinfo.data.forEach(function(c) {
+                    commit('ADD_COURT',c)
+                });
+            }  
+        )
+        .catch(
+            error => {
+                commit('setLoading',false, { root: true })
+                commit('setError', error.message, { root: true })
+            }
+        )
+
+        /*
         return db.collection('/courts').get()
         .then((snap) => {
             snap.forEach( doc => {
@@ -72,6 +90,7 @@ const actions = {
                 commit('ADD_COURT',{ id: id, lbl: data.lbl, msg: data.msg, state: data.state, statelbl: data.statelbl })
             })
         })
+        */
     }
     /*
     ,

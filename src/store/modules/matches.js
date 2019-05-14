@@ -23,13 +23,13 @@ const mutations = {
         state.matches.push(match)
     },
     REMOVE_MATCHES(state){
-        state.matches.lenght = 0
+        state.matches.splice(0)
     }
 }
 
 const actions = {
     watchCourts({commit}){
-
+        commit('REMOVE_MATCHES')
         var date = new Date("2019-01-24 00:00:00")
         unsubscribe = db.collection("/matches").where("date","==",date)
         .onSnapshot(function(snapshot) {
