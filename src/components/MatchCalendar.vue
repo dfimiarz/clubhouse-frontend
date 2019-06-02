@@ -9,11 +9,6 @@
           <span class="title">{{ this.getTimeString()}}</span> 
           <v-btn icon @click="changeDay(1)"> <v-icon> arrow_forward </v-icon></v-btn>
         </div>
-        <div class="text-xs-right">
-          <v-btn icon @click="changeDisplayedCourts(-1)"> <v-icon> arrow_back </v-icon> </v-btn>
-          <span class="title">Courts</span>
-          <v-btn icon @click="changeDisplayedCourts(1)"> <v-icon> arrow_forward </v-icon></v-btn>
-        </div>
       </v-layout>
     </v-flex>
     <v-flex xs12 lg10 >
@@ -21,22 +16,19 @@
           <div class="main-schedule-container" ref="scheduleContainer" @click="contClicked($event)">
             <div class="court-grid-container" v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length + ',1fr)' }">
               
-              <div class="pa-1" v-for="(court,index) in displayableCourts" :key="court.id"  v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }" >
-                <div class="text-xs-center headline" style="background: green; height: 100%; display: flex; align-items: center; justify-content: center;">
-                  {{ court.lbl }}    
-                </div>
-                <!--
-                <div class="text-xs-center">
-                  <span class="green darken-3">{{ court.statelbl }}</span>
-                </div>
-                -->
+              <div class="pa-1 court-grid-item" v-for="(court,index) in displayableCourts" :key="court.id"  v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }" >
+                
+                  <v-btn v-if="index == 0" small="" @click="changeDisplayedCourts(-1)" style="grid-row: 1; grid-column: 1 / span 1;"><v-icon> arrow_back </v-icon> </v-btn>
+                  <span class="headline" style="grid-row: 1; grid-column: 2 / span 1;">{{ court.lbl }}</span>
+                  <v-btn v-if="index == (displayableCourts.length - 1)" small="" @click="changeDisplayedCourts(1)" style="grid-row: 1; grid-column: 3 / span 1;"><v-icon> arrow_forward </v-icon> </v-btn>   
+                
               </div>
-              <div v-bind:style="{ 'grid-column' : 2, 'grid-row' : 1 }" class="change_court_btn change_court_btn_back">
+              <!-- <div v-bind:style="{ 'grid-column' : 2, 'grid-row' : 1 }" class="change_court_btn change_court_btn_back">
                   <v-btn small="" @click="changeDisplayedCourts(-1)"><v-icon> arrow_back </v-icon> </v-btn>
               </div>
-              <div v-bind:style="{ 'grid-column' : this.displayableCourts.length - 1, 'grid-row' : 1 }" class="change_court_btn change_court_btn_forward">
+              <div v-bind:style="{ 'grid-column' : this.displayableCourts.length + 1, 'grid-row' : 1 }" class="change_court_btn change_court_btn_forward">
                   <v-btn small="" @click="changeDisplayedCourts(1)"><v-icon> arrow_forward </v-icon> </v-btn>
-              </div>
+              </div> -->
           
             </div>
             <div class="time-grid-container">
@@ -239,6 +231,14 @@ export default {
   border: 1px solid;
 }
 
+.court-grid-item{
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(3,1fr);
+  justify-items: center;
+  align-items: center;
+}
+
 .time-grid-container{
   position: relative;
   grid-column : 1;
@@ -278,10 +278,8 @@ export default {
 
 .change_court_btn {
   position: absolute; 
-  grid-column: 6; 
   grid-row: 1; 
-  height: 100%; 
-  width: 100%; 
+  height: 100%;  
   display: flex; 
   align-items: center; 
   
