@@ -1,8 +1,7 @@
 const admin = require('firebase-admin')
-const functions = require('firebase-functions');
+const functions = require('firebase-functions')
 
-admin.initializeApp();
-
+admin.initializeApp(functions.config().firebase)
 
 exports.getAllMembers = function(){
     
@@ -26,11 +25,13 @@ exports.getAllMembers = function(){
 
 exports.getCourts = async function(){
 
-    const db = admin.firestore()
+    let courts = [];
 
+    
+    const db = admin.firestore()
+    
     const snap = await db.collection('/courts').get();
     
-    let courts = [];
     
     snap.forEach(doc => {
         const data = doc.data();
@@ -38,6 +39,7 @@ exports.getCourts = async function(){
         courts.push({ id: id, lbl: data.lbl, msg: data.msg, state: data.state, statelbl: data.statelbl });
     });
     
+
     return courts;
 
 }

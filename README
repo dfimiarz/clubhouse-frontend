@@ -1,0 +1,1 @@
+Run set GOOGLE_APPLICATION_CREDENTIALS=path\to\key.json before launching emulators locally.
