@@ -18,18 +18,11 @@
               
               <div class="pa-1 court-grid-item" v-for="(court,index) in displayableCourts" :key="court.id"  v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }" >
                 
-                  <v-btn v-if="index == 0" small="" @click="changeDisplayedCourts(-1)" style="grid-row: 1; grid-column: 1 / span 1;"><v-icon> arrow_back </v-icon> </v-btn>
+                  <v-btn v-if="index == 0" :disabled="firstCourt == 0" small="" @click="changeDisplayedCourts(-1)" style="grid-row: 1; grid-column: 1 / span 1;"><v-icon> arrow_back </v-icon> </v-btn>
                   <span class="headline" style="grid-row: 1; grid-column: 2 / span 1;">{{ court.lbl }}</span>
-                  <v-btn v-if="index == (displayableCourts.length - 1)" small="" @click="changeDisplayedCourts(1)" style="grid-row: 1; grid-column: 3 / span 1;"><v-icon> arrow_forward </v-icon> </v-btn>   
+                  <v-btn v-if="index == (displayableCourts.length - 1 )"  :disabled="( (firstCourt + index) == (courts.length - 1))" small="" @click="changeDisplayedCourts(1)" style="grid-row: 1; grid-column: 3 / span 1;"><v-icon> arrow_forward </v-icon> </v-btn>   
                 
               </div>
-              <!-- <div v-bind:style="{ 'grid-column' : 2, 'grid-row' : 1 }" class="change_court_btn change_court_btn_back">
-                  <v-btn small="" @click="changeDisplayedCourts(-1)"><v-icon> arrow_back </v-icon> </v-btn>
-              </div>
-              <div v-bind:style="{ 'grid-column' : this.displayableCourts.length + 1, 'grid-row' : 1 }" class="change_court_btn change_court_btn_forward">
-                  <v-btn small="" @click="changeDisplayedCourts(1)"><v-icon> arrow_forward </v-icon> </v-btn>
-              </div> -->
-          
             </div>
             <div class="time-grid-container">
                 <div v-for="(n) in totalCellCount" :key="n" class="cell"  v-bind:style="{ 'height':  cellHeight1H + 'px' }">
@@ -120,7 +113,7 @@ export default {
     changeDisplayedCourts: function (step){
     
       //Compute next first court to display
-      let nextFirstCourt = this.firstCourt + /*this.maxCourtCount **/ step
+      let nextFirstCourt = this.firstCourt + step
       
       if( nextFirstCourt < 0 ){
         nextFirstCourt = 0
