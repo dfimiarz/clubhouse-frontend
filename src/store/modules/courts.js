@@ -65,7 +65,7 @@ const actions = {
         commit('clearError', null, { root: true })
         commit('setLoading', true, { root: true })
 
-        Axios.get(process.env.VUE_APP_FUNCTION_ENDPOINT + '/getCourts')
+        Axios.get(process.env.VUE_APP_FUNCTION_ENDPOINT + '/courts')
         .then(
             courtinfo => {
                 commit('setLoading',false, { root: true })

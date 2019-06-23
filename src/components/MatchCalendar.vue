@@ -2,13 +2,13 @@
 <v-container fluid fill-height="" grid-list-xs >
   <v-layout justify-center="" align-content-start="" row wrap>
     <v-flex xs12 lg10 >
-      <v-layout justify-space-between="" align-end="" row wrap fill-height="">
-        <div>
+      <v-layout fill-height="">
+        <v-flex xs12 class="text-xs-center text-sm-left">
           <v-btn icon @click="resetDate()"> <v-icon> today </v-icon></v-btn>
           <v-btn icon @click="changeDay(-1)"> <v-icon> arrow_back </v-icon> </v-btn>
           <span class="title">{{ this.getTimeString()}}</span> 
           <v-btn icon @click="changeDay(1)"> <v-icon> arrow_forward </v-icon></v-btn>
-        </div>
+        </v-flex>
       </v-layout>
     </v-flex>
     <v-flex xs12 lg10 >
@@ -80,8 +80,6 @@ export default {
       message: "This is grid view",
       milTimeLabels: [ '12', '1' , '2', '3', '4' , '5' , '6' , '7' , '8', '9' , '10' , '11', '12' , '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23' ],
       civTimeLabels: [ '12 am', '1 am' , '2 am', '3 am', '4 am' , '5 am' , '6 am' , '7 am' , '8 am', '9 am' , '10 am' , '11 am', '12 pm' , '1 pm', '2 pm', '3 pm', '4 pm', '5 pm', '6 pm', '7 pm', '8 pm', '9 pm', '10 pm', '11 pm' ],
-      scheduleStartTime: 8,
-      scheduleEndTime: 20,
       dialog: false,
       date: null,
       courtSlots: null,
@@ -135,14 +133,26 @@ export default {
     
   },
   computed: {
+    scheduleStartTime: function(){
+      return this.$store.state.startTimeMin
+    },
+    scheduleEndTime: function(){
+      return this.$store.state.endTimeMin
+    },
+    scheduleStartHour: function(){
+      return Math.trunc(this.scheduleStartTime/60)
+    },
+    scheduleEndHour: function(){
+      return Math.trunc(this.scheduleEndTime/60)
+    },
     courts: function(){
       return this.$store.getters['courtstore/getCourts']
     },
     hourLabels: function(){
-      return this.civTimeLabels.slice(this.scheduleStartTime,this.scheduleEndTime)
+      return this.civTimeLabels.slice(this.scheduleStartHour,this.scheduleEndHour)
     },
     totalCellCount: function(){
-      return (this.scheduleEndTime - this.scheduleStartTime)
+      return (this.scheduleEndHour - this.scheduleStartHour)
     },
     matches: function () {
       return this.$store.getters['matchstore/loadedMatches']
@@ -155,7 +165,7 @@ export default {
         case 'xs': return 1
         case 'sm': return 2
         case 'md': return 3
-        case 'lg': return 5
+        case 'lg': return 3
         case 'xl': return 5
       }
     },
@@ -177,10 +187,12 @@ export default {
     
   },
   created: function() {
-    this.$store.dispatch('matchstore/watchCourts')
+
+    this.resetDate()
+    
   },
   mounted: function(){
-    this.resetDate()
+    this.$store.dispatch('matchstore/watchCourts')
     //console.log("Mounted")
   },
   watch: {
@@ -193,6 +205,9 @@ export default {
 
       this.firstCourt = newFirstCourt
 
+    },
+    date: function(val){
+      console.log("Date changed" + val)
     }
   },
   beforeDestroy () {

@@ -25,6 +25,8 @@ export const store = new Vuex.Store(
             error: null,
             db: null,
             cellHeight1H: 60,
+            startTimeMin: 8 * 60, 
+            endTimeMin: 22 * 60,
             repeaterTypes: [
                 { id : 0 , label : "Non-repeater"},
                 { id : 1 , label : "First Repeater"},
@@ -101,6 +103,12 @@ export const store = new Vuex.Store(
             },
             loading (state) {
                 return state.loading
+            },
+            startHour( state ){
+                return Math.trunc(state.startTimeMin/60)
+            },
+            endHour( state ){
+                return Math.trunc(state.endTimeMin/60)
             },
             calCellHeight1H(state){
                 return state.cellHeight1H;

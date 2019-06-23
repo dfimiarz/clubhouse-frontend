@@ -1,54 +1,65 @@
+'use strict';
+
+
+
 const functions = require('firebase-functions');
 const cors = require('cors')({
     origin: true,
   });
-  
 const db = require('./dbqueries')
+const express = require('express')
+const bodyParser = require('body-parser')
+const app = express()
 
-exports.getMembers = functions.https.onRequest((req,res) => { 
-    
-    db.getAllMembers().then( (members) => {
-        return cors(req,res, () => {
-            res.json(members)
-        })
-    })
-    .catch( err => { 
-        return cors(req,res, () => {
+app.use(cors);
+
+app.post('/session', async (req,res) => {
+
+})
+
+app.get('/', async (req,res) => {
+    res.json({name:'Clubhouse API'})
+})
+
+app.get('/members', async (req,res) => {
+
+    try{
+        let members = await db.getAllMembers()
+        res.json(members)
+    }
+    catch( err ){ 
+       
             res.status(500).json(err)
-        })
-    })
+       
+    }
 
 })
 
-exports.getSessions = functions.https.onRequest((req,res) => { 
+app.get('/courts', async (req,res) => {
 
-    db.getAllSessionsForDate(parseInt(req.query.date)).then( (sessions) => {
-        return cors(req,res, () => {
-            res.json(sessions)
-        })
-    })
-    .catch( err => { 
-        return cors(req,res, () => {
-            res.status(500).json(err)
-        })
-    })
-
+    try{
+        let courts = await db.getCourts()
+        res.json(courts)
+    }
+    catch( err ){
+        res.status(500).json(err)
+    }  
 })
 
-exports.getCourts = functions.https.onRequest((req,res) => {
+app.get('/sessions', async (req,res) => {
 
-        db.getCourts().then( courts => {
-            return cors(req,res, () => {
-                res.json(courts)
-            })
-        })
-        .catch( err => { 
-            return cors(req,res, () => {
-                res.status(500).json(err)
-            })
-        })
+    let timemillis = isNaN(parseInt(req.query.date)) ? null :  parseInt(req.query.date) 
+
+    try{
+        let sessions = await db.getAllSessionsForDate(timemillis)
+        res.json(sessions)
+    }
+    catch( err ){
+        res.status(500).json(err)
+    }  
 })
 
+/*
 
 exports.getCourtStatus = functions.https.onRequest((req,res) => {
 
@@ -154,12 +165,14 @@ exports.getCourtStatus = functions.https.onRequest((req,res) => {
         }
     );
     */
-})
+// })
 
-exports.signIn = functions.https.onRequest((req,res) => {
+// exports.signIn = functions.https.onRequest((req,res) => {
 
-    const username = "test"
+//     const username = "test"
 
     
 
-})
+// })
+
+exports.clubhouse = functions.https.onRequest(app)

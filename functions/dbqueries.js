@@ -15,7 +15,7 @@ exports.getAllMembers = function(){
         snap.forEach( doc => {
             const data = doc.data()
             const id = doc.id
-            members.push({ id: id, name: data.firstname + " " + data.lastname, role: data.role })
+            members.push({ id: id, firstname: data.firstname, lastname : data.lastname, role: data.role })
         })
 
         return members
@@ -44,36 +44,27 @@ exports.getCourts = async function(){
 
 }
 
-exports.getAllSessionsForDate = function(date){
-    const reqdate = new Date(date)
+exports.getAllSessionsForDate = function(date = null){
+    
+    const day = date === null ? new Date() : new Date(date)
 
-    const datestr = String(reqdate.getFullYear() + pad(reqdate.getMonth()+1) + pad(reqdate.getDate())) 
+    day.setHours(0)
+    day.setMinutes(0)
+    day.setMilliseconds(0)
 
     const db = admin.firestore()
 
-    console.log('/schedule/' + datestr + '/matches')
 
-    return db.collection('/schedule/' + datestr + '/matches').get()
+    return  db.collection("/matches").where("date","==",day).get()
     .then((snap) => {
         sessions = []
 
         snap.forEach( doc => {
             const data = doc.data()
             const id = doc.id
-            sessions.push(id)
+            sessions.push({id,data})
         })
 
         return sessions
     })
-}
-
-exports.auth = function(){
-    // TO DO. Write auth function
-}
-
-function pad(number){
-    if (number < 10) {
-        return '0' + number;
-      }
-      return number;
 }

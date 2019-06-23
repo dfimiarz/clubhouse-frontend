@@ -32,28 +32,33 @@ const actions = {
         commit('REMOVE_MATCHES')
         var date = new Date("2019-01-24 00:00:00")
         unsubscribe = db.collection("/matches").where("date","==",date)
-        .onSnapshot(function(snapshot) {
-            snapshot.docChanges().forEach(function(change) {
-                if (change.type === "added") {
-                    console.log("Match added: ", change.doc.data(),change.doc.id);
-                    let data = change.doc.data()
+        .onSnapshot({includeMetadataChanges: true },
+            function(snapshot) {
+            snapshot.docChanges({includeMetadataChanges: true })
+                .forEach(function(change) {
+
+                    console.log("test" + change.doc.metadata.hasPendingWrites)
+
+                    if (change.type === "added") {
+                        console.log("Match added: ", change.doc.data(),change.doc.id);
+                        let data = change.doc.data()
+                        
+                        let match = { 
+                                text: '4 players, bumpable', 
+                                durMin: data.duration, 
+                                startMin: data.start, 
+                                id: change.doc.id, 
+                                court: data.court 
+                            }                    
+                        commit('ADD_MATCH', match)
                     
-                    let match = { 
-                            text: '4 players, bumpable', 
-                            durMin: data.duration, 
-                            startMin: data.start, 
-                            id: change.doc.id, 
-                            court: data.court 
-                        }                    
-                    commit('ADD_MATCH', match)
-                   
-                }
-                if (change.type === "modified") {
-                    console.log("Match changed: ", change.doc.data());
-                }
-                if (change.type === "removed") {
-                    console.log("Match removed: ", change.doc.data());
-                }
+                    }
+                    if (change.type === "modified") {
+                        console.log("Match changed: ", change.doc.data());
+                    }
+                    if (change.type === "removed") {
+                        console.log("Match removed: ", change.doc.data());
+                    }
             })
         })
     },

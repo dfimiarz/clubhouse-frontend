@@ -2,14 +2,192 @@
 <v-container fluid fill-height="" grid-list-xs >
   <v-layout justify-center="" align-content-start="" row wrap>
     <v-flex xs12 sm8 md6 lg4>
-      <v-card>
-        <v-card-title>
-          <span class="headline">Add a session:</span>
-        </v-card-title>
-        <v-card-text>
+     
+          <v-stepper v-model="step">
+            <v-stepper-header>
+              <v-stepper-step :complete="step > 1" step="1">Court and time</v-stepper-step>
+
+              <v-divider></v-divider>
+
+              <v-stepper-step :complete="step > 2" step="2">Players</v-stepper-step>
+
+              <v-divider></v-divider>
+
+              <v-stepper-step step="3">Confirm</v-stepper-step>
+            </v-stepper-header>
+
+            <v-stepper-items>
+              <v-stepper-content step="1">
+                <v-container grid-list-md>
+                  <v-layout row wrap>
+                    <v-flex xs12>
+                      <v-layout>
+                        <v-flex xs12 md6>
+                          <v-select
+                            label="Court"
+                            :items="courts"
+                            item-value="id"
+                            item-text="lbl"
+                          >
+                            
+                          </v-select>
+                        </v-flex>
+                      </v-layout>
+                      
+                    </v-flex>
+                    <v-flex xs12 md6>
+                       <v-layout>
+                        <v-flex xs12>
+                          <v-dialog
+                            ref="date_dialog"
+                            v-model="datedialog"
+                            :return-value.sync="date"
+                            persistent
+                            lazy
+                            full-width
+                            width="290px"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                v-model="date"
+                                label="Date"
+                                prepend-icon="event"
+                                readonly
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker v-model="date" scrollable>
+                              <v-spacer></v-spacer>
+                              <v-btn flat color="primary" @click="datedialog = false">Cancel</v-btn>
+                              <v-btn flat color="primary" @click="$refs.date_dialog.save(date)">OK</v-btn>
+                            </v-date-picker>
+                          </v-dialog>
+                        </v-flex>
+                       </v-layout>
+                    </v-flex>
+                    <v-flex xs12 md6>
+                      <v-layout>
+                        <v-layout>
+                        <v-flex xs12>
+                          <v-dialog
+                            ref="time_dialog"
+                            v-model="timedialog"
+                            :return-value.sync="time"
+                            persistent
+                            :allowed-minutes="allowedminutes"
+                            lazy
+                            full-width
+                            width="290px"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                v-model="time"
+                                label="Start time"
+                                prepend-icon="event"
+                                readonly
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-time-picker
+                              v-model="time"
+                              class="mt-3"
+                            >
+                            <v-spacer></v-spacer>
+                              <v-btn flat color="primary" @click="timedialog = false">Cancel</v-btn>
+                              <v-btn flat color="primary" @click="$refs.time_dialog.save(time)">OK</v-btn>
+                            </v-time-picker>
+                          </v-dialog>
+                        </v-flex>
+                       </v-layout>
+                        <!-- <v-flex xs4> 
+                          <v-select
+                          label="Hour"
+                          :items="startHours"
+                          ></v-select>
+                        </v-flex>
+                        <v-flex xs4>
+                          <v-select
+                          label="Min"
+                          :items="startMinutes"
+                          ></v-select>
+                        </v-flex>
+                        <v-flex xs4>
+                          <v-select
+                          label="AM/PM"
+                          :items="partofday"
+                          ></v-select>
+                        </v-flex> -->
+                      </v-layout>
+                    
+                    </v-flex>
+                    <v-flex xs12>
+                      <v-layout wrap>
+                        <v-flex xs12 md6>
+                          <v-select
+                          label="Duration"
+                          
+                          ></v-select>
+                        </v-flex>
+                        <v-flex xs12 md6>
+                          <v-select
+                          label="Bumpable after"
+                          
+                          ></v-select>
+                        </v-flex>
+                      </v-layout>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+
+                <v-btn
+                  
+                  @click="step = 2"
+                >
+                  Continue
+                </v-btn>
+
+                <v-btn flat>Cancel</v-btn>
+              </v-stepper-content>
+
+              <v-stepper-content step="2">
+                <v-card
+                  class="mb-5"
+                  color="grey lighten-1"
+                  height="200px"
+                ></v-card>
+
+                <v-btn
+                  color="primary"
+                  @click="step = 3"
+                >
+                  Continue
+                </v-btn>
+
+                <v-btn flat>Cancel</v-btn>
+              </v-stepper-content>
+
+              <v-stepper-content step="3">
+                <v-card
+                  class="mb-5"
+                  color="grey lighten-1"
+                  height="200px"
+                ></v-card>
+
+                <v-btn
+                  color="primary"
+                  @click="step = 1"
+                >
+                  Continue
+                </v-btn>
+
+                <v-btn flat>Cancel</v-btn>
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
+          <!--
           <v-container grid-list-md>
             <v-layout wrap>
-              <v-flex xs12>
+              <v-flex xs12 md6>
                 <v-select
                   label="Court"
                   :items="courts"
@@ -19,65 +197,36 @@
                   
                 </v-select>
               </v-flex>
+              <v-flex xs12 md6>
+                <v-layout>
+                  <v-flex xs4> 
+                    <v-select
+                    label="Hour"
+                    :items="startHours"
+                    ></v-select>
+                  </v-flex>
+                  <v-flex xs4>
+                    <v-select
+                     label="Min"
+                    :items="startMinutes"
+                    ></v-select>
+                  </v-flex>
+                  <v-flex xs4>
+                    <v-select
+                    label="AM/PM"
+                    :items="partofday"
+                    ></v-select>
+                  </v-flex>
+                </v-layout>
+               
+              </v-flex>
               <v-flex xs12>
                 <v-layout wrap>
                   <v-flex xs12 md6>
-                    <v-menu
-                    ref="menu"
-                    :close-on-content-click="false"
-                    v-model="menu2"
-                    :nudge-right="40"
-                    :return-value.sync="time"
-                    lazy
-                    transition="scale-transition"
-                    offset-y
-                    full-width
-                    max-width="290px"
-                    min-width="290px"
-                  >
-                      <v-text-field
-                        slot="activator"
-                        v-model="time"
-                        label="Select start time"
-                        prepend-icon="access_time"
-                        readonly
-                      ></v-text-field>
-                      <v-time-picker
-                        v-if="menu2"
-                        v-model="time"
-                        full-width
-                        @change="$refs.menu.save(time)"
-                      ></v-time-picker>
-                    </v-menu>
+                    
                   </v-flex>
                   <v-flex xs12 md6>
-                    <v-menu
-                      ref="menu2"
-                      :close-on-content-click="false"
-                      v-model="menu3"
-                      :nudge-right="40"
-                      :return-value.sync="time"
-                      lazy
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      max-width="290px"
-                      min-width="290px"
-                    >
-                      <v-text-field
-                        slot="activator"
-                        v-model="endtime"
-                        label="Select end time"
-                        prepend-icon="access_time"
-                        readonly
-                      ></v-text-field>
-                      <v-time-picker
-                        v-if="menu3"
-                        v-model="endtime"
-                        full-width
-                        @change="$refs.menu.save(time)"
-                      ></v-time-picker>
-                    </v-menu>
+                   
                   </v-flex>
                 </v-layout>
               </v-flex>
@@ -179,15 +328,8 @@
               </v-flex>
                 
             </v-layout>
-          </v-container>    
-          <small>*indicates required field</small>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn flat :to="{name: 'MatchCalendar'}">Close</v-btn>
-          <v-btn flat >Save</v-btn>
-        </v-card-actions>
-      </v-card>
+          </v-container>
+          -->   
     </v-flex>
   </v-layout>
 </v-container>
@@ -204,27 +346,30 @@ export default {
   name: 'MatchCalendar',
   data: function() {
     return {
-      message: "This is grid view",
-      milTimeLabels: [ '12', '1' , '2', '3', '4' , '5' , '6' , '7' , '8', '9' , '10' , '11', '12' , '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23' ],
-      civTimeLabels: [ '12 am', '1 am' , '2 am', '3 am', '4 am' , '5 am' , '6 am' , '7 am' , '8 am', '9 am' , '10 am' , '11 am', '12 pm' , '1 pm', '2 pm', '3 pm', '4 pm', '5 pm', '6 pm', '7 pm', '8 pm', '9 pm', '10 pm', '11 pm' ],
-      scheduleStartTime: 8,
-      scheduleEndTime: 20,
-      dialog: false,
-      date: null,
-      courtSlots: null,
-      maxDisplayableCourts: 5,
-      firstCourt: 0,
-      lastCourt: 5,
-      resizeTimeout: null,
-      time: null,
-      endtime: null,
-      menu2: false,
-      menu3: false
-      
+        partofday: [{val: 0, text:"AM"},{val: 12, text:"PM"}],
+        months: [
+          { val: 1, text: "Jan"},
+          { val: 2, text: "Feb"},
+          { val: 3, text: "Mar"},
+          { val: 4, text: "Apr"},
+          { val: 5, text: "May"},
+          { val: 6, text: "Jun"},
+          { val: 7, text: "Jul"},
+          { val: 8, text: "Aug"},
+          { val: 9, text: "Sep"},
+          { val: 10, text: "Oct"},
+          { val: 11, text: "Nov"},
+          { val: 12, text: "Dec"},
+        ],
+        step: 0,
+        datedialog: false,
+        timedialog: false,
+        date: null,
+        time: null
     }
   },
   methods: {
-    
+    allowedminutes: m => m % 5 === 0
   },
   computed: {
     courts: function(){
@@ -235,6 +380,12 @@ export default {
     },
     repeaterTypes: function(){
         return this.$store.getters['repeaterTypes']
+    },
+    startHours: function(){
+      return  Array(12).fill().map((_, idx) => 1 + idx)
+    },
+    startMinutes: function(){
+      return  Array(4).fill().map((_, idx) => 0 + idx*15)
     }
     
   },

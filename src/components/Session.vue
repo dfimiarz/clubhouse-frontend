@@ -58,12 +58,15 @@ export default {
       return this.cellHeight1H / 60 * this.session.durMin
     },
     getVpos: function(){
-      return this.cellHeight1H / 60 * (this.session.startMin - 480)
+      return this.cellHeight1H / 60 * (this.session.startMin - this.startMin)
     }
   },
   computed:{
     cellHeight1H: function(){
       return this.$store.getters['calCellHeight1H'];
+    },
+    startMin: function(){
+      return this.$store.getters['startHour'] * 60;
     }
   }
 }
