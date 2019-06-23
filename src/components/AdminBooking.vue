@@ -17,7 +17,7 @@
             </v-stepper-header>
 
             <v-stepper-items>
-              <v-stepper-content step="1">
+              <v-stepper-content step="2">
                 <v-container grid-list-md>
                   <v-layout row wrap>
                     <v-flex xs12>
@@ -67,7 +67,6 @@
                     </v-flex>
                     <v-flex xs12 md6>
                       <v-layout>
-                        <v-layout>
                         <v-flex xs12>
                           <v-dialog
                             ref="time_dialog"
@@ -99,26 +98,6 @@
                           </v-dialog>
                         </v-flex>
                        </v-layout>
-                        <!-- <v-flex xs4> 
-                          <v-select
-                          label="Hour"
-                          :items="startHours"
-                          ></v-select>
-                        </v-flex>
-                        <v-flex xs4>
-                          <v-select
-                          label="Min"
-                          :items="startMinutes"
-                          ></v-select>
-                        </v-flex>
-                        <v-flex xs4>
-                          <v-select
-                          label="AM/PM"
-                          :items="partofday"
-                          ></v-select>
-                        </v-flex> -->
-                      </v-layout>
-                    
                     </v-flex>
                     <v-flex xs12>
                       <v-layout wrap>
@@ -141,7 +120,7 @@
 
                 <v-btn
                   
-                  @click="step = 2"
+                  @click="step = 3"
                 >
                   Continue
                 </v-btn>
@@ -149,16 +128,108 @@
                 <v-btn flat>Cancel</v-btn>
               </v-stepper-content>
 
-              <v-stepper-content step="2">
-                <v-card
-                  class="mb-5"
-                  color="grey lighten-1"
-                  height="200px"
-                ></v-card>
-
+              <v-stepper-content step="1">
+                <v-container fluid="" grid-list-md="">
+                  <v-layout row wrap>
+                    <v-flex xs12>
+                      <v-layout wrap="">
+                        <v-flex xs12 md6>
+                          <v-autocomplete
+                          label="Player 1"
+                          :items="players"
+                            item-text="name"
+                            item-value="id"
+                          >
+                          </v-autocomplete>
+                        </v-flex>
+                        <v-flex xs12 md6>
+                          <v-select
+                            :items="repeaterTypes"
+                            label="Repeater status:"
+                            item-text="label"
+                            item-value="id"
+                          >
+                            
+                          </v-select>
+                        </v-flex>
+                      </v-layout>  
+                    </v-flex>
+                    <v-flex xs12>
+                      <v-layout wrap="">
+                        <v-flex xs12 md6>
+                          <v-autocomplete
+                          label="Player 2"
+                          :items="players"
+                            item-text="name"
+                            item-value="id"
+                          >
+                          </v-autocomplete>
+                        </v-flex>
+                        <v-flex xs12 md6>
+                          <v-select
+                            :items="repeaterTypes"
+                            label="Repeater status:"
+                            item-text="label"
+                            item-value="id"
+                          >
+                          </v-select>
+                        </v-flex>
+                      </v-layout>
+                    
+                    </v-flex>
+                    <v-flex xs12>
+                      <v-layout wrap="">
+                        <v-flex xs12 md6>
+                          <v-autocomplete
+                          label="Player 3"
+                          :items="players"
+                            item-text="name"
+                            item-value="id"
+                          >
+                          </v-autocomplete>
+                        </v-flex>
+                        <v-flex xs12 md6>
+                        <v-select
+                            :items="repeaterTypes"
+                            label="Repeater status:"
+                            item-text="label"
+                            item-value="id"
+                          >
+                            
+                          </v-select>
+                        </v-flex>
+                      </v-layout>
+                    
+                    </v-flex>
+                    <v-flex xs12>
+                      <v-layout wrap="">
+                        <v-flex xs12 md6>
+                          <v-autocomplete
+                          label="Player 4"
+                          :items="players"
+                            item-text="name"
+                            item-value="id"
+                          >
+                          </v-autocomplete>
+                        </v-flex>
+                        <v-flex xs12 md6>
+                          <v-select
+                            :items="repeaterTypes"
+                            label="Repeater status:"
+                            item-text="label"
+                            item-value="id"
+                          >
+                            
+                          </v-select>
+                        </v-flex>
+                      </v-layout>
+                    </v-flex>
+                    
+                  </v-layout>
+                </v-container>
                 <v-btn
                   color="primary"
-                  @click="step = 3"
+                  @click="step = 2"
                 >
                   Continue
                 </v-btn>
@@ -183,153 +254,7 @@
                 <v-btn flat>Cancel</v-btn>
               </v-stepper-content>
             </v-stepper-items>
-          </v-stepper>
-          <!--
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex xs12 md6>
-                <v-select
-                  label="Court"
-                  :items="courts"
-                  item-value="id"
-                  item-text="lbl"
-                >
-                  
-                </v-select>
-              </v-flex>
-              <v-flex xs12 md6>
-                <v-layout>
-                  <v-flex xs4> 
-                    <v-select
-                    label="Hour"
-                    :items="startHours"
-                    ></v-select>
-                  </v-flex>
-                  <v-flex xs4>
-                    <v-select
-                     label="Min"
-                    :items="startMinutes"
-                    ></v-select>
-                  </v-flex>
-                  <v-flex xs4>
-                    <v-select
-                    label="AM/PM"
-                    :items="partofday"
-                    ></v-select>
-                  </v-flex>
-                </v-layout>
-               
-              </v-flex>
-              <v-flex xs12>
-                <v-layout wrap>
-                  <v-flex xs12 md6>
-                    
-                  </v-flex>
-                  <v-flex xs12 md6>
-                   
-                  </v-flex>
-                </v-layout>
-              </v-flex>
-              
-              <v-flex xs12>
-                <v-layout wrap="">
-                  <v-flex xs12 md6>
-                    <v-autocomplete
-                     label="Player 1"
-                     :items="players"
-                      item-text="name"
-                      item-value="id"
-                    >
-                    </v-autocomplete>
-                  </v-flex>
-                  <v-flex xs12 md6>
-                    <v-select
-                      :items="repeaterTypes"
-                      label="Repeater status:"
-                      item-text="label"
-                      item-value="id"
-                    >
-                      
-                    </v-select>
-                  </v-flex>
-                </v-layout>
-               
-              </v-flex>
-              <v-flex xs12>
-                <v-layout wrap="">
-                  <v-flex xs12 md6>
-                    <v-autocomplete
-                     label="Player 2"
-                     :items="players"
-                      item-text="name"
-                      item-value="id"
-                    >
-                    </v-autocomplete>
-                  </v-flex>
-                  <v-flex xs12 md6>
-                    <v-select
-                      :items="repeaterTypes"
-                      label="Repeater status:"
-                      item-text="label"
-                      item-value="id"
-                    >
-                    </v-select>
-                  </v-flex>
-                </v-layout>
-               
-              </v-flex>
-              <v-flex xs12>
-                <v-layout wrap="">
-                  <v-flex xs12 md6>
-                    <v-autocomplete
-                     label="Player 3"
-                     :items="players"
-                      item-text="name"
-                      item-value="id"
-                    >
-                    </v-autocomplete>
-                  </v-flex>
-                  <v-flex xs12 md6>
-                   <v-select
-                      :items="repeaterTypes"
-                      label="Repeater status:"
-                      item-text="label"
-                      item-value="id"
-                    >
-                      
-                    </v-select>
-                  </v-flex>
-                </v-layout>
-               
-              </v-flex>
-              <v-flex xs12>
-                <v-layout wrap="">
-                  <v-flex xs12 md6>
-                    <v-autocomplete
-                     label="Player 4"
-                     :items="players"
-                      item-text="name"
-                      item-value="id"
-                    >
-                    </v-autocomplete>
-                  </v-flex>
-                  <v-flex xs12 md6>
-                    <v-select
-                      :items="repeaterTypes"
-                      label="Repeater status:"
-                      item-text="label"
-                      item-value="id"
-                    >
-                      
-                    </v-select>
-                  </v-flex>
-                </v-layout>
-               
-              </v-flex>
-                
-            </v-layout>
-          </v-container>
-          -->   
+          </v-stepper> 
     </v-flex>
   </v-layout>
 </v-container>

@@ -55,11 +55,12 @@ const actions = {
     loadMembers({commit}){
         
         
-        axios.post(process.env.VUE_APP_FUNCTION_ENDPOINT + '/members')
+        axios.get(process.env.VUE_APP_FUNCTION_ENDPOINT + '/members')
             .then(function (response) {
                 const members = response.data
                 members.forEach((member) => {
-                    commit('ADD_MEMBER',member)
+                    const t_member = Object.assign(member,{ name: member.firstname + " " + member.lastname })
+                    commit('ADD_MEMBER',t_member)
                 })
             })
             .catch(function (error) {
