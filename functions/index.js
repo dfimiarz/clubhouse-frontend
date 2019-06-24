@@ -11,6 +11,9 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 app.use(cors);
 
 app.post('/session', async (req,res) => {
@@ -31,6 +34,30 @@ app.get('/members', async (req,res) => {
        
             res.status(500).json(err)
        
+    }
+
+})
+
+app.post('/matches', async (req,res) => {
+
+    const match = {
+        bumpable: true,
+        date: new Date(),
+        duration: 60,
+        note: "",
+        start: 480,
+        players: [
+            { id: "test1", name: "Dan Fim", repeater: 0, repeater_lbl: "Non Repeater"},
+            { id: "test2", name: "Test Fim", repeater: 0, repeater_lbl: "Non Repeater"}
+        ]
+    }
+
+    try{
+        let result = await db.addMatch(match)
+        res.status(201)
+    }
+    catch( err ){
+        res.status(500).json(err)
     }
 
 })

@@ -26,3 +26,4 @@ functions/firebase-debug.log
 src/firebase.js
 functions/firestore-debug.log
 run_*.bat
+firebase-debug.log

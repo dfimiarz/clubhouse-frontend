@@ -5,11 +5,11 @@
      
           <v-stepper v-model="step">
             <v-stepper-header>
-              <v-stepper-step :complete="step > 1" step="1">Court and time</v-stepper-step>
+              <v-stepper-step :complete="step > 1" step="1">Players</v-stepper-step>
 
               <v-divider></v-divider>
 
-              <v-stepper-step :complete="step > 2" step="2">Players</v-stepper-step>
+              <v-stepper-step :complete="step > 2" step="2">Court and time</v-stepper-step>
 
               <v-divider></v-divider>
 
@@ -19,6 +19,7 @@
             <v-stepper-items>
               <v-stepper-content step="2">
                 <v-container grid-list-md>
+                  <v-form ref="timeform">
                   <v-layout row wrap>
                     <v-flex xs12>
                       <v-layout>
@@ -28,6 +29,7 @@
                             :items="courts"
                             item-value="id"
                             item-text="lbl"
+                            :rules="[ rules.required ]"
                           >
                             
                           </v-select>
@@ -54,6 +56,7 @@
                                 prepend-icon="event"
                                 readonly
                                 v-on="on"
+                                :rules="[ rules.required ]"
                               ></v-text-field>
                             </template>
                             <v-date-picker v-model="date" scrollable>
@@ -102,48 +105,53 @@
                     <v-flex xs12>
                       <v-layout wrap>
                         <v-flex xs12 md6>
-                          <v-select
-                          label="Duration"
-                          
-                          ></v-select>
+                          <v-text-field
+                            ref="bumpablefield"
+                            label="Duration"
+                            type="number"
+                            v-model="duration"
+                            :rules="[ rules.required, rules.durationlimit ]"
+                          ></v-text-field>
                         </v-flex>
                         <v-flex xs12 md6>
-                          <v-select
-                          label="Bumpable after"
-                          
-                          ></v-select>
+                          <v-checkbox v-model="bumpable" label="Bumpable"></v-checkbox>
                         </v-flex>
                       </v-layout>
                     </v-flex>
                   </v-layout>
+                  </v-form>
                 </v-container>
-
-                <v-btn
+                <v-layout row>
                   
-                  @click="step = 3"
-                >
-                  Continue
-                </v-btn>
-
-                <v-btn flat>Cancel</v-btn>
+                    <v-btn flat @click="step = 1">Go back</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn @click="stepCheck(3)">
+                      Continue
+                    </v-btn>
+                   
+                </v-layout>
+                
               </v-stepper-content>
 
               <v-stepper-content step="1">
                 <v-container fluid="" grid-list-md="">
+                  <v-form ref="playerform">
                   <v-layout row wrap>
-                    <v-flex xs12>
+                    <v-flex xs12 v-for="(player,index) in selplayers" :key="index">
                       <v-layout wrap="">
                         <v-flex xs12 md6>
                           <v-autocomplete
-                          label="Player 1"
-                          :items="players"
-                            item-text="name"
-                            item-value="id"
+                          v-model="selplayers[index].id"
+                          :label="getPlayerLabel(index)"
+                          :items="clubmembers"
+                          item-text="name"
+                          item-value="id"
                           >
                           </v-autocomplete>
                         </v-flex>
                         <v-flex xs12 md6>
                           <v-select
+                            v-model="selplayers[index].repeater"
                             :items="repeaterTypes"
                             label="Repeater status:"
                             item-text="label"
@@ -154,104 +162,57 @@
                         </v-flex>
                       </v-layout>  
                     </v-flex>
-                    <v-flex xs12>
-                      <v-layout wrap="">
-                        <v-flex xs12 md6>
-                          <v-autocomplete
-                          label="Player 2"
-                          :items="players"
-                            item-text="name"
-                            item-value="id"
-                          >
-                          </v-autocomplete>
-                        </v-flex>
-                        <v-flex xs12 md6>
-                          <v-select
-                            :items="repeaterTypes"
-                            label="Repeater status:"
-                            item-text="label"
-                            item-value="id"
-                          >
-                          </v-select>
-                        </v-flex>
-                      </v-layout>
-                    
-                    </v-flex>
-                    <v-flex xs12>
-                      <v-layout wrap="">
-                        <v-flex xs12 md6>
-                          <v-autocomplete
-                          label="Player 3"
-                          :items="players"
-                            item-text="name"
-                            item-value="id"
-                          >
-                          </v-autocomplete>
-                        </v-flex>
-                        <v-flex xs12 md6>
-                        <v-select
-                            :items="repeaterTypes"
-                            label="Repeater status:"
-                            item-text="label"
-                            item-value="id"
-                          >
-                            
-                          </v-select>
-                        </v-flex>
-                      </v-layout>
-                    
-                    </v-flex>
-                    <v-flex xs12>
-                      <v-layout wrap="">
-                        <v-flex xs12 md6>
-                          <v-autocomplete
-                          label="Player 4"
-                          :items="players"
-                            item-text="name"
-                            item-value="id"
-                          >
-                          </v-autocomplete>
-                        </v-flex>
-                        <v-flex xs12 md6>
-                          <v-select
-                            :items="repeaterTypes"
-                            label="Repeater status:"
-                            item-text="label"
-                            item-value="id"
-                          >
-                            
-                          </v-select>
-                        </v-flex>
-                      </v-layout>
-                    </v-flex>
-                    
                   </v-layout>
+                  </v-form>
                 </v-container>
-                <v-btn
-                  color="primary"
-                  @click="step = 2"
-                >
-                  Continue
-                </v-btn>
-
-                <v-btn flat>Cancel</v-btn>
+                <v-layout row>
+                  
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    @click="step = 2"
+                  >
+                    Continue
+                  </v-btn>
+                </v-layout>
               </v-stepper-content>
 
               <v-stepper-content step="3">
-                <v-card
-                  class="mb-5"
-                  color="grey lighten-1"
-                  height="200px"
-                ></v-card>
-
-                <v-btn
-                  color="primary"
-                  @click="step = 1"
-                >
-                  Continue
+                <v-container fluid="">
+                  <v-layout row wrap>
+                    <v-flex xs12>
+                      <span class="headline">Confirm Booking</span>
+                    </v-flex>
+                    <v-flex xs12 class="my-2">
+                      <span class="body-1">Players:</span>
+                    </v-flex>
+                    <v-flex xs12 v-for="(player,index) in playerDetails" :key="index">
+                       <span class="subheading">{{ index + 1 }} - {{ player.name }} - {{ player.repeater }}</span>
+                    </v-flex>
+                    <v-flex xs12 class="my-2">
+                      <span class="subheading">Start: {{ date }} {{ time }}</span>
+                    </v-flex>
+                    <v-flex xs12 class="my-2">
+                      <span class="subheading">Duration: {{ duration }} min</span>
+                    </v-flex>
+                    <v-flex xs12 class="my-2">
+                      <span class="subheading">Bumpable: {{ bumpable }}</span>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+                
+                
+                <v-layout>
+                  <v-btn flat @click="step = 1">Go back</v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="primary"
+                  >
+                    Book
                 </v-btn>
 
-                <v-btn flat>Cancel</v-btn>
+                
+                </v-layout>
+                
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper> 
@@ -264,6 +225,7 @@
 
 import Session from './Session'
 
+
 export default {
   components:{
     'session' : Session
@@ -271,36 +233,41 @@ export default {
   name: 'MatchCalendar',
   data: function() {
     return {
-        partofday: [{val: 0, text:"AM"},{val: 12, text:"PM"}],
-        months: [
-          { val: 1, text: "Jan"},
-          { val: 2, text: "Feb"},
-          { val: 3, text: "Mar"},
-          { val: 4, text: "Apr"},
-          { val: 5, text: "May"},
-          { val: 6, text: "Jun"},
-          { val: 7, text: "Jul"},
-          { val: 8, text: "Aug"},
-          { val: 9, text: "Sep"},
-          { val: 10, text: "Oct"},
-          { val: 11, text: "Nov"},
-          { val: 12, text: "Dec"},
+        selplayers: [
+          { id: undefined, repeater: undefined },
+          { id: undefined, repeater: undefined },
+          { id: undefined, repeater: undefined },
+          { id: undefined, repeater: undefined },
         ],
         step: 0,
         datedialog: false,
         timedialog: false,
         date: null,
-        time: null
+        time: null,
+        duration: 30,
+        bumpable: false,
+        rules: {
+          required: value => !!value || 'Required.',
+          durationlimit: value => value >= 15 || 'Min 15 min',
+        }
     }
   },
   methods: {
-    allowedminutes: m => m % 5 === 0
+    allowedminutes: m => m % 5 === 0,
+    getPlayerLabel: index => "Player " + (index + 1),
+    stepCheck: function(){
+
+      
+        
+
+      this.step = 3
+    }
   },
   computed: {
     courts: function(){
       return this.$store.getters['courtstore/getCourts']
     },
-    players: function(){
+    clubmembers: function(){
       return this.$store.getters['memberstore/clubMembers'] 
     },
     repeaterTypes: function(){
@@ -311,7 +278,26 @@ export default {
     },
     startMinutes: function(){
       return  Array(4).fill().map((_, idx) => 0 + idx*15)
-    }
+    },
+    playerDetails: function(){
+
+      return this.selplayers.reduce( (accumulator,player) => {
+          
+
+          const member = this.$store.getters['memberstore/getMemberById'](player.id)
+          const repeaterDetails = this.$store.getters['getRepeaterType'](player.repeater)
+
+          if( member && repeaterDetails ){
+            
+            accumulator.push({ id: player.id, name: member.name, repeater: repeaterDetails.label })
+          }
+
+          return accumulator
+          
+          
+        },[])
+       
+    },
     
   },
   created: function() {

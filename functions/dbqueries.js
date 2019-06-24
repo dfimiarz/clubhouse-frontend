@@ -68,3 +68,10 @@ exports.getAllSessionsForDate = function(date = null){
         return sessions
     })
 }
+
+exports.addMatch = function(match){
+    return  db.collection("/matches").add(match)
+    .then((ref) => {
+        return ref
+    })
+}

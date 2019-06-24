@@ -102,7 +102,7 @@ const getters = {
        return state.members
    },
    getMemberById: (state) => (id) => {
-       return state.members.find( member => member.id == id )
+       return state.members.find( member => member.id === id )
    }
 }
 
