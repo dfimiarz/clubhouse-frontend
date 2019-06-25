@@ -70,6 +70,9 @@ exports.getAllSessionsForDate = function(date = null){
 }
 
 exports.addMatch = function(match){
+
+    const db = admin.firestore()
+
     return  db.collection("/matches").add(match)
     .then((ref) => {
         return ref

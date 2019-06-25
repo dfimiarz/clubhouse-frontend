@@ -40,21 +40,20 @@ app.get('/members', async (req,res) => {
 
 app.post('/matches', async (req,res) => {
 
+    console.log(req.body.date)
+
     const match = {
-        bumpable: true,
-        date: new Date(),
-        duration: 60,
-        note: "",
-        start: 480,
-        players: [
-            { id: "test1", name: "Dan Fim", repeater: 0, repeater_lbl: "Non Repeater"},
-            { id: "test2", name: "Test Fim", repeater: 0, repeater_lbl: "Non Repeater"}
-        ]
+        bumpable: req.body.bumpable,
+        date: new Date(req.body.date),
+        duration: req.body.duration,
+        note: req.body.note,
+        start: req.body.start,
+        players: req.body.players
     }
 
     try{
-        let result = await db.addMatch(match)
-        res.status(201)
+        let ref = await db.addMatch(match)
+        res.status(201).json(ref.id)
     }
     catch( err ){
         res.status(500).json(err)
