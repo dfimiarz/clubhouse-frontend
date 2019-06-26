@@ -19,7 +19,7 @@
             <v-stepper-items>
               <v-stepper-content step="2">
                 <v-container grid-list-md>
-                  <v-form ref="timeform">
+                  <v-form ref="timeform" lazy>
                   <v-layout row wrap>
                     <v-flex xs12>
                       <v-layout>
@@ -29,6 +29,7 @@
                             :items="courts"
                             item-value="id"
                             item-text="lbl"
+                            required=""
                             :rules="[ rules.required ]"
                           >
                             
@@ -51,11 +52,12 @@
                           >
                             <template v-slot:activator="{ on }">
                               <v-text-field
-                                v-model="date"
+                                v-model="computedDateFormatted"
                                 label="Date"
                                 prepend-icon="event"
                                 readonly
                                 v-on="on"
+                                required=""
                                 :rules="[ rules.required ]"
                               ></v-text-field>
                             </template>
@@ -88,6 +90,8 @@
                                 prepend-icon="event"
                                 readonly
                                 v-on="on"
+                                required=""
+                                :rules="[ rules.required ]"
                               ></v-text-field>
                             </template>
                             <v-time-picker
@@ -226,6 +230,7 @@
 
 import Session from './Session'
 import apihandler from './../services/db'
+import { isNull } from 'util';
 
 export default {
   components:{
@@ -256,22 +261,38 @@ export default {
   methods: {
     allowedminutes: m => m % 5 === 0,
     getPlayerLabel: index => "Player " + (index + 1),
-    stepCheck: function(){
-      this.step = 3
-    },
-    submitMatch: function(){
+    stepCheck: function(nextstep){
+      if( nextstep == 3 ){
+        if( ! this.$refs.timeform.validate() )
+          return false
 
-      const match = {
-          bumpable: true,
-          date: new Date(),
-          duration: 60,
-          note: "",
-          start: 480,
-          players: [
-              { id: "test1", name: "Dan Fim", repeater: 0, repeater_lbl: "Non Repeater"},
-              { id: "test2", name: "Test Fim", repeater: 0, repeater_lbl: "Non Repeater"}
-          ]
+        if( isNull(this.computedStart) )
+          return false
+
+        this.step = 3
       }
+    },
+    formatDate(date){
+      if (!date) return null
+
+      const [year, month, day] = date.split('-')
+      return `${month}/${day}/${year}`
+    },
+    validate: function(){
+
+        // console.log(this.date, this.time)
+
+        // let datepattern = /^(19|20)\d\d([- /.])(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])$/
+
+        // console.log(datepattern.test(this.date))
+
+        // let d = new Date(this.date)
+
+        return true
+    },
+    sendData(match){
+
+      console.log("sending ", match)
 
       apihandler.newMatch(match)
       .then(function (response) {
@@ -297,6 +318,24 @@ export default {
         }
         console.log(error.config);
       })  
+    },
+    submitMatch: function(){
+
+      if( ! this.validate() )
+        return false
+
+      
+      const match = {
+          bumpable: this.bumpable,
+          date: new Date(this.date),
+          duration: this.duration,
+          note: "",
+          start: this.computedStart,
+          players: this.playerDetails
+      }
+
+      this.sendData(match)
+      
     }
   },
   computed: {
@@ -325,7 +364,7 @@ export default {
 
           if( member && repeaterDetails ){
             
-            accumulator.push({ id: player.id, name: member.name, repeater: repeaterDetails.label })
+            accumulator.push({ id: player.id, name: member.name, repeater: player.repeater, repeater_lbl: repeaterDetails.label })
           }
 
           return accumulator
@@ -334,6 +373,27 @@ export default {
         },[])
        
     },
+    computedDateFormatted () {
+      return this.formatDate(this.date)
+    },
+    computedStart(){
+
+      if( this.time == null )
+        return null
+
+      const [ hours_str, min_str ] =  this.time.split(':',2)
+
+      const hours = parseInt(hours_str)
+      const min = parseInt(min_str)
+
+      if ( ! (hours >= 0 && hours <= 23) )
+          return null
+
+      if ( ! (min >= 0 && min <= 59) )
+          return null
+
+      return parseInt(hours) * 60 + parseInt(min)
+    }
     
   },
   created: function() {
