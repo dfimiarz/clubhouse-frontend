@@ -327,7 +327,7 @@ export default {
       
       const match = {
           bumpable: this.bumpable,
-          date: new Date(this.date),
+          date: this.date,
           duration: this.duration,
           note: "",
           start: this.computedStart,

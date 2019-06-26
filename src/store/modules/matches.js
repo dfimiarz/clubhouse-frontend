@@ -28,9 +28,9 @@ const mutations = {
 }
 
 const actions = {
-    watchCourts({commit}){
+    watchCourts({commit},date){
         commit('REMOVE_MATCHES')
-        var date = new Date("2019-01-24 00:00:00")
+        console.log("Trying to watch courts for " + date)
         unsubscribe = db.collection("/matches").where("date","==",date)
         .onSnapshot({includeMetadataChanges: true },
             function(snapshot) {

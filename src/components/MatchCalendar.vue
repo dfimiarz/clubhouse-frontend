@@ -106,7 +106,13 @@ export default {
       this.date = new Date(this.date.getTime() + day_diff * oneday)
     },
     resetDate(){
-       this.date = new Date()
+
+       const date = new Date()
+       date.setHours(0)
+       date.setMinutes(0)
+       date.setMilliseconds(0)
+       date.setSeconds(0)
+       this.date = date
     },
     changeDisplayedCourts: function (step){
     
@@ -192,7 +198,7 @@ export default {
     
   },
   mounted: function(){
-    this.$store.dispatch('matchstore/watchCourts')
+    this.$store.dispatch('matchstore/watchCourts',this.date)
     //console.log("Mounted")
   },
   watch: {
