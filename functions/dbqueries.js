@@ -46,16 +46,21 @@ exports.getCourts = async function(){
 
 exports.getAllSessionsForDate = function(date = null){
     
-    const day = date === null ? new Date() : new Date(date)
+    let today_dt = new Date()
+    today_dt.setHours(0)
+    today_dt.setMinutes(0)
+    today_dt.setSeconds(0)
+    today_dt.setMilliseconds(0)
 
-    day.setHours(0)
-    day.setMinutes(0)
-    day.setMilliseconds(0)
+    today = today_dt.getTime()
+
+    const date_int = date === null ? today : date
+
+    console.log(date_int, today_dt)
 
     const db = admin.firestore()
 
-
-    return  db.collection("/matches").where("date","==",day).get()
+    return  db.collection("/matches").where("date","==",date_int).get()
     .then((snap) => {
         sessions = []
 

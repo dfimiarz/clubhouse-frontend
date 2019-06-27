@@ -31,6 +31,7 @@
                             item-text="lbl"
                             required=""
                             :rules="[ rules.required ]"
+                            v-model="court"
                           >
                             
                           </v-select>
@@ -239,6 +240,7 @@ export default {
   name: 'MatchCalendar',
   data: function() {
     return {
+        court: null,
         selplayers: [
           { id: undefined, repeater: undefined },
           { id: undefined, repeater: undefined },
@@ -324,10 +326,13 @@ export default {
       if( ! this.validate() )
         return false
 
-      
+      let date = new Date(this.date + "T00:00:00")
+
+
       const match = {
+          court: this.court,
           bumpable: this.bumpable,
-          date: this.date,
+          date: date.getTime(),
           duration: this.duration,
           note: "",
           start: this.computedStart,

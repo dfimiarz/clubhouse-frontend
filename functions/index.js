@@ -9,6 +9,7 @@ const cors = require('cors')({
 const db = require('./dbqueries')
 const express = require('express')
 const bodyParser = require('body-parser')
+const admin = require('firebase-admin')
 const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -40,15 +41,16 @@ app.get('/members', async (req,res) => {
 
 app.post('/matches', async (req,res) => {
 
-    console.log(req.body.date)
+    let date = req.body.date
 
     const match = {
         bumpable: req.body.bumpable,
-        date: new Date(req.body.date),
+        date: date,
         duration: req.body.duration,
         note: req.body.note,
         start: req.body.start,
-        players: req.body.players
+        players: req.body.players,
+        court: req.body.court
     }
 
     try{
@@ -56,6 +58,7 @@ app.post('/matches', async (req,res) => {
         res.status(201).json(ref.id)
     }
     catch( err ){
+        console.log(err)
         res.status(500).json(err)
     }
 

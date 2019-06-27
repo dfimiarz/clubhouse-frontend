@@ -112,6 +112,7 @@ export default {
        date.setMinutes(0)
        date.setMilliseconds(0)
        date.setSeconds(0)
+       console.log(date.getTime())
        this.date = date
     },
     changeDisplayedCourts: function (step){
@@ -198,6 +199,7 @@ export default {
     
   },
   mounted: function(){
+    console.log("Mounted",this.date)
     this.$store.dispatch('matchstore/watchCourts',this.date)
     //console.log("Mounted")
   },

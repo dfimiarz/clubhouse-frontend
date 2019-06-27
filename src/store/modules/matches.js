@@ -30,8 +30,8 @@ const mutations = {
 const actions = {
     watchCourts({commit},date){
         commit('REMOVE_MATCHES')
-        console.log("Trying to watch courts for " + date)
-        unsubscribe = db.collection("/matches").where("date","==",date)
+        console.log("Watching for " + date.getTime(), date)
+        unsubscribe = db.collection("/matches").where("date","==",date.getTime())
         .onSnapshot({includeMetadataChanges: true },
             function(snapshot) {
             snapshot.docChanges({includeMetadataChanges: true })
@@ -49,7 +49,8 @@ const actions = {
                                 startMin: data.start, 
                                 id: change.doc.id, 
                                 court: data.court 
-                            }                    
+                            }
+                                           
                         commit('ADD_MATCH', match)
                     
                     }
