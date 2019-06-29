@@ -100,6 +100,8 @@
                               class="mt-3"
                               format="24hr"
                               :allowed-minutes="allowedminutes"
+                              min="8:00"
+                              max="21:55"
                             >
                             <v-spacer></v-spacer>
                               <v-btn flat color="primary" @click="stimedialog = false">Cancel</v-btn>
@@ -137,6 +139,8 @@
                               class="mt-3"
                               format="24hr"
                               :allowed-minutes="allowedminutes"
+                              :min="s_time"
+                              max="21:55"
                             >
                             <v-spacer></v-spacer>
                               <v-btn flat color="primary" @click="etimedialog = false">Cancel</v-btn>
