@@ -79,10 +79,10 @@
                             v-model="stimedialog"
                             :return-value.sync="s_time"
                             persistent
-                            :allowed-minutes="allowedminutes"
                             lazy
                             full-width
                             width="290px"
+                            
                           >
                             <template v-slot:activator="{ on }">
                               <v-text-field
@@ -98,6 +98,8 @@
                             <v-time-picker
                               v-model="s_time"
                               class="mt-3"
+                              format="24hr"
+                              :allowed-minutes="allowedminutes"
                             >
                             <v-spacer></v-spacer>
                               <v-btn flat color="primary" @click="stimedialog = false">Cancel</v-btn>
@@ -115,7 +117,6 @@
                             v-model="etimedialog"
                             :return-value.sync="e_time"
                             persistent
-                            :allowed-minutes="allowedminutes"
                             lazy
                             full-width
                             width="290px"
@@ -134,6 +135,8 @@
                             <v-time-picker
                               v-model="e_time"
                               class="mt-3"
+                              format="24hr"
+                              :allowed-minutes="allowedminutes"
                             >
                             <v-spacer></v-spacer>
                               <v-btn flat color="primary" @click="etimedialog = false">Cancel</v-btn>
