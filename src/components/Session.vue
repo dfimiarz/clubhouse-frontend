@@ -51,7 +51,7 @@ export default {
       return this.cellHeight1H / 60 * this.session.durationMin
     },
     getVpos: function(){
-      return this.cellHeight1H / 60 * (this.session.startMin - this.startMin)
+      return this.cellHeight1H / 60 * (this.session.startMin - this.openMin)
     },
     getPlayerClass(player){
       
@@ -72,8 +72,8 @@ export default {
     cellHeight1H: function(){
       return this.$store.getters['calCellHeight1H'];
     },
-    startMin: function(){
-      return this.$store.getters['startHour'] * 60;
+    openMin: function(){
+      return this.$store.getters['openMin'];
     },
     players: function(){
       return this.session.players === null ? [] : this.session.players

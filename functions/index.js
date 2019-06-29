@@ -17,11 +17,18 @@ app.use(bodyParser.json());
 
 app.use(cors);
 
+app.get('/ip', async (req,res) => {
+    const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+    res.json({ip:ipAddress})
+})
+
 app.post('/session', async (req,res) => {
 
 })
 
 app.get('/', async (req,res) => {
+    
     res.json({name:'Clubhouse API'})
 })
 
@@ -66,6 +73,10 @@ app.post('/matches', async (req,res) => {
 })
 
 app.get('/courts', async (req,res) => {
+
+    const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+    console.log(ipAddress)
 
     try{
         let courts = await db.getCourts()

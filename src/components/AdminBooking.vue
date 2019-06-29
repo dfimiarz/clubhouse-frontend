@@ -100,8 +100,8 @@
                               class="mt-3"
                               format="24hr"
                               :allowed-minutes="allowedminutes"
-                              min="8:00"
-                              max="21:55"
+                              :min="opentime"
+                              :max="closetime"
                             >
                             <v-spacer></v-spacer>
                               <v-btn flat color="primary" @click="stimedialog = false">Cancel</v-btn>
@@ -140,7 +140,7 @@
                               format="24hr"
                               :allowed-minutes="allowedminutes"
                               :min="s_time"
-                              max="21:55"
+                              :max="closetime"
                             >
                             <v-spacer></v-spacer>
                               <v-btn flat color="primary" @click="etimedialog = false">Cancel</v-btn>
@@ -272,6 +272,7 @@
 
 import apihandler from './../services/db'
 import { isNull } from 'util';
+import utils from './../services/utils'
 
 export default {
   components:{
@@ -389,24 +390,6 @@ export default {
 
       this.sendData(match)
       
-    },
-    getMinutes: function(val){
-      
-      if( val == null )
-        return null
-
-      const [ hours_str, min_str ] =  val.split(':',2)
-
-      const hours = parseInt(hours_str)
-      const min = parseInt(min_str)
-
-      if ( ! (hours >= 0 && hours <= 23) )
-          return null
-
-      if ( ! (min >= 0 && min <= 59) )
-          return null
-
-      return parseInt(hours) * 60 + parseInt(min)
     }
   },
   computed: {
@@ -449,14 +432,20 @@ export default {
     },
     computedStart(){
 
-      return this.getMinutes(this.s_time)
+      return utils.timetoInt(this.s_time)
     },
     computedEnd(){
 
-      return this.getMinutes(this.e_time)
+      return utils.timetoInt(this.e_time)
     },
     duration(){
       return this.computedEnd - this.computedStart
+    },
+    opentime(){
+      return this.$store.state.opentime
+    },
+    closetime(){
+      return this.$store.state.closetime
     }
     
   },

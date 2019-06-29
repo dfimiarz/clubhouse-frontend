@@ -4,6 +4,7 @@ import usermodule from './modules/user'
 import membermodule from './modules/member'
 import matchmodule from './modules/matches'
 import courtmodule from './modules/courts'
+import utils from './../services/utils'
 
 //import Axios from "axios";
 
@@ -25,8 +26,8 @@ export const store = new Vuex.Store(
             error: null,
             db: null,
             cellHeight1H: 120,
-            startTimeMin: 8 * 60, 
-            endTimeMin: 22 * 60,
+            opentime: "07:00",
+            closetime: "23:00",
             repeaterTypes: [
                 { id : 0 , label : "Non-repeater"},
                 { id : 1 , label : "First Repeater"},
@@ -109,6 +110,12 @@ export const store = new Vuex.Store(
             },
             endHour( state ){
                 return Math.trunc(state.endTimeMin/60)
+            },
+            openMin( state ){
+                return utils.timetoInt(state.opentime)
+            },
+            closeMin( state ){
+                return utils.timetoInt(state.closetime)
             },
             calCellHeight1H(state){
                 return state.cellHeight1H;

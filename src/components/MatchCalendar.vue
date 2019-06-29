@@ -69,6 +69,7 @@
 <script>
 
 import Session from './Session'
+import utils from './../services/utils'
 
 export default {
   components:{
@@ -140,26 +141,26 @@ export default {
     
   },
   computed: {
-    scheduleStartTime: function(){
-      return this.$store.state.startTimeMin
+    startMin: function(){
+      return this.$store.getters['openMin']
     },
-    scheduleEndTime: function(){
-      return this.$store.state.endTimeMin
+    endMin: function(){
+      return this.$store.getters['closeMin']
     },
-    scheduleStartHour: function(){
-      return Math.trunc(this.scheduleStartTime/60)
+    startHour: function(){
+      return Math.trunc(this.startMin/60)
     },
-    scheduleEndHour: function(){
-      return Math.trunc(this.scheduleEndTime/60)
+    endHour: function(){
+      return Math.trunc(this.endMin/60)
     },
     courts: function(){
       return this.$store.getters['courtstore/getCourts']
     },
     hourLabels: function(){
-      return this.civTimeLabels.slice(this.scheduleStartHour,this.scheduleEndHour)
+      return this.civTimeLabels.slice(this.startHour,this.endHour)
     },
     totalCellCount: function(){
-      return (this.scheduleEndHour - this.scheduleStartHour)
+      return (this.endHour - this.startHour)
     },
     matches: function () {
       return this.$store.getters['matchstore/loadedMatches']
