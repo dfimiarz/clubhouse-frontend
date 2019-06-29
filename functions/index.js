@@ -49,6 +49,7 @@ app.post('/matches', async (req,res) => {
         duration: req.body.duration,
         note: req.body.note,
         start: req.body.start,
+        end: req.body.end,
         players: req.body.players,
         court: req.body.court
     }

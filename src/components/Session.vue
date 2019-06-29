@@ -1,7 +1,7 @@
 <template>
   <div class="sessioncell" :style="{top:  + getVpos() + 'px', height: getHeight() + 'px'}"> 
       <v-layout row wrap fill-height="" class="session_container_new" align-start="" align-content-start="">
-        <v-flex xs6 >
+        <!-- <v-flex xs6 >
           <v-layout row wrap fill-height="" align-content-space-between="">
             <v-flex xs12>
               <div class="body-2">Match</div>
@@ -14,16 +14,14 @@
             </v-flex>
           </v-layout>
 
-        </v-flex>
-        <v-flex xs6 >
+        </v-flex> -->
+        <v-flex xs12 >
           <v-layout row wrap fill-height="" align-content-space-between="">
             <v-flex xs12>
-              <div class="body-2">Players:</div>
-              <div>
-                <span v-for="player in players" :key="player.id" class="caption">
-                  {{ player.name }} - {{ player.repeater }},
+              <span class="body-2">Players:</span>
+                <span v-for="(player,index) in players" :key="index" :class="['ma-1','body-2',getPlayerClass(player)]">
+                  {{ player.firstname }}
                 </span>
-              </div>
             </v-flex>
             
           </v-layout>
@@ -45,20 +43,29 @@ export default {
   name: "session",
   data: function() {
     return {
-      players: [
-        { name: "L.M.", repeater:"R1", id:1},
-        { name: "J.T", repeater:"R1", id:2},
-        { name: "T.S", repeater:"R1", id:3},
-        { name: "J.D", repeater:"R1", id:4},
-      ]
+      
     }
   },
   methods:{
     getHeight: function(){
-      return this.cellHeight1H / 60 * this.session.durMin
+      return this.cellHeight1H / 60 * this.session.durationMin
     },
     getVpos: function(){
       return this.cellHeight1H / 60 * (this.session.startMin - this.startMin)
+    },
+    getPlayerClass(player){
+      
+      var bgcolor = "white"
+
+      if( player.repeater == 1) 
+        bgcolor = "yellow lighten-3"
+      
+      if( player.repeater == 2) 
+        bgcolor = "red lighten-2"
+
+      return bgcolor
+      
+
     }
   },
   computed:{
@@ -67,6 +74,10 @@ export default {
     },
     startMin: function(){
       return this.$store.getters['startHour'] * 60;
+    },
+    players: function(){
+      return this.session.players === null ? [] : this.session.players
+      
     }
   }
 }

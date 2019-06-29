@@ -24,7 +24,7 @@ export const store = new Vuex.Store(
             loading: false,
             error: null,
             db: null,
-            cellHeight1H: 60,
+            cellHeight1H: 120,
             startTimeMin: 8 * 60, 
             endTimeMin: 22 * 60,
             repeaterTypes: [

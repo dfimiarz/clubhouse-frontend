@@ -260,7 +260,7 @@ export default {
   grid-column : 1;
   grid-row : 2;
   overflow: auto;
-  
+  height: 75vh;
 }
 
 .session-grid-container{

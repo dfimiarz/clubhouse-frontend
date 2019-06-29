@@ -6,15 +6,7 @@ let unsubscribe = null
 const state = {
 
     matches: [
-        /*
-        { text: '4 players, bumpable', durMin: 120, startMin: 0, id:1, court: 1 },
-        { text: '4 players, bumpable', durMin: 120, startMin: 300, id:2, court: 1 },
-        { text: '4 players, bumpable', durMin: 120, startMin: 480, id:3, court: 1 },
-        { text: '4 players, bumpable', durMin: 120, startMin: 480, id:4, court: 2 },
-        { text: '4 players, bumpable', durMin: 120, startMin: 480, id:4, court: 7 },
-        { text: '4 players, bumpable', durMin: 120, startMin: 480, id:4, court: 6 },
-        { text: '4 players, bumpable', durMin: 120, startMin: 480, id:4, court: 4 }
-        */
+      
     ]
 }
 
@@ -37,19 +29,31 @@ const actions = {
             snapshot.docChanges({includeMetadataChanges: true })
                 .forEach(function(change) {
 
-                    console.log("test" + change.doc.metadata.hasPendingWrites)
+                    //console.log("test" + change.doc.metadata.hasPendingWrites)
 
                     if (change.type === "added") {
-                        console.log("Match added: ", change.doc.data(),change.doc.id);
+                        
                         let data = change.doc.data()
                         
-                        let match = { 
-                                text: '4 players, bumpable', 
-                                durMin: data.duration, 
-                                startMin: data.start, 
-                                id: change.doc.id, 
-                                court: data.court 
-                            }
+                        // let match = { 
+                        //         text: '4 players, bumpable', 
+                        //         durMin: data.duration, 
+                        //         startMin: data.start, 
+                        //         id: change.doc.id, 
+                        //         court: data.court 
+                        //     }
+                        
+                        let match = {
+                            court: data.court,
+                            bumpable: data.bumpable,
+                            date: data.date,
+                            startMin: data.start,
+                            endMin: data.end,
+                            durationMin: data.duration,
+                            note: data.note,
+                            players: data.players
+                        }
+
                                            
                         commit('ADD_MATCH', match)
                     

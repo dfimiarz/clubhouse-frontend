@@ -39,9 +39,9 @@
                       </v-layout>
                       
                     </v-flex>
-                    <v-flex xs12 md6>
+                    <v-flex xs12>
                        <v-layout>
-                        <v-flex xs12>
+                        <v-flex xs12 md6>
                           <v-dialog
                             ref="date_dialog"
                             v-model="datedialog"
@@ -75,9 +75,9 @@
                       <v-layout>
                         <v-flex xs12>
                           <v-dialog
-                            ref="time_dialog"
-                            v-model="timedialog"
-                            :return-value.sync="time"
+                            ref="stdialog"
+                            v-model="stimedialog"
+                            :return-value.sync="s_time"
                             persistent
                             :allowed-minutes="allowedminutes"
                             lazy
@@ -86,7 +86,7 @@
                           >
                             <template v-slot:activator="{ on }">
                               <v-text-field
-                                v-model="time"
+                                v-model="s_time"
                                 label="Start time"
                                 prepend-icon="event"
                                 readonly
@@ -96,33 +96,63 @@
                               ></v-text-field>
                             </template>
                             <v-time-picker
-                              v-model="time"
+                              v-model="s_time"
                               class="mt-3"
                             >
                             <v-spacer></v-spacer>
-                              <v-btn flat color="primary" @click="timedialog = false">Cancel</v-btn>
-                              <v-btn flat color="primary" @click="$refs.time_dialog.save(time)">OK</v-btn>
+                              <v-btn flat color="primary" @click="stimedialog = false">Cancel</v-btn>
+                              <v-btn flat color="primary" @click="$refs.stdialog.save(s_time)">OK</v-btn>
                             </v-time-picker>
                           </v-dialog>
                         </v-flex>
                        </v-layout>
                     </v-flex>
-                    <v-flex xs12>
+                    <v-flex xs12 md6>
                       <v-layout wrap>
-                        <v-flex xs12 md6>
-                          <v-text-field
-                            ref="bumpablefield"
-                            label="Duration"
-                            type="number"
-                            v-model="duration"
-                            :rules="[ rules.required, rules.durationlimit ]"
-                          ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 md6>
-                          <v-checkbox v-model="bumpable" label="Bumpable"></v-checkbox>
+                        <v-flex xs12>
+                          <v-dialog
+                            ref="etdialog"
+                            v-model="etimedialog"
+                            :return-value.sync="e_time"
+                            persistent
+                            :allowed-minutes="allowedminutes"
+                            lazy
+                            full-width
+                            width="290px"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                v-model="e_time"
+                                label="End time"
+                                prepend-icon="event"
+                                readonly
+                                v-on="on"
+                                required=""
+                                :rules="[ rules.required ]"
+                              ></v-text-field>
+                            </template>
+                            <v-time-picker
+                              v-model="e_time"
+                              class="mt-3"
+                            >
+                            <v-spacer></v-spacer>
+                              <v-btn flat color="primary" @click="etimedialog = false">Cancel</v-btn>
+                              <v-btn flat color="primary" @click="$refs.etdialog.save(e_time)">OK</v-btn>
+                            </v-time-picker>
+                          </v-dialog>
                         </v-flex>
                       </v-layout>
                     </v-flex>
+                    <v-flex xs12 md6>
+                      <v-checkbox v-model="bumpable" label="Bumpable"></v-checkbox>  
+                    </v-flex>
+                    <v-flex xs12>
+                      <v-textarea
+                        v-model="note"
+                        label="Note"
+                      ></v-textarea>
+                    </v-flex>
+                   
                   </v-layout>
                   </v-form>
                 </v-container>
@@ -191,16 +221,19 @@
                       <span class="body-1">Players:</span>
                     </v-flex>
                     <v-flex xs12 v-for="(player,index) in playerDetails" :key="index">
-                       <span class="subheading">{{ index + 1 }} - {{ player.name }} - {{ player.repeater }}</span>
+                       <span class="subheading">{{ index + 1 }} - {{ player.firstname }} {{ player.lastname }} - {{ player.repeater_lbl }}</span>
                     </v-flex>
                     <v-flex xs12 class="my-2">
-                      <span class="subheading">Start: {{ date }} {{ time }}</span>
+                      <span class="subheading">Time: {{ date }} {{ s_time }} - {{ e_time }}</span>
                     </v-flex>
                     <v-flex xs12 class="my-2">
                       <span class="subheading">Duration: {{ duration }} min</span>
                     </v-flex>
                     <v-flex xs12 class="my-2">
                       <span class="subheading">Bumpable: {{ bumpable }}</span>
+                    </v-flex>
+                    <v-flex xs12 class="my-2">
+                      <span class="subheading">Note: {{ note }}</span>
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -210,7 +243,8 @@
                   <v-btn flat @click="step = 1">Go back</v-btn>
                   <v-spacer></v-spacer>
                   <v-btn
-                    color="primary"
+                    :loading="loading"
+                    :disabled="loading"
                     @click="submitMatch()"
                   >
                     Book
@@ -229,13 +263,11 @@
 
 <script>
 
-import Session from './Session'
 import apihandler from './../services/db'
 import { isNull } from 'util';
 
 export default {
   components:{
-    'session' : Session
   },
   name: 'MatchCalendar',
   data: function() {
@@ -249,15 +281,18 @@ export default {
         ],
         step: 0,
         datedialog: false,
-        timedialog: false,
+        stimedialog: false,
+        etimedialog: false,
         date: null,
-        time: null,
-        duration: 30,
+        s_time: null,
+        e_time: null,
+        note: null,
         bumpable: false,
         rules: {
           required: value => !!value || 'Required.',
           durationlimit: value => value >= 15 || 'Min 15 min',
-        }
+        },
+        loading: false
     }
   },
   methods: {
@@ -282,7 +317,7 @@ export default {
     },
     validate: function(){
 
-        // console.log(this.date, this.time)
+        // console.log(this.date, this.s_time)
 
         // let datepattern = /^(19|20)\d\d([- /.])(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])$/
 
@@ -295,10 +330,15 @@ export default {
     sendData(match){
 
       console.log("sending ", match)
+      this.loading = true
+
+      let that = this
 
       apihandler.newMatch(match)
       .then(function (response) {
           console.log(response)
+          that.loading = false
+          that.$router.push({ name: 'calendar' })
       })
       .catch(function (error) {
 
@@ -333,14 +373,33 @@ export default {
           court: this.court,
           bumpable: this.bumpable,
           date: date.getTime(),
-          duration: this.duration,
-          note: "",
           start: this.computedStart,
+          end: this.computedEnd,
+          duration: this.duration,
+          note: this.note,
           players: this.playerDetails
       }
 
       this.sendData(match)
       
+    },
+    getMinutes: function(val){
+      
+      if( val == null )
+        return null
+
+      const [ hours_str, min_str ] =  val.split(':',2)
+
+      const hours = parseInt(hours_str)
+      const min = parseInt(min_str)
+
+      if ( ! (hours >= 0 && hours <= 23) )
+          return null
+
+      if ( ! (min >= 0 && min <= 59) )
+          return null
+
+      return parseInt(hours) * 60 + parseInt(min)
     }
   },
   computed: {
@@ -369,7 +428,7 @@ export default {
 
           if( member && repeaterDetails ){
             
-            accumulator.push({ id: player.id, name: member.name, repeater: player.repeater, repeater_lbl: repeaterDetails.label })
+            accumulator.push({ id: player.id, firstname: member.firstname, lastname: member.lastname, repeater: player.repeater, repeater_lbl: repeaterDetails.label })
           }
 
           return accumulator
@@ -383,21 +442,14 @@ export default {
     },
     computedStart(){
 
-      if( this.time == null )
-        return null
+      return this.getMinutes(this.s_time)
+    },
+    computedEnd(){
 
-      const [ hours_str, min_str ] =  this.time.split(':',2)
-
-      const hours = parseInt(hours_str)
-      const min = parseInt(min_str)
-
-      if ( ! (hours >= 0 && hours <= 23) )
-          return null
-
-      if ( ! (min >= 0 && min <= 59) )
-          return null
-
-      return parseInt(hours) * 60 + parseInt(min)
+      return this.getMinutes(this.e_time)
+    },
+    duration(){
+      return this.computedEnd - this.computedStart
     }
     
   },

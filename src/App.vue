@@ -16,7 +16,7 @@
               <v-list-tile-title>Home</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
-          <v-list-tile :to="{name: 'MatchCalendar'}" exact="">
+          <v-list-tile :to="{name: 'calendar'}" exact="">
             <v-list-tile-action>
               <v-icon>schedule</v-icon>
             </v-list-tile-action>
@@ -64,7 +64,7 @@
         <v-spacer></v-spacer>
         <v-toolbar-items class="hidden-sm-and-down">
           <v-btn flat :to="{name: 'Home'}" exact>Home</v-btn>
-          <v-btn flat :to="{name: 'MatchCalendar'}" exact="">Schedule</v-btn>
+          <v-btn flat :to="{name: 'calendar'}" exact="">Schedule</v-btn>
           <v-btn flat :to="{name: 'QuickBooking'}" exact>Book a Court</v-btn>
         </v-toolbar-items>
       </v-toolbar>
