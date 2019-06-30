@@ -44,6 +44,7 @@ const actions = {
                         //     }
                         
                         let match = {
+                            id: change.doc.id,
                             court: data.court,
                             bumpable: data.bumpable,
                             date: data.date,

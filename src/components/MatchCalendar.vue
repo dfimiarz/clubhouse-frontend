@@ -12,7 +12,7 @@
       </v-layout>
     </v-flex>
     <v-flex xs12 lg10 >
-     
+      
           <div class="main-schedule-container" ref="scheduleContainer" @click="contClicked($event)">
             <div class="court-grid-container" v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length + ',1fr)' }">
               
@@ -39,10 +39,11 @@
                     class="court-sessions-container" 
                     v-bind:style="{ 'grid-column' : index + 2, 'grid-row': 1, 'height' : (totalCellCount * cellHeight1H) + 'px'  }">
                   
-                    <session v-for="match in getMachesForCourt(court.id)" :key="match.id" :session=match>
-                      
-                    </session>
-                  
+                    <transition-group name="fade" mode="out-in">
+                      <session v-for="match in getMachesForCourt(court.id)" :key="match.id" :session=match>
+                        
+                      </session>
+                    </transition-group>
                   </div>  
                 </div>
                 
@@ -69,7 +70,6 @@
 <script>
 
 import Session from './Session'
-import utils from './../services/utils'
 
 export default {
   components:{
@@ -312,5 +312,14 @@ export default {
   justify-content: flex-start;
 }
 
+.fade-enter-active,
+.fade-leave-active{
+    transition: opacity .3s;
+}
+
+.fade-enter,
+.fade-leave-to{
+    opacity: 0;
+}
 
 </style>

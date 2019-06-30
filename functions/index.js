@@ -74,10 +74,6 @@ app.post('/matches', async (req,res) => {
 
 app.get('/courts', async (req,res) => {
 
-    const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-
-    console.log(ipAddress)
-
     try{
         let courts = await db.getCourts()
         res.json(courts)
