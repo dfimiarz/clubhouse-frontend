@@ -272,7 +272,6 @@
 
 import apihandler from './../services/db'
 import { isNull } from 'util';
-import utils from './../services/utils'
 
 export default {
   components:{
@@ -374,16 +373,19 @@ export default {
       if( ! this.validate() )
         return false
 
-      let date = new Date(this.date + "T00:00:00")
+      const startime = this.date + " " + this.s_time
+      const endtime = this.date + " " + this.e_time
 
+      let start_dt = new Date(startime)
+      let end_dt = new Date(endtime)
+
+      console.log(startime,endtime,start_dt,end_dt)
 
       const match = {
           court: this.court,
           bumpable: this.bumpable,
-          date: date.getTime(),
-          start: this.computedStart,
-          end: this.computedEnd,
-          duration: this.duration,
+          start_dt: start_dt,
+          end_dt: end_dt,
           note: this.note,
           players: this.playerDetails
       }
@@ -429,17 +431,6 @@ export default {
     },
     computedDateFormatted () {
       return this.formatDate(this.date)
-    },
-    computedStart(){
-
-      return utils.timetoInt(this.s_time)
-    },
-    computedEnd(){
-
-      return utils.timetoInt(this.e_time)
-    },
-    duration(){
-      return this.computedEnd - this.computedStart
     },
     opentime(){
       return this.$store.state.opentime

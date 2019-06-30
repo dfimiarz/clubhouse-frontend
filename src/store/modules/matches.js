@@ -27,7 +27,10 @@ const actions = {
             unsubscribe()
         }
 
-        unsubscribe = db.collection("/matches").where("date","==",date.getTime())
+        const timemil = date.getTime()
+        let tomorrow_dt = new Date(timemil + 86400000)
+
+        unsubscribe = db.collection("/matches").where("start_dt",">=",date).where("start_dt","<=",tomorrow_dt)
         .onSnapshot({includeMetadataChanges: true },
             function(snapshot) {
             snapshot.docChanges({includeMetadataChanges: true })
@@ -39,22 +42,16 @@ const actions = {
                         
                         let data = change.doc.data()
                         
-                        // let match = { 
-                        //         text: '4 players, bumpable', 
-                        //         durMin: data.duration, 
-                        //         startMin: data.start, 
-                        //         id: change.doc.id, 
-                        //         court: data.court 
-                        //     }
-                        
                         let match = {
                             id: change.doc.id,
                             court: data.court,
                             bumpable: data.bumpable,
-                            date: data.date,
-                            startMin: data.start,
-                            endMin: data.end,
-                            durationMin: data.duration,
+                            // date: data.date,
+                            // startMin: data.start,
+                            // endMin: data.end,
+                            start_dt: data.start_dt.toDate(),
+                            end_dt: data.end_dt.toDate(),
+                            // durationMin: data.duration,
                             note: data.note,
                             players: data.players
                         }

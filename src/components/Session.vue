@@ -34,10 +34,10 @@ export default {
   },
   methods:{
     getHeight: function(){
-      return this.cellHeight1H / 60 * this.session.durationMin
+      return this.cellHeight1H / 60 * this.duration
     },
     getVpos: function(){
-      return this.cellHeight1H / 60 * (this.session.startMin - this.openMin)
+      return this.cellHeight1H / 60 * (this.startMin - this.openMin)
     },
     getPlayerClass(player){
       
@@ -76,6 +76,12 @@ export default {
     players: function(){
       return this.session.players === null ? [] : this.session.players
       
+    },
+    duration: function(){
+      return (this.session.end_dt.getTime() - this.session.start_dt.getTime()) / 60000
+    },
+    startMin: function(){
+      return this.session.start_dt.getHours() * 60 + this.session.start_dt.getMinutes()
     }
   }
 }

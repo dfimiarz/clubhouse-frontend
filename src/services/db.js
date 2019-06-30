@@ -3,6 +3,8 @@ import axios from 'axios'
 
 function newMatch(matchdata){
 
+    console.log(matchdata)
+
     return axios.post(process.env.VUE_APP_FUNCTION_ENDPOINT + '/matches',matchdata)
 
 }
