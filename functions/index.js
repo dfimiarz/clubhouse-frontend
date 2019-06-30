@@ -48,19 +48,16 @@ app.get('/members', async (req,res) => {
 
 app.post('/matches', async (req,res) => {
 
-    // let date = new Date(req.body.date)
-    let start_dt = new Date(req.body.start_dt)
-    let end_dt = new Date(req.body.end_dt)
+    let date = new Date(req.body.date)
+    // let start_dt = new Date(req.body.start_dt)
+    // let end_dt = new Date(req.body.end_dt)
 
     const match = {
         bumpable: req.body.bumpable,
-        // date: date,
-        // duration: req.body.duration,
+        date: req.body.date,
         note: req.body.note,
-        // start: req.body.start,
-        // end: req.body.end,
-        start_dt: start_dt,
-        end_dt: end_dt,
+        startmin: req.body.startmin,
+        endmin: req.body.endmin,
         players: req.body.players,
         court: req.body.court
     }

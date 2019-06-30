@@ -78,10 +78,10 @@ export default {
       
     },
     duration: function(){
-      return (this.session.end_dt.getTime() - this.session.start_dt.getTime()) / 60000
+      return this.session.endmin - this.session.startmin
     },
     startMin: function(){
-      return this.session.start_dt.getHours() * 60 + this.session.start_dt.getMinutes()
+      return this.session.startmin
     }
   }
 }

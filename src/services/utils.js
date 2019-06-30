@@ -22,7 +22,15 @@ function strTimetoInt(strval){
     return parseInt(hours) * 60 + parseInt(min)
 
 }
+function _dateToYear(date){
+
+    var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based
+    var dd = date.getDate().toString();
+
+    return [date.getFullYear(), mm.length===2 ? '' : '0', mm, dd.length===2 ? '' : '0', dd].join(''); 
+}
 
 export default {
-    timetoInt: strTimetoInt
+    timetoInt: strTimetoInt,
+    dateToYear: _dateToYear
 }

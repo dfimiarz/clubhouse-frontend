@@ -1,5 +1,6 @@
 import db from '../../firebase'
 import { isFunction } from 'util';
+import utils from '../../services/utils'
 
 let unsubscribe = null
 
@@ -27,10 +28,16 @@ const actions = {
             unsubscribe()
         }
 
-        const timemil = date.getTime()
-        let tomorrow_dt = new Date(timemil + 86400000)
+        /** 
+         * Each session must not be longer then 24 
+         * This way to get all sessions falling with today we can get those
+         * with end_date > DATET00:00 && DATET00:00 + 48 hours.
+         */ 
+        
 
-        unsubscribe = db.collection("/matches").where("start_dt",">=",date).where("start_dt","<=",tomorrow_dt)
+        const datestr = utils.dateToYear(date) 
+        
+        unsubscribe = db.collection("/matches").where("date","==",datestr)
         .onSnapshot({includeMetadataChanges: true },
             function(snapshot) {
             snapshot.docChanges({includeMetadataChanges: true })
@@ -44,21 +51,18 @@ const actions = {
                         
                         let match = {
                             id: change.doc.id,
+                            date: data.date,
                             court: data.court,
                             bumpable: data.bumpable,
-                            // date: data.date,
-                            // startMin: data.start,
-                            // endMin: data.end,
-                            start_dt: data.start_dt.toDate(),
-                            end_dt: data.end_dt.toDate(),
-                            // durationMin: data.duration,
+                            startmin: data.startmin,
+                            endmin: data.endmin,
                             note: data.note,
                             players: data.players
                         }
 
-                                           
+                                        
                         commit('ADD_MATCH', match)
-                    
+                        
                     }
                     if (change.type === "modified") {
                         console.log("Match changed: ", change.doc.data());
