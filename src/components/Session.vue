@@ -1,26 +1,12 @@
 <template>
   <div class="sessioncell" :style="{top:  + getVpos() + 'px', height: getHeight() + 'px'}"> 
       <v-layout row wrap fill-height="" class="session_container_new" align-start="" align-content-start="">
-        <!-- <v-flex xs6 >
-          <v-layout row wrap fill-height="" align-content-space-between="">
-            <v-flex xs12>
-              <div class="body-2">Match</div>
-            </v-flex>
-            <v-flex xs12>
-              <div class="caption">9:00 am - 10:30 am</div>
-            </v-flex>
-            <v-flex xs12>
-              <div class="caption">Bumpable at: 10:15</div>
-            </v-flex>
-          </v-layout>
-
-        </v-flex> -->
         <v-flex xs12 >
           <v-layout row wrap fill-height="" align-content-space-between="">
             <v-flex xs12>
               <span class="body-2">Players:</span>
                 <span v-for="(player,index) in players" :key="index" :class="['ma-1','body-2',getPlayerClass(player)]">
-                  {{ player.firstname }}
+                  {{ formatPlayerName(player) }}
                 </span>
             </v-flex>
             
@@ -66,6 +52,18 @@ export default {
       return bgcolor
       
 
+    },
+    /**
+     * @returns { string } Player name formated
+     */
+    formatPlayerName: function(player){
+      const lastname = player.lastname == null ? ""   :
+             player.lastname.lenght <= 1 ? player.lastname : 
+             player.lastname.substr(0,1)
+    
+      const firstname = player.firstname == null ? "" : player.firstname
+
+      return firstname + " " + lastname + "."
     }
   },
   computed:{
