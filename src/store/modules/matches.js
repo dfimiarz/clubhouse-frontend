@@ -22,7 +22,11 @@ const mutations = {
 const actions = {
     watchCourts({commit},date){
         commit('REMOVE_MATCHES')
-        console.log("Watching for " + date.getTime(), date)
+
+        if( isFunction(unsubscribe)){
+            unsubscribe()
+        }
+
         unsubscribe = db.collection("/matches").where("date","==",date.getTime())
         .onSnapshot({includeMetadataChanges: true },
             function(snapshot) {

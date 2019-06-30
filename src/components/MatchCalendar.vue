@@ -200,9 +200,9 @@ export default {
     
   },
   mounted: function(){
-    console.log("Mounted",this.date)
-    this.$store.dispatch('matchstore/watchCourts',this.date)
-    //console.log("Mounted")
+    
+    //this.$store.dispatch('matchstore/watchCourts',this.date)
+    
   },
   watch: {
     maxCourtCount: function(val){
@@ -217,6 +217,7 @@ export default {
     },
     date: function(val){
       console.log("Date changed" + val)
+      this.$store.dispatch('matchstore/watchCourts',this.date)
     }
   },
   beforeDestroy () {
