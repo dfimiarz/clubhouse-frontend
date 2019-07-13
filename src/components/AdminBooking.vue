@@ -28,7 +28,7 @@
                             label="Court"
                             :items="courts"
                             item-value="id"
-                            item-text="lbl"
+                            item-text="name"
                             required=""
                             :rules="[ rules.required ]"
                             v-model="court"
@@ -374,9 +374,10 @@ export default {
       if( ! this.validate() )
         return false
 
-      
+      //Convert currently chosen date to date object
       let date_dt = new Date(this.date + "T00:00:00")
 
+      //Get YYYYMMDD string from the date
       const datestr = utils.dateToYear(date_dt)
 
       const match = {
@@ -386,7 +387,7 @@ export default {
           startmin: this.startmin,
           endmin: this.endmin,
           note: this.note,
-          players: this.playerDetails
+          players: this.playerInfo
       }
 
       this.sendData(match)
@@ -427,6 +428,18 @@ export default {
           
         },[])
        
+    },
+    playerInfo: function(){
+      return this.selplayers.reduce( (accumulator,player) => {
+
+          if( player.id && player.repeater ){
+            accumulator.push({ id: player.id, repeater: player.repeater })
+          }
+
+          return accumulator
+          
+          
+        },[])
     },
     computedDateFormatted () {
       return this.formatDate(this.date)

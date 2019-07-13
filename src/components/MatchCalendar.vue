@@ -19,7 +19,7 @@
               <div class="pa-1 court-grid-item" v-for="(court,index) in displayableCourts" :key="court.id"  v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }" >
                 
                   <v-btn v-if="index == 0" :disabled="firstCourt == 0" small="" @click="changeDisplayedCourts(-1)" style="grid-row: 1; grid-column: 1 / span 1;"><v-icon> arrow_back </v-icon> </v-btn>
-                  <span class="headline" style="grid-row: 1; grid-column: 2 / span 1;">{{ court.lbl }}</span>
+                  <span class="headline" style="grid-row: 1; grid-column: 2 / span 1;">{{ court.name }}</span>
                   <v-btn v-if="index == (displayableCourts.length - 1 )"  :disabled="( (firstCourt + index) == (courts.length - 1))" small="" @click="changeDisplayedCourts(1)" style="grid-row: 1; grid-column: 3 / span 1;"><v-icon> arrow_forward </v-icon> </v-btn>   
                 
               </div>
@@ -217,11 +217,11 @@ export default {
     },
     date: function(val){
       console.log("Date changed" + val)
-      this.$store.dispatch('matchstore/watchCourts',this.date)
+      this.$store.dispatch('matchstore/loadMatches',this.date)
     }
   },
   beforeDestroy () {
-    this.$store.dispatch('matchstore/stopWatching')
+    // this.$store.dispatch('matchstore/stopWatching')
   }
 }
 </script>

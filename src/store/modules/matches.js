@@ -1,8 +1,9 @@
-import db from '../../firebase'
-import { isFunction } from 'util';
-import utils from '../../services/utils'
+// import db from '../../firebase'
+// import { isFunction } from 'util';
+// import utils from '../../services/utils'
+import Axios from "axios";
 
-let unsubscribe = null
+// let unsubscribe = null
 
 const state = {
 
@@ -21,66 +22,96 @@ const mutations = {
 }
 
 const actions = {
-    watchCourts({commit},date){
-        commit('REMOVE_MATCHES')
+    // watchCourts({commit},date){
+    //     commit('REMOVE_MATCHES')
 
-        if( isFunction(unsubscribe)){
-            unsubscribe()
-        }
+    //     if( isFunction(unsubscribe)){
+    //         unsubscribe()
+    //     }
 
-        /** 
-         * Each session must not be longer then 24 
-         * This way to get all sessions falling with today we can get those
-         * with end_date > DATET00:00 && DATET00:00 + 48 hours.
-         */ 
+    //     /** 
+    //      * Each session must not be longer then 24 
+    //      * This way to get all sessions falling with today we can get those
+    //      * with end_date > DATET00:00 && DATET00:00 + 48 hours.
+    //      */ 
         
 
-        const datestr = utils.dateToYear(date) 
+    //     const datestr = utils.dateToYear(date) 
         
-        unsubscribe = db.collection("/matches").where("date","==",datestr)
-        .onSnapshot({includeMetadataChanges: true },
-            function(snapshot) {
-            snapshot.docChanges({includeMetadataChanges: true })
-                .forEach(function(change) {
+    //     unsubscribe = db.collection("/matches").where("date","==",datestr)
+    //     .onSnapshot({includeMetadataChanges: true },
+    //         function(snapshot) {
+    //         snapshot.docChanges({includeMetadataChanges: true })
+    //             .forEach(function(change) {
 
-                    //console.log("test" + change.doc.metadata.hasPendingWrites)
+    //                 //console.log("test" + change.doc.metadata.hasPendingWrites)
 
-                    if (change.type === "added") {
+    //                 if (change.type === "added") {
                         
-                        let data = change.doc.data()
+    //                     let data = change.doc.data()
                         
-                        let match = {
-                            id: change.doc.id,
-                            date: data.date,
-                            court: data.court,
-                            bumpable: data.bumpable,
-                            startmin: data.startmin,
-                            endmin: data.endmin,
-                            note: data.note,
-                            players: data.players
-                        }
+    //                     let match = {
+    //                         id: change.doc.id,
+    //                         date: data.date,
+    //                         court: data.court,
+    //                         bumpable: data.bumpable,
+    //                         startmin: data.startmin,
+    //                         endmin: data.endmin,
+    //                         note: data.note,
+    //                         players: data.players
+    //                     }
 
                                         
-                        commit('ADD_MATCH', match)
+    //                     commit('ADD_MATCH', match)
                         
-                    }
-                    if (change.type === "modified") {
-                        console.log("Match changed: ", change.doc.data());
-                    }
-                    if (change.type === "removed") {
-                        console.log("Match removed: ", change.doc.data());
-                    }
-            })
-        })
-    },
-    stopWatching({commit}){
+    //                 }
+    //                 if (change.type === "modified") {
+    //                     console.log("Match changed: ", change.doc.data());
+    //                 }
+    //                 if (change.type === "removed") {
+    //                     console.log("Match removed: ", change.doc.data());
+    //                 }
+    //         })
+    //     })
+    // },
+    // stopWatching({commit}){
 
+    //     commit('REMOVE_MATCHES')
+
+    //     if( isFunction(unsubscribe) ){
+    //         console.log("Stopping listeners")
+    //         unsubscribe()
+    //     }
+    // },
+    loadMatches({commit}){
         commit('REMOVE_MATCHES')
+        Axios.get(process.env.VUE_APP_FUNCTION_ENDPOINT + '/matches')
+            .then(function (response) {
+                const matches = response.data
+                matches.forEach((match) => {
+                    commit('ADD_MATCH',match)
+                })
+            })
+            .catch(function (error) {
 
-        if( isFunction(unsubscribe) ){
-            console.log("Stopping listeners")
-            unsubscribe()
-        }
+
+                if( error.response ){
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                    commit('setError', error.response.data,  { root: true })
+
+                }
+                else{
+                    console.log('Error: ', error.message);
+                    commit('setError', "Connection failed",  { root: true })
+                }
+                
+            })
+            .finally(() => {
+                
+                commit('setLoading',false,  { root: true })
+            });
     }
 
 }

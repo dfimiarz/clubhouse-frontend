@@ -1,22 +1,4 @@
 import Axios from "axios";
-/*import db from '../../firebase'*/
-
-/*
-
-Expected court format
-
-label:"#1",
-id:1,
-state:1,
-statelbl:"OPEN",
-status:{label:"Available",caption:"Free for 1 hour"},
-startat: fakeStartTimeMs,
-endat: fakeStartTimeMs + 1 * 3600 * 1000, 
-serverTime: now_ms,
-bookable: true,
-msg:[]
-
-*/
 
 const state = {
     courts: [],
