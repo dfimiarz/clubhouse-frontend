@@ -29,9 +29,9 @@ export const store = new Vuex.Store(
             opentime: "07:00",
             closetime: "23:00",
             repeaterTypes: [
-                { id : 0 , label : "Non-repeater"},
-                { id : 1 , label : "First Repeater"},
-                { id : 2 , label : "Second Repeater"}
+                { id : 1000 , label : "Non-repeater"},
+                { id : 2000 , label : "First Repeater"},
+                { id : 3000 , label : "Second Repeater"}
             ],
             bookingRules:[
                 { id: 100, bumpable: false, maxduration: 30 * 60000},
