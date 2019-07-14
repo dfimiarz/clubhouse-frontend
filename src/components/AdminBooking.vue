@@ -221,6 +221,9 @@
               <v-stepper-content step="3">
                 <v-container fluid="">
                   <v-layout row wrap>
+                    <v-flex xs12 v-if="error">
+                      <div class="title red--text py-2">Error: {{ error }}</div>
+                    </v-flex>
                     <v-flex xs12>
                       <span class="headline">Confirm Booking</span>
                     </v-flex>
@@ -300,7 +303,8 @@ export default {
           required: value => !!value || 'Required.',
           durationlimit: value => value >= 15 || 'Min 15 min',
         },
-        loading: false
+        loading: false,
+        error: null
     }
   },
   methods: {
@@ -337,8 +341,8 @@ export default {
     },
     sendData(match){
 
-      console.log("sending ", match)
       this.loading = true
+      this.error = null
 
       let that = this
 
@@ -354,7 +358,7 @@ export default {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log(error.response.data);
+          that.error = error.response.data
           console.log(error.response.status);
           console.log(error.response.headers);
         } else if (error.request) {
@@ -367,29 +371,26 @@ export default {
           console.log('Error', error.message);
         }
         console.log(error.config);
-      })  
+      })
+      .finally(() => {
+        that.loading = false
+      })
     },
     submitMatch: function(){
 
       if( ! this.validate() )
         return false
 
-      //Convert currently chosen date to date object
-      let date_dt = new Date(this.date + "T00:00:00")
-
-      //Get YYYYMMDD string from the date
-      const datestr = utils.dateToYear(date_dt)
-
       const match = {
           court: this.court,
           bumpable: this.bumpable,
-          date: datestr,
-          startmin: this.startmin,
-          endmin: this.endmin,
+          starttime: this.date.concat(" ",this.s_time,":00"),
+          endtime: this.date.concat(" ",this.e_time,":00"),
           note: this.note,
           players: this.playerInfo
       }
 
+      console.log("Will send ", match)
       this.sendData(match)
       
     }
