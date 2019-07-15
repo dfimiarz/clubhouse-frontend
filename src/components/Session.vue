@@ -43,10 +43,10 @@ export default {
       
       var bgcolor = "white"
 
-      if( player.repeater == 1) 
+      if( player.repeater == 2000) 
         bgcolor = "yellow lighten-3"
       
-      if( player.repeater == 2) 
+      if( player.repeater == 3000) 
         bgcolor = "red lighten-2"
 
       return bgcolor

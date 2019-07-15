@@ -383,7 +383,7 @@ export default {
 
       const match = {
           court: this.court,
-          bumpable: this.bumpable,
+          bumpable: this.bumpable == true ? 1 : 0,
           starttime: this.date.concat(" ",this.s_time,":00"),
           endtime: this.date.concat(" ",this.e_time,":00"),
           note: this.note,

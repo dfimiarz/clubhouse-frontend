@@ -89,7 +89,7 @@ const actions = {
             .then(function (response) {
                 const matches = response.data
                 matches.forEach((match) => {
-                    commit('ADD_MATCH',match)
+                    commit('ADD_MATCH',JSON.parse(match))
                 })
             })
             .catch(function (error) {
