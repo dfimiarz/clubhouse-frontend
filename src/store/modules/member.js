@@ -28,7 +28,7 @@ const actions = {
     REGISTER_MEMBER({commit},newMemberInfo){
         commit('clearError', null, { root: true })
         commit('setLoading', true, { root: true })
-        axios.post('http://localhost:3000/members',newMemberInfo)
+        axios.post(process.env.VUE_APP_BACKEND + '/members',newMemberInfo)
             .then(function (response) {
                 console.log(response)
             })
@@ -55,7 +55,7 @@ const actions = {
     loadMembers({commit}){
         
         
-        axios.get(process.env.VUE_APP_FUNCTION_ENDPOINT + '/members')
+        axios.get(process.env.VUE_APP_BACKEND + '/members')
             .then(function (response) {
                 const members = response.data
                 members.forEach((member) => {

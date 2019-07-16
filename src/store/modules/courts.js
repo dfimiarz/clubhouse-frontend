@@ -26,7 +26,7 @@ const actions = {
         commit('CLEAR_COURT_STATUS')
         commit('clearError', null, { root: true })
         commit('setLoading', true, { root: true })
-        Axios.get(process.env.VUE_APP_FUNCTION_ENDPOINT + '/getCourtStatus')
+        Axios.get(process.env.VUE_APP_BACKEND + '/getCourtStatus')
         .then(
             courtstatus => {
                 commit('setLoading',false, { root: true })
@@ -47,7 +47,7 @@ const actions = {
         commit('clearError', null, { root: true })
         commit('setLoading', true, { root: true })
 
-        Axios.get(process.env.VUE_APP_FUNCTION_ENDPOINT + '/courts')
+        Axios.get(process.env.VUE_APP_BACKEND + '/courts')
         .then(
             courtinfo => {
                 commit('setLoading',false, { root: true })
@@ -77,7 +77,7 @@ const actions = {
     /*
     ,
     updateCourtInfo({commit}){
-        Axios.get(process.env.VUE_APP_FUNCTION_ENDPOINT + '/getCourts')
+        Axios.get(process.env.VUE_APP_BACKEND + '/getCourts')
         .then(
             courts => {
                 courts.data.forEach(function(c) {

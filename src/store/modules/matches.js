@@ -85,7 +85,7 @@ const actions = {
     // },
     loadMatches({commit}){
         commit('REMOVE_MATCHES')
-        Axios.get(process.env.VUE_APP_FUNCTION_ENDPOINT + '/matches')
+        Axios.get(process.env.VUE_APP_BACKEND + '/matches')
             .then(function (response) {
                 const matches = response.data
                 matches.forEach((match) => {
