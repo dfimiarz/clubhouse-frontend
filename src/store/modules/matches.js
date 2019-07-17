@@ -83,9 +83,14 @@ const actions = {
     //         unsubscribe()
     //     }
     // },
-    loadMatches({commit}){
+    loadMatches({commit},date){
         commit('REMOVE_MATCHES')
-        Axios.get(process.env.VUE_APP_BACKEND + '/matches')
+        console.log("fetching for" + date)
+        Axios.get(process.env.VUE_APP_BACKEND + '/matches',{
+                params: {
+                    date: date
+                }
+            })
             .then(function (response) {
                 const matches = response.data
                 matches.forEach((match) => {

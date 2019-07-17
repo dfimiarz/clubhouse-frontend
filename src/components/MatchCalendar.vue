@@ -70,6 +70,7 @@
 <script>
 
 import Session from './Session'
+import moment from 'moment'
 
 export default {
   components:{
@@ -100,7 +101,7 @@ export default {
         return this.hourLabels[cellnumber-1]
     },
     getTimeString(){
-      return this.date != null ? this.date.toDateString() : 'N/A' 
+      return this.date != null ? moment(this.date).format("dddd, MMMM Do") : 'N/A' 
     },
     changeDay(day_diff){
       const oneday = 1000*3600*24
@@ -217,7 +218,7 @@ export default {
     },
     date: function(val){
       console.log("Date changed" + val)
-      this.$store.dispatch('matchstore/loadMatches',this.date)
+      this.$store.dispatch('matchstore/loadMatches',moment(this.date).format("YYYY-MM-DD"))
     }
   },
   beforeDestroy () {
