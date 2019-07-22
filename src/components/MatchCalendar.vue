@@ -1,7 +1,7 @@
 <template>
 <v-container fluid fill-height="" grid-list-xs >
-  <v-layout justify-center="" align-content-start="" row wrap>
-    <v-flex xs12 lg10 >
+  <v-layout justify-center="" align-center="" row wrap>
+    <v-flex xs12 sm11>
       <v-layout fill-height="">
         <v-flex xs12 class="text-xs-center text-sm-left">
           <v-btn icon @click="resetDate()"> <v-icon> today </v-icon></v-btn>
@@ -11,7 +11,7 @@
         </v-flex>
       </v-layout>
     </v-flex>
-    <v-flex xs12 lg10 >
+    <v-flex xs12 sm11 >
       
           <div class="main-schedule-container" ref="scheduleContainer" @click="contClicked($event)">
             <div class="court-grid-container" v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length + ',1fr)' }">
