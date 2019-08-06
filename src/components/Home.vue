@@ -52,7 +52,7 @@ export default {
     return {
       cards: [
         { title: 'Schedule', text: 'View full schedule' ,src: './match_700_325.jpg', flexxs: 12, flexsm: 6 , dest: "calendar" },
-        { title: 'Book court', text: 'Regular court booking', src: './booking_700_325.jpg', flexxs: 12, flexsm: 6, dest: "QuickBooking" },
+        { title: 'Book court', text: 'Regular court booking', src: './booking_700_325.jpg', flexxs: 12, flexsm: 6, dest: "AdminBooking" },
         { title: 'Who is playing', text: 'Current games', src: './manage_700_325.jpg', flexxs: 12, flexsm: 6 },
         { title: 'Club Admin', text: 'Administrative features',  src: './manage_700_325.jpg', flexxs: 12, flexsm: 6 },
         
