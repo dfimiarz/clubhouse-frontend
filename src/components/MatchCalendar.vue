@@ -4,10 +4,12 @@
     <v-flex xs12 sm11>
       <v-layout fill-height="">
         <v-flex xs12 class="text-xs-center text-sm-left">
-          <v-btn icon @click="resetDate()"> <v-icon> today </v-icon></v-btn>
-          <v-btn icon @click="changeDay(-1)"> <v-icon> arrow_back </v-icon> </v-btn>
-          <span class="title">{{ this.getTimeString()}}</span> 
-          <v-btn icon @click="changeDay(1)"> <v-icon> arrow_forward </v-icon></v-btn>
+          <v-layout align-center="" fill-height="">
+            <v-btn icon @click="resetDate()"> <v-icon> today </v-icon></v-btn>
+            <v-btn icon @click="changeDay(-1)"> <v-icon> arrow_back </v-icon> </v-btn>
+            <span class="title">{{ this.getTimeString()}}</span> 
+            <v-btn icon @click="changeDay(1)"> <v-icon> arrow_forward </v-icon></v-btn>
+          </v-layout>
         </v-flex>
       </v-layout>
     </v-flex>
