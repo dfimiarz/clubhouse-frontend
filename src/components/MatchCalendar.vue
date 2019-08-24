@@ -101,7 +101,7 @@ export default {
         return this.hourLabels[cellnumber-1]
     },
     getTimeString(){
-      return this.date != null ? moment(this.date).format("dddd, MMMM Do") : 'N/A' 
+      return this.date != null ? moment(this.date).format("ddd, MMM Do") : 'N/A' 
     },
     changeDay(day_diff){
       const oneday = 1000*3600*24
