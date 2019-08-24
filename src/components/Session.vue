@@ -1,5 +1,5 @@
 <template>
-  <div class="sessioncell" :style="{top:  + getVpos() + 'px', height: getHeight() + 'px'}"> 
+  <div class="sessioncell" :style="{top:  + getVpos() + 'px', height: getHeight() + 'px'}" @click="sessionClicked"> 
       <v-layout row wrap fill-height="" class="session_container_new" align-start="" align-content-start="">
         <v-flex xs12 >
           <v-layout row wrap fill-height="" align-content-space-between="">
@@ -64,6 +64,9 @@ export default {
       const firstname = player.firstname == null ? "" : player.firstname
 
       return firstname + " " + lastname + "."
+    },
+    sessionClicked: function(){
+      this.$router.push({ name: 'SessionDetails', params: { id: this.session.id } })
     }
   },
   computed:{

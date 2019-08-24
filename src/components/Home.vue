@@ -1,8 +1,8 @@
 
 <template>
 <v-container fluid fill-height="">
-  <v-layout justify-center="" align-center="" wrap="" row>
-    <v-flex xm12 md10 lg8>
+  <v-layout justify-center="" align-start="" wrap="" row>
+    <v-flex sm12 md10 lg8>
         <v-container fluid="" grid-list-lg fill-height="">
           <v-layout row wrap justify-center="" align-center="">
             <v-flex xs12>
@@ -15,7 +15,8 @@
             <v-flex
               v-for="card in cards"
               v-bind="{ [`xs${card.flexxs}`]: true,
-                        [`sm${card.flexsm}`]: true }"
+                        [`sm${card.flexsm}`]: true,
+                        [`md${card.flexmd}`]: true }"
               :key="card.title"
             >
               <v-card :to="{name: card.dest}" raised="" >
@@ -51,10 +52,10 @@ export default {
   data: () => {
     return {
       cards: [
-        { title: 'Schedule', text: 'View full schedule' ,src: './match_700_325.jpg', flexxs: 12, flexsm: 6 , dest: "calendar" },
-        { title: 'Book court', text: 'Regular court booking', src: './booking_700_325.jpg', flexxs: 12, flexsm: 6, dest: "AdminBooking" },
-        { title: 'Who is playing', text: 'Current games', src: './manage_700_325.jpg', flexxs: 12, flexsm: 6 },
-        { title: 'Club Admin', text: 'Administrative features',  src: './manage_700_325.jpg', flexxs: 12, flexsm: 6 },
+        { title: 'Schedule', text: 'View full schedule' ,src: './match_700_325.jpg', flexxs: 12, flexsm: 12, flexmd: 6, dest: "calendar" },
+        { title: 'Book court', text: 'Regular court booking', src: './booking_700_325.jpg', flexxs: 12, flexsm: 12, flexmd: 6, dest: "AdminBooking" },
+        { title: 'Who is playing', text: 'Current games', src: './manage_700_325.jpg', flexxs: 12, flexsm: 12,flexmd: 6 },
+        { title: 'Club Admin', text: 'Administrative features',  src: './manage_700_325.jpg', flexxs: 12, flexsm: 12,flexmd: 6 },
         
       ]
       

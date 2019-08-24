@@ -1,19 +1,17 @@
 <template>
 <v-container fluid fill-height="" grid-list-xs >
   <v-layout justify-center="" align-center="" row wrap>
-    <v-flex xs12 sm11>
-      <v-layout fill-height="">
-        <v-flex xs12 class="text-xs-center text-sm-left">
-          <v-layout align-center="" fill-height="">
+    <v-flex xs12>
+      <v-layout fill-height="" align-center="">
+        
             <v-btn icon @click="resetDate()"> <v-icon> today </v-icon></v-btn>
             <v-btn icon @click="changeDay(-1)"> <v-icon> arrow_back </v-icon> </v-btn>
             <span class="title">{{ this.getTimeString()}}</span> 
             <v-btn icon @click="changeDay(1)"> <v-icon> arrow_forward </v-icon></v-btn>
-          </v-layout>
-        </v-flex>
       </v-layout>
+        
     </v-flex>
-    <v-flex xs12 sm11 >
+    <v-flex xs12>
       
           <div class="main-schedule-container" ref="scheduleContainer" @click="contClicked($event)">
             <div class="court-grid-container" v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length + ',1fr)' }">
@@ -222,9 +220,6 @@ export default {
       console.log("Date changed" + val)
       this.$store.dispatch('matchstore/loadMatches',moment(this.date).format("YYYY-MM-DD"))
     }
-  },
-  beforeDestroy () {
-    // this.$store.dispatch('matchstore/stopWatching')
   }
 }
 </script>
