@@ -9,8 +9,19 @@ function newMatch(matchdata){
 
 }
 
+function getSessionDetails(){
+
+    return new Promise((resolve) => {
+        setTimeout(function(){
+            resolve({ id: 23, start: '10:30 am'})
+        },2000)
+    })
+    
+}
+
 
 
 export default  {
-    newMatch: newMatch
+    newMatch: newMatch,
+    getSessionDetails: getSessionDetails
 }
