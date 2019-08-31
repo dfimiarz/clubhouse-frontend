@@ -1,14 +1,15 @@
 <template>
 <v-container fluid fill-height="" grid-list-xs >
-  <v-layout justify-center="" align-center="" row wrap>
+  <v-layout justify-start="" align-start="" row wrap>
     <v-flex xs12>
-      <v-layout fill-height="" align-center="">
+        <v-layout align-center="" class="py-1">
+            <v-btn color="primary" small @click="resetDate()">Today</v-btn>
+
+            <v-btn icon @click="changeDay(-1)"> <v-icon> mdi-arrow-left-bold </v-icon> </v-btn>
+            <span class="title mx-1">{{ this.getTimeString()}}</span> 
+            <v-btn icon @click="changeDay(1)"> <v-icon> mdi-arrow-right-bold </v-icon></v-btn>
+        </v-layout>    
         
-            <v-btn icon @click="resetDate()"> <v-icon> today </v-icon></v-btn>
-            <v-btn icon @click="changeDay(-1)"> <v-icon> arrow_back </v-icon> </v-btn>
-            <span class="title">{{ this.getTimeString()}}</span> 
-            <v-btn icon @click="changeDay(1)"> <v-icon> arrow_forward </v-icon></v-btn>
-      </v-layout>
         
     </v-flex>
     <v-flex xs12>
@@ -18,9 +19,9 @@
               
               <div class="pa-1 court-grid-item" v-for="(court,index) in displayableCourts" :key="court.id"  v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }" >
                 
-                  <v-btn v-if="index == 0" :disabled="firstCourt == 0" small="" @click="changeDisplayedCourts(-1)" style="grid-row: 1; grid-column: 1 / span 1;"><v-icon> arrow_back </v-icon> </v-btn>
+                  <v-btn v-if="index == 0" :disabled="firstCourt == 0" small="" @click="changeDisplayedCourts(-1)" style="grid-row: 1; grid-column: 1 / span 1;"><v-icon> mdi-arrow-left </v-icon> </v-btn>
                   <span class="headline" style="grid-row: 1; grid-column: 2 / span 1;">{{ court.name }}</span>
-                  <v-btn v-if="index == (displayableCourts.length - 1 )"  :disabled="( (firstCourt + index) == (courts.length - 1))" small="" @click="changeDisplayedCourts(1)" style="grid-row: 1; grid-column: 3 / span 1;"><v-icon> arrow_forward </v-icon> </v-btn>   
+                  <v-btn v-if="index == (displayableCourts.length - 1 )"  :disabled="( (firstCourt + index) == (courts.length - 1))" small="" @click="changeDisplayedCourts(1)" style="grid-row: 1; grid-column: 3 / span 1;"><v-icon> mdi-arrow-right </v-icon> </v-btn>   
                 
               </div>
             </div>
@@ -57,10 +58,10 @@
               fab
               bottom
               right
-              color="pink"
+              color="primary"
               :to="{name: 'AdminBooking'}"
             >
-              <v-icon>add</v-icon>
+              <v-icon>mdi-plus</v-icon>
             </v-btn>
     </v-flex>
   </v-layout>

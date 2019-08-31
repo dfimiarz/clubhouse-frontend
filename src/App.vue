@@ -10,7 +10,7 @@
         <v-list>
           <v-list-item :to="{name: 'Home'}" exact="">
             <v-list-item-action>
-              <v-icon>home</v-icon>
+              <v-icon>mdi-home</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Home</v-list-item-title>
@@ -18,7 +18,7 @@
           </v-list-item>
           <v-list-item :to="{name: 'calendar'}" exact="">
             <v-list-item-action>
-              <v-icon>schedule</v-icon>
+              <v-icon>mdi-calendar</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Schedule</v-list-item-title>
@@ -26,7 +26,7 @@
           </v-list-item>
           <v-list-item :to="{name: 'QuickBooking'}" exact="">
             <v-list-item-action>
-              <v-icon>home</v-icon>
+              <v-icon>mdi-calendar-plus</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Book a court</v-list-item-title>
@@ -34,7 +34,7 @@
           </v-list-item>
           <v-list-item  :to="{name: 'ManageMembers'}">
             <v-list-item-action>
-              <v-icon>people</v-icon>
+              <v-icon>mdi-account-multiple</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Members</v-list-item-title>
@@ -42,7 +42,7 @@
           </v-list-item>
           <v-list-item>
             <v-list-item-action>
-              <v-icon>dashboard</v-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Dashboard</v-list-item-title>
@@ -50,7 +50,7 @@
           </v-list-item>
           <v-list-item>
             <v-list-item-action>
-              <v-icon>settings</v-icon>
+              <v-icon>mdi-settings</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Settings</v-list-item-title>

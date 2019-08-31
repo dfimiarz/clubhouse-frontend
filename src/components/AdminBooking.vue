@@ -54,7 +54,7 @@
                               <v-text-field
                                 v-model="computedDateFormatted"
                                 label="Date"
-                                prepend-icon="event"
+                                prepend-icon="mdi-calendar"
                                 readonly
                                 v-on="on"
                                 required=""
@@ -86,7 +86,7 @@
                               <v-text-field
                                 v-model="s_time"
                                 label="Start time"
-                                prepend-icon="event"
+                                prepend-icon="mdi-clock-start"
                                 readonly
                                 v-on="on"
                                 required=""
@@ -124,7 +124,7 @@
                               <v-text-field
                                 v-model="e_time"
                                 label="End time"
-                                prepend-icon="event"
+                                prepend-icon="mdi-clock-end"
                                 readonly
                                 v-on="on"
                                 required=""
