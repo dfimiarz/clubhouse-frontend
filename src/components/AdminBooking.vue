@@ -22,24 +22,6 @@
                   <v-form ref="timeform" lazy>
                   <v-layout row wrap>
                     <v-flex xs12>
-                      <v-layout>
-                        <v-flex xs12 md6>
-                          <v-select
-                            label="Court"
-                            :items="courts"
-                            item-value="id"
-                            item-text="name"
-                            required=""
-                            :rules="[ rules.required ]"
-                            v-model="court"
-                          >
-                            
-                          </v-select>
-                        </v-flex>
-                      </v-layout>
-                      
-                    </v-flex>
-                    <v-flex xs12>
                        <v-layout>
                         <v-flex xs12 md6>
                           <v-dialog
@@ -147,6 +129,26 @@
                         </v-flex>
                       </v-layout>
                     </v-flex>
+                    
+                    <v-flex xs12>
+                      <v-layout>
+                        <v-flex xs12 md6>
+                          <v-select
+                            label="Court"
+                            :items="courts"
+                            item-value="id"
+                            item-text="name"
+                            required=""
+                            :rules="[ rules.required ]"
+                            v-model="court"
+                          >
+                            
+                          </v-select>
+                        </v-flex>
+                      </v-layout>
+                      
+                    </v-flex>
+                    
                     <v-flex xs12 md6>
                       <v-checkbox v-model="bumpable" label="Bumpable"></v-checkbox>  
                     </v-flex>
