@@ -275,6 +275,7 @@
 import apihandler from './../services/db'
 import { isNull } from 'util';
 import utils from './../services/utils'
+import moment from 'moment'
 
 export default {
   components:{
@@ -462,6 +463,7 @@ export default {
   },
   created: function() {
     
+    this.date = moment(new Date()).format("YYYY-MM-DD")
   },
   mounted: function(){
     
