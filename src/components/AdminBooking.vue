@@ -47,7 +47,6 @@
                             v-model="datedialog"
                             :return-value.sync="date"
                             persistent
-                            lazy
                             full-width
                             width="290px"
                           >
@@ -64,8 +63,8 @@
                             </template>
                             <v-date-picker v-model="date" scrollable>
                               <v-spacer></v-spacer>
-                              <v-btn flat color="primary" @click="datedialog = false">Cancel</v-btn>
-                              <v-btn flat color="primary" @click="$refs.date_dialog.save(date)">OK</v-btn>
+                              <v-btn text="" color="primary" @click="datedialog = false">Cancel</v-btn>
+                              <v-btn text="" color="primary" @click="$refs.date_dialog.save(date)">OK</v-btn>
                             </v-date-picker>
                           </v-dialog>
                         </v-flex>
@@ -79,7 +78,6 @@
                             v-model="stimedialog"
                             :return-value.sync="s_time"
                             persistent
-                            lazy
                             full-width
                             width="290px"
                             
@@ -104,8 +102,8 @@
                               :max="closetime"
                             >
                             <v-spacer></v-spacer>
-                              <v-btn flat color="primary" @click="stimedialog = false">Cancel</v-btn>
-                              <v-btn flat color="primary" @click="$refs.stdialog.save(s_time)">OK</v-btn>
+                              <v-btn text="" color="primary" @click="stimedialog = false">Cancel</v-btn>
+                              <v-btn text="" color="primary" @click="$refs.stdialog.save(s_time)">OK</v-btn>
                             </v-time-picker>
                           </v-dialog>
                         </v-flex>
@@ -119,7 +117,6 @@
                             v-model="etimedialog"
                             :return-value.sync="e_time"
                             persistent
-                            lazy
                             full-width
                             width="290px"
                           >
@@ -143,8 +140,8 @@
                               :max="closetime"
                             >
                             <v-spacer></v-spacer>
-                              <v-btn flat color="primary" @click="etimedialog = false">Cancel</v-btn>
-                              <v-btn flat color="primary" @click="$refs.etdialog.save(e_time)">OK</v-btn>
+                              <v-btn text="" color="primary" @click="etimedialog = false">Cancel</v-btn>
+                              <v-btn text="" color="primary" @click="$refs.etdialog.save(e_time)">OK</v-btn>
                             </v-time-picker>
                           </v-dialog>
                         </v-flex>
@@ -165,7 +162,7 @@
                 </v-container>
                 <v-layout row>
                   
-                    <v-btn flat @click="step = 1">Go back</v-btn>
+                    <v-btn text="" @click="step = 1">Go back</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn @click="stepCheck(3)">
                       Continue
@@ -250,7 +247,7 @@
                 
                 
                 <v-layout>
-                  <v-btn flat @click="step = 1">Go back</v-btn>
+                  <v-btn text="" @click="step = 1">Go back</v-btn>
                   <v-spacer></v-spacer>
                   <v-btn
                     :loading="loading"

@@ -11,7 +11,7 @@
                 <v-img
                 class="white--text"
                 height="120px"
-                src="../court.jpg"
+                src="@/assets/court.jpg"
                 >
                     <v-container fill-height fluid>
                         <v-layout justify-center="" align-center="">

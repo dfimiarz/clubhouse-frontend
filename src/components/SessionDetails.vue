@@ -1,20 +1,47 @@
 <template>
-  <v-layout fill-height >
-    <v-layout v-if="loading" fill-height justify-center align-center>
-      <v-progress-circular
-      :size="70"
-      :width="7"
-      indeterminate
-    ></v-progress-circular>
-    </v-layout>
+  <v-layout fill-height justify-center >
+    <v-flex xs12 sm10 md6 lg4>
+      <v-layout v-if="loading" fill-height justify-center align-center>
+        <v-progress-circular
+        :size="70"
+        :width="7"
+        indeterminate
+      ></v-progress-circular>
+      </v-layout>
 
-    <div v-if="error" class="error">
-      {{ error }}
-    </div>
+      <div v-if="error" class="error">
+        {{ error }}
+      </div>
 
-    <div v-if="sessioninfo" class="content">
-      {{ sessioninfo.start }}
-    </div>
+      <v-layout v-if="sessioninfo" class="content" row wrap justify-center align-center>
+        <v-flex xs12>
+          <v-card>
+            <v-img
+              class="white--text"
+              height="200px"
+              src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+            >
+              <v-container fill-height fluid>
+                <v-layout fill-height>
+                  <v-flex xs12 align-end flexbox>
+                    <span class="headline">Session Details</span>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-img>
+            <v-card-text> 
+              <div>
+                Sesssion Details
+              </div>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="orange">Share</v-btn>
+              <v-btn color="orange">Explore</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-flex>
   </v-layout>
 </template>
 

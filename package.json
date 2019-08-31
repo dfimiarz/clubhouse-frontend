@@ -5,8 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "dev-build": "vue-cli-service build --mode development",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "dev-build": "vue-cli-service build --mode development"
   },
   "dependencies": {
     "axios": "^0.18.1",
@@ -14,14 +14,18 @@
     "moment": "^2.24.0",
     "vue": "^2.6.10",
     "vue-router": "^3.1.2",
-    "vuetify": "^1.5.18",
+    "vuetify": "^2.0.0",
     "vuex": "^3.1.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
-    "vue-template-compiler": "^2.6.10"
+    "sass": "^1.17.4",
+    "sass-loader": "^7.1.0",
+    "vue-cli-plugin-vuetify": "^0.6.3",
+    "vue-template-compiler": "^2.6.10",
+    "vuetify-loader": "^1.2.2"
   },
   "browserslist": [
     "> 1%",

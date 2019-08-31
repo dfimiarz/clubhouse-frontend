@@ -8,66 +8,66 @@
         app
       >
         <v-list>
-          <v-list-tile :to="{name: 'Home'}" exact="">
-            <v-list-tile-action>
+          <v-list-item :to="{name: 'Home'}" exact="">
+            <v-list-item-action>
               <v-icon>home</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <v-list-tile-title>Home</v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-          <v-list-tile :to="{name: 'calendar'}" exact="">
-            <v-list-tile-action>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Home</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item :to="{name: 'calendar'}" exact="">
+            <v-list-item-action>
               <v-icon>schedule</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <v-list-tile-title>Schedule</v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-          <v-list-tile :to="{name: 'QuickBooking'}" exact="">
-            <v-list-tile-action>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Schedule</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item :to="{name: 'QuickBooking'}" exact="">
+            <v-list-item-action>
               <v-icon>home</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <v-list-tile-title>Book a court</v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-          <v-list-tile  :to="{name: 'ManageMembers'}">
-            <v-list-tile-action>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Book a court</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item  :to="{name: 'ManageMembers'}">
+            <v-list-item-action>
               <v-icon>people</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <v-list-tile-title>Members</v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-          <v-list-tile>
-            <v-list-tile-action>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Members</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-action>
               <v-icon>dashboard</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <v-list-tile-title>Dashboard</v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-          <v-list-tile>
-            <v-list-tile-action>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Dashboard</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-action>
               <v-icon>settings</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <v-list-tile-title>Settings</v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Settings</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <v-toolbar app   >
-        <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-app-bar app   >
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>KnickerBocker Field Club</v-toolbar-title>
-        <v-spacer></v-spacer>
+        <div class="flex-grow-1"></div>
         <v-toolbar-items class="hidden-sm-and-down">
-          <v-btn flat :to="{name: 'Home'}" exact>Home</v-btn>
-          <v-btn flat :to="{name: 'calendar'}" exact="">Schedule</v-btn>
-          <v-btn flat :to="{name: 'AdminBooking'}" exact>Book a Court</v-btn>
+          <v-btn text :to="{name: 'Home'}" exact>Home</v-btn>
+          <v-btn text :to="{name: 'calendar'}" exact="">Schedule</v-btn>
+          <v-btn text="" :to="{name: 'AdminBooking'}" exact>Book a Court</v-btn>
         </v-toolbar-items>
-      </v-toolbar>
+      </v-app-bar>
       <v-content>
        <router-view></router-view>
       </v-content>

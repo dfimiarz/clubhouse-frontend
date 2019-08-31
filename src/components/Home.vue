@@ -7,7 +7,7 @@
           <v-layout row wrap justify-center="" align-center="">
             <v-flex xs12>
               
-                <div class="main-title text-xs-center">
+                <div class="main-title text-center">
                   Knickerbocker Tennis
                 </div>
               
