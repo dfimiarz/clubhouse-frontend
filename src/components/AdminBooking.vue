@@ -29,6 +29,7 @@
                             v-model="datedialog"
                             full-width
                             width="290px"
+                            disabled=""
                           >
                             <template v-slot:activator="{ on }">
                                <v-text-field
@@ -177,6 +178,13 @@
                 <v-container fluid="" grid-list-md="">
                   <v-form ref="playerform">
                   <v-layout row wrap>
+                    <v-row no-gutters >
+                      <v-col cols="12" >
+                        <v-alert type="error" dense="" v-if="playerErrors">
+                          {{ this.playerErrors }}
+                        </v-alert>
+                      </v-col>
+                    </v-row>
                     <v-flex xs12 v-for="(player,index) in selplayers" :key="index">
                       <v-layout wrap="">
                         <v-flex xs12 md6>
@@ -186,6 +194,7 @@
                           :items="clubmembers"
                           item-text="name"
                           item-value="id"
+                          :error-messages="selplayers[index].error"
                           >
                           </v-autocomplete>
                         </v-flex>
@@ -209,7 +218,7 @@
                   
                   <v-spacer></v-spacer>
                   <v-btn
-                    @click="step = 2"
+                    @click="validatePlayerInput"
                   >
                     Continue
                   </v-btn>
@@ -283,11 +292,12 @@ export default {
     return {
         court: null,
         selplayers: [
-          { id: undefined, repeater: undefined },
-          { id: undefined, repeater: undefined },
-          { id: undefined, repeater: undefined },
-          { id: undefined, repeater: undefined },
+          { id: null, repeater: null },
+          { id: null, repeater: null },
+          { id: null, repeater: null },
+          { id: null, repeater: null }
         ],
+        playerErrors: null,
         step: 0,
         datedialog: false,
         stimedialog: false,
@@ -318,6 +328,18 @@ export default {
 
         this.step = 3
       }
+    },
+    validatePlayerInput(){
+
+      this.playerErrors = null
+
+      if( this.playerInfo.length == 0 ){
+        this.playerErrors = "No player selected"
+        return false
+      }
+        
+
+      this.step = 2
     },
     formatDate(date){
       if (!date) return null
