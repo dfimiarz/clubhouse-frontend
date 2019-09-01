@@ -27,13 +27,11 @@
                           <v-dialog
                             ref="date_dialog"
                             v-model="datedialog"
-                            :return-value.sync="date"
-                            persistent
                             full-width
                             width="290px"
                           >
                             <template v-slot:activator="{ on }">
-                              <v-text-field
+                               <v-text-field
                                 v-model="computedDateFormatted"
                                 label="Date"
                                 prepend-icon="mdi-calendar"
@@ -41,14 +39,15 @@
                                 v-on="on"
                                 required=""
                                 :rules="[ rules.required ]"
-                              ></v-text-field>
+                              ></v-text-field> 
                             </template>
-                            <v-date-picker v-model="date" scrollable>
-                              <v-spacer></v-spacer>
+                            <v-date-picker v-model="date" scrollable @input="datedialog = false">
+                              <!--<v-spacer></v-spacer>
                               <v-btn text="" color="primary" @click="datedialog = false">Cancel</v-btn>
-                              <v-btn text="" color="primary" @click="$refs.date_dialog.save(date)">OK</v-btn>
+                              <v-btn text="" color="primary" @click="$refs.date_dialog.save(date)">OK</v-btn> -->
                             </v-date-picker>
                           </v-dialog>
+                          
                         </v-flex>
                        </v-layout>
                     </v-flex>
@@ -275,7 +274,6 @@
 import apihandler from './../services/db'
 import { isNull } from 'util';
 import utils from './../services/utils'
-import moment from 'moment'
 
 export default {
   components:{
@@ -463,7 +461,7 @@ export default {
   },
   created: function() {
     
-    this.date = moment(new Date()).format("YYYY-MM-DD")
+    this.date = new Date().toISOString().substr(0, 10)
   },
   mounted: function(){
     
