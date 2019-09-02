@@ -194,7 +194,7 @@
                           :items="clubmembers"
                           item-text="name"
                           item-value="id"
-                          :error-messages="selplayers[index].error"
+                          :error-messages="selplayers[index].playerErrs"
                           >
                           </v-autocomplete>
                         </v-flex>
@@ -205,6 +205,7 @@
                             label="Repeater status:"
                             item-text="label"
                             item-value="id"
+                            :error-messages="selplayers[index].repeaterErrs"
                           >
                             
                           </v-select>
@@ -216,9 +217,15 @@
                 </v-container>
                 <v-layout row>
                   
-                  <v-spacer></v-spacer>
+                  <v-btn color="warning" text="" outlined class="ma-1"
+                    @click="clearPlayers"
+                  >
+                    Clear
+                  </v-btn>
+                  <div class="flex-grow-1"></div>
                   <v-btn
                     @click="validatePlayerInput"
+                    class="ma-1"
                   >
                     Continue
                   </v-btn>
@@ -292,10 +299,10 @@ export default {
     return {
         court: null,
         selplayers: [
-          { id: null, repeater: null },
-          { id: null, repeater: null },
-          { id: null, repeater: null },
-          { id: null, repeater: null }
+          { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
+          { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
+          { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
+          { id: null, repeater: null, playerErrs: [], repeaterErrs: [] }
         ],
         playerErrors: null,
         step: 0,
@@ -329,17 +336,69 @@ export default {
         this.step = 3
       }
     },
+    clearPlayers(){
+      this.selplayers.forEach((player) =>{
+        player.id = player.repeater = null
+      })
+
+      this.clearPlayerErrors()
+    },
+    clearPlayerErrors(){
+      this.selplayers.forEach((playerslot) =>{
+        playerslot.playerErrs.splice(0)
+        playerslot.repeaterErrs.splice(0)
+      })
+      this.playerErrors = null
+    },
     validatePlayerInput(){
 
-      this.playerErrors = null
+      this.clearPlayerErrors()
+       
+      //---Get valid player count 
+      let playerCheck = this.selplayers.reduce((accumulator,player,index) => {
 
-      if( this.playerInfo.length == 0 ){
-        this.playerErrors = "No player selected"
-        return false
+        if( player.id !== null ){
+
+          accumulator['players'].indexOf(player.id) != -1 ?
+          accumulator['errors'].push({ index: index, field: 'player', message:  "Duplicate player"}) :
+          accumulator['players'].push(player.id)
+          
+         if( player.repeater === null )
+          accumulator['errors'].push({ index: index, field: 'repeater', message:  "Repeater empty"})
+
+        }
+
+        return accumulator
+      },{ players: [], errors: [] })
+
+      console.log(playerCheck)
+
+      if( playerCheck.players.length == 0 ){
+        this.playerErrors = "Please select a player"
+        return
       }
+
+      if( playerCheck.errors.length != 0 ){
         
+        let that = this
+
+        playerCheck.errors.forEach((error) => {
+          let index = error.index
+          let field = error.field + "Errs"
+          let msg = error.message
+
+          that.selplayers[index][field].push(msg)
+        })
+      
+        return
+      
+      }
+      
+      //---
+
 
       this.step = 2
+      
     },
     formatDate(date){
       if (!date) return null
