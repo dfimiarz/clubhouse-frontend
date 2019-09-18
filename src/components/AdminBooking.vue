@@ -27,7 +27,6 @@
                           <v-dialog
                             ref="date_dialog"
                             v-model="datedialog"
-                            full-width
                             width="290px"
                             disabled=""
                           >
@@ -60,7 +59,6 @@
                             v-model="stimedialog"
                             :return-value.sync="s_time"
                             persistent
-                            full-width
                             width="290px"
                             
                           >
@@ -99,7 +97,6 @@
                             v-model="etimedialog"
                             :return-value.sync="e_time"
                             persistent
-                            full-width
                             width="290px"
                           >
                             <template v-slot:activator="{ on }">
@@ -355,7 +352,7 @@ export default {
 
       this.clearPlayerErrors()
        
-      //---Get valid player count 
+      
       let playerCheck = this.selplayers.reduce((accumulator,player,index) => {
 
         if( player.id !== null ){
@@ -395,7 +392,7 @@ export default {
       
       }
       
-      //---
+      
 
 
       this.step = 2

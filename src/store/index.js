@@ -26,8 +26,8 @@ export const store = new Vuex.Store(
             error: null,
             db: null,
             cellHeight1H: 120,
-            opentime: "07:00",
-            closetime: "23:00",
+            opentime: "08:00",
+            closetime: "20:00",
             repeaterTypes: [
                 { id : 1000 , label : "Non-repeater"},
                 { id : 2000 , label : "First Repeater"},

@@ -24,7 +24,7 @@
               <v-list-item-title>Schedule</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item :to="{name: 'QuickBooking'}" exact="">
+          <v-list-item :to="{name: 'AdminBooking'}" exact="">
             <v-list-item-action>
               <v-icon>mdi-calendar-plus</v-icon>
             </v-list-item-action>
