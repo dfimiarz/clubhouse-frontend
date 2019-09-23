@@ -28,7 +28,7 @@
                             ref="date_dialog"
                             v-model="datedialog"
                             width="290px"
-                            disabled=""
+                            
                           >
                             <template v-slot:activator="{ on }">
                                <v-text-field
@@ -42,9 +42,7 @@
                               ></v-text-field> 
                             </template>
                             <v-date-picker v-model="date" scrollable @input="datedialog = false">
-                              <!--<v-spacer></v-spacer>
-                              <v-btn text="" color="primary" @click="datedialog = false">Cancel</v-btn>
-                              <v-btn text="" color="primary" @click="$refs.date_dialog.save(date)">OK</v-btn> -->
+                              
                             </v-date-picker>
                           </v-dialog>
                           
@@ -125,6 +123,9 @@
                           </v-dialog>
                         </v-flex>
                       </v-layout>
+                    </v-flex>
+                    <v-flex xs12>
+                      {{ duration }}
                     </v-flex>
                     
                     <v-flex xs12>
