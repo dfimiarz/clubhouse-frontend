@@ -11,7 +11,7 @@ function newMatch(matchdata){
 
 function getSessionDetails( id ){
 
-    return axios.get(process.env.VUE_APP_BACKEND + '/sessions/' + id)
+    return axios.get(process.env.VUE_APP_BACKEND + '/matches/' + id)
     
 }
 

@@ -30,13 +30,125 @@
               </v-container>
             </v-img>
             <v-card-text> 
-              <div>
-                Sesssion Details
-              </div>
+              <v-list two-line>
+                <v-list-item >
+                  <v-list-item-action></v-list-item-action>
+
+                  <v-list-item-content>
+                    <v-list-item-title>09/20/2019 12:30 pm</v-list-item-title>
+                    <v-list-item-subtitle>Start</v-list-item-subtitle>
+                  </v-list-item-content>
+
+                  <v-list-item-icon>
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-list-item-icon>
+                  
+                </v-list-item>
+
+                <v-list-item >
+                  <v-list-item-action></v-list-item-action>
+
+                  <v-list-item-content>
+                    <v-list-item-title>09/20/2019 13:30 pm</v-list-item-title>
+                    <v-list-item-subtitle>End</v-list-item-subtitle>
+                  </v-list-item-content>
+
+                  <v-list-item-icon>
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-list-item-icon>
+                </v-list-item>
+                <v-list-item >
+                  <v-list-item-icon>
+                    <v-icon color="indigo">mdi-tennis</v-icon>
+                  </v-list-item-icon>
+
+                  <v-list-item-content>
+                    <v-list-item-title>1</v-list-item-title>
+                    <v-list-item-subtitle>Court</v-list-item-subtitle>
+                  </v-list-item-content>
+
+                  <v-list-item-icon>
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-list-item-icon>
+                </v-list-item>
+
+                <v-list-item >
+                  <v-list-item-action></v-list-item-action>
+
+                  <v-list-item-content>
+                    <v-list-item-title>Yes</v-list-item-title>
+                    <v-list-item-subtitle>Bumpable</v-list-item-subtitle>
+                  </v-list-item-content>
+
+                  
+                </v-list-item>
+
+                <v-divider inset></v-divider>
+
+                <v-list-item >
+                  <v-list-item-icon>
+                    <v-icon color="indigo">mdi-account</v-icon>
+                  </v-list-item-icon>
+
+                  <v-list-item-content>
+                    <v-list-item-title>John Doe</v-list-item-title>
+                    <v-list-item-subtitle>Player</v-list-item-subtitle>
+                  </v-list-item-content>
+
+                  <v-list-item-icon>
+                    <v-icon>mdi-account-remove</v-icon>
+                  </v-list-item-icon>
+                </v-list-item>
+
+                <v-list-item >
+                  <v-list-item-icon>
+                    <v-icon color="indigo">mdi-account</v-icon>
+                  </v-list-item-icon>
+
+                  <v-list-item-content>
+                    <v-list-item-title>Marry Pupins</v-list-item-title>
+                    <v-list-item-subtitle>Player</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-icon>
+                    <v-icon>mdi-account-remove</v-icon>
+                  </v-list-item-icon>
+                </v-list-item>
+
+                 <v-list-item >
+                  <v-list-item-icon>
+                    <v-icon color="indigo">mdi-account</v-icon>
+                  </v-list-item-icon>
+
+                  <v-list-item-content>
+                    <v-list-item-title>Marry Pupins 2</v-list-item-title>
+                    <v-list-item-subtitle>Player</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-icon>
+                    <v-icon>mdi-account-remove</v-icon>
+                  </v-list-item-icon>
+                </v-list-item>
+
+
+                 <v-list-item >
+                  <v-list-item-icon>
+                    <v-icon color="indigo">mdi-account</v-icon>
+                  </v-list-item-icon>
+
+                  <v-list-item-content>
+                    <v-list-item-title>Marry Pupins 3</v-list-item-title>
+                    <v-list-item-subtitle>Player</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-icon>
+                    <v-icon>mdi-account-remove</v-icon>
+                  </v-list-item-icon>
+                </v-list-item>
+
+              </v-list>
             </v-card-text>
             <v-card-actions>
-              <v-btn color="orange">Share</v-btn>
-              <v-btn color="orange">Explore</v-btn>
+              <v-btn color="orange">Cancel</v-btn>
+              <v-btn color="orange">End</v-btn>
+              <v-btn color="orange">Add Player</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -67,7 +179,7 @@ export default {
       let that = this
 
       apihandler.getSessionDetails(this.id).then((val) =>{
-        that.sessioninfo = val
+        that.sessioninfo = val.data
       })
       .catch(function (error) {
 
