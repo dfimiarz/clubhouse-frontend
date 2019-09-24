@@ -9,13 +9,9 @@ function newMatch(matchdata){
 
 }
 
-function getSessionDetails(){
+function getSessionDetails( id ){
 
-    return new Promise((resolve) => {
-        setTimeout(function(){
-            resolve({ id: 23, start: '10:30 am'})
-        },2000)
-    })
+    return axios.get(process.env.VUE_APP_BACKEND + '/sessions/' + id)
     
 }
 

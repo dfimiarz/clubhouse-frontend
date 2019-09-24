@@ -64,10 +64,27 @@ export default {
       this.error = this.sessioninfo = null
       this.loading = true
 
-      apihandler.getSessionDetails().then((val) =>{
-        this.sessioninfo = val
-      }).
-      finally(()=>{
+      let that = this
+
+      apihandler.getSessionDetails(this.id).then((val) =>{
+        that.sessioninfo = val
+      })
+      .catch(function (error) {
+
+        if (error.response) {
+          that.error = error.response.data 
+          console.log(error.response.status)
+          
+        } else if (error.request) {
+          that.error = error.request
+          //console.log(error.request);
+        } else {
+          that.error = error.message
+          
+        }
+        
+      })
+      .finally(()=>{
         this.loading = false
       })
     }
