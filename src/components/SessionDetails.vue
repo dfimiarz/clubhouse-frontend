@@ -19,7 +19,8 @@
             <v-img
               class="white--text"
               height="200px"
-              src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+              src="../assets/match.jpg"
+              
             >
               <v-container class="fill-height" fluid>
                 <v-row align="end" justify="center" class="fill-height">
