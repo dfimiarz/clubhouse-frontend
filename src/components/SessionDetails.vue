@@ -21,45 +21,47 @@
               height="200px"
               src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
             >
-              <v-container fill-height fluid>
-                <v-layout fill-height>
-                  <v-flex xs12 align-end flexbox>
-                    <span class="headline">Session Details</span>
-                  </v-flex>
-                </v-layout>
+              <v-container class="fill-height" fluid>
+                <v-row align="end" justify="center" class="fill-height">
+                  <v-col >
+                    <span class="display-1 px-3">
+                      Session Details
+                    </span> 
+                  </v-col>
+                </v-row>
               </v-container>
             </v-img>
             <v-card-text> 
               <v-list two-line>
                 <v-list-item >
-                  <v-list-item-action></v-list-item-action>
+                  <v-list-item-icon>
+                    <v-icon >mdi-clock-start</v-icon>
+                  </v-list-item-icon>
 
                   <v-list-item-content>
                     <v-list-item-title>09/20/2019 12:30 pm</v-list-item-title>
                     <v-list-item-subtitle>Start</v-list-item-subtitle>
                   </v-list-item-content>
 
-                  <v-list-item-icon>
-                    <v-icon>mdi-pencil</v-icon>
-                  </v-list-item-icon>
+                  
                   
                 </v-list-item>
 
                 <v-list-item >
-                  <v-list-item-action></v-list-item-action>
+                  <v-list-item-icon>
+                    <v-icon >mdi-clock-end</v-icon>
+                  </v-list-item-icon>
 
                   <v-list-item-content>
                     <v-list-item-title>09/20/2019 13:30 pm</v-list-item-title>
                     <v-list-item-subtitle>End</v-list-item-subtitle>
                   </v-list-item-content>
 
-                  <v-list-item-icon>
-                    <v-icon>mdi-pencil</v-icon>
-                  </v-list-item-icon>
+                  
                 </v-list-item>
                 <v-list-item >
                   <v-list-item-icon>
-                    <v-icon color="indigo">mdi-tennis</v-icon>
+                    <v-icon >mdi-tennis</v-icon>
                   </v-list-item-icon>
 
                   <v-list-item-content>
@@ -67,13 +69,13 @@
                     <v-list-item-subtitle>Court</v-list-item-subtitle>
                   </v-list-item-content>
 
-                  <v-list-item-icon>
-                    <v-icon>mdi-pencil</v-icon>
-                  </v-list-item-icon>
+                  
                 </v-list-item>
 
                 <v-list-item >
-                  <v-list-item-action></v-list-item-action>
+                  <v-list-item-icon>
+                    <v-icon >mdi-close-circle</v-icon>
+                  </v-list-item-icon>
 
                   <v-list-item-content>
                     <v-list-item-title>Yes</v-list-item-title>
@@ -87,7 +89,7 @@
 
                 <v-list-item >
                   <v-list-item-icon>
-                    <v-icon color="indigo">mdi-account</v-icon>
+                    <v-icon >mdi-account</v-icon>
                   </v-list-item-icon>
 
                   <v-list-item-content>
@@ -95,52 +97,57 @@
                     <v-list-item-subtitle>Player</v-list-item-subtitle>
                   </v-list-item-content>
 
-                  <v-list-item-icon>
-                    <v-icon>mdi-account-remove</v-icon>
-                  </v-list-item-icon>
+                  
                 </v-list-item>
 
                 <v-list-item >
                   <v-list-item-icon>
-                    <v-icon color="indigo">mdi-account</v-icon>
+                    <v-icon >mdi-account</v-icon>
                   </v-list-item-icon>
 
                   <v-list-item-content>
                     <v-list-item-title>Marry Pupins</v-list-item-title>
                     <v-list-item-subtitle>Player</v-list-item-subtitle>
                   </v-list-item-content>
-                  <v-list-item-icon>
-                    <v-icon>mdi-account-remove</v-icon>
-                  </v-list-item-icon>
+                 
                 </v-list-item>
 
                  <v-list-item >
                   <v-list-item-icon>
-                    <v-icon color="indigo">mdi-account</v-icon>
+                    <v-icon >mdi-account</v-icon>
                   </v-list-item-icon>
 
                   <v-list-item-content>
                     <v-list-item-title>Marry Pupins 2</v-list-item-title>
                     <v-list-item-subtitle>Player</v-list-item-subtitle>
                   </v-list-item-content>
-                  <v-list-item-icon>
-                    <v-icon>mdi-account-remove</v-icon>
-                  </v-list-item-icon>
+                  
                 </v-list-item>
 
 
-                 <v-list-item >
-                  <v-list-item-icon>
-                    <v-icon color="indigo">mdi-account</v-icon>
+                <v-list-item >
+                 <v-list-item-icon>
+                    <v-icon >mdi-account</v-icon>
                   </v-list-item-icon>
 
                   <v-list-item-content>
                     <v-list-item-title>Marry Pupins 3</v-list-item-title>
                     <v-list-item-subtitle>Player</v-list-item-subtitle>
                   </v-list-item-content>
+                  
+                </v-list-item>
+
+                <v-divider inset></v-divider>
+
+                <v-list-item >
                   <v-list-item-icon>
-                    <v-icon>mdi-account-remove</v-icon>
+                    <v-icon >mdi-note</v-icon>
                   </v-list-item-icon>
+
+                  <v-list-item-content>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                  </v-list-item-content>
+                  
                 </v-list-item>
 
               </v-list>
