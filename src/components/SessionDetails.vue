@@ -27,7 +27,7 @@
                 <v-row no-gutters="" class="fill-height">
                   <v-col cols="12" align-self="start">
                     
-                    <v-conainer fluid>
+                    <v-container fluid>
                       <v-row class="mx-1">
                         <div class="flex-grow-1 text-start">
                           <v-btn dark icon :to="{name: 'calendar'}">
@@ -41,7 +41,7 @@
                           </v-btn>
                         </div>
                       </v-row>
-                    </v-conainer>
+                    </v-container>
                     
                   </v-col>
                   
@@ -174,14 +174,82 @@
               </v-list>
             </v-card-text>
             <v-card-actions class="mx-2">
-              <v-btn color="warning" text="" outlined>Cancel</v-btn>
+              <v-btn color="warning" text="" @click="canceldialog = true" outlined>Cancel</v-btn>
               <div class="flex-grow-1"></div>
-              <v-btn large>End</v-btn>
+              <v-btn large @click="enddialog = true">End</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
       </v-layout>
     </v-flex>
+    <v-dialog
+      v-model="canceldialog"
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="headline">Cancel Session?</v-card-title>
+
+        <v-card-text>
+          Are you sure you wish to remove this session
+        </v-card-text>
+
+        <v-card-actions>
+          
+
+          <v-btn
+            color="primary"
+            text
+            @click="canceldialog = false"
+          >
+            No
+          </v-btn>
+
+          <div class="flex-grow-1"></div>
+
+          <v-btn
+            color="warning"
+            text
+            @click="canceldialog = false"
+          >
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="enddialog"
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="headline">End session?</v-card-title>
+
+        <v-card-text>
+          Are you sure you wish to end this session
+        </v-card-text>
+
+        <v-card-actions>
+          
+
+          <v-btn
+            color="primary"
+            text
+            @click="enddialog = false"
+          >
+            No
+          </v-btn>
+
+          <div class="flex-grow-1"></div>
+
+          <v-btn
+            color="warning"
+            text
+            @click="enddialog = false"
+          >
+            End now
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-layout>
 </template>
 
@@ -196,7 +264,9 @@ export default {
     return {
       loading: false,
       error: null,
-      sessioninfo: null
+      sessioninfo: null,
+      canceldialog: false,
+      enddialog: false
     }
   },
   methods:{
