@@ -30,7 +30,7 @@
                     <v-conainer fluid>
                       <v-row class="mx-1">
                         <div class="flex-grow-1 text-start">
-                          <v-btn dark icon>
+                          <v-btn dark icon :to="{name: 'calendar'}">
                             <v-icon>mdi-chevron-left</v-icon>
                           </v-btn>
                         </div>
@@ -45,27 +45,6 @@
                     
                   </v-col>
                   
-                  <!-- <v-col cols="12" align-self="top">
-                    <v-row>
-                      <v-col cols="4">
-                        <v-btn dark icon>
-                          <v-icon>mdi-chevron-left</v-icon>
-                        </v-btn>
-                      </v-col>
-                      <div class="flex-grow-1"></div>
-                      <v-col cols="4">
-                        
-                        <v-btn dark icon class="mr-4">
-                          <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                  <v-col cols="12" align-self="end">
-                    <span class="display-1 px-3">
-                      Match Details
-                    </span> 
-                  </v-col> -->
                   <v-col cols="12" align-self="end">
                     <span class="display-1 pa-1">Match Details</span>
                   </v-col>
@@ -194,10 +173,10 @@
 
               </v-list>
             </v-card-text>
-            <v-card-actions>
-              <v-btn color="orange">Cancel</v-btn>
-              <v-btn color="orange">End</v-btn>
-              <v-btn color="orange">Add Player</v-btn>
+            <v-card-actions class="mx-2">
+              <v-btn color="warning" text="" outlined>Cancel</v-btn>
+              <div class="flex-grow-1"></div>
+              <v-btn large>End</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
