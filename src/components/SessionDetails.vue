@@ -20,16 +20,57 @@
               class="white--text"
               height="200px"
               src="../assets/match.jpg"
-              
+              gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)"
             >
-              <v-container class="fill-height" fluid>
-                <v-row align="end" justify="center" class="fill-height">
-                  <v-col >
+              
+              <v-container class="fill-height" fluid="">  
+                <v-row no-gutters="" class="fill-height">
+                  <v-col cols="12" align-self="start">
+                    
+                    <v-conainer fluid>
+                      <v-row class="mx-1">
+                        <div class="flex-grow-1 text-start">
+                          <v-btn dark icon>
+                            <v-icon>mdi-chevron-left</v-icon>
+                          </v-btn>
+                        </div>
+                        <div style="Flex-grow:2;"></div>
+                        <div class="flex-grow-1 text-end">
+                          <v-btn icon>
+                            <v-icon>mdi-pencil</v-icon>
+                          </v-btn>
+                        </div>
+                      </v-row>
+                    </v-conainer>
+                    
+                  </v-col>
+                  
+                  <!-- <v-col cols="12" align-self="top">
+                    <v-row>
+                      <v-col cols="4">
+                        <v-btn dark icon>
+                          <v-icon>mdi-chevron-left</v-icon>
+                        </v-btn>
+                      </v-col>
+                      <div class="flex-grow-1"></div>
+                      <v-col cols="4">
+                        
+                        <v-btn dark icon class="mr-4">
+                          <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col cols="12" align-self="end">
                     <span class="display-1 px-3">
-                      Session Details
+                      Match Details
                     </span> 
+                  </v-col> -->
+                  <v-col cols="12" align-self="end">
+                    <span class="display-1 pa-1">Match Details</span>
                   </v-col>
                 </v-row>
+                
               </v-container>
             </v-img>
             <v-card-text> 
