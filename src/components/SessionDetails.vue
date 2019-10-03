@@ -174,9 +174,9 @@
               </v-list>
             </v-card-text>
             <v-card-actions class="mx-2">
-              <v-btn color="warning" text="" @click="canceldialog = true" outlined>Cancel</v-btn>
+              <v-btn color="warning" text="" @click="canceldialog = true" outlined>Remove Session</v-btn>
               <div class="flex-grow-1"></div>
-              <v-btn large @click="enddialog = true">End</v-btn>
+              <v-btn large @click="enddialog = true">End session</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
