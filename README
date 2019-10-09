@@ -1,3 +1,2 @@
 1. Configure .env files .env.local (serve) .env.production (build)
-2. Configure and run run_functions.bat. Make sure to point the path to a valid key file.
 
