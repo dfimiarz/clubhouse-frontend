@@ -21,7 +21,10 @@
             >
               <v-card :to="{name: card.dest}" raised="" >
                 <v-img
-                  :src="card.src"
+                  :src="require(`@/assets/${card.img}`)"
+                  :lazy-src="require(`@/assets/${card.img_small}`)"
+                  min-height="100"
+                  max-height="325"
                 >
                   
                   <v-container fill-height fluid>
@@ -52,10 +55,10 @@ export default {
   data: () => {
     return {
       cards: [
-        { title: 'Schedule', text: 'View full schedule' ,src: './match_700_325.jpg', flexxs: 12, flexsm: 12, flexmd: 6, dest: "calendar" },
-        { title: 'Book court', text: 'Regular court booking', src: './booking_700_325.jpg', flexxs: 12, flexsm: 12, flexmd: 6, dest: "AdminBooking" },
-        { title: 'Who is playing', text: 'Current games', src: './manage_700_325.jpg', flexxs: 12, flexsm: 12,flexmd: 6 },
-        { title: 'Club Admin', text: 'Administrative features',  src: './manage_700_325.jpg', flexxs: 12, flexsm: 12,flexmd: 6 },
+        { title: 'Schedule', text: 'View full schedule' ,img: 'players.jpg', img_small: 'players_small.jpg', flexxs: 12, flexsm: 12, flexmd: 6, dest: "calendar" },
+        { title: 'Book court', text: 'Regular court booking', img: 'tennisracquet.jpg', img_small: 'tennisracquet_small.jpg', flexxs: 12, flexsm: 12, flexmd: 6, dest: "AdminBooking" },
+        { title: 'Who is playing', text: 'Current games', img: 'clubhouse.jpg', flexxs: 12, img_small: 'clubhouse_small.jpg', flexsm: 12,flexmd: 6 },
+        { title: 'Club Admin', text: 'Administrative features',  img: 'clubhouse.jpg', img_small: 'clubhouse_small.jpg', flexxs: 12, flexsm: 12,flexmd: 6 },
         
       ]
       

@@ -19,7 +19,8 @@
             <v-img
               class="white--text"
               height="200px"
-              src="../assets/match.jpg"
+              :src="require('@/assets/match.jpg')"
+              :lazy-src="require('@/assets/match_small.jpg')"
               gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)"
             >
               
