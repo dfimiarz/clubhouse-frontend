@@ -61,7 +61,7 @@
                   </v-list-item-icon>
 
                   <v-list-item-content>
-                    <v-list-item-title>{{ sessioninfo.start }}</v-list-item-title>
+                    <v-list-item-title>{{ sessioninfo.start | formatTime }}</v-list-item-title>
                     <v-list-item-subtitle>Start</v-list-item-subtitle>
                   </v-list-item-content>
 
@@ -75,7 +75,7 @@
                   </v-list-item-icon>
 
                   <v-list-item-content>
-                    <v-list-item-title>{{ sessioninfo.end }}</v-list-item-title>
+                    <v-list-item-title>{{ sessioninfo.end | formatTime }}</v-list-item-title>
                     <v-list-item-subtitle>End</v-list-item-subtitle>
                   </v-list-item-content>
 
@@ -109,54 +109,15 @@
 
                 <v-divider inset></v-divider>
 
-                <v-list-item >
+                <v-list-item v-for="player in sessioninfo.players" :key="player.id" >
                   <v-list-item-icon>
                     <v-icon >mdi-account</v-icon>
                   </v-list-item-icon>
 
                   <v-list-item-content>
-                    <v-list-item-title>John Doe</v-list-item-title>
-                    <v-list-item-subtitle>Player</v-list-item-subtitle>
+                    <v-list-item-title>{{ player.firstname }} {{ player.lastname}}</v-list-item-title>
+                    <v-list-item-subtitle> {{ player.type }}</v-list-item-subtitle>
                   </v-list-item-content>
-
-                  
-                </v-list-item>
-
-                <v-list-item >
-                  <v-list-item-icon>
-                    <v-icon >mdi-account</v-icon>
-                  </v-list-item-icon>
-
-                  <v-list-item-content>
-                    <v-list-item-title>Marry Pupins</v-list-item-title>
-                    <v-list-item-subtitle>Player</v-list-item-subtitle>
-                  </v-list-item-content>
-                 
-                </v-list-item>
-
-                 <v-list-item >
-                  <v-list-item-icon>
-                    <v-icon >mdi-account</v-icon>
-                  </v-list-item-icon>
-
-                  <v-list-item-content>
-                    <v-list-item-title>Marry Pupins 2</v-list-item-title>
-                    <v-list-item-subtitle>Player</v-list-item-subtitle>
-                  </v-list-item-content>
-                  
-                </v-list-item>
-
-
-                <v-list-item >
-                 <v-list-item-icon>
-                    <v-icon >mdi-account</v-icon>
-                  </v-list-item-icon>
-
-                  <v-list-item-content>
-                    <v-list-item-title>Marry Pupins 3</v-list-item-title>
-                    <v-list-item-subtitle>Player</v-list-item-subtitle>
-                  </v-list-item-content>
-                  
                 </v-list-item>
 
                 <v-divider inset></v-divider>
@@ -177,7 +138,7 @@
             <v-card-actions class="mx-2">
               <v-btn color="warning" text="" @click="canceldialog = true" outlined>Remove Session</v-btn>
               <div class="flex-grow-1"></div>
-              <v-btn large @click="enddialog = true">End session</v-btn>
+              <v-btn large @click="enddialog = true">Abort session</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -257,6 +218,7 @@
 <script>
 
 import apihandler from './../services/db'
+import moment from 'moment'
 
 export default {
   props: ['id'],
@@ -298,6 +260,12 @@ export default {
       .finally(()=>{
         this.loading = false
       })
+    }
+  },
+  filters: {
+    formatTime: function(timestring){
+      if( ! timestring ) return 'N/A'
+      return moment(timestring).format('MMM. Do h:mm a ')
     }
   },
   computed:{
