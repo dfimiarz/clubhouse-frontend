@@ -61,7 +61,7 @@
                   </v-list-item-icon>
 
                   <v-list-item-content>
-                    <v-list-item-title>09/20/2019 12:30 pm</v-list-item-title>
+                    <v-list-item-title>{{ sessioninfo.start }}</v-list-item-title>
                     <v-list-item-subtitle>Start</v-list-item-subtitle>
                   </v-list-item-content>
 
@@ -75,7 +75,7 @@
                   </v-list-item-icon>
 
                   <v-list-item-content>
-                    <v-list-item-title>09/20/2019 13:30 pm</v-list-item-title>
+                    <v-list-item-title>{{ sessioninfo.end }}</v-list-item-title>
                     <v-list-item-subtitle>End</v-list-item-subtitle>
                   </v-list-item-content>
 
@@ -87,7 +87,7 @@
                   </v-list-item-icon>
 
                   <v-list-item-content>
-                    <v-list-item-title>1</v-list-item-title>
+                    <v-list-item-title>{{ sessioninfo.court }}</v-list-item-title>
                     <v-list-item-subtitle>Court</v-list-item-subtitle>
                   </v-list-item-content>
 
@@ -100,7 +100,7 @@
                   </v-list-item-icon>
 
                   <v-list-item-content>
-                    <v-list-item-title>Yes</v-list-item-title>
+                    <v-list-item-title>{{ sessioninfo.bumpable }}</v-list-item-title>
                     <v-list-item-subtitle>Bumpable</v-list-item-subtitle>
                   </v-list-item-content>
 
@@ -167,7 +167,7 @@
                   </v-list-item-icon>
 
                   <v-list-item-content>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    {{ sessioninfo.comment }}
                   </v-list-item-content>
                   
                 </v-list-item>
