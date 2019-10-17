@@ -1,16 +1,23 @@
 <template>
 <v-container fluid fill-height="" grid-list-xs >
-  <v-layout justify-start="" align-start="" row wrap>
+  <v-layout fill-height="" align-content-space-around="" row wrap>
     <v-flex xs12>
-        <v-layout align-center="" class="py-1">
-            <v-btn color="primary" small @click="resetDate()" class="mr-2">Today</v-btn>
+        <v-layout align-center="" class="py-1" justify-space-between="">
+          <v-flex xs12 >
+            <v-layout align-center="">
+              <v-btn color="primary" small outlined @click="resetDate()" class="mr-2">Today</v-btn>
 
-            <v-btn icon @click="changeDay(-1)"> <v-icon> mdi-arrow-left-bold </v-icon> </v-btn>
-            <span class="title mx-1">{{ this.getTimeString()}}</span> 
-            <v-btn icon @click="changeDay(1)"> <v-icon> mdi-arrow-right-bold </v-icon></v-btn>
+              <v-btn icon @click="changeDay(-1)"> <v-icon> mdi-arrow-left-bold </v-icon> </v-btn>
+              <span class="title mx-1">{{ this.getTimeString()}}</span> 
+              <v-btn icon @click="changeDay(1)"> <v-icon> mdi-arrow-right-bold </v-icon></v-btn>
+            </v-layout>
+          </v-flex>
+          <v-flex xs2>
+            <v-layout justify-end="" align-center="">
+              <v-btn color="warning" x-small fab>?</v-btn>
+            </v-layout>
+          </v-flex>
         </v-layout>    
-        
-        
     </v-flex>
     <v-flex xs12>
       
