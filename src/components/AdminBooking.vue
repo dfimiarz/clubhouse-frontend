@@ -152,8 +152,10 @@
                     </v-flex>
                     <v-flex xs12>
                       <v-textarea
+                        counter
                         v-model="note"
                         label="Note"
+                        :rules="[rules.notelimit]"
                       ></v-textarea>
                     </v-flex>
                    
@@ -316,6 +318,7 @@ export default {
         rules: {
           required: value => !!value || 'Required.',
           durationlimit: value => value >= 15 || 'Min 15 min',
+          notelimit: v => v.length <= 256 || 'Max 256 characters'
         },
         loading: false,
         error: null
