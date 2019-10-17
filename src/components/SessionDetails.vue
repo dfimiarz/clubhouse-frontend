@@ -9,11 +9,15 @@
       ></v-progress-circular>
       </v-layout>
 
+      <v-layout v-if="notfound" fill-height justify-center align-center>
+        <span class="display-1">Not found</span>
+      </v-layout>
+
       <div v-if="error" class="error">
         {{ error }}
       </div>
 
-      <v-layout v-if="sessioninfo" class="content" row wrap justify-center align-center>
+      <v-layout v-if="sessioninfo" class="content" row wrap fill-height="" justify-center align-center>
         <v-flex xs12>
           <v-card>
             <v-img
@@ -228,6 +232,7 @@ export default {
       loading: false,
       error: null,
       sessioninfo: null,
+      notfound: false,
       canceldialog: false,
       enddialog: false
     }
@@ -236,23 +241,26 @@ export default {
     fetchData: function(){
       this.error = this.sessioninfo = null
       this.loading = true
-
-      let that = this
+      this.notfound = false
 
       apihandler.getSessionDetails(this.id).then((val) =>{
-        that.sessioninfo = val.data
+        
+        if( val.data != null )
+          this.sessioninfo = val.data
+        else
+          this.notfound = true
       })
       .catch(function (error) {
 
         if (error.response) {
-          that.error = error.response.data 
+          this.error = error.response.data 
           console.log(error.response.status)
           
         } else if (error.request) {
-          that.error = error.request
+          this.error = error.request
           //console.log(error.request);
         } else {
-          that.error = error.message
+          this.error = error.message
           
         }
         
@@ -265,7 +273,7 @@ export default {
   filters: {
     formatTime: function(timestring){
       if( ! timestring ) return 'N/A'
-      return moment(timestring).format('MMM. Do h:mm a ')
+      return moment(timestring).format('MMM Do h:mm a ')
     }
   },
   computed:{
