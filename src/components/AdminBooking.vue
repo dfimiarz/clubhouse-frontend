@@ -313,7 +313,7 @@ export default {
         date: null,
         s_time: null,
         e_time: null,
-        note: null,
+        note: "",
         bumpable: false,
         rules: {
           required: value => !!value || 'Required.',
