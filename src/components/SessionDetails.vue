@@ -61,11 +61,24 @@
               <v-list two-line>
                 <v-list-item >
                   <v-list-item-icon>
+                    <v-icon >mdi-calendar-range</v-icon>
+                  </v-list-item-icon>
+
+                  <v-list-item-content>
+                    <v-list-item-title>{{ sessioninfo.date | formatDate }}</v-list-item-title>
+                    <v-list-item-subtitle>Date</v-list-item-subtitle>
+                  </v-list-item-content>
+
+                  
+                  
+                </v-list-item>
+                <v-list-item >
+                  <v-list-item-icon>
                     <v-icon >mdi-clock-start</v-icon>
                   </v-list-item-icon>
 
                   <v-list-item-content>
-                    <v-list-item-title>{{ sessioninfo.start | formatTime }}</v-list-item-title>
+                    <v-list-item-title>{{ starttime | formatTime }}</v-list-item-title>
                     <v-list-item-subtitle>Start</v-list-item-subtitle>
                   </v-list-item-content>
 
@@ -79,7 +92,7 @@
                   </v-list-item-icon>
 
                   <v-list-item-content>
-                    <v-list-item-title>{{ sessioninfo.end | formatTime }}</v-list-item-title>
+                    <v-list-item-title>{{ endtime | formatTime }}</v-list-item-title>
                     <v-list-item-subtitle>End</v-list-item-subtitle>
                   </v-list-item-content>
 
@@ -274,12 +287,20 @@ export default {
   filters: {
     formatTime: function(timestring){
       if( ! timestring ) return 'N/A'
-      return moment(timestring).format('MMM Do h:mm a ')
+      return moment(timestring).format('h:mm a')
+    },
+    formatDate: function(timestring){
+      if( ! timestring ) return 'N/A'
+      return moment(timestring).format('MMM Do, Y')
     }
   },
   computed:{
-    
-
+    starttime: function(){
+      return new Date(this.sessioninfo.date.concat('T',this.sessioninfo.start))
+    },
+    endtime: function(){
+      return new Date(this.sessioninfo.date.concat('T',this.sessioninfo.end))
+    }
   },
   watch:{
     //needed to get new data when route changes

@@ -14,7 +14,7 @@
           </v-flex>
           <v-flex xs2>
             <v-layout justify-end="" align-center="">
-              <v-btn color="warning" x-small fab>?</v-btn>
+              <v-btn color="warning" x-small fab><v-icon> mdi-help </v-icon></v-btn>
             </v-layout>
           </v-flex>
         </v-layout>    

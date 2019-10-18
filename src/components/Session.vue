@@ -84,12 +84,14 @@ export default {
       return this.endMin - this.startMin
     },
     startMin: function(){
-      let s_dt = new Date(this.session.start)
+      
+      let s_dt = new Date(this.session.date.concat('T',this.session.start))
       return s_dt.getHours() * 60 + s_dt.getMinutes()
-      //return this.session.startmin
+      
     },
     endMin: function(){
-      let e_dt = new Date(this.session.end)
+      
+      let e_dt = new Date(this.session.date.concat('T',this.session.end))
       return e_dt.getHours() * 60 + e_dt.getMinutes()
     }
 

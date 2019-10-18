@@ -465,8 +465,9 @@ export default {
       const match = {
           court: this.court,
           bumpable: this.bumpable == true ? 1 : 0,
-          starttime: this.date.concat(" ",this.s_time,":00"),
-          endtime: this.date.concat(" ",this.e_time,":00"),
+          date: this.date,
+          start: this.s_time,
+          end: this.e_time,
           note: this.note,
           players: this.playerInfo
       }
