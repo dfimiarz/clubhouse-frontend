@@ -154,9 +154,9 @@
               </v-list>
             </v-card-text>
             <v-card-actions class="mx-2">
-              <v-btn color="warning" text="" @click="canceldialog = true" outlined>Remove Session</v-btn>
+              <v-btn color="warning" text="" @click="canceldialog = true" outlined v-show="isRemoveable">Remove Session</v-btn>
               <div class="flex-grow-1"></div>
-              <v-btn large @click="enddialog = true">Abort session</v-btn>
+              <v-btn large @click="enddialog = true" v-show="isActive">End session</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -167,10 +167,10 @@
       max-width="290"
     >
       <v-card>
-        <v-card-title class="headline">Cancel Session?</v-card-title>
+        <v-card-title class="headline">Remove Session</v-card-title>
 
         <v-card-text>
-          Are you sure you wish to remove this session
+          <div>Are you sure you wish to <span class="red--text font-weight-bold"> REMOVE </span> this session from club schedule?</div>
         </v-card-text>
 
         <v-card-actions>
@@ -191,7 +191,7 @@
             text
             @click="canceldialog = false"
           >
-            Cancel
+            Yes, REMOVE
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -243,6 +243,8 @@ export default {
   name: "sessiondetails",
   data: function() {
     return {
+      interval: null,
+      currentTime: null,
       loading: false,
       error: null,
       sessioninfo: null,
@@ -300,6 +302,12 @@ export default {
     },
     endtime: function(){
       return new Date(this.sessioninfo.date.concat('T',this.sessioninfo.end))
+    },
+    isActive: function(){
+      return this.starttime.getTime() <= this.currentTime.getTime() && this.endtime.getTime() >= this.currentTime.getTime()
+    },
+    isRemoveable: function(){
+      return (this.starttime.getTime() + ( 15 * 60 * 1000)) > this.currentTime.getTime()
     }
   },
   watch:{
@@ -309,6 +317,15 @@ export default {
   created () {
     //fetch data here
     this.fetchData()
+
+    this.currentTime = new Date()
+
+    this.interval = setInterval(() => {
+      this.currentTime = new Date()
+    },1000)
+  },
+  destroyed (){
+    clearInterval(this.interval)
   }
 }
 </script>
