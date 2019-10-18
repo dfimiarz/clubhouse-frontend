@@ -83,6 +83,9 @@ const actions = {
     //         unsubscribe()
     //     }
     // },
+    clearMatches({commit}){
+        commit('REMOVE_MATCHES')
+    },
     loadMatches({commit},date){
         commit('REMOVE_MATCHES')
         console.log("fetching for" + date)

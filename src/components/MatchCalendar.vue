@@ -213,6 +213,9 @@ export default {
     //this.$store.dispatch('matchstore/watchCourts',this.date)
     
   },
+  destroyed: function(){
+    this.$store.dispatch('matchstore/clearMatches')
+  },
   watch: {
     maxCourtCount: function(val){
 
