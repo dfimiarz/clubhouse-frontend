@@ -243,7 +243,6 @@ export default {
   name: "sessiondetails",
   data: function() {
     return {
-      interval: null,
       currentTime: null,
       loading: false,
       error: null,
@@ -318,14 +317,11 @@ export default {
     //fetch data here
     this.fetchData()
 
-    this.currentTime = new Date()
+    this.currentTime = new Date('2019-10-18T15:00:00')
 
-    this.interval = setInterval(() => {
-      this.currentTime = new Date()
-    },1000)
   },
   destroyed (){
-    clearInterval(this.interval)
+    
   }
 }
 </script>
