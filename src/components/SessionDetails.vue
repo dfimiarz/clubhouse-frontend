@@ -154,9 +154,9 @@
               </v-list>
             </v-card-text>
             <v-card-actions class="mx-2">
-              <v-btn color="warning" text="" @click="canceldialog = true" outlined v-show="isRemoveable">Remove Session</v-btn>
+              <v-btn color="warning" text="" @click="canceldialog = true" outlined v-show="canRemove">Remove Session</v-btn>
               <div class="flex-grow-1"></div>
-              <v-btn large @click="enddialog = true" v-show="isActive">End session</v-btn>
+              <v-btn large @click="enddialog = true" v-show="canEnd">End session</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -223,7 +223,7 @@
           <v-btn
             color="warning"
             text
-            @click="enddialog = false"
+            @click="endSession"
           >
             End now
           </v-btn>
@@ -253,6 +253,40 @@ export default {
     }
   },
   methods:{
+    endSession: function(){
+      this.error = null
+      this.loading = true
+
+      var params = {
+        id: this.sessioninfo.id,
+        hash: this.sessioninfo.updated
+      }
+
+      
+
+      apihandler.endSession(params).then(() => {
+        this.$router.push({name: 'calendar'})
+      })
+      .catch((error) => {
+
+        if (error.response) {
+          this.error = error.response.data 
+          console.log(error.response.status)
+          
+        } else if (error.request) {
+          this.error = error.request
+          //console.log(error.request);
+        } else {
+          this.error = error.message
+          
+        }
+        
+      })
+      .finally(()=>{
+        this.loading = false
+      })
+    },
+
     fetchData: function(){
       this.error = this.sessioninfo = null
       this.loading = true
@@ -265,7 +299,7 @@ export default {
         else
           this.notfound = true
       })
-      .catch(function (error) {
+      .catch((error) => {
 
         if (error.response) {
           this.error = error.response.data 
@@ -302,11 +336,15 @@ export default {
     endtime: function(){
       return new Date(this.sessioninfo.date.concat('T',this.sessioninfo.end))
     },
-    isActive: function(){
-      return this.starttime.getTime() <= this.currentTime.getTime() && this.endtime.getTime() >= this.currentTime.getTime()
+    canEnd: function(){
+      return this.sessioninfo.hasOwnProperty('permissions')    ?
+              (Array.isArray(this.sessioninfo.permissions)      ? 
+              this.sessioninfo.permissions.includes('CAN_END') : false) : false
     },
-    isRemoveable: function(){
-      return (this.starttime.getTime() + ( 15 * 60 * 1000)) > this.currentTime.getTime()
+    canRemove: function(){
+      return this.sessioninfo.hasOwnProperty('permissions')       ?
+              (Array.isArray(this.sessioninfo.permissions)         ? 
+              this.sessioninfo.permissions.includes('CAN_REMOVE') : false) : false
     }
   },
   watch:{

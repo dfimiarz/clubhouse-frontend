@@ -6,10 +6,6 @@ import matchmodule from './modules/matches'
 import courtmodule from './modules/courts'
 import utils from './../services/utils'
 
-//import Axios from "axios";
-
-//import db from '../firebase'
-
 
 Vue.use(Vuex)
 
@@ -27,7 +23,7 @@ export const store = new Vuex.Store(
             db: null,
             cellHeight1H: 120,
             opentime: "08:00",
-            closetime: "20:00",
+            closetime: "23:00",
             repeaterTypes: [
                 { id : 1000 , label : "Non-repeater"},
                 { id : 2000 , label : "First Repeater"},
