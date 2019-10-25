@@ -25,6 +25,7 @@
                   :lazy-src="require(`@/assets/${card.img_small}`)"
                   min-height="100"
                   max-height="325"
+                  aspect-ratio="2.15"
                 >
                   
                   <v-container fill-height fluid>

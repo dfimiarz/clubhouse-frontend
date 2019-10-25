@@ -17,10 +17,12 @@ function getSessionDetails( id ){
 
 function endSession(params){
 
-    var url = new URL(process.env.VUE_APP_BACKEND + '/matches/' + params.id)
-    url.searchParams.set("hash",params.hash)
-
-    return axios.delete( url )
+    return axios.delete( process.env.VUE_APP_BACKEND + `/matches/${params.id}`,
+                            {
+                            params: {
+                                hash: params.hash
+                              }
+                        })      
 }
 
 
