@@ -105,7 +105,7 @@ export default {
   position: absolute;
   width: 100%;
   box-sizing: border-box;
-  padding: 2px 5px;
+  padding: 0px 5px;
 
 }
 

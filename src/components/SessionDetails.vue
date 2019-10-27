@@ -177,7 +177,7 @@
           
 
           <v-btn
-            color="primary"
+            
             text
             @click="canceldialog = false"
           >
