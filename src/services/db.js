@@ -16,13 +16,19 @@ function getSessionDetails( id ){
 }
 
 function endSession(params){
-
-    return axios.delete( process.env.VUE_APP_BACKEND + `/matches/${params.id}`,
-                            {
-                            params: {
-                                hash: params.hash
-                              }
-                        })      
+    
+    return axios.patch( process.env.VUE_APP_BACKEND + `/matches/${params.id}`, 
+        { 
+            "cmd" : {
+                "name":"END_SESSION",
+                "params" : { 
+                            "end_time": new Date().getTime(),
+                            "hash" : params.hash
+                         }
+                }
+            
+        } 
+    )      
 }
 
 
