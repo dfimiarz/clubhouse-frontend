@@ -31,10 +31,26 @@ function endSession(params){
     )      
 }
 
+function removeSession(params){
+
+    return axios.patch( process.env.VUE_APP_BACKEND + `/matches/${params.id}`, 
+        { 
+            "cmd" : {
+                "name":"REMOVE_SESSION",
+                "params" : { 
+                            "hash" : params.hash
+                         }
+                }
+            
+        } 
+    )      
+}
+
 
 
 export default  {
     newMatch: newMatch,
     getSessionDetails: getSessionDetails,
-    endSession: endSession
+    endSession: endSession,
+    removeSession: removeSession
 }

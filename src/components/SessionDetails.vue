@@ -189,7 +189,7 @@
           <v-btn
             color="warning"
             text
-            @click="canceldialog = false"
+            @click="removeSession"
           >
             Yes, REMOVE
           </v-btn>
@@ -253,6 +253,38 @@ export default {
     }
   },
   methods:{
+    removeSession: function(){
+      
+      this.error = null
+      this.loading = true
+
+      var params = {
+        id: this.sessioninfo.id,
+        hash: this.sessioninfo.updated
+      }
+
+      apihandler.removeSession(params).then(() => {
+        this.$router.push({name: 'calendar'})
+      })
+      .catch((error) => {
+
+        if (error.response) {
+          this.error = error.response.data 
+          console.log(error.response.status)
+          
+        } else if (error.request) {
+          this.error = error.request
+          //console.log(error.request);
+        } else {
+          this.error = error.message
+          
+        }
+        
+      })
+      .finally(()=>{
+        this.loading = false
+      })
+    },
     endSession: function(){
       this.error = null
       this.loading = true
