@@ -236,7 +236,9 @@
                 <v-container fluid="">
                   <v-layout row wrap>
                     <v-flex xs12 v-if="error">
-                      <div class="title red--text py-2">Error: {{ error }}</div>
+                      <v-alert type="error" elevation="2">
+                        {{ error }}
+                      </v-alert>
                     </v-flex>
                     <v-flex xs12>
                       <span class="headline">Confirm Booking</span>
@@ -264,7 +266,7 @@
                 
                 
                 <v-layout>
-                  <v-btn text="" @click="step = 1">Go back</v-btn>
+                  <v-btn text="" @click="changeBookingParmas">Go back</v-btn>
                   <v-spacer></v-spacer>
                   <v-btn
                     :loading="loading"
@@ -327,6 +329,10 @@ export default {
   methods: {
     allowedminutes: m => m % 5 === 0,
     getPlayerLabel: index => "Player " + (index + 1),
+    changeBookingParmas: function(){
+      this.error = null
+      this.step = 1
+    },
     stepCheck: function(nextstep){
       if( nextstep == 3 ){
         if( ! this.$refs.timeform.validate() )
