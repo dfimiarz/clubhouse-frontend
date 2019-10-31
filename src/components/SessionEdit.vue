@@ -41,7 +41,7 @@
                         </div>
                         <div style="Flex-grow:2;"></div>
                         <div class="flex-grow-1 text-end">
-                          <v-btn icon :to="{name: 'sessionedit', params: { 'id': id }}">
+                          <v-btn icon>
                             <v-icon>mdi-pencil</v-icon>
                           </v-btn>
                         </div>
@@ -51,7 +51,7 @@
                   </v-col>
                   
                   <v-col cols="12" align-self="end">
-                    <span class="display-1 pa-1">Match Details</span>
+                    <span class="display-1 pa-1">Modify session</span>
                   </v-col>
                 </v-row>
                 

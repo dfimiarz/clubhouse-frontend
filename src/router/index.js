@@ -8,6 +8,7 @@ const QuickMatchBooking = () => import ('@/components/QuickMatchBooking')
 const MatchCalendar = () => import ('@/components/MatchCalendar')
 const AdminBooking = () => import ('@/components/AdminBooking')
 const SessionDetails = () => import ('@/components/SessionDetails')
+const SessionEdit = () => import ('@/components/SessionEdit')
 
 Vue.use(Router)
 
@@ -51,6 +52,12 @@ const routes = [
       path: '/sessions/:id',
       name: 'SessionDetails',
       component: SessionDetails,
+      props: true
+    },
+    {
+      path: '/sessions/:id/edit',
+      name: 'sessionedit',
+      component: SessionEdit,
       props: true
     },
     {
