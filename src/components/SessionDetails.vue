@@ -41,9 +41,9 @@
                         </div>
                         <div style="Flex-grow:2;"></div>
                         <div class="flex-grow-1 text-end">
-                          <v-btn icon :to="{name: 'sessionedit', params: { 'id': id }}">
+                          <!-- <v-btn icon :to="{name: 'sessionedit', params: { 'id': id }}">
                             <v-icon>mdi-pencil</v-icon>
-                          </v-btn>
+                          </v-btn> -->
                         </div>
                       </v-row>
                     </v-container>
@@ -72,6 +72,7 @@
                   
                   
                 </v-list-item>
+                <v-divider inset></v-divider>
                 <v-list-item >
                   <v-list-item-icon>
                     <v-icon >mdi-clock-start</v-icon>
@@ -82,7 +83,14 @@
                     <v-list-item-subtitle>Start</v-list-item-subtitle>
                   </v-list-item-content>
 
-                  
+                  <v-list-item-action>
+                    <v-btn icon v-if="canChangeStart || canChangeEnd">
+                      <v-icon @click="showTimeEditor=true">mdi-pencil</v-icon>
+                    </v-btn>
+                    <v-btn icon v-else>
+                      <v-icon >mdi-pencil-off</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
                   
                 </v-list-item>
 
@@ -95,9 +103,9 @@
                     <v-list-item-title>{{ endtime | formatTime }}</v-list-item-title>
                     <v-list-item-subtitle>End</v-list-item-subtitle>
                   </v-list-item-content>
-
                   
                 </v-list-item>
+                <v-divider inset></v-divider>
                 <v-list-item >
                   <v-list-item-icon>
                     <v-icon >mdi-tennis</v-icon>
@@ -108,9 +116,14 @@
                     <v-list-item-subtitle>Court</v-list-item-subtitle>
                   </v-list-item-content>
 
-                  
-                </v-list-item>
+                  <v-list-item-action>
+                    <v-btn icon>
+                      <v-icon>mdi-pencil-circle</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
 
+                </v-list-item>
+                <v-divider inset></v-divider>
                 <v-list-item >
                   <v-list-item-icon>
                     <v-icon >mdi-close-circle</v-icon>
@@ -121,12 +134,16 @@
                     <v-list-item-subtitle>Bumpable</v-list-item-subtitle>
                   </v-list-item-content>
 
-                  
+                  <v-list-item-action>
+                    <v-btn icon>
+                      <v-icon>mdi-pencil-circle</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
                 </v-list-item>
 
                 <v-divider inset></v-divider>
 
-                <v-list-item v-for="player in sessioninfo.players" :key="player.id" >
+                <v-list-item v-for="(player,index) in sessioninfo.players" :key="player.id" >
                   <v-list-item-icon>
                     <v-icon >mdi-account</v-icon>
                   </v-list-item-icon>
@@ -135,6 +152,11 @@
                     <v-list-item-title>{{ player.firstname }} {{ player.lastname}}</v-list-item-title>
                     <v-list-item-subtitle> {{ player.type }}</v-list-item-subtitle>
                   </v-list-item-content>
+                  <v-list-item-action v-if="index == 0">
+                    <v-btn icon>
+                      <v-icon>mdi-pencil-circle</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
                 </v-list-item>
 
                 <v-divider inset></v-divider>
@@ -149,6 +171,12 @@
                     <v-list-item-subtitle> Note</v-list-item-subtitle>
                   </v-list-item-content>
                   
+                  <v-list-item-action>
+                    <v-btn icon>
+                      <v-icon>mdi-pencil-circle</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
+
                 </v-list-item>
 
               </v-list>
@@ -160,6 +188,7 @@
             </v-card-actions>
           </v-card>
         </v-flex>
+        <session-time-editor v-bind:visible.sync="showTimeEditor" :session="sessioninfo"></session-time-editor>
       </v-layout>
     </v-flex>
     <v-dialog
@@ -230,15 +259,21 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    
   </v-layout>
+  
 </template>
 
 <script>
 
 import apihandler from './../services/db'
 import moment from 'moment'
+import timeeditor from './session/SessionTimeEditor'
 
 export default {
+  components: {
+    'session-time-editor': timeeditor
+  },
   props: ['id'],
   name: "sessiondetails",
   data: function() {
@@ -249,7 +284,8 @@ export default {
       sessioninfo: null,
       notfound: false,
       canceldialog: false,
-      enddialog: false
+      enddialog: false,
+      showTimeEditor: false
     }
   },
   methods:{
@@ -377,6 +413,16 @@ export default {
       return this.sessioninfo.hasOwnProperty('permissions')       ?
               (Array.isArray(this.sessioninfo.permissions)         ? 
               this.sessioninfo.permissions.includes('CAN_REMOVE') : false) : false
+    },
+    canChangeStart: function(){
+    return this.sessioninfo.hasOwnProperty('permissions')    ?
+            (Array.isArray(this.sessioninfo.permissions)      ? 
+            this.sessioninfo.permissions.includes('CHANGE_START') : false) : false
+    },
+    canChangeEnd: function(){
+      return this.sessioninfo.hasOwnProperty('permissions')       ?
+              (Array.isArray(this.sessioninfo.permissions)         ? 
+              this.sessioninfo.permissions.includes('CHANGE_END') : false) : false
     }
   },
   watch:{

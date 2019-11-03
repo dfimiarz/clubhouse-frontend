@@ -46,11 +46,28 @@ function removeSession(params){
     )      
 }
 
+function changeSessionTime(params){
+    return axios.patch( process.env.VUE_APP_BACKEND + `/matches/${params.id}`,
+        { 
+            "cmd" : {
+                "name":"CHANGE_TIME",
+                "params" : { 
+                            "hash" : params.hash,
+                            "start": params.start,
+                            "end": params.end
+                        }
+                }
+            
+        } 
+     )
+}
+
 
 
 export default  {
     newMatch: newMatch,
     getSessionDetails: getSessionDetails,
     endSession: endSession,
-    removeSession: removeSession
+    removeSession: removeSession,
+    changeTime: changeSessionTime
 }
