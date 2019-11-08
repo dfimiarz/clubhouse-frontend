@@ -1,10 +1,10 @@
 <template>
 
-    <v-dialog
+    <!-- <v-dialog
         v-model="show"
         :fullscreen="$vuetify.breakpoint.xsOnly"
         max-width="500"
-      >
+      > -->
         <v-card tile="" height="100%">
           <v-toolbar
             flat
@@ -110,7 +110,7 @@
           </v-card-actions>
         </v-card>
         
-      </v-dialog>
+      <!-- </v-dialog> -->
 
 </template>
 
@@ -170,6 +170,9 @@ export default {
     },
     watch: {
       show( value ){
+
+        console.log( value )
+
         if( value ){
           this.s_time = moment(this.session.date.concat('T',this.session.start)).format('HH:mm')
           this.e_time = moment(this.session.date.concat('T',this.session.end)).format('HH:mm')

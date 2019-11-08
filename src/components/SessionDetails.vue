@@ -85,7 +85,7 @@
 
                   <v-list-item-action>
                     <v-btn icon v-if="canChangeStart || canChangeEnd">
-                      <v-icon @click="showTimeEditor=true">mdi-pencil</v-icon>
+                      <v-icon @click="openEditor('timeeditor')">mdi-pencil</v-icon>
                     </v-btn>
                     <v-btn icon v-else>
                       <v-icon >mdi-pencil-off</v-icon>
@@ -118,7 +118,7 @@
 
                   <v-list-item-action>
                     <v-btn icon>
-                      <v-icon>mdi-pencil-circle</v-icon>
+                      <v-icon @click="openEditor('courteditor')">mdi-pencil-circle</v-icon>
                     </v-btn>
                   </v-list-item-action>
 
@@ -136,7 +136,7 @@
 
                   <v-list-item-action>
                     <v-btn icon>
-                      <v-icon>mdi-pencil-circle</v-icon>
+                      <v-icon @click="openEditor('courteditor')">mdi-pencil-circle</v-icon>
                     </v-btn>
                   </v-list-item-action>
                 </v-list-item>
@@ -188,7 +188,11 @@
             </v-card-actions>
           </v-card>
         </v-flex>
-        <session-time-editor v-bind:visible.sync="showTimeEditor" :session="sessioninfo"></session-time-editor>
+        <!-- <component :is="editortype" v-bind:visible.sync="showeditor" :session="sessioninfo"></component> -->
+        <valueeditor v-bind:visible.sync="showeditor" :session="sessioninfo" :type="editortype"></valueeditor>
+        <!-- <session-time-editor v-bind:visible.sync="showTimeEditor" :session="sessioninfo"></session-time-editor>
+        <session-court-editor v-bind:visible.sync="showCourtEditor" :session="sessioninfo"></session-court-editor> -->
+        
       </v-layout>
     </v-flex>
     <v-dialog
@@ -269,10 +273,14 @@
 import apihandler from './../services/db'
 import moment from 'moment'
 import timeeditor from './session/SessionTimeEditor'
+import courteditor from './session/SessionCourtEditor'
+import valueeditor from './session/ValueEditor'
 
 export default {
   components: {
-    'session-time-editor': timeeditor
+    'timeeditor': timeeditor,
+    'courteditor': courteditor,
+    'valueeditor' : valueeditor
   },
   props: ['id'],
   name: "sessiondetails",
@@ -285,10 +293,18 @@ export default {
       notfound: false,
       canceldialog: false,
       enddialog: false,
-      showTimeEditor: false
+      showTimeEditor: false,
+      showCourtEditor: false,
+      showeditor: false,
+      editortype: null
     }
   },
   methods:{
+    openEditor(val){
+      this.editortype = val
+      this.showeditor = true
+    },
+
     removeSession: function(){
       
       this.error = null
