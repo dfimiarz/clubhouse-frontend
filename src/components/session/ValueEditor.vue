@@ -4,16 +4,17 @@
         v-model="show"
         :fullscreen="$vuetify.breakpoint.xsOnly"
         max-width="500"
+        persistent=""
       >
-        <component :session="session" :is="type"></component>
+        <component :session="session" :is="selectedType" v-on:update:show="show = false"></component>
     </v-dialog>
 
 </template>
 
 <script>
 
-import timeeditor from './SessionTimeEditor'
-import courteditor from './SessionCourtEditor'
+import timeeditor from './TimeEditor'
+import courteditor from './CourtEditor'
 
 export default {
     props: ['session','visible','type'],
@@ -23,8 +24,17 @@ export default {
     },
     data () {
         return {
-          
+            selectedType: null
         }
+    },
+    watch: {
+      show( value ){
+
+        if( value )
+          this.selectedType = this.type 
+        else
+          this.selectedType = null
+      }
     },
     methods: {
       

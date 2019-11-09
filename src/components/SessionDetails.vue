@@ -272,14 +272,10 @@
 
 import apihandler from './../services/db'
 import moment from 'moment'
-import timeeditor from './session/SessionTimeEditor'
-import courteditor from './session/SessionCourtEditor'
 import valueeditor from './session/ValueEditor'
 
 export default {
   components: {
-    'timeeditor': timeeditor,
-    'courteditor': courteditor,
     'valueeditor' : valueeditor
   },
   props: ['id'],
