@@ -117,8 +117,11 @@
                   </v-list-item-content>
 
                   <v-list-item-action>
-                    <v-btn icon>
-                      <v-icon @click="openEditor('courteditor')">mdi-pencil-circle</v-icon>
+                    <v-btn icon v-if="canChangeCourt">
+                      <v-icon @click="openEditor('courteditor')">mdi-pencil</v-icon>
+                    </v-btn>
+                    <v-btn icon v-else>
+                      <v-icon >mdi-pencil-off</v-icon>
                     </v-btn>
                   </v-list-item-action>
 
@@ -435,6 +438,11 @@ export default {
       return this.sessioninfo.hasOwnProperty('permissions')       ?
               (Array.isArray(this.sessioninfo.permissions)         ? 
               this.sessioninfo.permissions.includes('CHANGE_END') : false) : false
+    },
+    canChangeCourt: function(){
+      return this.sessioninfo.hasOwnProperty('permissions')       ?
+              (Array.isArray(this.sessioninfo.permissions)         ? 
+              this.sessioninfo.permissions.includes('CHANGE_COURT') : false) : false
     }
   },
   watch:{
