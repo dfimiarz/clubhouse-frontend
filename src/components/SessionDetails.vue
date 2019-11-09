@@ -146,7 +146,7 @@
 
                 <v-divider inset></v-divider>
 
-                <v-list-item v-for="(player,index) in sessioninfo.players" :key="player.id" >
+                <v-list-item v-for="player in sessioninfo.players" :key="player.id" >
                   <v-list-item-icon>
                     <v-icon >mdi-account</v-icon>
                   </v-list-item-icon>
@@ -155,11 +155,11 @@
                     <v-list-item-title>{{ player.firstname }} {{ player.lastname}}</v-list-item-title>
                     <v-list-item-subtitle> {{ player.type }}</v-list-item-subtitle>
                   </v-list-item-content>
-                  <v-list-item-action v-if="index == 0">
+                  <!-- <v-list-item-action v-if="index == 0">
                     <v-btn icon>
                       <v-icon>mdi-pencil-circle</v-icon>
                     </v-btn>
-                  </v-list-item-action>
+                  </v-list-item-action> -->
                 </v-list-item>
 
                 <v-divider inset></v-divider>
