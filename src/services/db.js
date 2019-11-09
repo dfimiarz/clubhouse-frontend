@@ -61,6 +61,20 @@ function changeSessionTime(params){
         } 
      )
 }
+function changeCourt(params){
+    return axios.patch( process.env.VUE_APP_BACKEND + `/matches/${params.id}`,
+        { 
+            "cmd" : {
+                "name":"CHANGE_COURT",
+                "params" : { 
+                            "hash" : params.hash,
+                            "court": params.court
+                        }
+                }
+            
+        } 
+     )
+}
 
 
 
@@ -69,5 +83,6 @@ export default  {
     getSessionDetails: getSessionDetails,
     endSession: endSession,
     removeSession: removeSession,
-    changeTime: changeSessionTime
+    changeTime: changeSessionTime,
+    changeCourt
 }

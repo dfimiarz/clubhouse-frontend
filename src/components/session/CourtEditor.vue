@@ -55,7 +55,7 @@
 
 <script>
 
-//import apihandler from './../../services/db'
+import apihandler from './../../services/db'
 import { editor } from './EditorMixin'
 
 export default {
@@ -74,35 +74,33 @@ export default {
         this.error = null
         this.loading = true
 
-        // var params = {
-        //   id: this.session.id,
-        //   hash: this.session.updated,
-        //   court: this.court
-        // }
+        var params = {
+           id: this.session.id,
+           hash: this.session.updated,
+           court: this.court
+        }
 
-        
+        apihandler.changeCourt(params).then(() => {
+          this.$router.push({name: 'calendar'})
+        })
+        .catch((error) => {
 
-        // apihandler.changeTime(params).then(() => {
-        //   this.$router.push({name: 'calendar'})
-        // })
-        // .catch((error) => {
-
-        //   if (error.response) {
-        //     this.error = error.response.data 
-        //     console.log(error.response.status)
+          if (error.response) {
+            this.error = error.response.data 
+            console.log(error.response.status)
             
-        //   } else if (error.request) {
-        //     this.error = error.request
+          } else if (error.request) {
+            this.error = error.request
             
-        //   } else {
-        //     this.error = error.message
+          } else {
+            this.error = error.message
             
-        //   }
+          }
           
-        // })
-        // .finally(()=>{
-        //   this.loading = false
-        // })
+        })
+        .finally(()=>{
+          this.loading = false
+        })
       }
     },
     computed: {
