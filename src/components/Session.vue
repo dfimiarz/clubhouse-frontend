@@ -1,13 +1,13 @@
 <template>
-  <div class="sessioncell" :style="{top:  + getVpos() + 'px', height: getHeight() + 'px'}" @click="sessionClicked"> 
-      <v-layout row wrap fill-height="" class="session_container_new" align-start="" align-content-start="">
+  <div class="sessioncell" :style="{top:  + vpos + 'px', height: height + 'px'}" @click="sessionClicked"> 
+      <v-layout row wrap fill-height="" :class="['session_container',sessionStyle()]" align-start="" align-content-start="">
         <v-flex xs12 >
           <v-layout row wrap fill-height="" align-content-space-between="">
             <v-flex xs12>
-              <span class="body-2">Players:</span>
-                <span v-for="(player,index) in players" :key="index" :class="['ma-1','body-2',getPlayerClass(player)]">
-                  {{ formatPlayerName(player) }}
-                </span>
+              <span>Players:</span>
+              <span v-for="(player,index) in players" :key="index" :class="['ma-1',getPlayerClass(player)]">
+                {{ formatPlayerName(player) }}
+              </span>
             </v-flex>
             
           </v-layout>
@@ -67,9 +67,19 @@ export default {
     },
     sessionClicked: function(){
       this.$router.push({ name: 'SessionDetails', params: { id: this.session.id } })
+    },
+    sessionStyle: function(){
+      return this.height > 20 ? 'body-2' : 'small_container'
     }
   },
   computed:{
+    height: function(){
+      const _height = this.cellHeight1H / 60 * this.duration
+      return _height <= 20 ? 20 : _height 
+    },
+    vpos: function(){
+      return this.cellHeight1H / 60 * (this.startMin - this.openMin)
+    },
     cellHeight1H: function(){
       return this.$store.getters['calCellHeight1H'];
     },
@@ -109,7 +119,7 @@ export default {
 
 }
 
-.session-container{
+/* .session-container{
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -123,15 +133,19 @@ export default {
   box-shadow: 2px 3px black;
   padding: 5px;
 
-}
+} */
 
-.session_container_new{
+.session_container{
   overflow: hidden;
   background-color: rgba(139,195,74,0.8);
   border: 2 px solid;
   border-radius: 3px;
   box-shadow: 2px 2px black;
   color: black;
+}
+
+.small_container{
+  font-size: x-small;
 }
 
 
