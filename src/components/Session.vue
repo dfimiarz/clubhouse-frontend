@@ -1,6 +1,6 @@
 <template>
   <div class="sessioncell" :style="{top:  + vpos + 'px', height: height + 'px'}" @click="sessionClicked"> 
-      <v-layout row wrap fill-height="" :class="['session_container',sessionStyle()]" align-start="" align-content-start="">
+      <v-layout row wrap fill-height="" :class="sessionStyle()" align-start="" align-content-start="">
         <v-flex xs12 >
           <v-layout row wrap fill-height="" align-content-space-between="">
             <v-flex xs12>
@@ -69,7 +69,12 @@ export default {
       this.$router.push({ name: 'SessionDetails', params: { id: this.session.id } })
     },
     sessionStyle: function(){
-      return this.height > 20 ? 'body-2' : 'small_container'
+      let styles = []
+      styles.push('session_container')
+      styles.push(this.height >= (this.cellHeight1H / 4) ? 'body-2' : 'small_container')
+      styles.push(this.session.bumpable == 1 ? 'bump_session' : 'nbump_session')
+      return styles
+
     }
   },
   computed:{
@@ -137,7 +142,7 @@ export default {
 
 .session_container{
   overflow: hidden;
-  background-color: rgba(139,195,74,0.8);
+  /* background-color: rgba(139,195,74,0.8); */
   border: 2 px solid;
   border-radius: 3px;
   box-shadow: 2px 2px black;
@@ -146,6 +151,14 @@ export default {
 
 .small_container{
   font-size: x-small;
+}
+
+.nbump_session {
+  background-color: rgba(139,195,74,0.8);
+}
+
+.bump_session {
+  background-color: rgba(186, 71, 115, 0.8);
 }
 
 
