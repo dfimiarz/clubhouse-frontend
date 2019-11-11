@@ -158,7 +158,7 @@ export default {
 }
 
 .bump_session {
-  background-color: rgba(186, 71, 115, 0.8);
+  background-color: rgba( 215,109,82, 0.8);
 }
 
 
