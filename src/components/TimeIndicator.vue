@@ -35,6 +35,14 @@ export default {
     }
     
 
+  },
+  watch: {
+    vpos: {
+      handler: function(val){
+        this.$emit('change:pos',val)
+      },
+      immediate: true
+    }
   }
 }
 </script>

@@ -32,11 +32,11 @@
                 
               </div>
             </div>
-            <div class="time-grid-container">
+            <div class="time-grid-container" ref="tcontainer">
                 <div v-for="(n) in totalCellCount" :key="n" class="cell"  v-bind:style="{ 'height':  cellHeight1H + 'px' }">
                     {{ getCellLabel(n) }}
                 </div>
-                <timeindicator :currtime="currtime" v-if="showTimeIndicator"></timeindicator>
+                
                 <div 
                   class="session-grid-container" 
                   v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length  + ',1fr)' }">
@@ -54,6 +54,7 @@
                     </transition-group>
                   </div>  
                 </div>
+                <timeindicator :currtime="currtime" v-if="showTimeIndicator" v-on:change:pos="scrollCalendar"></timeindicator>
                 
                 
                 
@@ -106,6 +107,11 @@ export default {
     }
   },
   methods: {
+    scrollCalendar: function(val){
+
+      console.log("Scroll height" + this.$refs.tcontainer)
+      console.log("Scroll to" + val)
+    },
     checkTimeIndicatorVisibility: function(){
       this.showTimeIndicator = this.date.getDate() == this.currtime.getDate() && 
                                this.date.getMonth() == this.currtime.getMonth() &&
@@ -222,7 +228,6 @@ export default {
     
   },
   mounted: function(){
-    
     
     //this.$store.dispatch('matchstore/watchCourts',this.date)
     
