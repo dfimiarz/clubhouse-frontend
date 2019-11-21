@@ -36,7 +36,7 @@
                 <div v-for="(n) in totalCellCount" :key="n" class="cell"  v-bind:style="{ 'height':  cellHeight1H + 'px' }">
                     {{ getCellLabel(n) }}
                 </div>
-                <timeindicator :currtime="currtime"></timeindicator>
+                <timeindicator :currtime="currtime" v-if="showTimeIndicator"></timeindicator>
                 <div 
                   class="session-grid-container" 
                   v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length  + ',1fr)' }">
@@ -100,11 +100,17 @@ export default {
       resizeTimeout: null,
       currtime: new Date(),
       menu2: false,
-      timerHandle: null
+      timerHandle: null,
+      showTimeIndicator: true
       
     }
   },
   methods: {
+    checkTimeIndicatorVisibility: function(){
+      this.showTimeIndicator = this.date.getDate() == this.currtime.getDate() && 
+                               this.date.getMonth() == this.currtime.getMonth() &&
+                               this.date.getYear() == this.currtime.getYear() ? true: false
+    },
     contClicked: function(){
       //console.log(event.target)
     },
@@ -240,6 +246,7 @@ export default {
     date: function(val){
       console.log("Date changed" + val)
       this.$store.dispatch('matchstore/loadMatches',moment(this.date).format("YYYY-MM-DD"))
+      this.checkTimeIndicatorVisibility()
     }
   }
 }
