@@ -36,7 +36,7 @@
                 <div v-for="(n) in totalCellCount" :key="n" class="cell"  v-bind:style="{ 'height':  cellHeight1H + 'px' }">
                     {{ getCellLabel(n) }}
                 </div>
-                
+                <timeindicator :currtime="currtime"></timeindicator>
                 <div 
                   class="session-grid-container" 
                   v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length  + ',1fr)' }">
@@ -78,11 +78,13 @@
 <script>
 
 import Session from './Session'
+import TimeIndicator from './TimeIndicator'
 import moment from 'moment'
 
 export default {
   components:{
-    'session' : Session
+    'session' : Session,
+    'timeindicator': TimeIndicator
   },
   name: 'MatchCalendar',
   data: function() {
@@ -96,8 +98,9 @@ export default {
       maxDisplayableCourts: 5,
       firstCourt: 0,
       resizeTimeout: null,
-      time: null,
-      menu2: false
+      currtime: new Date(),
+      menu2: false,
+      timerHandle: null
       
     }
   },
@@ -207,14 +210,21 @@ export default {
 
     this.resetDate()
     
+    this.timerHandle = setInterval(() => {
+      this.currtime = new Date()
+    },30000)
+    
   },
   mounted: function(){
+    
     
     //this.$store.dispatch('matchstore/watchCourts',this.date)
     
   },
   destroyed: function(){
+    
     this.$store.dispatch('matchstore/clearMatches')
+    clearInterval(this.timerHandle)
   },
   watch: {
     maxCourtCount: function(val){
