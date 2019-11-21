@@ -143,7 +143,7 @@ export default {
 .session_container{
   overflow: hidden;
   /* background-color: rgba(139,195,74,0.8); */
-  border: 2 px solid;
+  border: 2px solid;
   border-radius: 3px;
   box-shadow: 2px 2px black;
   color: black;
