@@ -1,6 +1,6 @@
 <template>
 <v-container fluid fill-height="" grid-list-xs >
-  <v-layout fill-height="" align-content-space-around="" row wrap>
+  <v-layout fill-height="" align-content-start="" row wrap>
     <v-flex xs12>
         <v-layout align-center="" class="py-1" justify-space-between="">
           <v-flex xs12 >
@@ -21,7 +21,7 @@
     </v-flex>
     <v-flex xs12>
       
-          <div class="main-schedule-container" ref="scheduleContainer" @click="contClicked($event)">
+          <div class="main-schedule-container" ref="scheduleContainer">
             <div class="court-grid-container" v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length + ',1fr)' }">
               
               <div class="pa-1 court-grid-item" v-for="(court,index) in displayableCourts" :key="court.id"  v-bind:style="{ 'grid-column' : index + 2, 'grid-row' : 1 }" >
@@ -107,13 +107,54 @@ export default {
     }
   },
   methods: {
-    scrollCalendar: function(val){
+    /**
+     * scrollCalendar moves the scrollbar to the position corresponding to current time
+     */
+    scrollCalendar: function(){
 
-      console.log("Scroll height" + this.$refs.tcontainer.scrollHeight)
-      console.log("Scroll to" + val)
-    },
-    contClicked: function(){
-      //console.log(event.target)
+      //Get total lenght of the day
+      var day_len = this.endMin - this.startMin
+
+      //Do nothing if day is not "long enough"
+      if ( day_len < 1 ){
+        console.log("Check start and end time")
+        return
+      }
+
+      //Check if container has height
+      if( ! (this.$refs.tcontainer.clientHeight !== undefined && this.$refs.tcontainer.clientHeight >= 0) ){
+        console.log("Element height error")
+        return
+      }
+
+      //Check if container has scrollheight
+       if( ! (this.$refs.tcontainer.scrollHeight !== undefined && this.$refs.tcontainer.scrollHeight >= 0) ){
+        console.log("Scroll Height error")
+        return
+      }
+
+      //Get current minutes
+      var curr_min = this.currtime.getHours() * 60 + this.currtime.getMinutes()
+
+      //Adjust current minuate for start and end
+      var adj_curr_min = curr_min <= this.startMin ? this.startMin : curr_min >= this.endMin ? this.endMin : curr_min
+
+      //Calculate scroll distance
+      var initScrollDistance = Math.ceil((adj_curr_min - this.startMin) / ( day_len ) * this.$refs.tcontainer.scrollHeight)
+
+      /**
+       * initScrollDistance will align top of the container with current time.
+       * We drop that value by clientHeigh / 2 to put current time right in the middle
+       * of the screen
+       */
+      var scrollAdjHeight = Math.ceil(this.$refs.tcontainer.clientHeight / 2);
+
+      /**
+       * set scrollTop to substracting scrollAjdHeight from initScrollDistnace
+       * According to doc scrollTop will ensure that values are not out of bounds
+       */
+      this.$refs.tcontainer.scrollTop = initScrollDistance - scrollAdjHeight
+
     },
     getCellLabel: function(cellnumber) {
         return this.hourLabels[cellnumber-1]
@@ -210,10 +251,16 @@ export default {
     
     },
     timeIndicatorVisible: function(){
+      //Get current time in ms
       var now_ms = this.currtime.getTime()
+
+      //Get date start in ms
       var date_start_ms = this.date.getTime()
+
+      //Get date end in ms
       var date_end_ms = date_start_ms + 86400000
 
+      //Check if now_ms falls between date_start and date_end
       return now_ms < date_start_ms ? false : now_ms >= date_end_ms ? false : true
 
     }
@@ -259,7 +306,9 @@ export default {
     date: function(val){
       console.log("Date changed" + val)
       this.$store.dispatch('matchstore/loadMatches',moment(this.date).format("YYYY-MM-DD"))
-      this.checkTimeIndicatorVisibility()
+      if( this.timeIndicatorVisible ){
+        this.scrollCalendar()
+      }
     }
   }
 }
