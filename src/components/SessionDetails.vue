@@ -139,7 +139,7 @@
 
                   <v-list-item-action>
                     <v-btn icon>
-                      <v-icon @click="openEditor('courteditor')">mdi-pencil-circle</v-icon>
+                      <v-icon>mdi-pencil-circle</v-icon>
                     </v-btn>
                   </v-list-item-action>
                 </v-list-item>

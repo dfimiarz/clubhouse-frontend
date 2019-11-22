@@ -21,28 +21,28 @@ export default {
     
   },
   computed:{
-    
+    /**
+     * Compute vertical position taking into account the start and end time
+     */
     vpos: function(){
-      return this.thickness * (this.currmin - this.openMin)
+      
+      var adj_currmin = this.currmin <= this.openMin ? this.openMin : this.currmin >= this.closeMin ? (this.closeMin - this.thickness) : this.currmin
+      
+      return this.thickness * (adj_currmin - this.openMin)
+      
     },
     openMin: function(){
       return this.$store.getters['openMin'];
     },
-    
+    closeMin: function(){
+      return this.$store.getters['closeMin'];
+    },    
     currmin: function(){
       return this.currtime.getHours() * 60 + this.currtime.getMinutes()
       
     }
     
 
-  },
-  watch: {
-    vpos: {
-      handler: function(val){
-        this.$emit('change:pos',val)
-      },
-      immediate: true
-    }
   }
 }
 </script>

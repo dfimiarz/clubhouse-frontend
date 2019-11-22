@@ -124,26 +124,8 @@ export default {
 
 }
 
-/* .session-container{
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content:space-evenly;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  background-color: rgba(139,195,74,0.8);
-  border: 2 px solid;
-  border-radius: 3px;
-  box-shadow: 2px 3px black;
-  padding: 5px;
-
-} */
-
 .session_container{
   overflow: hidden;
-  /* background-color: rgba(139,195,74,0.8); */
-  border: 2px solid;
   border-radius: 3px;
   box-shadow: 2px 2px black;
   color: black;

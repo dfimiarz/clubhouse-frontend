@@ -54,7 +54,7 @@
                     </transition-group>
                   </div>  
                 </div>
-                <timeindicator :currtime="currtime" v-if="showTimeIndicator" v-on:change:pos="scrollCalendar"></timeindicator>
+                <timeindicator :currtime="currtime" v-if="showTimeIndicator"></timeindicator>
                 
                 
                 
@@ -109,7 +109,7 @@ export default {
   methods: {
     scrollCalendar: function(val){
 
-      console.log("Scroll height" + this.$refs.tcontainer)
+      console.log("Scroll height" + this.$refs.tcontainer.scrollHeight)
       console.log("Scroll to" + val)
     },
     checkTimeIndicatorVisibility: function(){
@@ -137,7 +137,6 @@ export default {
        date.setMinutes(0)
        date.setMilliseconds(0)
        date.setSeconds(0)
-       console.log(date.getTime())
        this.date = date
     },
     changeDisplayedCourts: function (step){
@@ -221,13 +220,19 @@ export default {
   created: function() {
 
     this.resetDate()
-    
     this.timerHandle = setInterval(() => {
       this.currtime = new Date()
     },30000)
     
+    
   },
   mounted: function(){
+    
+    this.scrollCalendar()
+
+    // this.$nextTick(() => {
+    //   this.scrollCalendar()
+    // })
     
     //this.$store.dispatch('matchstore/watchCourts',this.date)
     
