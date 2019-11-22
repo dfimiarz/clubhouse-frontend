@@ -54,7 +54,7 @@
                     </transition-group>
                   </div>  
                 </div>
-                <timeindicator :currtime="currtime" v-if="showTimeIndicator"></timeindicator>
+                <timeindicator :currtime="currtime" v-if="timeIndicatorVisible"></timeindicator>
                 
                 
                 
@@ -111,11 +111,6 @@ export default {
 
       console.log("Scroll height" + this.$refs.tcontainer.scrollHeight)
       console.log("Scroll to" + val)
-    },
-    checkTimeIndicatorVisibility: function(){
-      this.showTimeIndicator = this.date.getDate() == this.currtime.getDate() && 
-                               this.date.getMonth() == this.currtime.getMonth() &&
-                               this.date.getYear() == this.currtime.getYear() ? true: false
     },
     contClicked: function(){
       //console.log(event.target)
@@ -213,6 +208,14 @@ export default {
       */
       return this.courts.slice(this.firstCourt,lastIndex)
     
+    },
+    timeIndicatorVisible: function(){
+      var now_ms = this.currtime.getTime()
+      var date_start_ms = this.date.getTime()
+      var date_end_ms = date_start_ms + 86400000
+
+      return now_ms < date_start_ms ? false : now_ms >= date_end_ms ? false : true
+
     }
   
     
