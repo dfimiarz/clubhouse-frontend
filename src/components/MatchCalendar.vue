@@ -99,7 +99,7 @@ export default {
       maxDisplayableCourts: 5,
       firstCourt: 0,
       resizeTimeout: null,
-      currtime: new Date(),
+      currtime: null,
       menu2: false,
       timerHandle: null,
       showTimeIndicator: true
@@ -270,15 +270,18 @@ export default {
   created: function() {
 
     this.resetDate()
-    this.timerHandle = setInterval(() => {
-      this.currtime = new Date()
-    },30000)
+    this.currtime = new Date()
+    
     
     
   },
   mounted: function(){
     
     this.scrollCalendar()
+
+    this.timerHandle = setInterval(() => {
+      this.currtime = new Date()
+    },30000)
 
     // this.$nextTick(() => {
     //   this.scrollCalendar()
