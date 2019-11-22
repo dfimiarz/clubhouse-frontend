@@ -1,23 +1,24 @@
 
 <template>
-<v-container fluid fill-height="">
-  <v-layout justify-center="" align-start="" wrap="" row>
-    <v-flex sm12 md10 lg8>
-        <v-container fluid="" grid-list-lg fill-height="">
-          <v-layout row wrap justify-center="" align-center="">
-            <v-flex xs12>
+<v-container fluid>
+  <v-row justify="center" align="start" no-gutters="" >
+    <v-col cols="12" md="10" lg="8">
+        <v-container fluid>
+          <v-row justify="center" align="center" no-gutters="">
+            <v-col cols="12">
               
                 <div class="main-title text-center">
                   Knickerbocker Tennis
                 </div>
               
-            </v-flex>
-            <v-flex
+            </v-col>
+          </v-row>
+          <v-row justify="center" align="center" no-gutters="">
+            <v-col
               v-for="card in cards"
-              v-bind="{ [`xs${card.flexxs}`]: true,
-                        [`sm${card.flexsm}`]: true,
-                        [`md${card.flexmd}`]: true }"
               :key="card.title"
+              v-bind="{ cols: card.xs, sm: card.sm, md: card.md }"
+              class="pa-2"
             >
               <v-card :to="{name: card.dest}" raised="" >
                 <v-img
@@ -27,24 +28,23 @@
                   max-height="325"
                   aspect-ratio="2.15"
                 >
+
+                  <v-row justify="center" align="end" no-gutters="" style="height: 100%;" >
+                    <v-col cols="12">
+                      <div class='tile-text-container'>
+                        <h3 class="tile-title">{{ card.title }}</h3>
+                        <div>{{ card.text }}</div>
+                      </div>
+                    </v-col>
+                  </v-row>
                   
-                  <v-container fill-height fluid>
-                    <v-layout justify-center="" align-end="" row>
-                      <v-flex xs12>
-                        <div class='tile-text-container'>
-                          <h3 class="tile-title">{{ card.title }}</h3>
-                          <div>{{ card.text }}</div>
-                        </div>
-                      </v-flex>
-                    </v-layout>
-                  </v-container>
                 </v-img>
               </v-card>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-container>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </v-container>
 </template>
 
@@ -56,10 +56,10 @@ export default {
   data: () => {
     return {
       cards: [
-        { title: 'Schedule', text: 'View full schedule' ,img: 'players.jpg', img_small: 'players_small.jpg', flexxs: 12, flexsm: 12, flexmd: 6, dest: "calendar" },
-        { title: 'Book court', text: 'Regular court booking', img: 'tennisracquet.jpg', img_small: 'tennisracquet_small.jpg', flexxs: 12, flexsm: 12, flexmd: 6, dest: "AdminBooking" },
-        { title: 'Who is playing', text: 'Current games', img: 'clubhouse.jpg', flexxs: 12, img_small: 'clubhouse_small.jpg', flexsm: 12,flexmd: 6 },
-        { title: 'Club Admin', text: 'Administrative features',  img: 'clubhouse.jpg', img_small: 'clubhouse_small.jpg', flexxs: 12, flexsm: 12,flexmd: 6 },
+        { title: 'Schedule', text: 'View full schedule' ,img: 'players.jpg', img_small: 'players_small.jpg', xs: 12, sm: 12, md: 6, dest: "calendar" },
+        { title: 'Book court', text: 'Regular court booking', img: 'tennisracquet.jpg', img_small: 'tennisracquet_small.jpg', xs: 12, sm: 12, md: 6, dest: "AdminBooking" },
+        { title: 'Who is playing', text: 'Current games', img: 'clubhouse.jpg', xs: 12, img_small: 'clubhouse_small.jpg', sm: 12,md: 6 },
+        { title: 'Club Admin', text: 'Administrative features',  img: 'clubhouse.jpg', img_small: 'clubhouse_small.jpg', xs: 12, sm: 12,md: 6 },
         
       ]
       
