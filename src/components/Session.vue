@@ -1,20 +1,13 @@
 <template>
   <div class="sessioncell" :style="{top:  + vpos + 'px', height: height + 'px'}" @click="sessionClicked"> 
-      <v-layout row wrap fill-height="" :class="sessionStyle()" align-start="" align-content-start="">
-        <v-flex xs12 >
-          <v-layout row wrap fill-height="" align-content-space-between="">
-            <v-flex xs12>
+      <v-row :class="sessionStyle()" align="start" style="height: 100%;" no-gutters="">
+        <v-col cols="12">
               <span>Players:</span>
               <span v-for="(player,index) in players" :key="index" :class="['ma-1',getPlayerClass(player)]">
                 {{ formatPlayerName(player) }}
               </span>
-            </v-flex>
-            
-          </v-layout>
-        </v-flex>
-        
-      </v-layout> 
-    
+        </v-col>
+      </v-row> 
   </div>
 </template>
 
