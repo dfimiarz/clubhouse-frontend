@@ -1,25 +1,25 @@
 <template>
-<v-container fluid fill-height="" grid-list-xs >
-  <v-layout fill-height="" align-content-start="" row wrap>
-    <v-flex xs12>
-        <v-layout align-center="" class="py-1" justify-space-between="">
-          <v-flex xs12 >
-            <v-layout align-center="">
+<v-container fluid >
+  <v-row align="start" class="px-1" no-gutters="">
+    <v-col cols="12">
+        <v-row align="center" justify="space-between" no-gutters="" class="py-1">
+          <v-col cols="auto" >
+            <v-row align="center" no-gutters="">
               <v-btn color="primary" small outlined @click="resetDate()" class="mr-2">Today</v-btn>
 
               <v-btn icon @click="changeDay(-1)"> <v-icon> mdi-arrow-left-bold </v-icon> </v-btn>
               <span class="title mx-1">{{ this.getTimeString()}}</span> 
               <v-btn icon @click="changeDay(1)"> <v-icon> mdi-arrow-right-bold </v-icon></v-btn>
-            </v-layout>
-          </v-flex>
-          <v-flex xs2>
-            <v-layout justify-end="" align-center="">
-              <v-btn color="warning" x-small fab><v-icon> mdi-help </v-icon></v-btn>
-            </v-layout>
-          </v-flex>
-        </v-layout>    
-    </v-flex>
-    <v-flex xs12>
+            </v-row>
+          </v-col>
+          <!-- <v-col cols="auto">
+            <v-row justify="end" align="center" no-gutters="">
+              <v-btn color="warning" icon><v-icon> mdi-help </v-icon></v-btn>
+            </v-row>
+          </v-col> -->
+        </v-row>    
+    </v-col>
+    <v-col cols="12">
       
           <div class="main-schedule-container" ref="scheduleContainer">
             <div class="court-grid-container" v-bind:style="{ 'grid-template-columns': '40px repeat(' + this.displayableCourts.length + ',1fr)' }">
@@ -71,8 +71,8 @@
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </v-container>
 </template>
 
@@ -234,6 +234,7 @@ export default {
         case 'md': return 3
         case 'lg': return 3
         case 'xl': return 5
+        default : return 5
       }
     },
     
