@@ -56,6 +56,14 @@
               <v-list-item-title>Settings</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item>
+            <v-list-item-action>
+              <v-icon>mdi-help</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Help</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-navigation-drawer>
       <v-app-bar app   >
@@ -66,6 +74,7 @@
           <v-btn text :to="{name: 'Home'}" exact>Home</v-btn>
           <v-btn text :to="{name: 'calendar'}" exact="">Schedule</v-btn>
           <v-btn text="" :to="{name: 'AdminBooking'}" exact>Book a Court</v-btn>
+          <v-btn text exact>Help</v-btn>
         </v-toolbar-items>
       </v-app-bar>
       <v-content>
