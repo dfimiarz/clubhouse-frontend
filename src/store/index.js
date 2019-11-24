@@ -17,13 +17,14 @@ export const store = new Vuex.Store(
             matchstore: matchmodule,
             courtstore: courtmodule
         },
-        state: {            
+        state: {  
+            clubtz: "America/New_York",          
             loading: false,
             error: null,
             db: null,
             cellHeight1H: 120,
-            opentime: "06:00",
-            closetime: "23:00",
+            opentime: "08:00",
+            closetime: "20:00",
             repeaterTypes: [
                 { id : 1000 , label : "Non-repeater"},
                 { id : 2000 , label : "First Repeater"},

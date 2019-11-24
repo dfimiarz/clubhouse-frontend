@@ -32,7 +32,9 @@
                 
               </div>
             </div>
+            
             <div class="time-grid-container" ref="tcontainer">
+              
                 <div v-for="(n) in totalCellCount" :key="n" class="cell"  v-bind:style="{ 'height':  cellHeight1H + 'px' }">
                     {{ getCellLabel(n) }}
                 </div>
@@ -55,11 +57,11 @@
                   </div>  
                 </div>
                 <timeindicator :currtime="currtime" v-if="timeIndicatorVisible"></timeindicator>
+              </div> 
                 
                 
-                
-            </div> 
-           
+            
+            
           </div>
            <v-btn
               fixed=""
@@ -80,7 +82,8 @@
 
 import Session from './Session'
 import TimeIndicator from './TimeIndicator'
-import moment from 'moment'
+//import moment from 'moment'
+import moment from 'moment-timezone'
 
 export default {
   components:{
@@ -134,7 +137,8 @@ export default {
       }
 
       //Get current minutes
-      var curr_min = this.currtime.getHours() * 60 + this.currtime.getMinutes()
+      
+      var curr_min = moment(this.currtime).tz(this.clubtz).hour() * 60 + moment(this.currtime).tz(this.clubtz).minute()
 
       //Adjust current minuate for start and end
       var adj_curr_min = curr_min <= this.startMin ? this.startMin : curr_min >= this.endMin ? this.endMin : curr_min
@@ -160,20 +164,18 @@ export default {
         return this.hourLabels[cellnumber-1]
     },
     getTimeString(){
-      return this.date != null ? moment(this.date).format("ddd, MMM Do") : 'N/A' 
+      return this.date != null ? moment(this.date).tz(this.clubtz).format("ddd, MMM Do") : 'N/A' 
     },
     changeDay(day_diff){
-      const oneday = 1000*3600*24
-      this.date = new Date(this.date.getTime() + day_diff * oneday)
+      
+      this.date = moment(this.date).add(day_diff,'day').format()
+      console.log("New date", this.date)
     },
     resetDate(){
 
-       const date = new Date()
-       date.setHours(0)
-       date.setMinutes(0)
-       date.setMilliseconds(0)
-       date.setSeconds(0)
-       this.date = date
+      //this.date = moment().tz(this.clubtz).startOf('day')
+      this.date = moment().startOf('day').format()
+      
     },
     changeDisplayedCourts: function (step){
     
@@ -200,6 +202,9 @@ export default {
     
   },
   computed: {
+    clubtz: function(){
+       return this.$store.state.clubtz
+    },
     startMin: function(){
       return this.$store.getters['openMin']
     },
@@ -253,10 +258,10 @@ export default {
     },
     timeIndicatorVisible: function(){
       //Get current time in ms
-      var now_ms = this.currtime.getTime()
+      var now_ms = moment(this.currtime).tz(this.clubtz).valueOf()
 
       //Get date start in ms
-      var date_start_ms = this.date.getTime()
+      var date_start_ms = moment(this.date).tz(this.clubtz).valueOf()
 
       //Get date end in ms
       var date_end_ms = date_start_ms + 86400000
@@ -271,7 +276,7 @@ export default {
   created: function() {
 
     this.resetDate()
-    this.currtime = new Date()
+    this.currtime = moment().format()
     
     
     
@@ -281,14 +286,12 @@ export default {
     this.scrollCalendar()
 
     this.timerHandle = setInterval(() => {
-      this.currtime = new Date()
+      this.currtime = moment().format()
     },30000)
 
     // this.$nextTick(() => {
     //   this.scrollCalendar()
     // })
-    
-    //this.$store.dispatch('matchstore/watchCourts',this.date)
     
   },
   destroyed: function(){
@@ -309,7 +312,7 @@ export default {
     },
     date: function(val){
       console.log("Date changed" + val)
-      this.$store.dispatch('matchstore/loadMatches',moment(this.date).format("YYYY-MM-DD"))
+      this.$store.dispatch('matchstore/loadMatches',moment(this.date).tz(this.clubtz).format("YYYY-MM-DD"))
       if( this.timeIndicatorVisible ){
         this.scrollCalendar()
       }
@@ -337,7 +340,7 @@ export default {
   position: relative;
   display: grid;
   /* grid-template-columns: 40px repeat(5,1fr); */
-  grid-template-rows: 50px;
+  /* grid-template-rows: 50px; */
   border: 1px solid;
 }
 
@@ -354,7 +357,7 @@ export default {
   grid-column : 1;
   grid-row : 2;
   overflow: auto;
-  height: 75vh;
+  height: calc(100vh - 210px); 
 }
 
 .session-grid-container{

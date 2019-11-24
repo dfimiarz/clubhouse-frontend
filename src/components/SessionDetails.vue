@@ -285,7 +285,6 @@ export default {
   name: "sessiondetails",
   data: function() {
     return {
-      currentTime: null,
       loading: false,
       error: null,
       sessioninfo: null,
@@ -420,27 +419,27 @@ export default {
       return new Date(this.sessioninfo.date.concat('T',this.sessioninfo.end))
     },
     canEnd: function(){
-      return this.sessioninfo.hasOwnProperty('permissions')    ?
+      return Object.prototype.hasOwnProperty.call(this.sessioninfo,"permissions")    ?
               (Array.isArray(this.sessioninfo.permissions)      ? 
               this.sessioninfo.permissions.includes('CAN_END') : false) : false
     },
     canRemove: function(){
-      return this.sessioninfo.hasOwnProperty('permissions')       ?
+      return Object.prototype.hasOwnProperty.call(this.sessioninfo,"permissions")       ?
               (Array.isArray(this.sessioninfo.permissions)         ? 
               this.sessioninfo.permissions.includes('CAN_REMOVE') : false) : false
     },
     canChangeStart: function(){
-    return this.sessioninfo.hasOwnProperty('permissions')    ?
+    return Object.prototype.hasOwnProperty.call(this.sessioninfo,"permissions")    ?
             (Array.isArray(this.sessioninfo.permissions)      ? 
             this.sessioninfo.permissions.includes('CHANGE_START') : false) : false
     },
     canChangeEnd: function(){
-      return this.sessioninfo.hasOwnProperty('permissions')       ?
+      return Object.prototype.hasOwnProperty.call(this.sessioninfo,"permissions")       ?
               (Array.isArray(this.sessioninfo.permissions)         ? 
               this.sessioninfo.permissions.includes('CHANGE_END') : false) : false
     },
     canChangeCourt: function(){
-      return this.sessioninfo.hasOwnProperty('permissions')       ?
+      return Object.prototype.hasOwnProperty.call(this.sessioninfo,"permissions")       ?
               (Array.isArray(this.sessioninfo.permissions)         ? 
               this.sessioninfo.permissions.includes('CHANGE_COURT') : false) : false
     }
@@ -452,8 +451,6 @@ export default {
   created () {
     //fetch data here
     this.fetchData()
-
-    this.currentTime = new Date('2019-10-18T15:00:00')
 
   },
   destroyed (){

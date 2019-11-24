@@ -4,11 +4,14 @@
 </template>
 
 <script>
+
+import moment from 'moment-timezone'
+
 export default {
   props: {
     currtime: {
       required: true,
-      type: Date
+      type: String
     }
   },
   name: "timeindicator",
@@ -21,6 +24,9 @@ export default {
     
   },
   computed:{
+    clubtz: function(){
+       return this.$store.state.clubtz
+    },
     /**
      * Compute vertical position taking into account the start and end time
      */
@@ -38,7 +44,8 @@ export default {
       return this.$store.getters['closeMin'];
     },    
     currmin: function(){
-      return this.currtime.getHours() * 60 + this.currtime.getMinutes()
+      
+      return moment(this.currtime).tz(this.clubtz).hour() * 60 + moment(this.currtime).tz(this.clubtz).minute()
       
     }
     
