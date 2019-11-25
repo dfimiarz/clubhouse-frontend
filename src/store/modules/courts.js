@@ -1,4 +1,5 @@
 import Axios from "axios";
+import dbservice from "../../services/db"
 
 const state = {
     courts: [],
@@ -42,37 +43,18 @@ const actions = {
             }
         )
     },
-    loadCourts({commit}){
+    async loadCourts({commit}){
         commit('CLEAR_COURTS')
-        commit('clearError', null, { root: true })
-        commit('setLoading', true, { root: true })
 
-        Axios.get(process.env.VUE_APP_BACKEND + '/courts')
-        .then(
-            courtinfo => {
-                commit('setLoading',false, { root: true })
-                courtinfo.data.forEach(function(c) {
-                    commit('ADD_COURT',c)
-                });
-            }  
-        )
-        .catch(
-            error => {
-                commit('setLoading',false, { root: true })
-                commit('setError', error.message, { root: true })
-            }
-        )
-
-        /*
-        return db.collection('/courts').get()
-        .then((snap) => {
-            snap.forEach( doc => {
-                const data = doc.data()
-                const id = doc.id
-                commit('ADD_COURT',{ id: id, lbl: data.lbl, msg: data.msg, state: data.state, statelbl: data.statelbl })
-            })
-        })
-        */
+        try{
+            let courtdata = await dbservice.getCourts()
+            courtdata.data.forEach(function(c) {
+                commit('ADD_COURT',c)
+            });
+        } 
+        finally{
+            /* Continue regardless the erro */
+        }
     }
     /*
     ,

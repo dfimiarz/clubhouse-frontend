@@ -1,4 +1,5 @@
 import axios from 'axios'
+import dbservice from '../../services/db'
 
 const state = {
     
@@ -52,37 +53,20 @@ const actions = {
                 commit('setLoading',false,  { root: true });
             });
     },
-    loadMembers({commit}){
+    async loadMembers({commit}){
         
-        
-        axios.get(process.env.VUE_APP_BACKEND + '/members')
-            .then(function (response) {
-                const members = response.data
-                members.forEach((member) => {
-                    const t_member = Object.assign(member,{ name: member.firstname + " " + member.lastname })
-                    commit('ADD_MEMBER',t_member)
-                })
+        try{
+            let membersdata = await dbservice.getMembers()
+            membersdata.data.forEach((member) => {
+                const t_member = Object.assign(member,{ name: member.firstname + " " + member.lastname })
+                commit('ADD_MEMBER',t_member)
             })
-            .catch(function (error) {
 
+        }
+        finally{
+            /* Continue regardless of errro */
+        }
 
-                if( error.response ){
-                    console.log(error.response.data);
-                    console.log(error.response.status);
-                    console.log(error.response.headers);
-                    commit('setError', error.response.data,  { root: true })
-
-                }
-                else{
-                    console.log('Error: ', error.message);
-                    commit('setError', "Connection failed",  { root: true })
-                }
-                
-            })
-            .finally(() => {
-                
-                commit('setLoading',false,  { root: true })
-            });
         
        /*
         return db.collection('/members').get()

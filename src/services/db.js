@@ -76,7 +76,13 @@ function changeCourt(params){
      )
 }
 
+function getCourts(){
+    return axios.get(process.env.VUE_APP_BACKEND + '/courts')
+}
 
+function getMembers(){
+    return axios.get(process.env.VUE_APP_BACKEND + '/members')
+}
 
 export default  {
     newMatch: newMatch,
@@ -84,5 +90,7 @@ export default  {
     endSession: endSession,
     removeSession: removeSession,
     changeTime: changeSessionTime,
-    changeCourt
+    changeCourt,
+    getCourts,
+    getMembers
 }

@@ -84,14 +84,9 @@ export const store = new Vuex.Store(
             clearError({commit}){
                 commit('clearError')
             },
-            loadAppInfo({ dispatch }){
-                Promise.all([dispatch('memberstore/loadMembers'),dispatch('courtstore/loadCourts')])
-                .then( () =>{
-                    console.log("Info loaded")
-                })
-                .catch( (err) =>{
-                    console.log(err)
-                })
+            loadAppInfo({dispatch }){
+                
+                return Promise.all([dispatch('memberstore/loadMembers'),dispatch('courtstore/loadCourts')])
                 
             }
         },
