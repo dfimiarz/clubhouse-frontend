@@ -274,7 +274,7 @@
 <script>
 
 import apihandler from './../services/db'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import valueeditor from './session/ValueEditor'
 
 export default {
@@ -412,11 +412,14 @@ export default {
     }
   },
   computed:{
+    clubtz: function(){
+       return this.$store.state.clubtz
+    },
     starttime: function(){
-      return new Date(this.sessioninfo.date.concat('T',this.sessioninfo.start))
+      return moment(this.sessioninfo.date.concat('T',this.sessioninfo.start)).tz(this.clubtz).format()
     },
     endtime: function(){
-      return new Date(this.sessioninfo.date.concat('T',this.sessioninfo.end))
+      return moment(this.sessioninfo.date.concat('T',this.sessioninfo.end)).tz(this.clubtz).format()
     },
     canEnd: function(){
       return Object.prototype.hasOwnProperty.call(this.sessioninfo,"permissions")    ?

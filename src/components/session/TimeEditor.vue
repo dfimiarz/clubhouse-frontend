@@ -108,7 +108,7 @@
 
 <script>
 
-import moment from 'moment'
+import moment from 'moment-timezone'
 import apihandler from './../../services/db'
 import { editor } from './EditorMixin'
 
@@ -121,16 +121,13 @@ export default {
           s_time: null,
           etimedialog: false,
           e_time: null,
-          // error: null,
-          // loading: false
+          
         }
     },
     methods: {
       
       allowedminutes: m => m % 5 === 0,
-      // close: function(){
-      //   this.$emit('update:show')
-      // },
+      
       changeTime: function(){
         this.error = null
         this.loading = true
@@ -168,6 +165,9 @@ export default {
       }
     },
     computed: {
+      clubtz: function(){
+        return this.$store.state.clubtz
+      },
       opentime(){
         return this.$store.state.opentime
       },
@@ -175,19 +175,19 @@ export default {
         return this.$store.state.closetime
       },
       canChangeStart: function(){
-      return this.session.hasOwnProperty('permissions')    ?
+      return Object.prototype.hasOwnProperty.call(this.session,"permissions")    ?
               (Array.isArray(this.session.permissions)      ? 
               this.session.permissions.includes('CHANGE_START') : false) : false
       },
       canChangeEnd: function(){
-        return this.session.hasOwnProperty('permissions')       ?
+        return Object.prototype.hasOwnProperty.call(this.session,"permissions")       ?
                 (Array.isArray(this.session.permissions)         ? 
                 this.session.permissions.includes('CHANGE_END') : false) : false
       }
     },
     mounted: function(){
-      this.s_time = moment(this.session.date.concat('T',this.session.start)).format('HH:mm')
-      this.e_time = moment(this.session.date.concat('T',this.session.end)).format('HH:mm')
+      this.s_time = moment(this.session.date.concat('T',this.session.start)).tz(this.clubtz).format('HH:mm')
+      this.e_time = moment(this.session.date.concat('T',this.session.end)).tz(this.clubtz).format('HH:mm')
     }
     
 }

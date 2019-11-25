@@ -82,7 +82,6 @@
 
 import Session from './Session'
 import TimeIndicator from './TimeIndicator'
-//import moment from 'moment'
 import moment from 'moment-timezone'
 
 export default {

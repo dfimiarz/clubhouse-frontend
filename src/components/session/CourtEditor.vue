@@ -105,7 +105,7 @@ export default {
     },
     computed: {
       canChangeCourt: function(){
-      return this.session.hasOwnProperty('permissions')    ?
+      return Object.prototype.hasOwnProperty.call(this.sessioninfo,"permissions")    ?
               (Array.isArray(this.session.permissions)      ? 
               this.session.permissions.includes('CHANGE_COURT') : false) : false
       },

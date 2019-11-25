@@ -416,14 +416,6 @@ export default {
     },
     validate: function(){
 
-        // console.log(this.date, this.s_time)
-
-        // let datepattern = /^(19|20)\d\d([- /.])(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])$/
-
-        // console.log(datepattern.test(this.date))
-
-        // let d = new Date(this.date)
-
         return true
     },
     sendData(match){

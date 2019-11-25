@@ -98,7 +98,6 @@ export default {
       
     },
     endMin: function(){
-      
       let e_dt = new Date(this.session.date.concat('T',this.session.end))
       return e_dt.getHours() * 60 + e_dt.getMinutes()
     }
