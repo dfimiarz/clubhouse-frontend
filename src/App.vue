@@ -3,6 +3,7 @@
   
   <div id="app">
     <v-app dark>
+      <transition name="fade">
       <splashscreen v-if="! loaded" :loading="loading" :error="loadingError"></splashscreen>
       <div v-else>
         <v-navigation-drawer
@@ -92,6 +93,7 @@
           </v-layout>
         </v-footer>
       </div>
+      </transition>
     </v-app>
     
   </div>
@@ -140,5 +142,14 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.25s ease-out;
+  }
+
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
+
 </style>
