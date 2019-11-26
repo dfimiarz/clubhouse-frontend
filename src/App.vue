@@ -121,7 +121,7 @@ export default {
     new Promise((resolve) => {
       setTimeout(() => {
         resolve()
-      },2000)
+      },500)
     })
     .then(() => {
       return this.$store.dispatch('loadAppInfo')
