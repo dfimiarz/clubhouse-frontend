@@ -22,7 +22,6 @@ function endSession(params){
             "cmd" : {
                 "name":"END_SESSION",
                 "params" : { 
-                            "end_time": new Date().getTime(),
                             "hash" : params.hash
                          }
                 }
