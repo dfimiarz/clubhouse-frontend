@@ -287,10 +287,6 @@ export default {
     this.timerHandle = setInterval(() => {
       this.currtime = moment().format()
     },30000)
-
-    // this.$nextTick(() => {
-    //   this.scrollCalendar()
-    // })
     
   },
   destroyed: function(){

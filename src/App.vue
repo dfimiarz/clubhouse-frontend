@@ -88,7 +88,7 @@
         <v-footer app>
           <v-layout>
             <v-flex sm6>
-              <span class="white--text">&copy; 2018</span>
+              <span class="white--text">&copy; 2019</span>
             </v-flex>
           </v-layout>
         </v-footer>
