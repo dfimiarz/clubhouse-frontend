@@ -125,7 +125,7 @@
                       </v-layout>
                     </v-flex>
                     <v-flex xs12>
-                      {{ duration }}
+                      <span>Duration: </span><span>{{ duration }}</span><span v-if="maxDuration">/{{ maxDuration }}</span><span> min.</span>
                     </v-flex>
                     
                     <v-flex xs12>
@@ -476,6 +476,36 @@ export default {
     }
   },
   computed: {
+    matchConfig: function(){
+        return this.selplayers.reduce( (cur_val,player) => {
+            
+            let val = 0
+
+            switch (player.repeater) {
+                case 1000:
+                    val = 100
+                    break;
+                case 2000:
+                    val = 10
+                    break;
+                case 3000:
+                    val = 1
+                    break;
+                default:
+                    val = 0
+                    break;
+            }
+
+            return val + cur_val
+        },0)
+    },
+    bookingRules: function(){
+      let rule = this.$store.getters['getBookingRule'](this.matchConfig)
+      return rule !== undefined ? rule : {} 
+    },
+    maxDuration: function(){
+      return Object.prototype.hasOwnProperty.call(this.bookingRules,"maxduration") ? (this.bookingRules.maxduration / 60000) : undefined
+    },
     courts: function(){
       return this.$store.getters['courtstore/getCourts']
     },
@@ -538,7 +568,8 @@ export default {
       return utils.timetoInt(this.e_time)
     },
     duration: function(){
-      return this.endmin - this.startmin 
+      let dur = this.endmin - this.startmin
+      return dur >= 0 ? dur : 'N/A' 
     }
   },
   created: function() {
