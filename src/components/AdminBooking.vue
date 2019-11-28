@@ -17,8 +17,8 @@
             </v-stepper-header>
 
             <v-stepper-items>
-              <v-stepper-content step="2">
-                <v-container grid-list-md>
+              <v-stepper-content step="2" class="px-0">
+                <v-container grid-list-sm>
                   <v-form ref="timeform" lazy>
                   <v-layout row wrap>
                     <v-flex xs12>
@@ -49,7 +49,7 @@
                         </v-flex>
                        </v-layout>
                     </v-flex>
-                    <v-flex xs12 md6>
+                    <v-flex xs6 md6>
                       <v-layout>
                         <v-flex xs12>
                           <v-dialog
@@ -87,7 +87,7 @@
                         </v-flex>
                        </v-layout>
                     </v-flex>
-                    <v-flex xs12 md6>
+                    <v-flex xs6 md6>
                       <v-layout wrap>
                         <v-flex xs12>
                           <v-dialog
@@ -106,6 +106,7 @@
                                 v-on="on"
                                 required=""
                                 :rules="[ rules.required ]"
+                                :disabled=" startmin <= 0"
                               ></v-text-field>
                             </template>
                             <v-time-picker
@@ -125,7 +126,10 @@
                       </v-layout>
                     </v-flex>
                     <v-flex xs12>
-                      <span>Duration: </span><span>{{ duration }}</span><span v-if="maxDuration">/{{ maxDuration }}</span><span> min.</span>
+                      <div class="body-2">
+                        <span>Session time: </span><span :class="{'yellow--text': duration > maxDuration}">{{ duration }}</span><span v-if="maxDuration">/{{ maxDuration }}</span><span> min.</span>
+                      </div>
+                      <div class="overline yellow--text" v-show=" duration > maxDuration">* Note maximum play time of {{ maxDuration }} min</div>
                     </v-flex>
                     
                     <v-flex xs12>
@@ -175,7 +179,7 @@
               </v-stepper-content>
 
               <v-stepper-content step="1">
-                <v-container fluid="" grid-list-md="">
+                <v-container fluid="" grid-list-sm="" class="px-0">
                   <v-form ref="playerform">
                   <v-layout row wrap>
                     <v-row no-gutters >
@@ -569,7 +573,7 @@ export default {
     },
     duration: function(){
       let dur = this.endmin - this.startmin
-      return dur >= 0 ? dur : 'N/A' 
+      return dur >= 0 ? dur : 0
     }
   },
   created: function() {

@@ -6,7 +6,7 @@
 function strTimetoInt(strval){
 
     if (! strval )
-        return null
+        return 0
 
     const [hours_str, min_str] = strval.split(':', 2)
 
@@ -14,10 +14,10 @@ function strTimetoInt(strval){
     const min = parseInt(min_str)
 
     if (!(hours >= 0 && hours <= 23))
-        return null
+        return 0
 
     if (!(min >= 0 && min <= 59))
-        return null
+        return 0
 
     return parseInt(hours) * 60 + parseInt(min)
 
