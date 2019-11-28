@@ -49,9 +49,12 @@
                         </v-flex>
                        </v-layout>
                     </v-flex>
-                    <v-flex xs6 md6>
+                    <v-flex xs12 class="py-1">
+                      <v-divider></v-divider>
+                    </v-flex>
+                    <v-flex xs12>
                       <v-layout>
-                        <v-flex xs12>
+                        <v-flex xs12 md6>
                           <v-dialog
                             ref="stdialog"
                             v-model="stimedialog"
@@ -87,9 +90,9 @@
                         </v-flex>
                        </v-layout>
                     </v-flex>
-                    <v-flex xs6 md6>
+                    <v-flex xs12>
                       <v-layout wrap>
-                        <v-flex xs12>
+                        <v-flex xs12 md6>
                           <v-dialog
                             ref="etdialog"
                             v-model="etimedialog"
@@ -125,13 +128,15 @@
                         </v-flex>
                       </v-layout>
                     </v-flex>
-                    <v-flex xs12>
+                    <v-flex xs12 class="pa-2">
                       <div class="body-2">
                         <span>Session time: </span><span :class="{'yellow--text': duration > maxDuration}">{{ duration }}</span><span v-if="maxDuration">/{{ maxDuration }}</span><span> min.</span>
                       </div>
-                      <div class="overline yellow--text" v-show=" duration > maxDuration">* Note maximum play time of {{ maxDuration }} min</div>
+                      <div class="overline yellow--text" v-show=" duration > maxDuration">* Note maximum session time of {{ maxDuration }} min</div>
                     </v-flex>
-                    
+                    <v-flex xs12 class="py-1">
+                      <v-divider></v-divider>
+                    </v-flex>
                     <v-flex xs12>
                       <v-layout>
                         <v-flex xs12 md6>
@@ -143,9 +148,15 @@
                             required=""
                             :rules="[ rules.required ]"
                             v-model="court"
+                            @change="checkCourt"
+                            :disabled="duration == 0"
                           >
                             
                           </v-select>
+                          <div v-show="court">
+                            <div class="caption green--text">Court is availble</div>
+                            <div class="caption red--text">Court is NOT availble</div>
+                          </div>
                         </v-flex>
                       </v-layout>
                       
@@ -270,7 +281,7 @@
                 
                 
                 <v-layout>
-                  <v-btn text="" @click="changeBookingParmas">Go back</v-btn>
+                  <v-btn text="" @click="changeBookingParams">Go back</v-btn>
                   <v-spacer></v-spacer>
                   <v-btn
                     :loading="loading"
@@ -333,9 +344,9 @@ export default {
   methods: {
     allowedminutes: m => m % 5 === 0,
     getPlayerLabel: index => "Player " + (index + 1),
-    changeBookingParmas: function(){
+    changeBookingParams: function(){
       this.error = null
-      this.step = 1
+      this.step = 2
     },
     stepCheck: function(nextstep){
       if( nextstep == 3 ){
@@ -477,6 +488,9 @@ export default {
       console.log("Will send ", match)
       this.sendData(match)
       
+    },
+    checkCourt: function(){
+      console.log( this.court )
     }
   },
   computed: {
