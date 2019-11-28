@@ -30,21 +30,21 @@ const actions = {
         commit('clearError', null, { root: true })
         commit('setLoading', true, { root: true })
         axios.post(process.env.VUE_APP_BACKEND + '/members',newMemberInfo)
-            .then(function (response) {
-                console.log(response)
+            .then(function () {
+                
             })
             .catch(function (error) {
 
-                console.log("Error", error)
+                // console.log("Error", error)
                 if( error.response ){
-                    console.log(error.response.data);
-                    console.log(error.response.status);
-                    console.log(error.response.headers);
+                    // console.log(error.response.data);
+                    // console.log(error.response.status);
+                    // console.log(error.response.headers);
                     commit('setError', error.response.data,  { root: true })
 
                 }
                 else{
-                    console.log('Error: ', error.message);
+                    //console.log('Error: ', error.message);
                     commit('setError', "Connection failed",  { root: true })
                 }
                 

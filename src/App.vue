@@ -1,7 +1,7 @@
 <template>
   
   
-  <div id="app">
+  <div>
     <v-app dark>
       <transition name="fade">
       <splashscreen v-if="! loaded" :loading="loading" :error="loadingError"></splashscreen>
@@ -101,12 +101,12 @@
 
 <script>
 
-import splashscreen from './components/SplashScreen'
+//import splashscreen from './components/SplashScreen'
 
 export default {
   name: "app",
   components:{
-    splashscreen: splashscreen
+    splashscreen: () => import(/* webpackPrelaod: true,webpackChunkName: "splashscreen" */ './components/SplashScreen')
   },
   data: () => ({
     drawer: false,
@@ -116,7 +116,7 @@ export default {
   }),
   created: function(){
 
-    console.log("Loading app data...")
+    //console.log("Loading app data...")
 
     new Promise((resolve) => {
       setTimeout(() => {
@@ -127,11 +127,11 @@ export default {
       return this.$store.dispatch('loadAppInfo')
     })
     .then(() => { 
-      console.log("App data loaded!")
+      //console.log("App data loaded!")
       this.loaded = true
      })
     .catch((err) => { 
-      console.log("Loading error:",err.message)
+      //console.log("Loading error:",err.message)
       this.loadingError = err.message 
     })
     .finally(() => {
