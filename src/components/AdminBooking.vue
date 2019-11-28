@@ -394,7 +394,7 @@ export default {
         return accumulator
       },{ players: [], errors: [] })
 
-      console.log(playerCheck)
+      //console.log(playerCheck)
 
       if( playerCheck.players.length == 0 ){
         this.playerErrors = "Please select a player"
@@ -441,30 +441,31 @@ export default {
       let that = this
 
       apihandler.newMatch(match)
-      .then(function (response) {
-          console.log(response)
+      .then(function () {
+          //console.log(response)
           that.loading = false
           that.$router.push({ name: 'calendar' })
       })
       .catch(function (error) {
 
+        // TODO: handle send errors better
           
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
           that.error = error.response.data
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          //console.log(error.response.status);
+          //console.log(error.response.headers);
         } else if (error.request) {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          console.log(error.request);
+          //console.log(error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message);
+          //console.log('Error', error.message);
         }
-        console.log(error.config);
+        //console.log(error.config);
       })
       .finally(() => {
         that.loading = false
@@ -485,12 +486,12 @@ export default {
           players: this.playerInfo
       }
 
-      console.log("Will send ", match)
+      //console.log("Will send ", match)
       this.sendData(match)
       
     },
     checkCourt: function(){
-      console.log( this.court )
+      //console.log( this.court )
     }
   },
   computed: {
