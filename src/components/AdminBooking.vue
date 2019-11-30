@@ -129,10 +129,15 @@
                       </v-layout>
                     </v-flex>
                     <v-flex xs12 class="pa-2">
-                      <div class="body-2">
-                        <span>Session time: </span><span :class="{'yellow--text': duration > maxDuration}">{{ duration }}</span><span v-if="maxDuration">/{{ maxDuration }}</span><span> min.</span>
+                      <div v-if="maxDuration">
+                        <div class="body-2">
+                          <span>Session time: </span><span :class="{'yellow--text': duration > maxDuration}">{{ duration }}</span><span v-if="maxDuration">/{{ maxDuration }}</span><span> min.</span>
+                        </div>
+                        <div class="overline yellow--text" v-show=" duration > maxDuration">* Note maximum session time of {{ maxDuration }} min</div>
                       </div>
-                      <div class="overline yellow--text" v-show=" duration > maxDuration">* Note maximum session time of {{ maxDuration }} min</div>
+                      <div v-else>
+                          <span>Session time: {{ duration }} min.</span>
+                      </div>
                     </v-flex>
                     <v-flex xs12 class="py-1">
                       <v-divider></v-divider>
@@ -523,7 +528,7 @@ export default {
       return rule !== undefined ? rule : {} 
     },
     maxDuration: function(){
-      return Object.prototype.hasOwnProperty.call(this.bookingRules,"maxduration") ? (this.bookingRules.maxduration / 60000) : undefined
+      return Object.prototype.hasOwnProperty.call(this.bookingRules,"maxduration") ? (this.bookingRules.maxduration / 60000) : null
     },
     courts: function(){
       return this.$store.getters['courtstore/getCourts']
