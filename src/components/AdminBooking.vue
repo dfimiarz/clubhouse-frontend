@@ -2,7 +2,7 @@
 <v-container fluid fill-height="" grid-list-xs >
   <v-layout justify-center="" align-content-start="" row wrap>
     <v-flex xs12 sm8 md6 lg4>
-     
+
           <v-stepper v-model="step">
             <v-stepper-header>
               <v-stepper-step :complete="step > 1" step="1">Players</v-stepper-step>
@@ -28,7 +28,7 @@
                             ref="date_dialog"
                             v-model="datedialog"
                             width="290px"
-                            
+
                           >
                             <template v-slot:activator="{ on }">
                                <v-text-field
@@ -39,13 +39,13 @@
                                 v-on="on"
                                 required=""
                                 :rules="[ rules.required ]"
-                              ></v-text-field> 
+                              ></v-text-field>
                             </template>
                             <v-date-picker v-model="date" scrollable @input="datedialog = false">
-                              
+
                             </v-date-picker>
                           </v-dialog>
-                          
+
                         </v-flex>
                        </v-layout>
                     </v-flex>
@@ -61,7 +61,7 @@
                             :return-value.sync="s_time"
                             persistent
                             width="290px"
-                            
+
                           >
                             <template v-slot:activator="{ on }">
                               <v-text-field
@@ -129,11 +129,11 @@
                       </v-layout>
                     </v-flex>
                     <v-flex xs12 class="pa-2">
-                      <div v-if="maxDuration">
+                      <div v-if="reqMaxDuration">
                         <div class="body-2">
-                          <span>Session time: </span><span :class="{'yellow--text': duration > maxDuration}">{{ duration }}</span><span v-if="maxDuration">/{{ maxDuration }}</span><span> min.</span>
+                          <span>Session time: </span><span :class="{'yellow--text': duration > reqMaxDuration}">{{ duration }}</span><span>/{{ reqMaxDuration }}</span><span> min.</span>
                         </div>
-                        <div class="overline yellow--text" v-show=" duration > maxDuration">* Note maximum session time of {{ maxDuration }} min</div>
+                        <div class="overline yellow--text" v-show=" duration > reqMaxDuration">* Rules: Session time limit: {{ reqMaxDuration }} min</div>
                       </div>
                       <div v-else>
                           <span>Session time: {{ duration }} min.</span>
@@ -156,7 +156,7 @@
                             @change="checkCourt"
                             :disabled="duration == 0"
                           >
-                            
+
                           </v-select>
                           <div v-show="court">
                             <div class="caption green--text">Court is availble</div>
@@ -164,34 +164,44 @@
                           </div>
                         </v-flex>
                       </v-layout>
-                      
+
                     </v-flex>
-                    
-                    <v-flex xs12 md6>
-                      <v-checkbox v-model="bumpable" label="Bumpable"></v-checkbox>  
+
+                    <v-flex xs12 md6 v-show="reqBumpable">
+                      <v-switch
+                        dense=""
+                        flat=""
+                        v-model="bumpable"
+                        label="Bumpable"
+                      >
+                      </v-switch>
+
+                    </v-flex>
+                    <v-flex xs12 class="pa-0" v-if="reqBumpable">
+                      <div class="overline yellow--text" v-show="reqBumpable !== bumpable">* Rules: Bumpable should be set.</div>
                     </v-flex>
                     <v-flex xs12>
                       <v-textarea
                         counter
                         v-model="note"
                         label="Note"
-                        :rules="[rules.notelimit]"
+                        :rules="[rules.notelimit,rules.explainRuleChange]"
                       ></v-textarea>
                     </v-flex>
-                   
+
                   </v-layout>
                   </v-form>
                 </v-container>
                 <v-layout row>
-                  
+
                     <v-btn text="" @click="step = 1">Go back</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn @click="stepCheck(3)">
                       Continue
                     </v-btn>
-                   
+
                 </v-layout>
-                
+
               </v-stepper-content>
 
               <v-stepper-content step="1">
@@ -227,16 +237,16 @@
                             item-value="id"
                             :error-messages="selplayers[index].repeaterErrs"
                           >
-                            
+
                           </v-select>
                         </v-flex>
-                      </v-layout>  
+                      </v-layout>
                     </v-flex>
                   </v-layout>
                   </v-form>
                 </v-container>
                 <v-layout row>
-                  
+
                   <v-btn color="warning" text="" outlined class="ma-1"
                     @click="clearPlayers"
                   >
@@ -283,8 +293,8 @@
                     </v-flex>
                   </v-layout>
                 </v-container>
-                
-                
+
+
                 <v-layout>
                   <v-btn text="" @click="changeBookingParams">Go back</v-btn>
                   <v-spacer></v-spacer>
@@ -296,12 +306,12 @@
                     Book
                 </v-btn>
 
-                
+
                 </v-layout>
-                
+
               </v-stepper-content>
             </v-stepper-items>
-          </v-stepper> 
+          </v-stepper>
     </v-flex>
   </v-layout>
 </v-container>
@@ -340,7 +350,10 @@ export default {
         rules: {
           required: value => !!value || 'Required.',
           durationlimit: value => value >= 15 || 'Min 15 min',
-          notelimit: v => v.length <= 256 || 'Max 256 characters'
+          notelimit: v => v.length <= 256 || 'Max 256 characters',
+          explainRuleChange: () => {
+            return (this.duration > this.reqMaxDuration || (this.reqBumpable == 1 && this.bumpable ==0 )) ? 'Explain rules overwrite' : true
+          }
         },
         loading: false,
         error: null
@@ -381,8 +394,8 @@ export default {
     validatePlayerInput(){
 
       this.clearPlayerErrors()
-       
-      
+
+
       let playerCheck = this.selplayers.reduce((accumulator,player,index) => {
 
         if( player.id !== null ){
@@ -390,7 +403,7 @@ export default {
           accumulator['players'].indexOf(player.id) != -1 ?
           accumulator['errors'].push({ index: index, field: 'player', message:  "Duplicate player"}) :
           accumulator['players'].push(player.id)
-          
+
          if( player.repeater === null )
           accumulator['errors'].push({ index: index, field: 'repeater', message:  "Repeater empty"})
 
@@ -407,7 +420,7 @@ export default {
       }
 
       if( playerCheck.errors.length != 0 ){
-        
+
         let that = this
 
         playerCheck.errors.forEach((error) => {
@@ -417,16 +430,16 @@ export default {
 
           that.selplayers[index][field].push(msg)
         })
-      
+
         return
-      
+
       }
-      
-      
+
+
 
 
       this.step = 2
-      
+
     },
     formatDate(date){
       if (!date) return null
@@ -454,7 +467,7 @@ export default {
       .catch(function (error) {
 
         // TODO: handle send errors better
-          
+
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -493,16 +506,21 @@ export default {
 
       //console.log("Will send ", match)
       this.sendData(match)
-      
+
     },
     checkCourt: function(){
       //console.log( this.court )
     }
   },
+  watch: {
+    reqBumpable: function( newval ){
+      this.bumpable = newval
+    }
+  },
   computed: {
     matchConfig: function(){
         return this.selplayers.reduce( (cur_val,player) => {
-            
+
             let val = 0
 
             switch (player.repeater) {
@@ -525,16 +543,19 @@ export default {
     },
     bookingRules: function(){
       let rule = this.$store.getters['getBookingRule'](this.matchConfig)
-      return rule !== undefined ? rule : {} 
+      return rule !== undefined ? rule : {}
     },
-    maxDuration: function(){
+    reqMaxDuration: function(){
       return Object.prototype.hasOwnProperty.call(this.bookingRules,"maxduration") ? (this.bookingRules.maxduration / 60000) : null
+    },
+    reqBumpable: function(){
+      return Object.prototype.hasOwnProperty.call(this.bookingRules,"bumpable") ? this.bookingRules.bumpable : null
     },
     courts: function(){
       return this.$store.getters['courtstore/getCourts']
     },
     clubmembers: function(){
-      return this.$store.getters['memberstore/clubMembers'] 
+      return this.$store.getters['memberstore/clubMembers']
     },
     repeaterTypes: function(){
         return this.$store.getters['repeaterTypes']
@@ -548,21 +569,21 @@ export default {
     playerDetails: function(){
 
       return this.selplayers.reduce( (accumulator,player) => {
-          
+
 
           const member = this.$store.getters['memberstore/getMemberById'](player.id)
           const repeaterDetails = this.$store.getters['getRepeaterType'](player.repeater)
 
           if( member && repeaterDetails ){
-            
+
             accumulator.push({ id: player.id, firstname: member.firstname, lastname: member.lastname, repeater: player.repeater, repeater_lbl: repeaterDetails.label })
           }
 
           return accumulator
-          
-          
+
+
         },[])
-       
+
     },
     playerInfo: function(){
       return this.selplayers.reduce( (accumulator,player) => {
@@ -572,8 +593,8 @@ export default {
           }
 
           return accumulator
-          
-          
+
+
         },[])
     },
     computedDateFormatted () {
@@ -597,16 +618,16 @@ export default {
     }
   },
   created: function() {
-    
+
     this.date = moment().format("Y-MM-DD")
   },
   mounted: function(){
-    
+
   },
   beforeDestroy () {
-   
+
   },
-  
+
 }
 </script>
 
