@@ -129,22 +129,18 @@
                       </v-layout>
                     </v-flex>
                     <v-flex xs12 class="pa-2">
-                      <div v-if="reqMaxDuration">
-                        <div class="body-2">
-                          <span>Session time: </span><span :class="{'yellow--text': duration > reqMaxDuration}">{{ duration }}</span><span>/{{ reqMaxDuration }}</span><span> min.</span>
-                        </div>
-                        <div class="overline yellow--text" v-show=" duration > reqMaxDuration">* Rules: Session time limit: {{ reqMaxDuration }} min</div>
-                      </div>
-                      <div v-else>
-                          <span>Session time: {{ duration }} min.</span>
-                      </div>
+                      <div class="title" >Session time: <span :class="{'warning--text': duration > reqMaxDuration}">{{ duration }}</span> min.</div>
+                      <v-row class="caption warning--text" v-show=" duration > reqMaxDuration" no-gutters="" align="center">
+                        <v-col cols="auto" >* Club rules limit time to {{ reqMaxDuration }} min.</v-col>
+                        <v-col cols="auto" class="ml-auto"><v-btn small="" outlined="" color="warning">Fix</v-btn></v-col>
+                      </v-row>
                     </v-flex>
                     <v-flex xs12 class="py-1">
                       <v-divider></v-divider>
                     </v-flex>
                     <v-flex xs12>
                       <v-layout>
-                        <v-flex xs12 md6>
+                        <v-flex xs6>
                           <v-select
                             label="Court"
                             :items="courts"
@@ -154,32 +150,39 @@
                             :rules="[ rules.required ]"
                             v-model="court"
                             @change="checkCourt"
-                            :disabled="duration == 0"
+                            :disabled="duration == 0 || checkingCourt"
+                            :loading="checkingCourt"
                           >
 
                           </v-select>
-                          <div v-show="court">
+                          <!-- <div v-show="court">
                             <div class="caption green--text">Court is availble</div>
                             <div class="caption red--text">Court is NOT availble</div>
-                          </div>
+                          </div> -->
                         </v-flex>
                       </v-layout>
 
                     </v-flex>
-
-                    <v-flex xs12 md6 v-show="reqBumpable">
+                    <v-layout v-show="reqBumpable" row wrap>
+                    <v-flex xs12 class="my-1">
+                      <v-divider></v-divider>
+                    </v-flex>
+                    <v-flex xs12 >
                       <v-switch
                         dense=""
                         flat=""
                         v-model="bumpable"
                         label="Bumpable"
+                        
                       >
+                     
                       </v-switch>
-
+                      <div class="caption warning--text" v-show="reqBumpable !== bumpable">* Club Rules call for bumpable switched on</div>
                     </v-flex>
-                    <v-flex xs12 class="pa-0" v-if="reqBumpable">
-                      <div class="overline yellow--text" v-show="reqBumpable !== bumpable">* Rules: Bumpable should be set.</div>
+                    <v-flex xs12 class="my-1">
+                      <v-divider></v-divider>
                     </v-flex>
+                    </v-layout>
                     <v-flex xs12>
                       <v-textarea
                         counter
@@ -356,6 +359,7 @@ export default {
           }
         },
         loading: false,
+        checkingCourt: false,
         error: null
     }
   },
@@ -509,7 +513,8 @@ export default {
 
     },
     checkCourt: function(){
-      //console.log( this.court )
+      this.checkingCourt = true
+      setTimeout(() => { this.checkingCourt = false}, 2000)
     }
   },
   watch: {
