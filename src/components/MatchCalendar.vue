@@ -119,19 +119,19 @@ export default {
 
       //Do nothing if day is not "long enough"
       if ( day_len < 1 ){
-        console.log("Check start and end time")
+        //console.log("Check start and end time")
         return
       }
 
       //Check if container has height
       if( ! (this.$refs.tcontainer.clientHeight !== undefined && this.$refs.tcontainer.clientHeight >= 0) ){
-        console.log("Element height error")
+        //console.log("Element height error")
         return
       }
 
       //Check if container has scrollheight
        if( ! (this.$refs.tcontainer.scrollHeight !== undefined && this.$refs.tcontainer.scrollHeight >= 0) ){
-        console.log("Scroll Height error")
+        //console.log("Scroll Height error")
         return
       }
 
@@ -168,7 +168,7 @@ export default {
     changeDay(day_diff){
       
       this.date = moment(this.date).add(day_diff,'day').format()
-      console.log("New date", this.date)
+      //console.log("New date", this.date)
     },
     resetDate(){
 
@@ -306,7 +306,7 @@ export default {
 
     },
     date: function(val){
-      console.log("Date changed" + val)
+      //console.log("Date changed" + val)
       this.$store.dispatch('matchstore/loadMatches',moment(this.date).tz(this.clubtz).format("YYYY-MM-DD"))
       if( this.timeIndicatorVisible ){
         this.scrollCalendar()
