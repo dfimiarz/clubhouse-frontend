@@ -1,7 +1,7 @@
 /**
  * 
- * @param { String } strval String representation of time in format HH:MM
- * @returns number of minutes since midnight (00:00) | null
+ * @param { String } strval String representation of time in format hh:hh
+ * @returns { Number ) number of minutes since midnight (00:00) | null
  */
 function strTimetoInt(strval){
 
@@ -24,9 +24,9 @@ function strTimetoInt(strval){
 }
 
 /**
- * 
- * @param { Number } total_min 
- * @returns zero padded hours:minutes representation of minutes since 00:00
+ * Return zero padded hours:minutes representation of minutes since 00:00
+ * @param { Number } total_min Number of minutes since 00:00
+ * @returns { ( String|null ) } String representation in form hh:mm
  */
 function minToTime(total_min){
 
