@@ -325,7 +325,7 @@
 import apihandler from './../services/db'
 import { isNull } from 'util';
 import utils from './../services/utils'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 export default {
   components:{
@@ -440,7 +440,25 @@ export default {
       }
 
 
+      var time = moment().tz(this.clubtz).format("HH:mm")
+      var current_minutes = utils.timetoInt(time)
 
+      var minutes = current_minutes % 60
+      var hours = (current_minutes - minutes) / 60
+
+      var minutes_limit = 5
+      var minutes_rounded = Math.floor(minutes / minutes_limit) * minutes_limit
+
+      var final_start_minutes = hours * 60 + minutes_rounded + minutes_limit
+
+      //console.log(current_minutes,hours,minutes,minutes_rounded, final_start_minutes)
+
+      var open_minutes = utils.timetoInt(this.opentime)
+      var close_minutes = utils.timetoInt(this.closetime)
+
+      if( final_start_minutes >= open_minutes && final_start_minutes <= close_minutes){
+        this.s_time = utils.minToTime(final_start_minutes)
+      }
 
       this.step = 2
 
@@ -523,6 +541,9 @@ export default {
     }
   },
   computed: {
+    clubtz: function(){
+       return this.$store.state.clubtz
+    },
     matchConfig: function(){
         return this.selplayers.reduce( (cur_val,player) => {
 
@@ -624,7 +645,7 @@ export default {
   },
   created: function() {
 
-    this.date = moment().format("Y-MM-DD")
+    this.date = moment().tz(this.clubtz).format("Y-MM-DD")
   },
   mounted: function(){
 

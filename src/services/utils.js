@@ -19,9 +19,33 @@ function strTimetoInt(strval){
     if (!(min >= 0 && min <= 59))
         return 0
 
-    return parseInt(hours) * 60 + parseInt(min)
+    return hours * 60 + min
 
 }
+
+/**
+ * 
+ * @param { Number } total_min 
+ * @returns zero padded hours:minutes representation of minutes since 00:00
+ */
+function minToTime(total_min){
+
+    if( typeof total_min !== "number"){
+        return null
+    }
+
+    if( total_min < 0 || total_min > 1439 )
+        return null
+    
+    let min = total_min % 60
+    let hours = (total_min - min) / 60
+
+    let min_str = min < 10 ? `0${min}` : `${min}`
+    let hour_str =  hours < 10 ? `0${hours}` : `${hours}`
+
+    return hour_str.concat(':',min_str)
+}
+
 function _dateToYear(date){
 
     var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based
@@ -32,5 +56,6 @@ function _dateToYear(date){
 
 export default {
     timetoInt: strTimetoInt,
-    dateToYear: _dateToYear
+    dateToYear: _dateToYear,
+    minToTime
 }

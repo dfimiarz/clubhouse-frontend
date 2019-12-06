@@ -307,7 +307,7 @@ export default {
     },
     date: function(val){
       //console.log("Date changed" + val)
-      this.$store.dispatch('matchstore/loadMatches',moment(this.date).tz(this.clubtz).format("YYYY-MM-DD"))
+      this.$store.dispatch('matchstore/loadMatches',moment(val).tz(this.clubtz).format("YYYY-MM-DD"))
       if( this.timeIndicatorVisible ){
         this.scrollCalendar()
       }
