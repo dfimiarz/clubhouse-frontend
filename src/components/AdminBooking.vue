@@ -441,7 +441,7 @@ export default {
 
 
       var time = moment().tz(this.clubtz).format("HH:mm")
-      var current_minutes = utils.timetoInt(time)
+      var current_minutes = utils.timeToMinutes(time)
 
       var minutes = current_minutes % 60
       var hours = (current_minutes - minutes) / 60
@@ -453,8 +453,8 @@ export default {
 
       //console.log(current_minutes,hours,minutes,minutes_rounded, final_start_minutes)
 
-      var open_minutes = utils.timetoInt(this.opentime)
-      var close_minutes = utils.timetoInt(this.closetime)
+      var open_minutes = utils.timeToMinutes(this.opentime)
+      var close_minutes = utils.timeToMinutes(this.closetime)
 
       if( final_start_minutes >= open_minutes && final_start_minutes <= close_minutes){
         this.s_time = utils.minToTime(final_start_minutes)
@@ -633,10 +633,10 @@ export default {
       return this.$store.state.closetime
     },
     startmin: function(){
-      return utils.timetoInt(this.s_time)
+      return utils.timeToMinutes(this.s_time)
     },
     endmin: function(){
-      return utils.timetoInt(this.e_time)
+      return utils.timeToMinutes(this.e_time)
     },
     duration: function(){
       let dur = this.endmin - this.startmin

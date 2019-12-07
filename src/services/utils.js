@@ -3,10 +3,10 @@
  * @param { String } strval String representation of time in format hh:hh
  * @returns { Number ) number of minutes since midnight (00:00) | null
  */
-function strTimetoInt(strval){
+function strTimeToMinutes(strval){
 
-    if (! strval )
-        return 0
+    if( typeof strval !== "string")
+        return NaN
 
     const [hours_str, min_str] = strval.split(':', 2)
 
@@ -14,10 +14,10 @@ function strTimetoInt(strval){
     const min = parseInt(min_str)
 
     if (!(hours >= 0 && hours <= 23))
-        return 0
+        return NaN
 
     if (!(min >= 0 && min <= 59))
-        return 0
+        return NaN
 
     return hours * 60 + min
 
@@ -55,7 +55,7 @@ function _dateToYear(date){
 }
 
 export default {
-    timetoInt: strTimetoInt,
+    timeToMinutes: strTimeToMinutes,
     dateToYear: _dateToYear,
     minToTime
 }

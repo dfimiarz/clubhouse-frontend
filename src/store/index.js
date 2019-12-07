@@ -104,10 +104,14 @@ export const store = new Vuex.Store(
                 return Math.trunc(state.endTimeMin/60)
             },
             openMin( state ){
-                return utils.timetoInt(state.opentime)
+                var openmin = utils.timeToMinutes(state.opentime)
+                //If opentime is not set, use 0 (00:00)
+                return isNaN(openmin) ? 0 : openmin 
             },
             closeMin( state ){
-                return utils.timetoInt(state.closetime)
+                var closemin = utils.timeToMinutes(state.closetime)
+                //If closetime is not set, use 1439 (23:59)
+                return isNaN(closemin) ? 1439 : closemin 
             },
             calCellHeight1H(state){
                 return state.cellHeight1H;

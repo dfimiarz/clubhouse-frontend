@@ -24,3 +24,31 @@ describe('Service Utils minToTime', () => {
         
     })
   })
+
+  describe('Service Utils timeToMinutes', () => {
+
+    it('returns NaN when wrong or no param supplied', () => {
+
+        expect(utils.timeToMinutes()).toBe(NaN)
+        expect(utils.timeToMinutes(23)).toBe(NaN)
+        expect(utils.timeToMinutes(false)).toBe(NaN)
+        expect(utils.timeToMinutes("12")).toBe(NaN)
+        expect(utils.timeToMinutes("12:")).toBe(NaN)
+        expect(utils.timeToMinutes("0:_")).toBe(NaN)
+        expect(utils.timeToMinutes("12:er")).toBe(NaN)
+        expect(utils.timeToMinutes("er:er")).toBe(NaN)
+        expect(utils.timeToMinutes("er:12")).toBe(NaN)
+        expect(utils.timeToMinutes("24:00")).toBe(NaN)
+      })
+
+    it('returns correct minutes for valid time', () => {
+
+        expect(utils.timeToMinutes("00:00")).toEqual(0)
+        expect(utils.timeToMinutes("0:0")).toEqual(0)
+        expect(utils.timeToMinutes("01:00:02")).toEqual(60)
+        expect(utils.timeToMinutes("10:01:02")).toEqual(601)
+        expect(utils.timeToMinutes("23:59")).toEqual(1439)
+       
+        
+    })
+  })
