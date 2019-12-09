@@ -13,13 +13,15 @@ function strTimeToMinutes(strval){
     const hours = parseInt(hours_str)
     const min = parseInt(min_str)
 
-    if (!(hours >= 0 && hours <= 23))
+    if (!(hours >= 0 && hours <= 24))
         return NaN
 
     if (!(min >= 0 && min <= 59))
         return NaN
 
-    return hours * 60 + min
+    const total = hours * 60 + min
+
+    return total > 1440 ? NaN : total
 
 }
 
@@ -34,7 +36,7 @@ function minToTime(total_min){
         return null
     }
 
-    if( total_min < 0 || total_min > 1439 )
+    if( total_min < 0 || total_min > 1440 )
         return null
     
     let min = total_min % 60

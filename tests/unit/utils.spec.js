@@ -8,10 +8,10 @@ describe('Service Utils minToTime', () => {
         expect(utils.minToTime("12")).toBe(null)
       })
 
-    it('returns null when minutes are out of range < 0, > 1439', () => {
+    it('returns null when minutes are out of range < 0, > 1440', () => {
 
       expect(utils.minToTime(-1)).toBe(null)
-      expect(utils.minToTime(1440)).toBe(null)
+      expect(utils.minToTime(1441)).toBe(null)
     })
 
     it('returns correct time for valid minutes', () => {
@@ -21,6 +21,7 @@ describe('Service Utils minToTime', () => {
         expect(utils.minToTime(300)).toMatch("05:00")
         expect(utils.minToTime(601)).toMatch("10:01")
         expect(utils.minToTime(1439)).toMatch("23:59")
+        expect(utils.minToTime(1440)).toMatch("24:00")
         
     })
   })
@@ -38,7 +39,7 @@ describe('Service Utils minToTime', () => {
         expect(utils.timeToMinutes("12:er")).toBe(NaN)
         expect(utils.timeToMinutes("er:er")).toBe(NaN)
         expect(utils.timeToMinutes("er:12")).toBe(NaN)
-        expect(utils.timeToMinutes("24:00")).toBe(NaN)
+        expect(utils.timeToMinutes("24:01")).toBe(NaN)
       })
 
     it('returns correct minutes for valid time', () => {
@@ -48,6 +49,7 @@ describe('Service Utils minToTime', () => {
         expect(utils.timeToMinutes("01:00:02")).toEqual(60)
         expect(utils.timeToMinutes("10:01:02")).toEqual(601)
         expect(utils.timeToMinutes("23:59")).toEqual(1439)
+        expect(utils.timeToMinutes("24:00")).toEqual(1440)
        
         
     })
