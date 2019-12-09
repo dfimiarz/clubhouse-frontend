@@ -77,11 +77,12 @@
                             <v-time-picker
                               v-model="s_time"
                               class="mt-3"
-                              format="24hr"
+                              format="24h"
                               :allowed-minutes="allowedminutes"
                               :min="opentime"
                               :max="closetime"
                             >
+                            
                             <v-spacer></v-spacer>
                               <v-btn text="" color="primary" @click="stimedialog = false">Cancel</v-btn>
                               <v-btn text="" color="primary" @click="$refs.stdialog.save(s_time)">OK</v-btn>
@@ -91,6 +92,43 @@
                        </v-layout>
                     </v-flex>
                     <v-flex xs12>
+                      <v-layout>
+                        <v-flex xs12 md6>
+                          <v-dialog
+                            ref="durdialog_ref"
+                            v-model="durDialog"
+                            persistent=""
+                            :return-value.sync="sel_duration"
+                            width="290px"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                hint="Minutes"
+                                v-model="sel_duration"
+                                label="Duration"
+                                prepend-icon="mdi-timer"
+                                readonly
+                                v-on="on"
+                                required=""
+                                :rules="[ rules.required ]"
+                                :disabled="! s_time "
+                              ></v-text-field>
+                            </template>
+                          
+                            <vnumberpad v-model="sel_duration">
+                              <template v-slot:actions>
+                                <v-spacer></v-spacer>
+                                <v-btn text="" color="primary" @click="durDialog = false">Cancel</v-btn>
+                                <v-btn text="" color="primary" @click="$refs.durdialog_ref.save(sel_duration)">OK</v-btn>
+                              </template>
+                            </vnumberpad>
+                            
+                          
+                          </v-dialog>
+                        </v-flex>
+                      </v-layout>
+                    </v-flex>
+                    <!-- <v-flex xs12>
                       <v-layout wrap>
                         <v-flex xs12 md6>
                           <v-dialog
@@ -109,16 +147,15 @@
                                 v-on="on"
                                 required=""
                                 :rules="[ rules.required ]"
-                                :disabled=" startmin <= 0"
+                                :disabled=" false "
                               ></v-text-field>
                             </template>
                             <v-time-picker
                               v-model="e_time"
                               class="mt-3"
-                              format="24hr"
+                              format="24h"
                               :allowed-minutes="allowedminutes"
-                              :min="s_time"
-                              :max="closetime"
+                              
                             >
                             <v-spacer></v-spacer>
                               <v-btn text="" color="primary" @click="etimedialog = false">Cancel</v-btn>
@@ -127,9 +164,9 @@
                           </v-dialog>
                         </v-flex>
                       </v-layout>
-                    </v-flex>
+                    </v-flex> -->
                     <v-flex xs12 class="pa-2">
-                      <div class="title" >Session time: <span :class="{'warning--text': duration > reqMaxDuration}">{{ duration }}</span> min.</div>
+                      <!-- <div class="title" >Session time: <span :class="{'warning--text': duration > reqMaxDuration}">{{ duration }}</span> min.</div> -->
                       <v-row class="caption warning--text" v-show=" duration > reqMaxDuration" no-gutters="" align="center">
                         <v-col cols="auto" >* Club rules limit time to {{ reqMaxDuration }} min.</v-col>
                         <v-col cols="auto" class="ml-auto"><v-btn small="" outlined="" color="warning">Fix</v-btn></v-col>
@@ -322,6 +359,7 @@
 
 <script>
 
+import vnumberpad from './booking/vuetify-numberpad'
 import apihandler from './../services/db'
 import { isNull } from 'util';
 import utils from './../services/utils'
@@ -329,6 +367,7 @@ import moment from 'moment-timezone'
 
 export default {
   components:{
+    vnumberpad
   },
   name: 'MatchCalendar',
   data: function() {
@@ -345,9 +384,11 @@ export default {
         datedialog: false,
         stimedialog: false,
         etimedialog: false,
+        durDialog: false,
         date: null,
         s_time: null,
-        e_time: null,
+        //e_time: null,
+        sel_duration: 0,
         note: "",
         bumpable: false,
         rules: {
@@ -460,6 +501,15 @@ export default {
         this.s_time = utils.minToTime(final_start_minutes)
       }
 
+      if( this.reqMaxDuration ){
+
+        const dur = ( final_start_minutes < close_minutes ) 
+                      ? (final_start_minutes + this.reqMaxDuration) < close_minutes 
+                        ? this.reqMaxDuration : (close_minutes - final_start_minutes)
+                      : 0
+        this.sel_duration = dur
+      }
+
       this.step = 2
 
     },
@@ -541,6 +591,9 @@ export default {
     }
   },
   computed: {
+    e_time: function(){
+      return utils.minToTime(this.sel_duration + utils.timeToMinutes(this.s_time))
+    },
     clubtz: function(){
        return this.$store.state.clubtz
     },
