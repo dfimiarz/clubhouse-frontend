@@ -67,10 +67,10 @@ export default {
         }
     },
     created: function(){
-        console.log("Created")
+        
     },
     mounted: function(){
-        console.log("Mounted")
+        
     }
 }
 

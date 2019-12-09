@@ -87,7 +87,7 @@ export default {
 
           if (error.response) {
             this.error = error.response.data 
-            console.log(error.response.status)
+            //console.log(error.response.status)
             
           } else if (error.request) {
             this.error = error.request
