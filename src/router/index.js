@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import NotFound from '@/components/NotFound'
+import TokenView from '@/components/Token'
 const RegisterMember = () => import(/* webpackChunkName: "member" */ '@/components/RegisterMember')
 const MemberManager = () => import(/* webpackChunkName: "member" */ '@/components/MemberManager')
 //const QuickMatchBooking = () => import (/* webpackChunkName: "group-foo" */ '@/components/QuickMatchBooking')
@@ -31,6 +32,11 @@ const routes = [
           component: RegisterMember
         }
       ]
+    },
+    {
+      path: '/token',
+      name: 'token',
+      component: TokenView
     },
     {
       path: '/sessions',
