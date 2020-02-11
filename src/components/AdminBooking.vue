@@ -1,7 +1,7 @@
 <template>
-<v-container fluid fill-height="" grid-list-xs >
-  <v-layout justify-center="" align-content-start="" row wrap>
-    <v-flex xs12 sm8 md6 lg4>
+<v-container fluid class="fill-height" >
+  <v-row justify="center" align="center" class="fill-height">
+    <v-col cols="12" sm="8" md="6" lg="4">
 
           <v-stepper v-model="step">
             <v-stepper-header>
@@ -20,10 +20,10 @@
               <v-stepper-content step="2" class="px-0">
                 <v-container grid-list-sm>
                   <v-form ref="timeform" lazy>
-                  <v-layout row wrap>
-                    <v-flex xs12>
-                       <v-layout>
-                        <v-flex xs12 md6>
+                  <v-row row wrap>
+                    <v-col cols="12">
+                       <v-row>
+                        <v-col cols="12" md="6">
                           <v-dialog
                             ref="date_dialog"
                             v-model="datedialog"
@@ -46,15 +46,15 @@
                             </v-date-picker>
                           </v-dialog>
 
-                        </v-flex>
-                       </v-layout>
-                    </v-flex>
-                    <v-flex xs12 class="py-1">
+                        </v-col>
+                       </v-row>
+                    </v-col>
+                    <v-col cols="12" class="py-1">
                       <v-divider></v-divider>
-                    </v-flex>
-                    <v-flex xs12>
-                      <v-layout>
-                        <v-flex xs12 md6>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col cols="12" md="6">
                           <v-dialog
                             ref="stdialog"
                             v-model="stimedialog"
@@ -88,12 +88,12 @@
                               <v-btn text="" color="primary" @click="$refs.stdialog.save(s_time)">OK</v-btn>
                             </v-time-picker>
                           </v-dialog>
-                        </v-flex>
-                       </v-layout>
-                    </v-flex>
-                    <v-flex xs12>
-                      <v-layout>
-                        <v-flex xs12 md6>
+                        </v-col>
+                       </v-row>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col cols="12" md="6">
                           <v-dialog
                             ref="durdialog_ref"
                             v-model="durDialog"
@@ -125,12 +125,12 @@
                             
                           
                           </v-dialog>
-                        </v-flex>
-                      </v-layout>
-                    </v-flex>
-                    <!-- <v-flex xs12>
-                      <v-layout wrap>
-                        <v-flex xs12 md6>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                    <!-- <v-col cols="12">
+                      <v-row wrap>
+                        <v-col cols="12" md="6">
                           <v-dialog
                             ref="etdialog"
                             v-model="etimedialog"
@@ -162,22 +162,22 @@
                               <v-btn text="" color="primary" @click="$refs.etdialog.save(e_time)">OK</v-btn>
                             </v-time-picker>
                           </v-dialog>
-                        </v-flex>
-                      </v-layout>
-                    </v-flex> -->
-                    <v-flex xs12 class="pa-2">
+                        </v-col>
+                      </v-row>
+                    </v-col> -->
+                    <v-col cols="12" class="pa-2">
                       <!-- <div class="title" >Session time: <span :class="{'warning--text': duration > reqMaxDuration}">{{ duration }}</span> min.</div> -->
                       <v-row class="caption warning--text" v-show=" duration > reqMaxDuration" no-gutters="" align="center">
-                        <v-col cols="auto" >* Club rules limit time to {{ reqMaxDuration }} min.</v-col>
-                        <v-col cols="auto" class="ml-auto"><v-btn small="" outlined="" color="warning">Fix</v-btn></v-col>
+                        <v-row cols="auto" >* Club rules limit time to {{ reqMaxDuration }} min.</v-row>
+                        <v-row cols="auto" class="ml-auto"><v-btn small="" outlined="" color="warning">Fix</v-btn></v-row>
                       </v-row>
-                    </v-flex>
-                    <v-flex xs12 class="py-1">
+                    </v-col>
+                    <v-col cols="12" class="py-1">
                       <v-divider></v-divider>
-                    </v-flex>
-                    <v-flex xs12>
-                      <v-layout>
-                        <v-flex xs6>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col xs6>
                           <v-select
                             label="Court"
                             :items="courts"
@@ -196,15 +196,15 @@
                             <div class="caption green--text">Court is availble</div>
                             <div class="caption red--text">Court is NOT availble</div>
                           </div> -->
-                        </v-flex>
-                      </v-layout>
+                        </v-col>
+                      </v-row>
 
-                    </v-flex>
-                    <v-layout v-show="reqBumpable" row wrap>
-                    <v-flex xs12 class="my-1">
+                    </v-col>
+                    <v-row v-show="reqBumpable" row wrap>
+                    <v-col cols="12" class="my-1">
                       <v-divider></v-divider>
-                    </v-flex>
-                    <v-flex xs12 >
+                    </v-col>
+                    <v-col cols="12" >
                       <v-switch
                         dense=""
                         flat=""
@@ -215,24 +215,24 @@
                      
                       </v-switch>
                       <div class="caption warning--text" v-show="reqBumpable !== bumpable">* Club Rules call for bumpable switched on</div>
-                    </v-flex>
-                    <v-flex xs12 class="my-1">
+                    </v-col>
+                    <v-col cols="12" class="my-1">
                       <v-divider></v-divider>
-                    </v-flex>
-                    </v-layout>
-                    <v-flex xs12>
+                    </v-col>
+                    </v-row>
+                    <v-col cols="12">
                       <v-textarea
                         counter
                         v-model="note"
                         label="Note"
                         :rules="[rules.notelimit,rules.explainRuleChange]"
                       ></v-textarea>
-                    </v-flex>
+                    </v-col>
 
-                  </v-layout>
+                  </v-row>
                   </v-form>
                 </v-container>
-                <v-layout row>
+                <v-row row>
 
                     <v-btn text="" @click="step = 1">Go back</v-btn>
                     <v-spacer></v-spacer>
@@ -240,24 +240,22 @@
                       Continue
                     </v-btn>
 
-                </v-layout>
+                </v-row>
 
               </v-stepper-content>
 
               <v-stepper-content step="1">
                 <v-container fluid="" grid-list-sm="" class="px-0">
                   <v-form ref="playerform">
-                  <v-layout row wrap>
-                    <v-row no-gutters >
-                      <v-col cols="12" >
-                        <v-alert type="error" dense="" v-if="playerErrors">
-                          {{ this.playerErrors }}
-                        </v-alert>
-                      </v-col>
-                    </v-row>
-                    <v-flex xs12 v-for="(player,index) in selplayers" :key="index">
-                      <v-layout wrap="">
-                        <v-flex xs12 md6>
+                  <v-row>
+                    <v-col cols="12" >
+                      <v-alert type="error" dense="" v-if="playerErrors">
+                        {{ this.playerErrors }}
+                      </v-alert>
+                    </v-col>
+                    <v-col cols="12" v-for="(player,index) in selplayers" :key="index">
+                      <v-row dense="">
+                        <v-col cols="12" md="6">
                           <v-autocomplete
                           v-model="selplayers[index].id"
                           :label="getPlayerLabel(index)"
@@ -267,8 +265,8 @@
                           :error-messages="selplayers[index].playerErrs"
                           >
                           </v-autocomplete>
-                        </v-flex>
-                        <v-flex xs12 md6>
+                        </v-col>
+                        <v-col cols="12" md="6">
                           <v-select
                             v-model="selplayers[index].repeater"
                             :items="repeaterTypes"
@@ -279,14 +277,14 @@
                           >
 
                           </v-select>
-                        </v-flex>
-                      </v-layout>
-                    </v-flex>
-                  </v-layout>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
                   </v-form>
                 </v-container>
-                <v-layout row>
-
+                <v-row dense="">
+                  
                   <v-btn color="warning" text="" outlined class="ma-1"
                     @click="clearPlayers"
                   >
@@ -299,43 +297,44 @@
                   >
                     Continue
                   </v-btn>
-                </v-layout>
+                  
+                </v-row>
               </v-stepper-content>
 
               <v-stepper-content step="3">
                 <v-container fluid="">
-                  <v-layout row wrap>
-                    <v-flex xs12 v-if="error">
+                  <v-row row wrap>
+                    <v-col cols="12" v-if="error">
                       <v-alert type="error" elevation="2">
                         {{ error }}
                       </v-alert>
-                    </v-flex>
-                    <v-flex xs12>
+                    </v-col>
+                    <v-col cols="12">
                       <span class="headline">Confirm Booking</span>
-                    </v-flex>
-                    <v-flex xs12 class="my-2">
+                    </v-col>
+                    <v-col cols="12" class="my-2">
                       <span class="body-1">Players:</span>
-                    </v-flex>
-                    <v-flex xs12 v-for="(player,index) in playerDetails" :key="index">
+                    </v-col>
+                    <v-col cols="12" v-for="(player,index) in playerDetails" :key="index">
                        <span class="subheading">{{ index + 1 }} - {{ player.firstname }} {{ player.lastname }} - {{ player.repeater_lbl }}</span>
-                    </v-flex>
-                    <v-flex xs12 class="my-2">
+                    </v-col>
+                    <v-col cols="12" class="my-2">
                       <span class="subheading">Time: {{ date }} {{ s_time }} - {{ e_time }}</span>
-                    </v-flex>
-                    <v-flex xs12 class="my-2">
+                    </v-col>
+                    <v-col cols="12" class="my-2">
                       <span class="subheading">Duration: {{ duration }} min</span>
-                    </v-flex>
-                    <v-flex xs12 class="my-2">
+                    </v-col>
+                    <v-col cols="12" class="my-2">
                       <span class="subheading">Bumpable: {{ bumpable }}</span>
-                    </v-flex>
-                    <v-flex xs12 class="my-2">
+                    </v-col>
+                    <v-col cols="12" class="my-2">
                       <span class="subheading">Note: {{ note }}</span>
-                    </v-flex>
-                  </v-layout>
+                    </v-col>
+                  </v-row>
                 </v-container>
 
 
-                <v-layout>
+                <v-row>
                   <v-btn text="" @click="changeBookingParams">Go back</v-btn>
                   <v-spacer></v-spacer>
                   <v-btn
@@ -347,13 +346,13 @@
                 </v-btn>
 
 
-                </v-layout>
+                </v-row>
 
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </v-container>
 </template>
 
@@ -380,7 +379,7 @@ export default {
           { id: null, repeater: null, playerErrs: [], repeaterErrs: [] }
         ],
         playerErrors: null,
-        step: 0,
+        step: 1,
         datedialog: false,
         stimedialog: false,
         etimedialog: false,
