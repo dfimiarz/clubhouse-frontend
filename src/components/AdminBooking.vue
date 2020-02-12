@@ -1,6 +1,6 @@
 <template>
 <v-container fluid class="fill-height" >
-  <v-row justify="center" align="center" class="fill-height">
+  <v-row justify="center" align="center" class="fill-height" no-gutters="">
     <v-col cols="12" sm="8" md="6" lg="4">
 
           <v-stepper v-model="step">
@@ -18,13 +18,20 @@
 
             <v-stepper-items>
               <v-stepper-content step="2" class="px-0">
-                <v-container grid-list-sm>
+                <v-container fluid="">
                   <v-form ref="timeform" lazy>
-                  <v-row row wrap>
+                  <v-row dense="">
                     <v-col cols="12">
-                       <v-row>
+                       <v-row dense="">
                         <v-col cols="12" md="6">
-                          <v-dialog
+                          <v-text-field
+                                v-model="computedDateFormatted"
+                                label="Date"
+                                prepend-icon="mdi-calendar"
+                                v-on="on"
+                                readonly=""
+                              ></v-text-field>
+                          <!-- <v-dialog
                             ref="date_dialog"
                             v-model="datedialog"
                             width="290px"
@@ -44,16 +51,13 @@
                             <v-date-picker v-model="date" scrollable @input="datedialog = false">
 
                             </v-date-picker>
-                          </v-dialog>
+                          </v-dialog> -->
 
                         </v-col>
                        </v-row>
                     </v-col>
-                    <v-col cols="12" class="py-1">
-                      <v-divider></v-divider>
-                    </v-col>
                     <v-col cols="12">
-                      <v-row>
+                      <v-row dense="">
                         <v-col cols="12" md="6">
                           <v-dialog
                             ref="stdialog"
@@ -80,7 +84,7 @@
                               format="24h"
                               :allowed-minutes="allowedminutes"
                               :min="opentime"
-                              :max="closetime"
+                              :max="maxstarttime"
                             >
                             
                             <v-spacer></v-spacer>
@@ -92,7 +96,7 @@
                        </v-row>
                     </v-col>
                     <v-col cols="12">
-                      <v-row>
+                      <v-row dense="">
                         <v-col cols="12" md="6">
                           <v-dialog
                             ref="durdialog_ref"
@@ -112,6 +116,7 @@
                                 required=""
                                 :rules="[ rules.required ]"
                                 :disabled="! s_time "
+                                suffix="min"
                               ></v-text-field>
                             </template>
                           
@@ -165,18 +170,16 @@
                         </v-col>
                       </v-row>
                     </v-col> -->
-                    <v-col cols="12" class="pa-2">
-                      <!-- <div class="title" >Session time: <span :class="{'warning--text': duration > reqMaxDuration}">{{ duration }}</span> min.</div> -->
+                    <v-col cols="12" md="6" class="pa-2">
                       <v-row class="caption warning--text" v-show=" duration > reqMaxDuration" no-gutters="" align="center">
-                        <v-row cols="auto" >* Club rules limit time to {{ reqMaxDuration }} min.</v-row>
-                        <v-row cols="auto" class="ml-auto"><v-btn small="" outlined="" color="warning">Fix</v-btn></v-row>
+                        <span>* Club rules limit time to {{ reqMaxDuration }} min.</span> <v-btn small="" outlined="" color="warning">Fix</v-btn>
                       </v-row>
                     </v-col>
                     <v-col cols="12" class="py-1">
                       <v-divider></v-divider>
                     </v-col>
-                    <v-col cols="12">
-                      <v-row>
+                    <v-col cols="12" md="6">
+                      <v-row dense="">
                         <v-col xs6>
                           <v-select
                             label="Court"
@@ -200,11 +203,7 @@
                       </v-row>
 
                     </v-col>
-                    <v-row v-show="reqBumpable" row wrap>
-                    <v-col cols="12" class="my-1">
-                      <v-divider></v-divider>
-                    </v-col>
-                    <v-col cols="12" >
+                    <v-col cols="12" v-show="reqBumpable" >
                       <v-switch
                         dense=""
                         flat=""
@@ -212,14 +211,10 @@
                         label="Bumpable"
                         
                       >
-                     
+                    
                       </v-switch>
                       <div class="caption warning--text" v-show="reqBumpable !== bumpable">* Club Rules call for bumpable switched on</div>
                     </v-col>
-                    <v-col cols="12" class="my-1">
-                      <v-divider></v-divider>
-                    </v-col>
-                    </v-row>
                     <v-col cols="12">
                       <v-textarea
                         counter
@@ -231,16 +226,17 @@
 
                   </v-row>
                   </v-form>
-                </v-container>
-                <v-row row>
-
-                    <v-btn text="" @click="step = 1">Go back</v-btn>
+                  <v-row dense="">
+                  
+                    <v-btn color="warning" text="" outlined class="ma-1" @click="step = 1">Go back</v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn @click="stepCheck(3)">
+                    <v-btn @click="validateSessionInput">
                       Continue
                     </v-btn>
-
-                </v-row>
+                  
+                  </v-row>
+                </v-container>
+                
 
               </v-stepper-content>
 
@@ -334,8 +330,8 @@
                 </v-container>
 
 
-                <v-row>
-                  <v-btn text="" @click="changeBookingParams">Go back</v-btn>
+                <v-row dense="">
+                  <v-btn color="warning" text="" outlined class="ma-1" @click="changeBookingParams">Go back</v-btn>
                   <v-spacer></v-spacer>
                   <v-btn
                     :loading="loading"
@@ -343,9 +339,7 @@
                     @click="submitMatch()"
                   >
                     Book
-                </v-btn>
-
-
+                  </v-btn>
                 </v-row>
 
               </v-stepper-content>
@@ -360,7 +354,7 @@
 
 import vnumberpad from './booking/vuetify-numberpad'
 import apihandler from './../services/db'
-import { isNull } from 'util';
+//import { isNull } from 'util';
 import utils from './../services/utils'
 import moment from 'moment-timezone'
 
@@ -410,30 +404,30 @@ export default {
       this.error = null
       this.step = 2
     },
-    stepCheck: function(nextstep){
-      if( nextstep == 3 ){
-        if( ! this.$refs.timeform.validate() )
-          return false
-
-        if( isNull(this.computedStart) )
-          return false
-
-        this.step = 3
-      }
-    },
     clearPlayers(){
       this.selplayers.forEach((player) =>{
-        player.id = player.repeater = null
+        player.id = player.repeater = null;
       })
 
-      this.clearPlayerErrors()
+      this.clearPlayerErrors();
     },
     clearPlayerErrors(){
       this.selplayers.forEach((playerslot) =>{
-        playerslot.playerErrs.splice(0)
-        playerslot.repeaterErrs.splice(0)
+        playerslot.playerErrs.splice(0);
+        playerslot.repeaterErrs.splice(0);
       })
-      this.playerErrors = null
+      this.playerErrors = null;
+    },
+    validateSessionInput(){
+      if( ! this.$refs.timeform.validate() )
+          return;
+
+      if( ! this.s_time ){
+
+        return
+      }
+
+      this.step = 3;
     },
     validatePlayerInput(){
 
@@ -693,6 +687,9 @@ export default {
     duration: function(){
       let dur = this.endmin - this.startmin
       return dur >= 0 ? dur : 0
+    },
+    maxstarttime: function(){
+      return utils.minToTime(utils.timeToMinutes(this.closetime) - 5)
     }
   },
   created: function() {
