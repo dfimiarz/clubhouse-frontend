@@ -19,7 +19,7 @@
             <v-stepper-items>
               <v-stepper-content step="2" class="px-0">
                 <v-container fluid="">
-                  <v-form ref="timeform" lazy>
+                  <v-form ref="sessionform" lazy>
                   <v-row dense="">
                     <v-col cols="12">
                        <v-row dense="">
@@ -28,7 +28,6 @@
                                 v-model="computedDateFormatted"
                                 label="Date"
                                 prepend-icon="mdi-calendar"
-                                v-on="on"
                                 readonly=""
                               ></v-text-field>
                           <!-- <v-dialog
@@ -114,7 +113,7 @@
                                 readonly
                                 v-on="on"
                                 required=""
-                                :rules="[ rules.required ]"
+                                :rules="[ rules.required, rules.minduration ]"
                                 :disabled="! s_time "
                                 suffix="min"
                               ></v-text-field>
@@ -386,7 +385,11 @@ export default {
         bumpable: false,
         rules: {
           required: value => !!value || 'Required.',
-          durationlimit: value => value >= 15 || 'Min 15 min',
+          minduration: value => value >= 5 || 'Min 5 min',
+          maxduration: value => {
+            const max = (utils.timeToMinutes(value > this.closetime) - utils.timeToMinutes(this.s_time))
+            return value < max || `Max dur min`
+          },
           notelimit: v => v.length <= 256 || 'Max 256 characters',
           explainRuleChange: () => {
             return (this.duration > this.reqMaxDuration || (this.reqBumpable == 1 && this.bumpable ==0 )) ? 'Explain rules overwrite' : true
@@ -419,7 +422,7 @@ export default {
       this.playerErrors = null;
     },
     validateSessionInput(){
-      if( ! this.$refs.timeform.validate() )
+      if( ! this.$refs.sessionform.validate() )
           return;
 
       if( ! this.s_time ){

@@ -23,9 +23,9 @@
                     <v-col class="text-center"><v-btn @click="increment(9)">9</v-btn></v-col>
                 </v-row>
                 <v-row  justify="center">
-                    <v-col class="text-center"><v-btn color="warning" @click="clear">C</v-btn></v-col>
-                    <v-col class="text-center"><v-btn @click="removeDigit"> &#x27A1; </v-btn> </v-col>
-                    <v-col class="text-center"><v-btn @click="increment(0)">0</v-btn></v-col>
+                    <v-col cols="8" class="text-center"><v-btn @click="increment(0)" width="100%">0</v-btn></v-col>
+                    <!-- <v-col class="text-center"><v-btn @click="removeDigit"> &#x27A1; </v-btn> </v-col> -->
+                    <v-col cols="4" class="text-center"><v-btn color="secondary" @click="clear">C</v-btn></v-col>
                 </v-row>
             </v-container>
         </v-card-text>
