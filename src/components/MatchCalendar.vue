@@ -35,8 +35,8 @@
             
             <div class="time-grid-container" ref="tcontainer">
               
-                <div v-for="(n) in totalCellCount" :key="n" class="cell"  v-bind:style="{ 'height':  cellHeight1H + 'px' }">
-                    {{ getCellLabel(n) }}
+                <div v-for="(n) in (totalCellCount * 4)" :key="n" :class="(n-1) % 4 == 0 ? 'hourly-cell' : 'cell'"  v-bind:style="{ 'height':  cellHeight1H/4 + 'px' }">
+                    <span v-if="(n-1) % 4 == 0" >{{ getCellLabel((parseInt((n-1)/4))) }}</span>
                 </div>
                 
                 <div 
@@ -160,7 +160,7 @@ export default {
 
     },
     getCellLabel: function(cellnumber) {
-        return this.hourLabels[cellnumber-1]
+        return this.hourLabels[cellnumber]
     },
     getTimeString(){
       return this.date != null ? moment(this.date).tz(this.clubtz).format("ddd, MMM Do") : 'N/A' 
@@ -367,7 +367,7 @@ export default {
 }
 
 .court-sessions-container{
-  border: 1px solid;
+  border: 1px solid gray;
   position: relative;
   box-sizing: border-box;
   
@@ -375,6 +375,12 @@ export default {
 
 .cell{
   border-top: 1px dotted gray;
+  box-sizing: border-box;
+  font-size: small;
+}
+
+.hourly-cell{
+  border-top: 3px double gray;
   box-sizing: border-box;
   font-size: small;
 }
