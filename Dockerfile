@@ -8,6 +8,6 @@ RUN npm run build
 FROM nginx:alpine as production-stage
 RUN mkdir /app
 COPY --from=build-stage /app/dist /app
-COPY nginx.conf /etc/nginx/nginx.conf
-EXPOSE 80
+#COPY nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80 443
 CMD ["nginx","-g","daemon off;"]
