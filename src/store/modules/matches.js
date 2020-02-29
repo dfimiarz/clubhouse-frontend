@@ -104,14 +104,14 @@ const actions = {
 
 
                 if( error.response ){
-                    console.log(error.response.data);
-                    console.log(error.response.status);
-                    console.log(error.response.headers);
+                    //console.log(error.response.data);
+                    //console.log(error.response.status);
+                    //console.log(error.response.headers);
                     commit('setError', error.response.data,  { root: true })
 
                 }
                 else{
-                    console.log('Error: ', error.message);
+                    //console.log('Error: ', error.message);
                     commit('setError', "Connection failed",  { root: true })
                 }
                 

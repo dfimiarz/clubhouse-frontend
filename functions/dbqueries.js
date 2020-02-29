@@ -56,7 +56,7 @@ exports.getAllSessionsForDate = function(date = null){
 
     const date_int = date === null ? today : date
 
-    console.log(date_int, today_dt)
+    //console.log(date_int, today_dt)
 
     const db = admin.firestore()
 
