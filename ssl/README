@@ -1,0 +1,3 @@
+This folder is used to store SSL certificates used by the web server when using default docker-compose configuration. 
+The folder should be mounted as volume in docker. See main docker compose file for volume mapping
+If docker and volumes are not used, files need to be placed on the server in correct folders.
