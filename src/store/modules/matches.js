@@ -88,7 +88,7 @@ const actions = {
     },
     loadMatches({commit},date){
         commit('REMOVE_MATCHES')
-        console.log("fetching for" + date)
+        //console.log("fetching for" + date)
         Axios.get(process.env.VUE_APP_BACKEND + '/matches',{
                 params: {
                     date: date
