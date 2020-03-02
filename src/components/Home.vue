@@ -2,7 +2,7 @@
 <template>
 <v-container fluid>
   <v-row justify="center" align="start" no-gutters="" >
-    <v-col cols="12" md="10" lg="8">
+    <v-col cols="12" sm="10" lg="8">
         <v-container fluid>
           <v-row justify="center" align="center" no-gutters="">
             <v-col cols="12">
@@ -26,7 +26,7 @@
                   :lazy-src="require(`@/assets/${card.img_small}`)"
                   min-height="100"
                   max-height="325"
-                  aspect-ratio="2.15"
+                  aspect-ratio="1.5"
                 >
 
                   <v-row justify="center" align="end" no-gutters="" style="height: 100%;" >
@@ -56,10 +56,12 @@ export default {
   data: () => {
     return {
       cards: [
-        { title: 'Schedule', text: 'View full schedule' ,img: 'players.jpg', img_small: 'players_small.jpg', xs: 12, sm: 12, md: 6, dest: "calendar" },
+        { title: 'Daily Schedule', text: 'View full schedule' ,img: 'players.jpg', img_small: 'players_small.jpg', xs: 12, sm: 12, md: 6, dest: "calendar" },
         { title: 'Book court', text: 'Regular court booking', img: 'tennisracquet.jpg', img_small: 'tennisracquet_small.jpg', xs: 12, sm: 12, md: 6, dest: "AdminBooking" },
-        { title: 'Who is playing', text: 'Current games', img: 'clubhouse.jpg', xs: 12, img_small: 'clubhouse_small.jpg', sm: 12,md: 6 },
-        { title: 'Club Admin', text: 'Administrative features',  img: 'clubhouse.jpg', img_small: 'clubhouse_small.jpg', xs: 12, sm: 12,md: 6 },
+        { title: 'Matches', text: 'Show current games', img: 'clubhouse.jpg', xs: 6, img_small: 'clubhouse_small.jpg', sm: 6 ,md: 3 },
+        { title: 'Guests', text: 'Guest registration', img: 'clubhouse.jpg', xs: 6, img_small: 'clubhouse_small.jpg', sm: 6,md: 3 },
+        { title: 'Manage', text: 'Administrative features',  img: 'clubhouse.jpg', img_small: 'clubhouse_small.jpg', xs: 6, sm: 6,md: 3 },
+        { title: 'Reports', text: 'Reports',  img: 'clubhouse.jpg', img_small: 'clubhouse_small.jpg', xs: 6, sm: 6,md: 3 }
         
       ]
       
