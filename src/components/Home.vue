@@ -2,12 +2,12 @@
 <template>
 <v-container fluid>
   <v-row justify="center" align="start" no-gutters="" >
-    <v-col cols="12" sm="10" lg="8">
+    <v-col cols="12" md="10" lg="8">
         <v-container fluid>
           <v-row justify="center" align="center" no-gutters="">
             <v-col cols="12">
               
-                <div class="main-title text-center">
+                <div :class="['text-center', mainHeaderClass ]">
                   Knickerbocker Tennis
                 </div>
               
@@ -29,11 +29,11 @@
                   aspect-ratio="1.5"
                 >
 
-                  <v-row justify="center" align="end" no-gutters="" style="height: 100%;" >
+                  <v-row justify="center" align="end" no-gutters="" class="fill-height" >
                     <v-col cols="12">
                       <div class='tile-text-container'>
-                        <h3 class="tile-title">{{ card.title }}</h3>
-                        <div>{{ card.text }}</div>
+                        <h3 :class="[tileTitleClass,'tile-title']">{{ card.title }}</h3>
+                        <div class="body-2">{{ card.text }}</div>
                       </div>
                     </v-col>
                   </v-row>
@@ -56,8 +56,8 @@ export default {
   data: () => {
     return {
       cards: [
-        { title: 'Daily Schedule', text: 'View full schedule' ,img: 'players.jpg', img_small: 'players_small.jpg', xs: 12, sm: 12, md: 6, dest: "calendar" },
-        { title: 'Book court', text: 'Regular court booking', img: 'tennisracquet.jpg', img_small: 'tennisracquet_small.jpg', xs: 12, sm: 12, md: 6, dest: "AdminBooking" },
+        { title: 'Daily Schedule', text: 'View full schedule' ,img: 'players.jpg', img_small: 'players_small.jpg', xs: 6, sm: 6, md: 6, dest: "calendar" },
+        { title: 'Book court', text: 'Regular court booking', img: 'tennisracquet.jpg', img_small: 'tennisracquet_small.jpg', xs: 6, sm: 6, md: 6, dest: "AdminBooking" },
         { title: 'Matches', text: 'Show current games', img: 'clubhouse.jpg', xs: 6, img_small: 'clubhouse_small.jpg', sm: 6 ,md: 3 },
         { title: 'Guests', text: 'Guest registration', img: 'clubhouse.jpg', xs: 6, img_small: 'clubhouse_small.jpg', sm: 6,md: 3 },
         { title: 'Manage', text: 'Administrative features',  img: 'clubhouse.jpg', img_small: 'clubhouse_small.jpg', xs: 6, sm: 6,md: 3 },
@@ -72,6 +72,17 @@ export default {
       //console.log("CardClicked")
     }
 
+  },
+  computed: {
+
+    mainHeaderClass: function(){
+
+      return this.$vuetify.breakpoint.mdAndDown ? { 'display-3' : true, 'py-4': true } : { 'display-4' : true, 'py-8': true }
+    
+    },
+    tileTitleClass: function(){
+      return this.$vuetify.breakpoint.mdAndDown ? { 'headline' : true } : { 'display-1' : true }
+    }
   }
 }
 </script>
@@ -86,13 +97,7 @@ export default {
 }
 
 .tile-title  {
-  text-shadow: 3px 3px #000000;
-  font-size: calc(10px + 1.5vmax);
-  
-}
-
-.main-title{
-  font-size: calc(12px + 3.5vmax);
+  text-shadow: 3px 3px #000000;  
 }
 
 .main-text{
