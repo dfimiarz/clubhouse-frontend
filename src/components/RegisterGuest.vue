@@ -43,12 +43,13 @@
                   v-model="newMember.age"
                   ></v-select>
                   <v-text-field
-                      v-model="newMember.pin"
-                      label="PIN"
-                      maxlength="6"
+                      v-model="newMember.hostemail"
+                      label="Member host email"
                       required
-                      autocomplete="off">
+                      mask="email"
+                  >
                   </v-text-field>
+                  
                   <v-btn :disabled="loading" @click.prevent="addNewMember">
                       Add Member
                   </v-btn>
@@ -74,7 +75,7 @@ export default {
         phone: "",
         gender: "",
         age: "",
-        pin: ""
+        hostemail: null
       },
       ages: [
         { value: "18", text: "18 +" },

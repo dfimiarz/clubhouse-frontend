@@ -59,8 +59,8 @@ export default {
         { title: 'Daily Schedule', text: 'View full schedule' ,img: 'players.jpg', img_small: 'players_small.jpg', xs: 6, sm: 6, md: 6, dest: "calendar" },
         { title: 'Book court', text: 'Regular court booking', img: 'tennisracquet.jpg', img_small: 'tennisracquet_small.jpg', xs: 6, sm: 6, md: 6, dest: "AdminBooking" },
         { title: 'Matches', text: 'Show current games', img: 'clubhouse.jpg', xs: 6, img_small: 'clubhouse_small.jpg', sm: 6 ,md: 3 },
-        { title: 'Guests', text: 'Guest registration', img: 'clubhouse.jpg', xs: 6, img_small: 'clubhouse_small.jpg', sm: 6,md: 3 },
-        { title: 'Manage', text: 'Administrative features',  img: 'clubhouse.jpg', img_small: 'clubhouse_small.jpg', xs: 6, sm: 6,md: 3 },
+        { title: 'Guests', text: 'Guest managment', img: 'clubhouse.jpg', xs: 6, img_small: 'clubhouse_small.jpg', sm: 6,md: 3, dest: "guestmanager" },
+        { title: 'Manage', text: 'Club managment',  img: 'clubhouse.jpg', img_small: 'clubhouse_small.jpg', xs: 6, sm: 6,md: 3 },
         { title: 'Reports', text: 'Reports',  img: 'clubhouse.jpg', img_small: 'clubhouse_small.jpg', xs: 6, sm: 6,md: 3 }
         
       ]
