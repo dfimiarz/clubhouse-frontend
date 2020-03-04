@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-layout justify-center align-start="" row="" wrap="">
-          <v-flex xs12 sm10 md8 lg6 xl4>
+          <v-flex xs12>
             <div class="subheading">
                Add a member
             </div>

@@ -37,12 +37,12 @@
                 <v-list-item-title>Book a court</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item  :to="{name: 'ManageMembers'}">
+            <v-list-item  :to="{name: 'guestregistration'}">
               <v-list-item-action>
                 <v-icon>mdi-account-multiple</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Members</v-list-item-title>
+                <v-list-item-title>Guests</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item>

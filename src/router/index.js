@@ -5,6 +5,7 @@ import NotFound from '@/components/NotFound'
 import TokenView from '@/components/Token'
 const RegisterGuest = () => import(/* webpackChunkName: "member" */ '@/components/RegisterGuest')
 const GuestManager = () => import(/* webpackChunkName: "member" */ '@/components/GuestManager')
+const GuestInfo = () => import(/* webpackChunkName: "member" */ '@/components/GuestInfo')
 //const QuickMatchBooking = () => import (/* webpackChunkName: "group-foo" */ '@/components/QuickMatchBooking')
 const MatchCalendar = () => import (/* webpackChunkName: "calendar" */ '@/components/MatchCalendar')
 const AdminBooking = () => import (/* webpackChunkName: "booking" */ '@/components/AdminBooking')
@@ -25,12 +26,12 @@ const routes = [
         {
           path : '',
           component: RegisterGuest,
-          name: 'guestmanager',
+          name: 'guestregistration',
         },
         {
           path : 'register',
-          component: RegisterGuest,
-          name: 'guestactivation',
+          component: GuestInfo,
+          name: 'guestinfo',
         }
       ]
     },
