@@ -3,9 +3,9 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import NotFound from '@/components/NotFound'
 import TokenView from '@/components/Token'
-const RegisterGuest = () => import(/* webpackChunkName: "member" */ '@/components/RegisterGuest')
+const GuestCreator = () => import(/* webpackChunkName: "member" */ '@/components/GuestCreator')
 const GuestManager = () => import(/* webpackChunkName: "member" */ '@/components/GuestManager')
-const GuestInfo = () => import(/* webpackChunkName: "member" */ '@/components/GuestInfo')
+const GuestActivation = () => import(/* webpackChunkName: "member" */ '@/components/GuestActivation')
 //const QuickMatchBooking = () => import (/* webpackChunkName: "group-foo" */ '@/components/QuickMatchBooking')
 const MatchCalendar = () => import (/* webpackChunkName: "calendar" */ '@/components/MatchCalendar')
 const AdminBooking = () => import (/* webpackChunkName: "booking" */ '@/components/AdminBooking')
@@ -25,13 +25,13 @@ const routes = [
       children: [
         {
           path : '',
-          component: RegisterGuest,
+          component: GuestCreator,
           name: 'guestregistration',
         },
         {
-          path : 'register',
-          component: GuestInfo,
-          name: 'guestinfo',
+          path : 'activate',
+          component: GuestActivation,
+          name: 'guestactivation',
         }
       ]
     },

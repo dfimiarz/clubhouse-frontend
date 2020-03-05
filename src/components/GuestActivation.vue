@@ -1,10 +1,23 @@
 <template>
-    <v-container>
-        <v-layout justify-center align-start="" row="" wrap="">
-          <v-flex xs12>
-            Guset info              
-          </v-flex>
-        </v-layout>
+    <v-container fluid="">
+        <div class="py-2"> Please enter a host's email to find guest(s) to activate.</div>
+        <v-row no-gutters="">
+          <v-col cols="12" lg="10">
+            <v-row justify="center" align="center" no-gutters="">
+              
+                <v-text-field
+                  label="Host's e-mail"
+                ></v-text-field>
+              
+                <v-btn icon> <v-icon> mdi-account-search </v-icon> </v-btn>
+              
+            </v-row>           
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12">
+          </v-col>
+        </v-row>
     </v-container>
 </template>
 

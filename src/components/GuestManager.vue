@@ -1,43 +1,43 @@
 <template>
-    <v-container fluid="">
+    <v-container>
          <v-row no-gutters="" dense="" justify="center">
-            <v-col cols="12" sm="10" md="8" lg="6" xl="4">
-            <v-toolbar
-                flat
-                dense
-                
+           <v-col cols="12" sm="10" md="8" lg="6" xl="4">
+            
+            <v-card
+              class="mx-auto"
+              
             >
-
-                <v-toolbar-title>Guests</v-toolbar-title>
-
-                <v-spacer></v-spacer>
-
-                <template v-slot:extension>
-                    <v-tabs
-                    v-model="tab"
-                    align-with-title
-                    >
-                    <v-tabs-slider color="yellow"></v-tabs-slider>
-
-                    <v-tab :to="{name: 'guestregistration'}">
-                        ADD GUEST
-                    </v-tab>
-                    <v-tab :to="{name: 'guestinfo'}">
-                        GUEST INFO
-                    </v-tab>
-                   
-                    </v-tabs>
-                </template>
+              <v-img
+                class="white--text align-end"
+                height="150px"
+                :src="require(`@/assets/guestsbg.jpg`)"
+                :lazy-src="require(`@/assets/guestsbg_small.jpg`)"
+                gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)"
+              >
+                <v-card-title>Manage Guest Players</v-card-title>
+              </v-img>
+              <v-tabs
+                  
+                  dark
+                  
+                  
+              >
+                  <v-tab :to="{ 'name':'guestregistration'}" exact="">
+                  Register
+                  </v-tab>
+                  <v-tab :to="{ 'name':'guestactivation'}" exact="">
+                  Activate
+                  </v-tab>
+                  
+              </v-tabs>
+              <v-card-text>
+              <router-view></router-view>
+              </v-card-text>
+            </v-card>
             
-            </v-toolbar>
+             
             </v-col>
-            
          </v-row>
-        <v-row no-gutters="" dense="" justify="center">
-            <v-col cols="12" sm="10" md="8" lg="6" xl="4">
-                <router-view></router-view>
-            </v-col>
-        </v-row>
     </v-container>
 </template>
 
@@ -50,6 +50,7 @@ export default {
         items: [
           'add guest','active guests'
         ],
+        drawer: false
     };
   },
   methods: {
