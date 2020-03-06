@@ -1,6 +1,6 @@
 <template>
     <v-container fluid="">
-      <div class="caption py-2">This form is to be completed by <span class="font-weight-bold info--text">club members</span> registering a guest visitor. Only <span class="font-weight-bold info--text">single</span> registration is required. Once in the system, a guest can be activated for a particular day through the <span class="font-weight-bold info--text">"ACTIVATE"</span> tab.</div>
+      <div class="caption py-2">This form is to be completed by <span class="font-weight-bold info--text">club members</span> registering a guest visitor. Only <span class="font-weight-bold info--text">single</span> registration is required. Once in the system, a guest can be activated for a particular day through the <span class="font-weight-bold">"ACTIVATE"</span> tab.</div>
       <v-form>
           <v-row no-gutters="">
             <v-col cols="12">
@@ -104,7 +104,7 @@
                 v-model="agree">
                 <template v-slot:label>
                   <div class="caption">
-                    I have read, understood, and agree to all club rules pertaining to guests visitors
+                    I have read, understood, and agree to all club <v-chip color="primary" x-small @click.stop.prevent="showRules">rules</v-chip> pertaining to guests visitors
                   </div>
                 </template>
               ></v-checkbox>
@@ -113,7 +113,7 @@
           
           <v-row no-gutters="">
             <v-col cols="12" class="text-right">
-              <v-btn :disabled="loading" @click.prevent="addNewMember">
+              <v-btn :disabled="loading" @click="addNewMember">
                   Add Guest
               </v-btn>
             </v-col>
@@ -168,6 +168,9 @@ export default {
     addNewMember: function() {
       //console.log(this.guest);
       this.$store.dispatch("memberstore/REGISTER_MEMBER", this.guest);
+    },
+    showRules: function(){
+      alert("Will show rules");
     }
   },
   computed: {
