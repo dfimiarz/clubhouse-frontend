@@ -9,8 +9,8 @@
               </div>
             </v-col>
           </v-row>
-          <v-row no-gutters="" class="pt-2">
-            <v-col cols="12">Member Host</v-col>
+          <v-row no-gutters="" class="pt-4">
+            <v-col cols="12" class="body-1">Member Host</v-col>
           </v-row>
           <v-divider></v-divider>
           <v-row no-gutters="">
@@ -24,8 +24,8 @@
               </v-text-field>
             </v-col>
           </v-row>
-          <v-row no-gutters="" class="pt-2">
-            <v-col cols="12">Guest information</v-col>
+          <v-row no-gutters="" class="pt-4">
+            <v-col cols="12" class="title">Guest information</v-col>
           </v-row>
           <v-divider></v-divider>
           <v-row no-gutters="">
@@ -66,7 +66,8 @@
               </v-text-field>
             </v-col>
           </v-row>
-            <v-row no-gutters="">
+          
+          <!--<v-row no-gutters="">
             <v-col cols="12" lg="8">
               <v-select
               :items="genderItems"
@@ -75,8 +76,8 @@
               >
               </v-select>
             </v-col>
-          </v-row>
-          <v-row no-gutters="">
+          </v-row> -->
+          <!-- <v-row no-gutters="">
             <v-col cols="12" lg="8">
               <v-select
               :items="ages"
@@ -85,7 +86,7 @@
               >
               </v-select>  
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-row no-gutters="">
             <v-col cols="12" lg="8">
               <v-checkbox
@@ -94,8 +95,8 @@
               ></v-checkbox>
             </v-col>
           </v-row>
-          <v-row no-gutters="" class="pt-2">
-            <v-col cols="12">Terms and Conditions</v-col>
+          <v-row no-gutters="" class="pt-4">
+            <v-col cols="12"  class="title">Terms and Conditions</v-col>
           </v-row>
           <v-divider></v-divider>
           <v-row no-gutters="">

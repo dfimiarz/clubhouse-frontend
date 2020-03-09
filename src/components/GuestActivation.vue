@@ -16,6 +16,18 @@
         </v-row>
         <v-row>
           <v-col cols="12">
+            <v-item-group multiple="" mendatory="">
+              <v-row no-gutters="">
+                <v-col cols="6" md="3" v-for="guest in guests" :key="guest.id">
+                  <v-card>
+                    <v-img src="https://dummyimage.com/50x50/DDD/000000.jpg&text=GUEST"
+                    max-height="50" height="50" aspect-ratio="1">
+
+                    </v-img>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-item-group>
           </v-col>
         </v-row>
     </v-container>
@@ -23,12 +35,19 @@
 
 <script>
 export default {
-  name: "RegisterMember",
+  name: "GuestActivation",
   created: () => {
     //console.log("Created")
   },
   data: function() {
     return {
+      guests : [
+        { "id":"1","name" : "Daniel Smith", "email" : "dsmith@email.com" },
+        { "id":"2","name" : "Daniel Smith", "email" : "dsmith@email.com" },
+        { "id":"3","name" : "Daniel Smith", "email" : "dsmith@email.com" },
+        { "id":"4","name" : "Daniel Smith", "email" : "dsmith@email.com" }
+      ]
+
     }
   },
   methods: {

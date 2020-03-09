@@ -43,7 +43,7 @@
 
 <script>
 export default {
-  name: "MemberManager",
+  name: "GusetManager",
   data: function() {
     return {
         tab: null,
