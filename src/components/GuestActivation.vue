@@ -1,16 +1,17 @@
 <template>
     <v-container fluid="">
-        <div class="py-2"> Please enter a host's email to find guest(s) to activate.</div>
+        <div class="py-2"> Please enter host's email to find guest(s) to activate.</div>
         <v-row no-gutters="">
-          <v-col cols="12" lg="10">
-            <v-row justify="center" align="center" no-gutters="">
-              
+          <v-col cols="12">
+            <v-row justify="space-around" align="center" no-gutters="">
+              <v-col cols="8" lg="10">
                 <v-text-field
                   label="Host's e-mail"
                 ></v-text-field>
-              
-                <v-btn icon> <v-icon> mdi-account-search </v-icon> </v-btn>
-              
+              </v-col>
+              <v-col cols="4" lg="2" class="text-center">
+                <v-btn small> <v-icon> mdi-account-search </v-icon> find</v-btn>
+              </v-col>
             </v-row>           
           </v-col>
         </v-row>
