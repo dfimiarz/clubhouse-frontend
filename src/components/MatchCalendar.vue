@@ -1,6 +1,6 @@
 <template>
-<v-container fluid >
-  <v-row align="start" class="px-1" no-gutters="">
+<v-container fluid class="py-0" >
+  <v-row align="start" no-gutters="">
     <v-col cols="12">
         <v-row align="center" justify="space-between" no-gutters="" class="py-1">
           <v-col cols="auto" >
@@ -352,7 +352,7 @@ export default {
   grid-column : 1;
   grid-row : 2;
   overflow: auto;
-  height: calc(100vh - 210px); 
+  height: calc(100vh - 212px); 
 }
 
 .session-grid-container{
