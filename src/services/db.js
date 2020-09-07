@@ -80,7 +80,20 @@ function getCourts(){
 }
 
 function getMembers(){
-    return axios.get(process.env.VUE_APP_BACKEND + '/members')
+    return axios.get(process.env.VUE_APP_BACKEND + '/persons/members')
+}
+
+function getGuests(){
+    return axios.get(process.env.VUE_APP_BACKEND + '/persons/guests')
+}
+
+async function addGuest(guest){
+
+    return await axios.post(process.env.VUE_APP_BACKEND + '/persons/guests',guest)
+}
+
+async function getEligiblePersons(){
+    return axios.get(process.env.VUE_APP_BACKEND + '/persons/eligible')
 }
 
 export default  {
@@ -91,5 +104,8 @@ export default  {
     changeTime: changeSessionTime,
     changeCourt,
     getCourts,
-    getMembers
+    getMembers,
+    getGuests,
+    addGuest,
+    getEligiblePersons
 }

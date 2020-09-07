@@ -2,7 +2,7 @@ import axios from 'axios'
 import dbservice from '../../services/db'
 
 const state = {
-    
+
     regerrors: {
         firstname: null,
         lastname: null,
@@ -15,83 +15,112 @@ const state = {
         rank: null
     },
     members: [
-      ]
+    ],
+    guests: [
+
+    ],
+    eligible_persons: [
+
+    ]
 
 }
 
 const mutations = {
-    ADD_MEMBER(state, member ){
+    ADD_MEMBER(state, member) {
         state.members.push(member)
+    },
+    ADD_GUEST(state, guest) {
+        state.members.push(guest)
+    },
+    ADD_ELIGIBLE_PERSON(state, person) {
+        state.eligible_persons.push(person)
     }
 }
 
 const actions = {
-    REGISTER_MEMBER({commit},newMemberInfo){
+    REGISTER_MEMBER({ commit }, newMemberInfo) {
         commit('clearError', null, { root: true })
         commit('setLoading', true, { root: true })
-        axios.post(process.env.VUE_APP_BACKEND + '/members',newMemberInfo)
+        axios.post(process.env.VUE_APP_BACKEND + '/members', newMemberInfo)
             .then(function () {
-                
+
             })
             .catch(function (error) {
 
                 // console.log("Error", error)
-                if( error.response ){
+                if (error.response) {
                     // console.log(error.response.data);
                     // console.log(error.response.status);
                     // console.log(error.response.headers);
-                    commit('setError', error.response.data,  { root: true })
+                    commit('setError', error.response.data, { root: true })
 
                 }
-                else{
+                else {
                     //console.log('Error: ', error.message);
-                    commit('setError', "Connection failed",  { root: true })
+                    commit('setError', "Connection failed", { root: true })
                 }
-                
+
             })
             .finally(() => {
-                commit('setLoading',false,  { root: true });
+                commit('setLoading', false, { root: true });
             });
     },
-    async loadMembers({commit}){
-        
-        try{
+    async loadEligiblePersons({ commit }) {
+
+        let eligiblePeronsData = await dbservice.getEligiblePersons()
+        eligiblePeronsData.data.forEach((person) => {
+            commit('ADD_ELIGIBLE_PERSON', person)
+        })
+
+    },
+    async loadMembers({ commit }) {
+
+        try {
             let membersdata = await dbservice.getMembers()
             membersdata.data.forEach((member) => {
-                const t_member = Object.assign(member,{ name: member.firstname + " " + member.lastname })
-                commit('ADD_MEMBER',t_member)
+                commit('ADD_MEMBER', member)
             })
 
         }
-        finally{
+        finally {
             /* Continue regardless of errro */
         }
 
-        
-       /*
-        return db.collection('/members').get()
-        .then((snap) => {
-            snap.forEach( doc => {
-                const data = doc.data()
-                const id = doc.id
-                commit('ADD_MEMBER',{ id: id, name: data.firstname + " " + data.lastname, role: data.role })
+    },
+    async loadGuests({ commit }) {
+
+        try {
+            let guestdata = await dbservice.getGuests()
+            guestdata.data.forEach((guest) => {
+                commit('ADD_GUEST', guest)
             })
-        })
-        */
+
+        }
+        finally {
+            /* Continue regardless of errro */
+        }
+
     }
 }
 
 const getters = {
-   clubMembers: state => {
-       return state.members
-   },
-   getMemberById: (state) => (id) => {
-       return state.members.find( member => member.id === id )
-   }
+    clubMembers: state => {
+        return state.members
+    },
+    getMemberById: (state) => (id) => {
+        return state.members.find(member => member.id === id)
+    },
+    getEligiblePersons(){
+        return state.eligible_persons.map((person) => {
+            const appendix = person.type_id == 2 ? ' [G]' : ''
+            const nameformatted = `${person.firstname} ${person.lastname}${appendix}`
+            return { ...person, "name": nameformatted}
+        })
+    }
 }
 
 export default {
-    namespaced: true, 
+    namespaced: true,
     state,
     mutations,
     actions,

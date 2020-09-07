@@ -29,27 +29,6 @@
                             prepend-icon="mdi-calendar"
                             readonly
                           ></v-text-field>
-                          <!-- <v-dialog
-                            ref="date_dialog"
-                            v-model="datedialog"
-                            width="290px"
-
-                          >
-                            <template v-slot:activator="{ on }">
-                               <v-text-field
-                                v-model="computedDateFormatted"
-                                label="Date"
-                                prepend-icon="mdi-calendar"
-                                readonly
-                                v-on="on"
-                                required=""
-                                :rules="[ rules.required ]"
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker v-model="date" scrollable @input="datedialog = false">
-
-                            </v-date-picker>
-                          </v-dialog>-->
                         </v-col>
                       </v-row>
                     </v-col>
@@ -237,7 +216,7 @@
                           <v-autocomplete
                             v-model="selplayers[index].id"
                             :label="getPlayerLabel(index)"
-                            :items="clubmembers"
+                            :items="eligiblepersons"
                             item-text="name"
                             item-value="id"
                             :error-messages="selplayers[index].playerErrs"
@@ -611,8 +590,8 @@ export default {
     courts: function() {
       return this.$store.getters["courtstore/getCourts"];
     },
-    clubmembers: function() {
-      return this.$store.getters["memberstore/clubMembers"];
+    eligiblepersons: function() {
+      return this.$store.getters["memberstore/getEligiblePersons"];
     },
     repeaterTypes: function() {
       return this.$store.getters["repeaterTypes"];
