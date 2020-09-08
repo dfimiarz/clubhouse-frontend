@@ -110,11 +110,16 @@ const getters = {
     getMemberById: (state) => (id) => {
         return state.members.find(member => member.id === id)
     },
-    getEligiblePersons(){
+    getEligiblePersons() {
         return state.eligible_persons.map((person) => {
-            const appendix = person.type_id == 2 ? ' [G]' : ''
+            const appendix = person.type_id === 2 ? ' [G]' : ''
             const nameformatted = `${person.firstname} ${person.lastname}${appendix}`
-            return { ...person, "name": nameformatted}
+            return { ...person, "name": nameformatted }
+        })
+    },
+    getActiveMembers() {
+        return state.eligible_persons.filter((person) => person.type_id === 1).map((member) => {
+            return { ...member, "name": `${member.firstname} ${member.lastname}` }
         })
     }
 }

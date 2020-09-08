@@ -1,20 +1,17 @@
 <template>
-  <v-container fluid class="fill-height">
-    <v-row justify="center" align="center" no-gutters="">
-      <v-col cols="12" md="6" lg="4">
-        <v-card outlined="">
+  <v-container fluid>
+    <v-row justify="center" no-gutters>
+      <v-col cols="12" md="6" lg="4" xl="3">
+        <v-card outlined>
           <v-card-subtitle>Manage Access Token</v-card-subtitle>
           <v-card-text>
-            <v-text-field dense=""
-              label="Token"
-              outlined=""
-              append-icon="mdi-lock"
-            ></v-text-field>
+            <v-text-field dense label="Token" outlined append-icon="mdi-lock" v-model="token"></v-text-field>
           </v-card-text>
           <v-card-actions>
-            <v-btn text small color="warning"> Request New </v-btn>
+            <v-btn text small color="warning">Request</v-btn>
+            <v-btn text small color="error" @click="clearToken">Clear</v-btn>
             <v-spacer></v-spacer>
-            <v-btn> Add </v-btn>
+            <v-btn @click="addToken">Add</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -25,11 +22,37 @@
 <script>
 export default {
   name: "token",
-  data: function() {
+  data: function () {
     return {
+      token: null,
+    };
+  },
+  methods: {
+    addToken() {
+      if (!this.token) {
+        return false;
+      }
 
-    }
-  }
+      this.$store
+        .dispatch("saveToken", this.token)
+        .then(() => {
+          this.$router.push({ name: "home" });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    clearToken() {
+      this.$store
+        .dispatch("clearToken")
+        .then(() => {
+          console.log("Cleared");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
 };
 </script>
 

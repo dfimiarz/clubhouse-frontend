@@ -96,6 +96,10 @@ async function getEligiblePersons(){
     return axios.get(process.env.VUE_APP_BACKEND + '/persons/eligible')
 }
 
+async function getInactiveGuests(){
+    return axios.get(process.env.VUE_APP_BACKEND + '/persons/guests/inactive')
+}
+
 export default  {
     newMatch: newMatch,
     getSessionDetails: getSessionDetails,
@@ -107,5 +111,6 @@ export default  {
     getMembers,
     getGuests,
     addGuest,
-    getEligiblePersons
+    getEligiblePersons,
+    getInactiveGuests,
 }

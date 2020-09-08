@@ -56,8 +56,10 @@ function _dateToYear(date){
     return [date.getFullYear(), mm.length===2 ? '' : '0', mm, dd.length===2 ? '' : '0', dd].join(''); 
 }
 
+
+
 export default {
     timeToMinutes: strTimeToMinutes,
     dateToYear: _dateToYear,
-    minToTime
+    minToTime,
 }
