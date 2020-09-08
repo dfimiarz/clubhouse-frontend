@@ -34,6 +34,9 @@ const mutations = {
     },
     ADD_ELIGIBLE_PERSON(state, person) {
         state.eligible_persons.push(person)
+    },
+    CLEAR_ELIGIBLE_PERSONS(state){
+        state.eligible_persons.splice(0);
     }
 }
 
@@ -68,6 +71,7 @@ const actions = {
     async loadEligiblePersons({ commit }) {
 
         let eligiblePeronsData = await dbservice.getEligiblePersons()
+        commit('CLEAR_ELIGIBLE_PERSONS');
         eligiblePeronsData.data.forEach((person) => {
             commit('ADD_ELIGIBLE_PERSON', person)
         })
