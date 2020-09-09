@@ -100,6 +100,10 @@ async function getInactiveGuests(){
     return axios.get(process.env.VUE_APP_BACKEND + '/persons/guests/inactive')
 }
 
+async function activateGuests(payload){
+    return axios.patch(process.env.VUE_APP_BACKEND + '/persons/guests/',payload)
+}
+
 export default  {
     newMatch: newMatch,
     getSessionDetails: getSessionDetails,
@@ -113,4 +117,5 @@ export default  {
     addGuest,
     getEligiblePersons,
     getInactiveGuests,
+    activateGuests
 }
