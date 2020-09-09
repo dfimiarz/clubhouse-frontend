@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <div class="caption py-2">
+    <div class="text-caption py-2">
       Please use this form to register a guest visitor. Only
       <span
         class="font-weight-bold info--text"
@@ -149,7 +149,7 @@ export default {
           }
         });
       }
-      this.$emit("show:error", "Please fix field errors", "error");
+      this.$emit("show:message", "Please fix field errors", "error");
     },
     addGuest: function () {
       if (!this.$refs.form.validate()) {
@@ -168,7 +168,7 @@ export default {
           if (Object.prototype.hasOwnProperty.call(error, "fielderrors")) {
             this.handleFieldErrors(error.fielderrors);
           } else {
-            this.$emit("show:error", error, "error");
+            this.$emit("show:message", error, "error");
           }
         })
         .finally(() => {

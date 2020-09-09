@@ -18,7 +18,7 @@
             <v-tab :to="{ 'name':'guestactivation'}" exact>Activate</v-tab>
           </v-tabs>
           <v-card-text>
-            <router-view :loading.sync="loading" @show:error="showSnackBar"></router-view>
+            <router-view :loading.sync="loading" @show:message="showSnackBar"></router-view>
           </v-card-text>
         </v-card>
         <v-snackbar v-model="snackbar.open" top>
