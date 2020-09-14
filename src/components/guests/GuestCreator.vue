@@ -64,7 +64,7 @@
             <template v-slot:label>
               <div class="caption">
                 I have read, understood, and agree to all club
-                <v-chip color="primary" x-small @click.stop.prevent="showRules">rules</v-chip>pertaining to guests visitors
+                <v-chip color="primary" x-small @click.stop.prevent="showRules">rules</v-chip>&nbsp;pertaining to guests visitors
               </div>
             </template>
             >
@@ -132,7 +132,6 @@ export default {
   },
   methods: {
     resetForm() {
-      console.log("Reset");
       Object.keys(this.errors).forEach((elem) => {
         this.errors[elem] = null;
       });
@@ -160,8 +159,9 @@ export default {
 
       dbservice
         .addGuest(this.guest)
-        .then((data) => {
-          console.log(data);
+        .then(() => {
+          this.$emit("show:message", "Guest added", "success");
+          this.resetForm();
         })
         .catch((err) => {
           const error = processAxiosError(err);

@@ -6,6 +6,7 @@ import TokenView from '@/components/Token'
 const GuestCreator = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestCreator')
 const GuestManager = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestManager')
 const GuestActivation = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestActivation')
+const ActiveGuestList = () => import(/* webpackChunkName: "guest" */ '@/components/guests/ActiveGuestList')
 const MatchCalendar = () => import(/* webpackChunkName: "calendar" */ '@/components/MatchCalendar')
 const AdminBooking = () => import(/* webpackChunkName: "booking" */ '@/components/AdminBooking')
 const SessionDetails = () => import(/* webpackChunkName: "details" */ '@/components/SessionDetails')
@@ -35,7 +36,17 @@ const routes = [
         meta: {
           requiresAuth: true
         }
+      },
+      {
+        path: 'active',
+        component: ActiveGuestList,
+        name: 'activeguests',
+        meta: {
+          requiresAuth: true
+        }
       }
+
+      
     ]
   },
   {

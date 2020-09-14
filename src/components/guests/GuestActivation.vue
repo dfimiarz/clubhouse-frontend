@@ -14,6 +14,7 @@
             item-value="id"
             :rules="[ rules.notempty]"
             :error-messages="hosterrors"
+            no-data-text="No active members found"
           ></v-autocomplete>
         </v-col>
 
@@ -29,6 +30,7 @@
             item-text="name"
             item-value="id"
             :error-messages="guest.errors"
+            no-data-text="No inactive guests found"
           ></v-autocomplete>
         </v-col>
       </v-row>
@@ -36,7 +38,7 @@
         <v-col cols="12" class="d-flex justify-space-between">
           <v-btn outlined @click="resetForm" color="warning">Clear</v-btn>
           <v-spacer></v-spacer>
-          <v-btn @click="activateGuests">Activate</v-btn>
+          <v-btn @click="activateGuests" :disabled="loading">Activate</v-btn>
         </v-col>
       </v-row>
     </v-form>
@@ -48,6 +50,7 @@ import dbservice from "./../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
 
 export default {
+  props: ['loading'],
   name: "GuestActivation",
   data: function () {
     return {
@@ -58,7 +61,6 @@ export default {
         { id: null, errors: [] },
       ],
       guests: [],
-      loading: false,
       host: null,
       hosterrors: [],
       inactiveguests: [],
@@ -151,40 +153,51 @@ export default {
         guestslot.errors.splice(0);
       });
     },
-    activateGuests() {
+    async activateGuests() {
       if (!this.validateForm()) {
         return;
       }
 
       const host_id = this.host;
-      const guests = this.selectedGuests.reduce((acc, guest) => {
+      const guest_array = this.selectedGuests.reduce((acc, guest) => {
         if (guest.id) {
           acc.push(guest.id);
         }
         return acc;
       }, []);
 
-      this.setLoading(true);
+      try {
+        this.setLoading(true);
 
-      console.log(host_id);
-      console.log(guests);
-
-      dbservice
-        .activateGuests()
-        .then(() => {
-          this.$emit("show:message", `Guests activated.`, "success");
-        })
-        .catch((err) => {
+        try {
+          await dbservice.activateGuests(host_id, guest_array);
+        } catch (err) {
           const error = processAxiosError(err);
-          this.$emit(
-            "show:message",
-            `Unable to activate guests: ${error}`,
-            "error"
+          throw new Error(`Unable to activate guests: ${error}`);
+        }
+
+        try {
+          const result = await Promise.all([
+            dbservice.getInactiveGuests(),
+            //TO DO: load only new list of active guests no the entire list
+            this.$store.dispatch("memberstore/loadEligiblePersons"),
+          ]);
+
+          this.inactiveguests = result[0].data;
+        } catch (err) {
+          const error = processAxiosError(err);
+          throw new Error(
+            `Unable to reload data: ${error}. Contact club admin if error persists`
           );
-        })
-        .finally(() => {
-          this.setLoading(false);
-        });
+        }
+
+        this.$emit("show:message", `Guests activated`, "success");
+        this.resetForm();
+      } catch (error) {
+        this.$emit("show:message", `${error.message}`, "error");
+      } finally {
+        this.setLoading(false);
+      }
     },
     getGuestLabel: (index) => `Guest #${index}`,
     resetForm() {

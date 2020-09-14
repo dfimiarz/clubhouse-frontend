@@ -21,6 +21,9 @@ const state = {
     ],
     eligible_persons: [
 
+    ],
+    active_persons: [
+
     ]
 
 }
@@ -124,6 +127,11 @@ const getters = {
     getActiveMembers() {
         return state.eligible_persons.filter((person) => person.type_id === 1).map((member) => {
             return { ...member, "name": `${member.firstname} ${member.lastname}` }
+        })
+    },
+    getActiveGuests() {
+        return state.eligible_persons.filter((person) => person.type_id === 2).map((guest) => {
+            return { ...guest, "name": `${guest.firstname} ${guest.lastname}` }
         })
     }
 }

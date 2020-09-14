@@ -100,8 +100,17 @@ async function getInactiveGuests(){
     return axios.get(process.env.VUE_APP_BACKEND + '/persons/guests/inactive')
 }
 
-async function activateGuests(payload){
-    return axios.patch(process.env.VUE_APP_BACKEND + '/persons/guests/',payload)
+async function getCurrentGuestActivations(){
+    return axios.get(process.env.VUE_APP_BACKEND + '/guest_activations/current')
+}
+
+/**
+ * 
+ * @param {Number} memberhost_id ID of the active member host
+ * @param {Number[]} guests Array of IDs for inactive guets
+ */
+async function activateGuests(memberhost_id,guests){
+    return axios.post(process.env.VUE_APP_BACKEND + '/guest_activations/bulk',{memberhost: memberhost_id,"guests":guests})
 }
 
 export default  {
@@ -117,5 +126,6 @@ export default  {
     addGuest,
     getEligiblePersons,
     getInactiveGuests,
-    activateGuests
+    activateGuests,
+    getCurrentGuestActivations
 }

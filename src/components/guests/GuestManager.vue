@@ -16,6 +16,7 @@
           <v-tabs dark>
             <v-tab :to="{ 'name':'guestregistration'}" exact>Register</v-tab>
             <v-tab :to="{ 'name':'guestactivation'}" exact>Activate</v-tab>
+            <v-tab :to="{ 'name':'activeguests'}" exact>Active Guests</v-tab>
           </v-tabs>
           <v-card-text>
             <router-view :loading.sync="loading" @show:message="showSnackBar"></router-view>
