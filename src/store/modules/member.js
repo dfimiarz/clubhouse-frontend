@@ -117,6 +117,9 @@ const getters = {
     getMemberById: (state) => (id) => {
         return state.members.find(member => member.id === id)
     },
+    getEligiblePersonById: (state) => (id) => {
+        return state.eligible_persons.find(person => person.id === id)
+    },
     getEligiblePersons() {
         return state.eligible_persons.map((person) => {
             const appendix = person.type_id === 2 ? ' [G]' : ''

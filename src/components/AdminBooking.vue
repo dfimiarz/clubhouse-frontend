@@ -167,9 +167,7 @@
                             required
                             :rules="[ rules.required ]"
                             v-model="court"
-                            @change="checkCourt"
-                            :disabled="duration == 0 || checkingCourt"
-                            :loading="checkingCourt"
+                            :disabled="duration == 0"
                           ></v-select>
                           <!-- <div v-show="court">
                             <div class="caption green--text">Court is availble</div>
@@ -203,10 +201,10 @@
               </v-container>
             </v-stepper-content>
 
-            <v-stepper-content step="1">
-              <v-container fluid grid-list-sm class="px-0">
+            <v-stepper-content step="1" class="px-0">
+              <v-container fluid>
                 <v-form ref="playerform">
-                  <v-row>
+                  <v-row dense>
                     <v-col cols="12">
                       <v-alert type="error" dense v-if="playerErrors">{{ this.playerErrors }}</v-alert>
                     </v-col>
@@ -236,57 +234,80 @@
                     </v-col>
                   </v-row>
                 </v-form>
+                <v-row dense>
+                  <v-btn color="warning" text outlined class="ma-1" @click="clearPlayers">Clear</v-btn>
+                  <div class="flex-grow-1"></div>
+                  <v-btn @click="validatePlayerInput" class="ma-1">Continue</v-btn>
+                </v-row>
               </v-container>
-              <v-row dense>
-                <v-btn color="warning" text outlined class="ma-1" @click="clearPlayers">Clear</v-btn>
-                <div class="flex-grow-1"></div>
-                <v-btn @click="validatePlayerInput" class="ma-1">Continue</v-btn>
-              </v-row>
             </v-stepper-content>
 
-            <v-stepper-content step="3">
+            <v-stepper-content step="3" class="px-0">
               <v-container fluid>
-                <v-row row wrap>
+                <v-row>
                   <v-col cols="12" v-if="error">
                     <v-alert type="error" elevation="2">{{ error }}</v-alert>
                   </v-col>
                   <v-col cols="12">
-                    <span class="headline">Confirm Booking</span>
+                    <div class="text-h4">Booking Summary</div>
+                    <div class="text-caption">Please review session details</div>
                   </v-col>
-                  <v-col cols="12" class="my-2">
-                    <span class="body-1">Players:</span>
+                  <v-col cols="12">
+                    <v-row dense>
+                      <v-col cols="12" class="my-2">
+                        <div class="text-body-2">Players:</div>
+                      </v-col>
+                      <v-col cols="12" md="6" v-for="(player,index) in playerDetails" :key="index">
+                        <!-- <v-row dense align="center">
+                          <v-col cols="1">
+                            <div class="text-h4">{{ index + 1 }}</div>
+                          </v-col>
+                          <v-col cols="11"> -->
+                            <div class="text-h6">{{ player.firstname }} {{ player.lastname }}</div>
+                            <div class="text-caption">{{ player.repeater_lbl }}</div>
+                          <!-- </v-col>
+                        </v-row> -->
+                      </v-col>
+                    </v-row>
                   </v-col>
-                  <v-col cols="12" v-for="(player,index) in playerDetails" :key="index">
-                    <span
-                      class="subheading"
-                    >{{ index + 1 }} - {{ player.firstname }} {{ player.lastname }} - {{ player.repeater_lbl }}</span>
+                  <v-col cols="12">
+                    <v-divider></v-divider>
                   </v-col>
-                  <v-col cols="12" class="my-2">
-                    <span class="subheading">Time: {{ date }} {{ s_time }} - {{ e_time }}</span>
+                  <v-col cols="12">
+                    <div class="text-body-1">{{ date }}</div>
+                    <div class="text-body-2">Date</div>
                   </v-col>
-                  <v-col cols="12" class="my-2">
-                    <span class="subheading">Duration: {{ duration }} min</span>
+                  <v-col cols="12">
+                    <div class="text-body-1">{{ s_time }}  - {{ e_time }} ({{ duration }} min)</div>
+                    <div class="text-body-2">Time</div>
                   </v-col>
-                  <v-col cols="12" class="my-2">
-                    <span class="subheading">Bumpable: {{ bumpable }}</span>
+                  <v-col cols="12">
+                    <v-divider></v-divider>
                   </v-col>
-                  <v-col cols="12" class="my-2">
-                    <span class="subheading">Note: {{ note }}</span>
+                  <v-col cols="12">
+                    <div class="text-body-1">{{ bumpable ? 'Yes' : 'No' }}</div>
+                    <div class="text-body-2">Bumpable</div>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-divider></v-divider>
+                  </v-col>
+                  <v-col>
+                    <div class="text-body-1">{{ note ? note : 'No notes'}}</div>
+                    <div class="text-body-2">Notes</div>
                   </v-col>
                 </v-row>
+                <v-row dense>
+                  <v-btn
+                    color="warning"
+                    text
+                    outlined
+                    class="ma-1"
+                    @click="changeBookingParams"
+                  >Go back</v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn :loading="loading" :disabled="loading" @click="submitMatch()">Book</v-btn>
+                </v-row>
               </v-container>
-
-              <v-row dense>
-                <v-btn
-                  color="warning"
-                  text
-                  outlined
-                  class="ma-1"
-                  @click="changeBookingParams"
-                >Go back</v-btn>
-                <v-spacer></v-spacer>
-                <v-btn :loading="loading" :disabled="loading" @click="submitMatch()">Book</v-btn>
-              </v-row>
             </v-stepper-content>
           </v-stepper-items>
         </v-stepper>
@@ -304,17 +325,17 @@ import moment from "moment-timezone";
 
 export default {
   components: {
-    vnumberpad
+    vnumberpad,
   },
   name: "MatchCalendar",
-  data: function() {
+  data: function () {
     return {
       court: null,
       selplayers: [
         { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
         { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
         { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
-        { id: null, repeater: null, playerErrs: [], repeaterErrs: [] }
+        { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
       ],
       playerErrors: null,
       step: 1,
@@ -329,43 +350,42 @@ export default {
       note: "",
       bumpable: false,
       rules: {
-        required: value => !!value || "Required.",
-        minduration: value => value >= 5 || "Min 5 min",
-        maxduration: value => {
+        required: (value) => !!value || "Required.",
+        minduration: (value) => value >= 5 || "Min 5 min",
+        maxduration: (value) => {
           const max =
             utils.timeToMinutes(value > this.closetime) -
             utils.timeToMinutes(this.s_time);
           return value < max || `Max dur min`;
         },
-        notelimit: v => v.length <= 256 || "Max 256 characters",
+        notelimit: (v) => v.length <= 256 || "Max 256 characters",
         explainRuleChange: () => {
           return this.duration > this.reqMaxDuration ||
             (this.reqBumpable == 1 && this.bumpable == 0)
             ? "Explain rules overwrite"
             : true;
-        }
+        },
       },
       loading: false,
-      checkingCourt: false,
-      error: null
+      error: null,
     };
   },
   methods: {
-    allowedminutes: m => m % 5 === 0,
-    getPlayerLabel: index => "Player " + (index + 1),
-    changeBookingParams: function() {
+    allowedminutes: (m) => m % 5 === 0,
+    getPlayerLabel: (index) => "Player " + (index + 1),
+    changeBookingParams: function () {
       this.error = null;
       this.step = 2;
     },
     clearPlayers() {
-      this.selplayers.forEach(player => {
+      this.selplayers.forEach((player) => {
         player.id = player.repeater = null;
       });
 
       this.clearPlayerErrors();
     },
     clearPlayerErrors() {
-      this.selplayers.forEach(playerslot => {
+      this.selplayers.forEach((playerslot) => {
         playerslot.playerErrs.splice(0);
         playerslot.repeaterErrs.splice(0);
       });
@@ -390,7 +410,7 @@ export default {
               ? accumulator["errors"].push({
                   index: index,
                   field: "player",
-                  message: "Duplicate player"
+                  message: "Duplicate player",
                 })
               : accumulator["players"].push(player.id);
 
@@ -398,7 +418,7 @@ export default {
               accumulator["errors"].push({
                 index: index,
                 field: "repeater",
-                message: "Repeater empty"
+                message: "Repeater empty",
               });
           }
 
@@ -417,7 +437,7 @@ export default {
       if (playerCheck.errors.length != 0) {
         let that = this;
 
-        playerCheck.errors.forEach(error => {
+        playerCheck.errors.forEach((error) => {
           let index = error.index;
           let field = error.field + "Errs";
           let msg = error.message;
@@ -428,9 +448,7 @@ export default {
         return;
       }
 
-      var time = moment()
-        .tz(this.clubtz)
-        .format("HH:mm");
+      var time = moment().tz(this.clubtz).format("HH:mm");
       var current_minutes = utils.timeToMinutes(time);
 
       var minutes = current_minutes % 60;
@@ -471,7 +489,7 @@ export default {
       const [year, month, day] = date.split("-");
       return `${month}/${day}/${year}`;
     },
-    validate: function() {
+    validate: function () {
       return true;
     },
     sendData(match) {
@@ -482,12 +500,12 @@ export default {
 
       apihandler
         .newMatch(match)
-        .then(function() {
+        .then(function () {
           //console.log(response)
           that.loading = false;
           that.$router.push({ name: "calendar" });
         })
-        .catch(function(error) {
+        .catch(function (error) {
           // TODO: handle send errors better
 
           if (error.response) {
@@ -511,7 +529,7 @@ export default {
           that.loading = false;
         });
     },
-    submitMatch: function() {
+    submitMatch: function () {
       if (!this.validate()) return false;
 
       const match = {
@@ -521,34 +539,28 @@ export default {
         start: this.s_time,
         end: this.e_time,
         note: this.note,
-        players: this.playerInfo
+        players: this.playerInfo,
       };
 
       //console.log("Will send ", match)
       this.sendData(match);
     },
-    checkCourt: function() {
-      this.checkingCourt = true;
-      setTimeout(() => {
-        this.checkingCourt = false;
-      }, 2000);
-    }
   },
   watch: {
-    reqBumpable: function(newval) {
+    reqBumpable: function (newval) {
       this.bumpable = newval;
-    }
+    },
   },
   computed: {
-    e_time: function() {
+    e_time: function () {
       return utils.minToTime(
         this.sel_duration + utils.timeToMinutes(this.s_time)
       );
     },
-    clubtz: function() {
+    clubtz: function () {
       return this.$store.state.clubtz;
     },
-    matchConfig: function() {
+    matchConfig: function () {
       return this.selplayers.reduce((cur_val, player) => {
         let val = 0;
 
@@ -570,11 +582,11 @@ export default {
         return val + cur_val;
       }, 0);
     },
-    bookingRules: function() {
+    bookingRules: function () {
       let rule = this.$store.getters["getBookingRule"](this.matchConfig);
       return rule !== undefined ? rule : {};
     },
-    reqMaxDuration: function() {
+    reqMaxDuration: function () {
       return Object.prototype.hasOwnProperty.call(
         this.bookingRules,
         "maxduration"
@@ -582,53 +594,53 @@ export default {
         ? this.bookingRules.maxduration / 60000
         : null;
     },
-    reqBumpable: function() {
+    reqBumpable: function () {
       return Object.prototype.hasOwnProperty.call(this.bookingRules, "bumpable")
         ? this.bookingRules.bumpable
         : null;
     },
-    courts: function() {
+    courts: function () {
       return this.$store.getters["courtstore/getCourts"];
     },
-    eligiblepersons: function() {
+    eligiblepersons: function () {
       return this.$store.getters["memberstore/getEligiblePersons"];
     },
-    repeaterTypes: function() {
+    repeaterTypes: function () {
       return this.$store.getters["repeaterTypes"];
     },
-    startHours: function() {
+    startHours: function () {
       return Array(12)
         .fill()
         .map((_, idx) => 1 + idx);
     },
-    startMinutes: function() {
+    startMinutes: function () {
       return Array(4)
         .fill()
         .map((_, idx) => 0 + idx * 15);
     },
-    playerDetails: function() {
+    playerDetails: function () {
       return this.selplayers.reduce((accumulator, player) => {
-        const member = this.$store.getters["memberstore/getMemberById"](
+        const person = this.$store.getters["memberstore/getEligiblePersonById"](
           player.id
         );
         const repeaterDetails = this.$store.getters["getRepeaterType"](
           player.repeater
         );
 
-        if (member && repeaterDetails) {
+        if (person && repeaterDetails) {
           accumulator.push({
             id: player.id,
-            firstname: member.firstname,
-            lastname: member.lastname,
+            firstname: person.firstname,
+            lastname: person.lastname,
             repeater: player.repeater,
-            repeater_lbl: repeaterDetails.label
+            repeater_lbl: repeaterDetails.label,
           });
         }
 
         return accumulator;
       }, []);
     },
-    playerInfo: function() {
+    playerInfo: function () {
       return this.selplayers.reduce((accumulator, player) => {
         if (player.id && player.repeater) {
           accumulator.push({ id: player.id, repeater: player.repeater });
@@ -646,27 +658,25 @@ export default {
     closetime() {
       return this.$store.state.closetime;
     },
-    startmin: function() {
+    startmin: function () {
       return utils.timeToMinutes(this.s_time);
     },
-    endmin: function() {
+    endmin: function () {
       return utils.timeToMinutes(this.e_time);
     },
-    duration: function() {
+    duration: function () {
       let dur = this.endmin - this.startmin;
       return dur >= 0 ? dur : 0;
     },
-    maxstarttime: function() {
+    maxstarttime: function () {
       return utils.minToTime(utils.timeToMinutes(this.closetime) - 5);
-    }
+    },
   },
-  created: function() {
-    this.date = moment()
-      .tz(this.clubtz)
-      .format("Y-MM-DD");
+  created: function () {
+    this.date = moment().tz(this.clubtz).format("Y-MM-DD");
   },
-  mounted: function() {},
-  beforeDestroy() {}
+  mounted: function () {},
+  beforeDestroy() {},
 };
 </script>
 
