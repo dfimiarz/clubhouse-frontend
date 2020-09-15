@@ -38,18 +38,18 @@ export default {
         .then(() => {
           this.$router.push({ name: "home" });
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          //console.log(err);
         });
     },
     clearToken() {
       this.$store
         .dispatch("clearToken")
         .then(() => {
-          console.log("Cleared");
+          //console.log("Cleared");
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          //console.log(err);
         });
     },
   },
