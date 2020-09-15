@@ -60,7 +60,7 @@ export default {
         { title: 'Book court', text: 'Regular court booking', img: 'tennisracquet.jpg', img_small: 'tennisracquet_small.jpg', xs: 12, sm: 6, md: 6, dest: "AdminBooking" },
         { title: 'Matches', text: 'Show current games', img: 'curr_matches.jpg', img_small: 'curr_matches_small.jpg', xs: 12, sm: 6,md: 3 },
         { title: 'Guests', text: 'Guest management', img: 'guests_btn_bg.jpg', img_small: 'clubhouse_small.jpg', xs: 12, sm: 6,md: 3, dest: "guestregistration" },
-        { title: 'Manage', text: 'Club management',  img: 'clubhouse.jpg', img_small: 'clubhouse_small.jpg', xs: 12, sm: 6,md: 3 },
+        { title: 'Manage', text: 'Club management',  img: 'manager.jpg', img_small: 'manager_small.jpg', xs: 12, sm: 6,md: 3 },
         { title: 'Reports', text: 'Reports',  img: 'reports.jpg', img_small: 'reports_small.jpg', xs: 12, sm: 6,md: 3 }
         
       ]
