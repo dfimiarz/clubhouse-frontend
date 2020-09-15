@@ -106,7 +106,6 @@ export default {
         firstname: null,
         lastname: null,
         email: null,
-        age: null,
         phone: null,
       },
       agree: false,
