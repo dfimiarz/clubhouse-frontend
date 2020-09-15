@@ -16,7 +16,7 @@
           </v-stepper-header>
 
           <v-stepper-items>
-            <v-stepper-content step="2" class="px-0">
+            <v-stepper-content step="2" >
               <v-container fluid>
                 <v-form ref="sessionform" lazy>
                   <v-row dense>
@@ -201,10 +201,10 @@
               </v-container>
             </v-stepper-content>
 
-            <v-stepper-content step="1" class="px-0">
+            <v-stepper-content step="1">
               <v-container fluid>
                 <v-form ref="playerform">
-                  <v-row dense>
+                  <v-row>
                     <v-col cols="12">
                       <v-alert type="error" dense v-if="playerErrors">{{ this.playerErrors }}</v-alert>
                     </v-col>
@@ -242,15 +242,14 @@
               </v-container>
             </v-stepper-content>
 
-            <v-stepper-content step="3" class="px-0">
+            <v-stepper-content step="3" >
               <v-container fluid>
                 <v-row>
                   <v-col cols="12" v-if="error">
                     <v-alert type="error" elevation="2">{{ error }}</v-alert>
                   </v-col>
                   <v-col cols="12">
-                    <div class="text-h4">Booking Summary</div>
-                    <div class="text-caption">Please review session details</div>
+                    <div class="text-h5">Booking Summary</div>
                   </v-col>
                   <v-col cols="12">
                     <v-row dense>
@@ -305,7 +304,7 @@
                     @click="changeBookingParams"
                   >Go back</v-btn>
                   <v-spacer></v-spacer>
-                  <v-btn :loading="loading" :disabled="loading" @click="submitMatch()">Book</v-btn>
+                  <v-btn :loading="loading" :disabled="loading" color="primary" large @click="submitMatch()">Book</v-btn>
                 </v-row>
               </v-container>
             </v-stepper-content>
