@@ -12,11 +12,6 @@
               <v-btn icon @click="changeDay(1)"> <v-icon> mdi-arrow-right-bold </v-icon></v-btn>
             </v-row>
           </v-col>
-          <!-- <v-col cols="auto">
-            <v-row justify="end" align="center" no-gutters="">
-              <v-btn color="warning" icon><v-icon> mdi-help </v-icon></v-btn>
-            </v-row>
-          </v-col> -->
         </v-row>    
     </v-col>
     <v-col cols="12">
@@ -69,7 +64,7 @@
               bottom
               right
               color="primary"
-              :to="{name: 'AdminBooking'}"
+              :to="{name: 'SessionBooking'}"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>

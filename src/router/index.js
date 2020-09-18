@@ -8,7 +8,7 @@ const GuestManager = () => import(/* webpackChunkName: "guest" */ '@/components/
 const GuestActivation = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestActivation')
 const ActiveGuestList = () => import(/* webpackChunkName: "guest" */ '@/components/guests/ActiveGuestList')
 const MatchCalendar = () => import(/* webpackChunkName: "calendar" */ '@/components/MatchCalendar')
-const AdminBooking = () => import(/* webpackChunkName: "booking" */ '@/components/AdminBooking')
+const SessionBooking = () => import(/* webpackChunkName: "booking" */ '@/components/SessionBooking')
 const SessionDetails = () => import(/* webpackChunkName: "details" */ '@/components/SessionDetails')
 import store from '@/store/index'
 
@@ -64,8 +64,8 @@ const routes = [
   },
   {
     path: '/sessions/new',
-    name: 'AdminBooking',
-    component: AdminBooking,
+    name: 'SessionBooking',
+    component: SessionBooking,
     meta: {
       requiresAuth: true
     }

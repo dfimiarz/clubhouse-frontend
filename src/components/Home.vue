@@ -57,7 +57,7 @@ export default {
     return {
       cards: [
         { title: 'Daily Schedule', text: 'View full schedule' ,img: 'players.jpg', img_small: 'players_small.jpg', xs: 12, sm: 6, md: 6, dest: "calendar" },
-        { title: 'Book court', text: 'Regular court booking', img: 'tennisracquet.jpg', img_small: 'tennisracquet_small.jpg', xs: 12, sm: 6, md: 6, dest: "AdminBooking" },
+        { title: 'Book court', text: 'Regular court booking', img: 'tennisracquet.jpg', img_small: 'tennisracquet_small.jpg', xs: 12, sm: 6, md: 6, dest: "SessionBooking" },
         { title: 'Matches', text: 'Show current games', img: 'curr_matches.jpg', img_small: 'curr_matches_small.jpg', xs: 12, sm: 6,md: 3 },
         { title: 'Guests', text: 'Guest management', img: 'guests_btn_bg.jpg', img_small: 'clubhouse_small.jpg', xs: 12, sm: 6,md: 3, dest: "guestregistration" },
         { title: 'Manage', text: 'Club management',  img: 'manager.jpg', img_small: 'manager_small.jpg', xs: 12, sm: 6,md: 3 },

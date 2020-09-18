@@ -18,7 +18,7 @@
             <v-list-item-title>Schedule</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{name: 'AdminBooking'}" exact>
+        <v-list-item :to="{name: 'SessionBooking'}" exact>
           <v-list-item-action>
             <v-icon>mdi-calendar-plus</v-icon>
           </v-list-item-action>
@@ -75,7 +75,7 @@
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn text :to="{name: 'home'}" exact>Home</v-btn>
         <v-btn text :to="{name: 'calendar'}" exact>Schedule</v-btn>
-        <v-btn text :to="{name: 'AdminBooking'}" exact>Book a Court</v-btn>
+        <v-btn text :to="{name: 'SessionBooking'}" exact>Book a Court</v-btn>
         <v-btn text exact>Help</v-btn>
       </v-toolbar-items>
     </v-app-bar>
