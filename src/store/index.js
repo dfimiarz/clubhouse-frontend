@@ -129,10 +129,10 @@ const store = new Vuex.Store(
                 return state.loading
             },
             startHour(state) {
-                return Math.trunc(state.startTimeMin / 60)
+                return Math.floor(state.startTimeMin / 60)
             },
             endHour(state) {
-                return Math.trunc(state.endTimeMin / 60)
+                return Math.ceil(state.endTimeMin / 60)
             },
             openMin(state) {
                 var openmin = utils.timeToMinutes(state.opentime)

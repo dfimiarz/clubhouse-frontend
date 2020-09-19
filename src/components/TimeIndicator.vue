@@ -32,9 +32,9 @@ export default {
      */
     vpos: function(){
       
-      var adj_currmin = this.currmin <= this.openMin ? this.openMin : this.currmin >= this.closeMin ? (this.closeMin - this.thickness) : this.currmin
+      var adj_currmin = this.currmin <= this.startMin ? this.startMin : this.currmin >= this.endMin ? (this.endMin - this.thickness) : this.currmin
       
-      return this.thickness * (adj_currmin - this.openMin)
+      return this.thickness * (adj_currmin - this.startMin)
       
     },
     openMin: function(){
@@ -47,6 +47,12 @@ export default {
       
       return moment(this.currtime).tz(this.clubtz).hour() * 60 + moment(this.currtime).tz(this.clubtz).minute()
       
+    },
+    startMin: function(){
+      return Math.floor(this.openMin/60)*60;
+    },
+    endMin: function(){
+      return Math.ceil(this.closeMin/60)*60;
     }
     
 

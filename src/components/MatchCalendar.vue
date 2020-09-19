@@ -206,10 +206,10 @@ export default {
       return this.$store.getters['closeMin']
     },
     startHour: function(){
-      return Math.trunc(this.startMin/60)
+      return Math.floor(this.startMin/60)
     },
     endHour: function(){
-      return Math.trunc(this.endMin/60)
+      return Math.ceil(this.endMin/60)
     },
     courts: function(){
       return this.$store.getters['courtstore/getCourts']
@@ -231,7 +231,7 @@ export default {
         case 'xs': return 1
         case 'sm': return 2
         case 'md': return 3
-        case 'lg': return 3
+        case 'lg': return 5
         case 'xl': return 5
         default : return 5
       }
