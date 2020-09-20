@@ -105,6 +105,20 @@ async function getCurrentGuestActivations(){
 }
 
 /**
+ *  Get Booking Types
+ */
+async function getBookingTypes(){
+    return axios.get(process.env.VUE_APP_BACKEND + '/booking_types')
+}
+
+/**
+ * Get club managers
+ */
+async function getManagers() {
+    return axios.get(process.env.VUE_APP_BACKEND + '/persons/members/managers')
+}
+
+/**
  * 
  * @param {Number} memberhost_id ID of the active member host
  * @param {Number[]} guests Array of IDs for inactive guets
@@ -127,5 +141,7 @@ export default  {
     getEligiblePersons,
     getInactiveGuests,
     activateGuests,
-    getCurrentGuestActivations
+    getCurrentGuestActivations,
+    getManagers,
+    getBookingTypes,
 }

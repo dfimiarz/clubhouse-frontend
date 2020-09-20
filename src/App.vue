@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import splashscreen from './components/SplashScreen'
+import splashscreen from "./components/SplashScreen";
 
 export default {
   name: "app",
@@ -25,7 +25,7 @@ export default {
     loading: true,
     loadingError: null,
   }),
-  created: function () {
+  mounted: function () {
     //console.log("Loading app data...")
 
     new Promise((resolve) => {

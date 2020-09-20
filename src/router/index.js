@@ -10,6 +10,7 @@ const ActiveGuestList = () => import(/* webpackChunkName: "guest" */ '@/componen
 const MatchCalendar = () => import(/* webpackChunkName: "calendar" */ '@/components/MatchCalendar')
 const SessionBooking = () => import(/* webpackChunkName: "booking" */ '@/components/SessionBooking')
 const SessionDetails = () => import(/* webpackChunkName: "details" */ '@/components/SessionDetails')
+const EventBooking = () => import(/* webpackChunkName: "manage" */ '@/components/EventBooking')
 import store from '@/store/index'
 
 Vue.use(Router)
@@ -55,7 +56,7 @@ const routes = [
     component: TokenView
   },
   {
-    path: '/sessions',
+    path: '/calendar',
     name: 'calendar',
     component: MatchCalendar,
     meta: {
@@ -63,7 +64,7 @@ const routes = [
     }
   },
   {
-    path: '/sessions/new',
+    path: '/bookings/matches/new',
     name: 'SessionBooking',
     component: SessionBooking,
     meta: {
@@ -71,7 +72,15 @@ const routes = [
     }
   },
   {
-    path: '/sessions/:id',
+    path: '/manage/eventbooking',
+    name: 'EventBooking',
+    component: EventBooking,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/booking/:id',
     name: 'SessionDetails',
     component: SessionDetails,
     props: true,

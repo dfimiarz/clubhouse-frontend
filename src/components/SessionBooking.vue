@@ -56,7 +56,6 @@
                             <v-time-picker
                               v-model="s_time"
                               class="mt-3"
-                              format="24h"
                               :allowed-minutes="allowedminutes"
                               :min="opentime"
                               :max="maxstarttime"
@@ -277,7 +276,7 @@
                     <div class="text-body-2">Date</div>
                   </v-col>
                   <v-col cols="12">
-                    <div class="text-body-1">{{ s_time }}  - {{ e_time }} ({{ duration }} min)</div>
+                    <div class="text-body-1">{{ s_time | formatTime }}  - {{ e_time | formatTime}} ({{ duration }} min)</div>
                     <div class="text-body-2">Time</div>
                   </v-col>
                   <v-col cols="12">
@@ -344,7 +343,6 @@ export default {
       durDialog: false,
       date: null,
       s_time: null,
-      //e_time: null,
       sel_duration: 0,
       note: "",
       bumpable: false,
@@ -368,6 +366,16 @@ export default {
       loading: false,
       error: null,
     };
+  },
+   filters: {
+    formatTime: function(timestring){
+      if( ! timestring ) return 'N/A'
+      return moment(timestring).format('h:mm a')
+    },
+    formatDate: function(timestring){
+      if( ! timestring ) return 'N/A'
+      return moment(timestring).format('MMM Do, Y')
+    }
   },
   methods: {
     allowedminutes: (m) => m % 5 === 0,
