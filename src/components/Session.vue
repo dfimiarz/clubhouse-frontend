@@ -76,13 +76,22 @@ export default {
       return _height <= 20 ? 20 : _height 
     },
     vpos: function(){
-      return this.cellHeight1H / 60 * (this.startMin - this.openMin)
+      return this.cellHeight1H / 60 * (this.startMin - this.calStartMin)
     },
     cellHeight1H: function(){
       return this.$store.getters['calCellHeight1H'];
     },
     openMin: function(){
       return this.$store.getters['openMin'];
+    },
+    closeMin: function(){
+      return this.$store.getters['closeMin'];
+    },  
+    calStartMin: function(){
+      return Math.floor(this.openMin/60)*60;
+    },
+    calEndMin: function(){
+      return Math.ceil(this.closeMin/60)*60;
     },
     players: function(){
       return this.session.players === null ? [] : this.session.players
@@ -101,6 +110,7 @@ export default {
       let e_dt = new Date(this.session.date.concat('T',this.session.end))
       return e_dt.getHours() * 60 + e_dt.getMinutes()
     }
+    
 
   }
 }
