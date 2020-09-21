@@ -104,43 +104,6 @@
                         </vnumberpad>
                       </v-dialog>
                     </v-col>
-                    <!-- <v-col cols="12">
-                      <v-row wrap>
-                        <v-col cols="12" md="6">
-                          <v-dialog
-                            ref="etdialog"
-                            v-model="etimedialog"
-                            :return-value.sync="e_time"
-                            persistent
-                            width="290px"
-                          >
-                            <template v-slot:activator="{ on }">
-                              <v-text-field
-                                v-model="e_time"
-                                label="End time"
-                                prepend-icon="mdi-clock-end"
-                                readonly
-                                v-on="on"
-                                required=""
-                                :rules="[ rules.required ]"
-                                :disabled=" false "
-                              ></v-text-field>
-                            </template>
-                            <v-time-picker
-                              v-model="e_time"
-                              class="mt-3"
-                              format="24h"
-                              :allowed-minutes="allowedminutes"
-                              
-                            >
-                            <v-spacer></v-spacer>
-                              <v-btn text="" color="primary" @click="etimedialog = false">Cancel</v-btn>
-                              <v-btn text="" color="primary" @click="$refs.etdialog.save(e_time)">OK</v-btn>
-                            </v-time-picker>
-                          </v-dialog>
-                        </v-col>
-                      </v-row>
-                    </v-col>-->
                     <v-col cols="12" class="pa-2">
                       <v-row
                         class="caption warning--text"
@@ -276,7 +239,7 @@
                     <div class="text-body-2">Date</div>
                   </v-col>
                   <v-col cols="12">
-                    <div class="text-body-1">{{ s_time | formatTime }}  - {{ e_time | formatTime}} ({{ duration }} min)</div>
+                    <div class="text-body-1">{{ s_time  }}  - {{ e_time }} ({{ duration }} min)</div>
                     <div class="text-body-2">Time</div>
                   </v-col>
                   <v-col cols="12">
@@ -317,7 +280,6 @@
 <script>
 import vnumberpad from "./booking/vuetify-numberpad";
 import apihandler from "./../services/db";
-//import { isNull } from 'util';
 import utils from "./../services/utils";
 import moment from "moment-timezone";
 
@@ -325,7 +287,7 @@ export default {
   components: {
     vnumberpad,
   },
-  name: "MatchCalendar",
+  name: "MatchBooking",
   data: function () {
     return {
       court: null,

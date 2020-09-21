@@ -26,7 +26,7 @@
                   <v-select
                     v-model="manager"
                     :items="managers"
-                    label="Organizer"
+                    label="Authorized Person"
                     prepend-icon="mdi-account"
                     no-data-text="No available organizers"
                     :rules="[ rules.required ]"
@@ -128,7 +128,7 @@
                         prepend-icon="mdi-clock-end"
                         v-on="on"
                         required
-                        :rules="[ rules.required ]"
+                        :rules="[ rules.required, rules.endAfterStart ]"
                       ></v-text-field>
                     </template>
                     <v-time-picker
@@ -146,7 +146,7 @@
                 </v-col>
 
                 <v-col cols="12">
-                  <v-text-field v-model="note" label="Note"></v-text-field>
+                  <v-text-field v-model="note" label="Note" counter maxlength="200" :rules="[ notelimit ]"></v-text-field>
                 </v-col>
               </v-row>
             </v-form>
@@ -194,40 +194,26 @@ export default {
         open: false,
         color: null,
       },
-      selplayers: [
-        { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
-        { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
-        { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
-        { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
-      ],
-      playerErrors: null,
-      step: 1,
       datedialog: false,
       stimedialog: false,
       etimedialog: false,
-      durDialog: false,
       date: null,
       s_time: null,
       e_time: null,
-      sel_duration: 0,
-      note: "",
-      bumpable: false,
+      note: null,
       rules: {
         required: (value) => !!value || "Required.",
-        minduration: (value) => value >= 5 || "Min 5 min",
-        maxduration: (value) => {
-          const max =
-            utils.timeToMinutes(value > this.closetime) -
-            utils.timeToMinutes(this.s_time);
-          return value < max || `Max dur min`;
+        endAfterStart: (value) => {
+          if( ! this.s_time ){
+            return true
+          } 
+
+          if( utils.timeToMinutes(value) - utils.timeToMinutes(this.s_time) <= 0 ){
+            return "End must be after start";
+          }
+
         },
-        notelimit: (v) => v.length <= 256 || "Max 256 characters",
-        explainRuleChange: () => {
-          return this.duration > this.reqMaxDuration ||
-            (this.reqBumpable == 1 && this.bumpable == 0)
-            ? "Explain rules overwrite"
-            : true;
-        },
+        notelimit: (v) => v.length <= 200 || "Max 256 characters",
       },
       loading: false,
       error: null,
@@ -235,108 +221,6 @@ export default {
   },
   methods: {
     allowedminutes: (m) => m % 5 === 0,
-    getPlayerLabel: (index) => "Player " + (index + 1),
-    changeBookingParams: function () {
-      this.error = null;
-      this.step = 2;
-    },
-    clearPlayers() {
-      this.selplayers.forEach((player) => {
-        player.id = player.repeater = null;
-      });
-
-      this.clearPlayerErrors();
-    },
-    clearPlayerErrors() {
-      this.selplayers.forEach((playerslot) => {
-        playerslot.playerErrs.splice(0);
-        playerslot.repeaterErrs.splice(0);
-      });
-      this.playerErrors = null;
-    },
-    validatePlayerInput() {
-      this.clearPlayerErrors();
-
-      let playerCheck = this.selplayers.reduce(
-        (accumulator, player, index) => {
-          if (player.id !== null) {
-            accumulator["players"].indexOf(player.id) != -1
-              ? accumulator["errors"].push({
-                  index: index,
-                  field: "player",
-                  message: "Duplicate player",
-                })
-              : accumulator["players"].push(player.id);
-
-            if (player.repeater === null)
-              accumulator["errors"].push({
-                index: index,
-                field: "repeater",
-                message: "Repeater empty",
-              });
-          }
-
-          return accumulator;
-        },
-        { players: [], errors: [] }
-      );
-
-      //console.log(playerCheck)
-
-      if (playerCheck.players.length == 0) {
-        this.playerErrors = "Please select a player";
-        return;
-      }
-
-      if (playerCheck.errors.length != 0) {
-        let that = this;
-
-        playerCheck.errors.forEach((error) => {
-          let index = error.index;
-          let field = error.field + "Errs";
-          let msg = error.message;
-
-          that.selplayers[index][field].push(msg);
-        });
-
-        return;
-      }
-
-      var time = moment().tz(this.clubtz).format("HH:mm");
-      var current_minutes = utils.timeToMinutes(time);
-
-      var minutes = current_minutes % 60;
-      var hours = (current_minutes - minutes) / 60;
-
-      var minutes_limit = 5;
-      var minutes_rounded = Math.floor(minutes / minutes_limit) * minutes_limit;
-
-      var final_start_minutes = hours * 60 + minutes_rounded + minutes_limit;
-
-      //console.log(current_minutes,hours,minutes,minutes_rounded, final_start_minutes)
-
-      var open_minutes = utils.timeToMinutes(this.opentime);
-      var close_minutes = utils.timeToMinutes(this.closetime);
-
-      if (
-        final_start_minutes >= open_minutes &&
-        final_start_minutes <= close_minutes
-      ) {
-        this.s_time = utils.minToTime(final_start_minutes);
-      }
-
-      if (this.reqMaxDuration) {
-        const dur =
-          final_start_minutes < close_minutes
-            ? final_start_minutes + this.reqMaxDuration < close_minutes
-              ? this.reqMaxDuration
-              : close_minutes - final_start_minutes
-            : 0;
-        this.sel_duration = dur;
-      }
-
-      this.step = 2;
-    },
     formatDate(date) {
       if (!date) return null;
 
@@ -344,6 +228,14 @@ export default {
       return `${month}/${day}/${year}`;
     },
     validate: function () {
+      return true;
+    },
+    validateFields(){
+
+      if( !this.$refs.eventbookingform.validate() ){
+        return false
+      }
+
       return true;
     },
     sendData(match) {
@@ -384,7 +276,8 @@ export default {
         });
     },
     submitBooking: function () {
-      if (!this.$refs.eventbookingform.validate()) return false;
+      
+      if (! this.validateFields()) return false;
 
       const booking = {
         court: this.court,
@@ -433,62 +326,12 @@ export default {
       this.snackbar.color = color;
     },
   },
-  watch: {
-    reqBumpable: function (newval) {
-      this.bumpable = newval;
-    },
-  },
   computed: {
     clubtz: function () {
       return this.$store.state.clubtz;
     },
-    matchConfig: function () {
-      return this.selplayers.reduce((cur_val, player) => {
-        let val = 0;
-
-        switch (player.repeater) {
-          case 1000:
-            val = 100;
-            break;
-          case 2000:
-            val = 10;
-            break;
-          case 3000:
-            val = 1;
-            break;
-          default:
-            val = 0;
-            break;
-        }
-
-        return val + cur_val;
-      }, 0);
-    },
-    bookingRules: function () {
-      let rule = this.$store.getters["getBookingRule"](this.matchConfig);
-      return rule !== undefined ? rule : {};
-    },
-    reqMaxDuration: function () {
-      return Object.prototype.hasOwnProperty.call(
-        this.bookingRules,
-        "maxduration"
-      )
-        ? this.bookingRules.maxduration / 60000
-        : null;
-    },
-    reqBumpable: function () {
-      return Object.prototype.hasOwnProperty.call(this.bookingRules, "bumpable")
-        ? this.bookingRules.bumpable
-        : null;
-    },
     courts: function () {
       return this.$store.getters["courtstore/getCourts"];
-    },
-    eligiblepersons: function () {
-      return this.$store.getters["memberstore/getEligiblePersons"];
-    },
-    repeaterTypes: function () {
-      return this.$store.getters["repeaterTypes"];
     },
     startHours: function () {
       return Array(12)
@@ -499,37 +342,6 @@ export default {
       return Array(4)
         .fill()
         .map((_, idx) => 0 + idx * 15);
-    },
-    playerDetails: function () {
-      return this.selplayers.reduce((accumulator, player) => {
-        const person = this.$store.getters["memberstore/getEligiblePersonById"](
-          player.id
-        );
-        const repeaterDetails = this.$store.getters["getRepeaterType"](
-          player.repeater
-        );
-
-        if (person && repeaterDetails) {
-          accumulator.push({
-            id: player.id,
-            firstname: person.firstname,
-            lastname: person.lastname,
-            repeater: player.repeater,
-            repeater_lbl: repeaterDetails.label,
-          });
-        }
-
-        return accumulator;
-      }, []);
-    },
-    playerInfo: function () {
-      return this.selplayers.reduce((accumulator, player) => {
-        if (player.id && player.repeater) {
-          accumulator.push({ id: player.id, repeater: player.repeater });
-        }
-
-        return accumulator;
-      }, []);
     },
     formattedDate: {
       get() {

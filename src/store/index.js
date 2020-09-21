@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import usermodule from './modules/user'
 import membermodule from './modules/member'
-import matchmodule from './modules/matches'
+import bookingsmodule from './modules/bookings'
 import courtmodule from './modules/courts'
 import utils from './../services/utils'
 import TokenManager from './../services/TokenManager'
@@ -14,7 +14,7 @@ const store = new Vuex.Store(
         modules: {
             userstore: usermodule,
             memberstore: membermodule,
-            matchstore: matchmodule,
+            bookingsstore: bookingsmodule,
             courtstore: courtmodule
         },
         state: {

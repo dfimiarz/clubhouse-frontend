@@ -8,8 +8,8 @@ const GuestManager = () => import(/* webpackChunkName: "guest" */ '@/components/
 const GuestActivation = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestActivation')
 const ActiveGuestList = () => import(/* webpackChunkName: "guest" */ '@/components/guests/ActiveGuestList')
 const MatchCalendar = () => import(/* webpackChunkName: "calendar" */ '@/components/MatchCalendar')
-const SessionBooking = () => import(/* webpackChunkName: "booking" */ '@/components/SessionBooking')
-const SessionDetails = () => import(/* webpackChunkName: "details" */ '@/components/SessionDetails')
+const MatchBooking = () => import(/* webpackChunkName: "booking" */ '@/components/MatchBooking')
+const BookingDetails = () => import(/* webpackChunkName: "details" */ '@/components/BookingDetails')
 const EventBooking = () => import(/* webpackChunkName: "manage" */ '@/components/EventBooking')
 import store from '@/store/index'
 
@@ -65,8 +65,8 @@ const routes = [
   },
   {
     path: '/bookings/matches/new',
-    name: 'SessionBooking',
-    component: SessionBooking,
+    name: 'MatchBooking',
+    component: MatchBooking,
     meta: {
       requiresAuth: true
     }
@@ -80,9 +80,9 @@ const routes = [
     }
   },
   {
-    path: '/booking/:id',
-    name: 'SessionDetails',
-    component: SessionDetails,
+    path: '/bookings/:id',
+    name: 'BookingDetails',
+    component: BookingDetails,
     props: true,
     meta: {
       requiresAuth: true

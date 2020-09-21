@@ -5,19 +5,19 @@ function newMatch(matchdata){
 
     //console.log(matchdata)
 
-    return axios.post(process.env.VUE_APP_BACKEND + '/matches',matchdata)
+    return axios.post(process.env.VUE_APP_BACKEND + '/bookings',matchdata)
 
 }
 
-function getSessionDetails( id ){
+function getBookingDetails( id ){
 
-    return axios.get(process.env.VUE_APP_BACKEND + '/matches/' + id)
+    return axios.get(process.env.VUE_APP_BACKEND + '/bookings/' + id)
     
 }
 
 function endSession(params){
     
-    return axios.patch( process.env.VUE_APP_BACKEND + `/matches/${params.id}`, 
+    return axios.patch( process.env.VUE_APP_BACKEND + `/bookings/${params.id}`, 
         { 
             "cmd" : {
                 "name":"END_SESSION",
@@ -32,7 +32,7 @@ function endSession(params){
 
 function removeSession(params){
 
-    return axios.patch( process.env.VUE_APP_BACKEND + `/matches/${params.id}`, 
+    return axios.patch( process.env.VUE_APP_BACKEND + `/bookings/${params.id}`, 
         { 
             "cmd" : {
                 "name":"REMOVE_SESSION",
@@ -46,7 +46,7 @@ function removeSession(params){
 }
 
 function changeSessionTime(params){
-    return axios.patch( process.env.VUE_APP_BACKEND + `/matches/${params.id}`,
+    return axios.patch( process.env.VUE_APP_BACKEND + `/bookings/${params.id}`,
         { 
             "cmd" : {
                 "name":"CHANGE_TIME",
@@ -61,7 +61,7 @@ function changeSessionTime(params){
      )
 }
 function changeCourt(params){
-    return axios.patch( process.env.VUE_APP_BACKEND + `/matches/${params.id}`,
+    return axios.patch( process.env.VUE_APP_BACKEND + `/bookings/${params.id}`,
         { 
             "cmd" : {
                 "name":"CHANGE_COURT",
@@ -129,7 +129,7 @@ async function activateGuests(memberhost_id,guests){
 
 export default  {
     newMatch: newMatch,
-    getSessionDetails: getSessionDetails,
+    getBookingDetails,
     endSession: endSession,
     removeSession: removeSession,
     changeTime: changeSessionTime,

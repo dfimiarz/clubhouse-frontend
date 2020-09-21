@@ -59,7 +59,7 @@ export default {
       return firstname + " " + lastname + "."
     },
     sessionClicked: function(){
-      this.$router.push({ name: 'SessionDetails', params: { id: this.session.id } })
+      this.$router.push({ name: 'BookingDetails', params: { id: this.session.id } })
     },
     sessionStyle: function(){
       let styles = []

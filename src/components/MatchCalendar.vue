@@ -64,7 +64,7 @@
               bottom
               right
               color="primary"
-              :to="{name: 'SessionBooking'}"
+              :to="{name: 'MatchBooking'}"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -191,7 +191,7 @@ export default {
     },
     getMachesForCourt(courtid){
       
-      return this.$store.getters['matchstore/matchesForCourt'](courtid)
+      return this.$store.getters['bookingsstore/bookingsForCourt'](courtid)
     }
     
   },
@@ -221,7 +221,7 @@ export default {
       return (this.endHour - this.startHour)
     },
     matches: function () {
-      return this.$store.getters['matchstore/loadedMatches']
+      return this.$store.getters['bookingsstore/loadedBookings']
     },
     cellHeight1H: function(){
       return this.$store.getters['calCellHeight1H'];
@@ -286,7 +286,7 @@ export default {
   },
   destroyed: function(){
     
-    this.$store.dispatch('matchstore/clearMatches')
+    this.$store.dispatch('bookingsstore/clearBookings')
     clearInterval(this.timerHandle)
   },
   watch: {
@@ -302,7 +302,7 @@ export default {
     },
     date: function(val){
       //console.log("Date changed" + val)
-      this.$store.dispatch('matchstore/loadMatches',moment(val).tz(this.clubtz).format("YYYY-MM-DD"))
+      this.$store.dispatch('bookingsstore/loadBookings',moment(val).tz(this.clubtz).format("YYYY-MM-DD"))
       if( this.timeIndicatorVisible ){
         this.scrollCalendar()
       }
