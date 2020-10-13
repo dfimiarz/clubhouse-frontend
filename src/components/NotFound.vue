@@ -1,19 +1,18 @@
 <template>
-<v-container fluid fill-height>
-  <v-layout justify-center align-center>
-    <v-flex shrink>
-      <div class="notfound">
-        Not Found
-      </div>
-    </v-flex>
-  </v-layout>
+<v-container fill-height>
+  <v-row justify="center" align="center">
+    <v-col cols="12" class="text-center">
+      
+        Page Not Found
+     
+    </v-col>
+  </v-row>
 </v-container>
 </template>
 
 <script>
 export default {
   name: "NotFound",
-  data: function() {}
 };
 </script>
 
