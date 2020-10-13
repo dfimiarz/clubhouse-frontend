@@ -1,6 +1,6 @@
 <template>
-<v-container fluid class="py-0" >
-  <v-row align="start" no-gutters="">
+<v-container v-bind:fluid="$vuetify.breakpoint.lgAndDown" class="py-0" >
+  <v-row align="start" no-gutters="" justify="center">
     <v-col cols="12">
         <v-row align="center" justify="space-between" no-gutters="" class="py-1">
           <v-col cols="auto" >
