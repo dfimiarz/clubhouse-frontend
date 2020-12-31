@@ -1,13 +1,13 @@
 
 <template>
-<v-container fluid>
+<v-container>
   <v-row justify="center" align="start" no-gutters="" >
     <v-col cols="12" md="10" lg="8">
         <v-container fluid>
           <v-row justify="center" align="center" no-gutters="">
             <v-col cols="12">
               
-                <div :class="['text-center', mainHeaderClass ]">
+                <div class="text-center text-h3 text-md-h2 text-xl-h1 py-5">
                   Knickerbocker Tennis
                 </div>
               
@@ -32,7 +32,7 @@
                   <v-row justify="center" align="end" no-gutters="" class="fill-height" >
                     <v-col cols="12">
                       <div class='tile-text-container'>
-                        <h3 :class="[tileTitleClass,'tile-title']">{{ card.title }}</h3>
+                        <h3 class="text-h6 text-xl-h4">{{ card.title }}</h3>
                         <div class="body-2">{{ card.text }}</div>
                       </div>
                     </v-col>
@@ -68,18 +68,10 @@ export default {
     }
   },
   methods: {
-    cardClicked: () => {
-      //console.log("CardClicked")
-    }
 
   },
   computed: {
 
-    mainHeaderClass: function(){
-
-      return this.$vuetify.breakpoint.mdAndDown ? { 'display-2' : true, 'py-2': true } : { 'display-4' : true, 'py-8': true }
-    
-    },
     tileTitleClass: function(){
       return this.$vuetify.breakpoint.mdAndDown ? { 'headline' : true } : { 'display-1' : true }
     }
@@ -96,11 +88,8 @@ export default {
   
 }
 
-.tile-title  {
+/* .tile-title  {
   text-shadow: 3px 3px #000000;  
-}
+} */
 
-.main-text{
-  font-size: 1vmax;
-}
 </style>
