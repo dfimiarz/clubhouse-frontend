@@ -154,7 +154,7 @@
                   </v-list-item-icon>
 
                   <v-list-item-content>
-                    <v-list-item-title>{{ sessioninfo.note }}</v-list-item-title>
+                    <v-list-item-title>{{ sessioninfo.notes }}</v-list-item-title>
                     <v-list-item-subtitle>Note</v-list-item-subtitle>
                   </v-list-item-content>
 
