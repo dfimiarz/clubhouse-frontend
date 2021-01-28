@@ -1,6 +1,6 @@
 <template>
   <v-layout fill-height justify-center>
-    <v-flex xs12 sm10 md6 lg4>
+    <v-flex xs12 sm10 md6 lg3>
       <v-layout v-if="loading" fill-height justify-center align-center>
         <v-progress-circular :size="70" :width="7" indeterminate></v-progress-circular>
       </v-layout>
@@ -49,6 +49,16 @@
             </v-img>
             <v-card-text>
               <v-list two-line>
+                 <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-information</v-icon>
+                  </v-list-item-icon>
+
+                  <v-list-item-content>
+                    <v-list-item-title>{{ sessioninfo.type }}</v-list-item-title>
+                    <v-list-item-subtitle>Boooking Type</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
                 <v-list-item>
                   <v-list-item-icon>
                     <v-icon>mdi-calendar-range</v-icon>
@@ -122,9 +132,9 @@
                   </v-list-item-content>
 
                   <v-list-item-action>
-                    <v-btn icon>
+                    <!-- <v-btn icon>
                       <v-icon>mdi-pencil-circle</v-icon>
-                    </v-btn>
+                    </v-btn> -->
                   </v-list-item-action>
                 </v-list-item>
 
