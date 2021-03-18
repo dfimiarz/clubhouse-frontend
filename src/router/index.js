@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import NotFound from '@/components/NotFound'
-import TokenView from '@/components/Token'
+import LoginView from '@/components/Login'
 const GuestCreator = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestCreator')
 const GuestManager = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestManager')
 const GuestActivation = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestActivation')
@@ -51,9 +51,9 @@ const routes = [
     ]
   },
   {
-    path: '/token',
-    name: 'token',
-    component: TokenView
+    path: '/login',
+    name: 'login',
+    component: LoginView
   },
   {
     path: '/calendar',
@@ -102,11 +102,11 @@ let router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (store.state.token) {
+    if (store.state.userstore.user || store.state.userstore.geoauth) {
       next();
     }
     else {
-      next('/token');
+      next('/login');
     }
   } else {
     next()

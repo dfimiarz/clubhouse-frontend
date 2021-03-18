@@ -7,73 +7,56 @@ const state = {
 }
 
 const mutations = {
-    ADD_COURT(state, court){
+    ADD_COURT(state, court) {
         state.courts.push(court)
     },
-    ADD_COURT_INFO( state, info){
+    ADD_COURT_INFO(state, info) {
         state.courtstatus.push(info)
     },
-    CLEAR_COURT_STATUS( state ){
+    CLEAR_COURT_STATUS(state) {
         state.courtstatus.splice(0)
     },
-    CLEAR_COURTS( state ){
+    CLEAR_COURTS(state) {
         state.courts.splice(0)
     }
 }
 
 const actions = {
-    
-    loadCourtStatus({commit}){
+
+    loadCourtStatus({ commit }) {
         commit('CLEAR_COURT_STATUS')
         commit('clearError', null, { root: true })
         commit('setLoading', true, { root: true })
         Axios.get(process.env.VUE_APP_BACKEND + '/getCourtStatus')
-        .then(
-            courtstatus => {
-                commit('setLoading',false, { root: true })
-                courtstatus.data.forEach(function(c) {
-                    commit('ADD_COURT_INFO',c)
-                });
-            }  
-        )
-        .catch(
-            error => {
-                commit('setLoading',false, { root: true })
-                commit('setError', error.message, { root: true })
-            }
-        )
+            .then(
+                courtstatus => {
+                    commit('setLoading', false, { root: true })
+                    courtstatus.data.forEach(function (c) {
+                        commit('ADD_COURT_INFO', c)
+                    });
+                }
+            )
+            .catch(
+                error => {
+                    commit('setLoading', false, { root: true })
+                    commit('setError', error.message, { root: true })
+                }
+            )
     },
-    async loadCourts({commit}){
-        commit('CLEAR_COURTS')
+    async loadCourts({ commit }) {
 
-        try{
-            let courtdata = await dbservice.getCourts()
-            courtdata.data.forEach(function(c) {
-                commit('ADD_COURT',c)
-            });
-        } 
-        finally{
-            /* Continue regardless the erro */
-        }
+        let courtdata = await dbservice.getCourts()
+
+        commit('CLEAR_COURTS')
+        courtdata.data.forEach(function (c) {
+            commit('ADD_COURT', c)
+        });
+
+    },
+    clearCourts({commit}){
+        commit('CLEAR_COURTS')
     }
-    /*
-    ,
-    updateCourtInfo({commit}){
-        Axios.get(process.env.VUE_APP_BACKEND + '/getCourts')
-        .then(
-            courts => {
-                courts.data.forEach(function(c) {
-                    commit('UPDATE_COURT_INFO',c)
-                });
-            }  
-        )
-        .catch(
-            error => {
-                commit('setError', error.message, { root: true })
-            }
-        )
-    }
-    */
+
 }
 
 const getters = {
@@ -82,7 +65,7 @@ const getters = {
     },
     getCourtInfo: state => {
         return courtid => {
-            return state.courts.find( court => court.id == courtid)
+            return state.courts.find(court => court.id == courtid)
         }
     },
     getCourtStatus: state => {
@@ -91,7 +74,7 @@ const getters = {
 }
 
 export default {
-    namespaced: true, 
+    namespaced: true,
     state,
     mutations,
     actions,

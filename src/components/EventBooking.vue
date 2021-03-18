@@ -24,7 +24,7 @@
               <v-row dense>
                 <v-col cols="12" md="8">
                   <v-select
-                    v-model="manager"
+                    v-model="organizer"
                     :items="managers"
                     label="Authorized Person"
                     prepend-icon="mdi-account"
@@ -146,7 +146,7 @@
                 </v-col>
 
                 <v-col cols="12">
-                  <v-text-field v-model="note" label="Note" counter maxlength="200" :rules="[ notelimit ]"></v-text-field>
+                  <v-text-field v-model="note" label="Note" counter maxlength="200" :rules="[ rules.notelimit ]"></v-text-field>
                 </v-col>
               </v-row>
             </v-form>
@@ -156,7 +156,7 @@
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="submitBooking">Book</v-btn>
           </v-card-actions>
-          <v-snackbar v-model="snackbar.open" top>
+          <!-- <v-snackbar v-model="snackbar.open" top>
             {{ snackbar.text }}
             <template v-slot:action="{ attrs }">
               <v-btn
@@ -166,7 +166,7 @@
                 @click="snackbar.open = false"
               >Close</v-btn>
             </template>
-          </v-snackbar>
+          </v-snackbar> -->
         </v-card>
       </v-col>
     </v-row>
@@ -179,13 +179,15 @@ import utils from "./../services/utils";
 import moment from "moment-timezone";
 import processAxiosError from "../utils/AxiosErrorHandler";
 
+const HOST_TYPE_ID = 4000;
+
 export default {
   components: {},
   name: "EventBooking",
   data: function () {
     return {
       court: null,
-      manager: null,
+      organizer: null,
       bookingtype: null,
       managers: [],
       bookingtypes: [],
@@ -205,15 +207,17 @@ export default {
         required: (value) => !!value || "Required.",
         endAfterStart: (value) => {
           if( ! this.s_time ){
-            return true
+            return true;
           } 
 
           if( utils.timeToMinutes(value) - utils.timeToMinutes(this.s_time) <= 0 ){
             return "End must be after start";
           }
 
+          return true;
+
         },
-        notelimit: (v) => v.length <= 200 || "Max 256 characters",
+        notelimit: (v) => (typeof(v) === 'object' || (typeof(v) === 'string' && v.length <= 200)) || "Max 256 characters",
       },
       loading: false,
       error: null,
@@ -251,25 +255,10 @@ export default {
           that.loading = false;
           that.$router.push({ name: "calendar" });
         })
-        .catch(function (error) {
-          // TODO: handle send errors better
-
-          if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            that.error = error.response.data;
-            //console.log(error.response.status);
-            //console.log(error.response.headers);
-          } else if (error.request) {
-            // The request was made but no response was received
-            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
-            //console.log(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            //console.log('Error', error.message);
-          }
-          //console.log(error.config);
+        .catch(function (e) {
+          //TODO show errors
+          console.log(e)
+          that.$emit( 'show:message',processAxiosError(e));
         })
         .finally(() => {
           that.loading = false;
@@ -281,12 +270,13 @@ export default {
 
       const booking = {
         court: this.court,
+        bumpable: 0,
         date: this.date,
         start: this.s_time,
         end: this.e_time,
         note: this.note,
-        organizer: this.organizer,
-        type: this.bookingtype
+        players: [{ id: this.organizer, type: HOST_TYPE_ID }],
+        bookingtype: this.bookingtype
       };
 
       //console.log("Will send ", match)
@@ -314,16 +304,11 @@ export default {
             });
         })
         .catch((err) => {
-          this.showSnackBar(processAxiosError(err), "error");
+          this.$emit( 'show:message',processAxiosError(err));
         })
         .finally(() => {
           this.loading = false;
         });
-    },
-    showSnackBar(text, color) {
-      this.snackbar.open = true;
-      this.snackbar.text = text;
-      this.snackbar.color = color;
     },
   },
   computed: {

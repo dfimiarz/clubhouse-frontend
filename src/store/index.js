@@ -5,7 +5,7 @@ import membermodule from './modules/member'
 import bookingsmodule from './modules/bookings'
 import courtmodule from './modules/courts'
 import utils from './../services/utils'
-import TokenManager from './../services/TokenManager'
+
 
 Vue.use(Vuex)
 
@@ -18,7 +18,12 @@ const store = new Vuex.Store(
             courtstore: courtmodule
         },
         state: {
-            token: null,
+            /**
+             * true: init ok
+             * String: init error. Contains error message
+             * null: not initialized
+             */
+            initStatus: null,
             clubtz: "America/New_York",
             loading: false,
             error: null,
@@ -80,45 +85,26 @@ const store = new Vuex.Store(
             clearError(state) {
                 state.error = null
             },
-            setToken(state, value) {
-                state.token = value;
+            SET_INIT_STATUS(state, status) {
+                state.initStatus = status
             }
         },
         actions: {
             clearError({ commit }) {
                 commit('clearError')
             },
-            async loadToken({ commit }) {
-                const tokenval = await TokenManager.getToken();
-                commit('setToken', tokenval)
+            loadAppResources({ dispatch, getters }) {
 
+                //Load app resources only when user is authenticated
+                if( getters['userstore/isAuthenticated'] === true ) 
+                    return Promise.all([dispatch('memberstore/loadEligiblePersons'), dispatch('courtstore/loadCourts')])
+                else
+                    return Promise.resolve(true);
+                
             },
-            async saveToken({ commit }, payload) {
-                try {
-                    await TokenManager.storeToken(payload)
-                }
-                catch (err) {
-                    throw new Error("Unable to change token value");
-                }
-
-                commit('setToken', payload)
-
-            },
-            async clearToken({ commit }) {
-                try {
-                    await TokenManager.clearToken()
-                }
-                catch (err) {
-                    throw new Error("Unable to change token value");
-                }
-
-                commit('setToken', null)
-
-            },
-            loadAppInfo({ dispatch }) {
-
-                return Promise.all([dispatch('loadToken'), dispatch('memberstore/loadEligiblePersons'), dispatch('courtstore/loadCourts')])
-
+            clearAppResources({ dispatch }){
+                dispatch('memberstore/clearEligiblePersons');
+                dispatch('courtstore/clearCourts');
             }
         },
         getters: {
@@ -163,9 +149,6 @@ const store = new Vuex.Store(
                         return rule.id == id
                     })
                 }
-            },
-            hasToken(state) {
-                return !!state.token; 
             }
         }
     }

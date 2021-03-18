@@ -2,12 +2,9 @@
   <v-container fluid>
     <div class="text-caption py-2">
       Please use this form to register a guest visitor. Only
-      <span
-        class="font-weight-bold info--text"
-      >single</span> registration is required. Once in the system, a guest can be activated for a particular day through the
-      <span
-        class="font-weight-bold"
-      >"ACTIVATE"</span> tab.
+      <span class="font-weight-bold info--text">single</span> registration is
+      required. Once in the system, a guest can be activated for a particular
+      day through the <span class="font-weight-bold">"ACTIVATE"</span> tab.
     </div>
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-row no-gutters class="pt-4">
@@ -21,6 +18,7 @@
             label="First name"
             :error-messages="errors.firstname"
             :rules="nameRules"
+            :disabled="!formenabled"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -31,6 +29,7 @@
             label="Last Name"
             :error-messages="errors.lastname"
             :rules="nameRules"
+            :disabled="!formenabled"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -41,6 +40,7 @@
             label="E-mail"
             :error-messages="errors.email"
             :rules="emailRules"
+            :disabled="!formenabled"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -51,6 +51,7 @@
             label="Phone"
             :error-messages="errors.phone"
             :rules="phoneRules"
+            :disabled="!formenabled"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -60,11 +61,13 @@
       <v-divider></v-divider>
       <v-row no-gutters>
         <v-col cols="12">
-          <v-checkbox v-model="agree" :rules="checkBoxRules">
+          <v-checkbox v-model="agree" :rules="checkBoxRules" :disabled="!formenabled">
             <template v-slot:label>
               <div class="caption">
                 I have read, understood, and agree to all club
-                <v-chip color="primary" x-small @click.stop.prevent="showRules">rules</v-chip>&nbsp;pertaining to guests visitors
+                <v-chip color="primary" x-small @click.stop.prevent="showRules"
+                  >rules</v-chip
+                >&nbsp;pertaining to guests visitors
               </div>
             </template>
             >
@@ -75,7 +78,7 @@
       <v-row>
         <v-col cols="12" class="d-flex justify-space-between">
           <v-btn color="warning" outlined @click="resetForm">Reset</v-btn>
-          <v-btn :disabled="loading" @click="addGuest">Add Guest</v-btn>
+          <v-btn :disabled="!formenabled" @click="addGuest">Add Guest</v-btn>
         </v-col>
       </v-row>
     </v-form>
@@ -85,15 +88,33 @@
 <script>
 import dbservice from "../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
+import recaptcha from "../../services/recaptcha"
 
 export default {
   props: ["loading"],
   name: "RegisterMember",
-  created: () => {
-    //console.log("Created")
+  mounted: function () {
+    this.setLoading(true);
+    recaptcha.getToken("/guest")
+    .then( (token) =>{
+      return dbservice.getRecaptchaScore(token);
+    })
+    .then((result) => {
+      if( result.success && result.score >= 0.5 ){
+        this.initialized = true;
+      }
+      
+    })
+    .catch(() => {
+      this.$emit("show:message", "Error loading recaptcha", "error");
+    })
+    .finally(()=>{
+      this.setLoading(false);
+    })
   },
   data: function () {
     return {
+      initialized: false,
       valid: true,
       errors: {
         firstname: null,
@@ -129,6 +150,11 @@ export default {
       checkBoxRules: [(v) => !!v || "Agreement required"],
     };
   },
+  computed:{
+    formenabled: function(){
+      return this.loading !== true && this.initialized === true;
+    }
+  },
   methods: {
     resetForm() {
       Object.keys(this.errors).forEach((elem) => {
@@ -150,6 +176,20 @@ export default {
       this.$emit("show:message", "Please fix field errors", "error");
     },
     addGuest: function () {
+      if (!window.grecaptcha) {
+        this.$emit("show:message", "Google recaptcha error", "error");
+      }
+
+      window.grecaptcha.ready(() => {
+        window.grecaptcha
+          .execute("6Lca4D8aAAAAABoNbYpThdZYq4ZcyeLEsa10i-RJ", {
+            action: "GuestRegistration",
+          })
+          .then((token) => {
+            console.log(token);
+          });
+      });
+
       if (!this.$refs.form.validate()) {
         return;
       }

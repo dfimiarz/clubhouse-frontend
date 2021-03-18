@@ -1,7 +1,11 @@
 <template>
   <v-app dark>
     <transition name="fade">
-      <splashscreen v-if="! loaded" :loading="loading" :error="loadingError"></splashscreen>
+      <splashscreen
+        v-if="!loaded"
+        :loading="loading"
+        :error="loadingError"
+      ></splashscreen>
       <mainscreen v-else></mainscreen>
     </transition>
   </v-app>
@@ -22,31 +26,41 @@ export default {
   data: () => ({
     drawer: false,
     loaded: false,
-    loading: true,
+    loading: false,
     loadingError: null,
   }),
+  methods: {
+    loadApp() {
+      this.loading = true;
+      new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 1000);
+      })
+        .then(() => {
+          this.loaded = true;
+        })
+        .catch((err) => {
+          this.loadingError = err.message;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+  },
+  computed: {
+    initStatus: function () {
+      return this.$store.state.initStatus;
+    },
+  },
   mounted: function () {
-    //console.log("Loading app data...")
-
-    new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 500);
-    })
-      .then(() => {
-        return this.$store.dispatch("loadAppInfo");
-      })
-      .then(() => {
-        //console.log("App data loaded!")
-        this.loaded = true;
-      })
-      .catch((err) => {
-        //console.log("Loading error:",err.message)
-        this.loadingError = err.message;
-      })
-      .finally(() => {
-        this.loading = false;
-      });
+    if (this.initStatus === true) {
+      this.loadApp();
+    } else if (typeof this.initStatus === "string") {
+      this.loadingError = this.initStatus;
+    } else {
+      this.loadingError = "Unable to initilize";
+    }
   },
 };
 </script>

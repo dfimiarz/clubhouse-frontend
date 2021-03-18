@@ -4,11 +4,15 @@
       <v-col cols="12" sm="8" md="6" lg="4">
         <v-stepper v-model="step">
           <v-stepper-header>
-            <v-stepper-step :complete="step > 1" step="1">Players</v-stepper-step>
+            <v-stepper-step :complete="step > 1" step="1"
+              >Players</v-stepper-step
+            >
 
             <v-divider></v-divider>
 
-            <v-stepper-step :complete="step > 2" step="2">Court and time</v-stepper-step>
+            <v-stepper-step :complete="step > 2" step="2"
+              >Court and time</v-stepper-step
+            >
 
             <v-divider></v-divider>
 
@@ -16,7 +20,7 @@
           </v-stepper-header>
 
           <v-stepper-items>
-            <v-stepper-content step="2" >
+            <v-stepper-content step="2">
               <v-container fluid>
                 <v-form ref="sessionform" lazy>
                   <v-row dense>
@@ -50,7 +54,7 @@
                                 readonly
                                 v-on="on"
                                 required
-                                :rules="[ rules.required ]"
+                                :rules="[rules.required]"
                               ></v-text-field>
                             </template>
                             <v-time-picker
@@ -61,8 +65,18 @@
                               :max="maxstarttime"
                             >
                               <v-spacer></v-spacer>
-                              <v-btn text color="primary" @click="stimedialog = false">Cancel</v-btn>
-                              <v-btn text color="primary" @click="$refs.stdialog.save(s_time)">OK</v-btn>
+                              <v-btn
+                                text
+                                color="primary"
+                                @click="stimedialog = false"
+                                >Cancel</v-btn
+                              >
+                              <v-btn
+                                text
+                                color="primary"
+                                @click="$refs.stdialog.save(s_time)"
+                                >OK</v-btn
+                              >
                             </v-time-picker>
                           </v-dialog>
                         </v-col>
@@ -85,8 +99,8 @@
                             readonly
                             v-on="on"
                             required
-                            :rules="[ rules.required, rules.minduration ]"
-                            :disabled="! s_time "
+                            :rules="[rules.required, rules.minduration]"
+                            :disabled="!s_time"
                             suffix="min"
                           ></v-text-field>
                         </template>
@@ -94,12 +108,18 @@
                         <vnumberpad v-model="sel_duration">
                           <template v-slot:actions>
                             <v-spacer></v-spacer>
-                            <v-btn text color="primary" @click="durDialog = false">Cancel</v-btn>
+                            <v-btn
+                              text
+                              color="primary"
+                              @click="durDialog = false"
+                              >Cancel</v-btn
+                            >
                             <v-btn
                               text
                               color="primary"
                               @click="$refs.durdialog_ref.save(sel_duration)"
-                            >OK</v-btn>
+                              >OK</v-btn
+                            >
                           </template>
                         </vnumberpad>
                       </v-dialog>
@@ -107,11 +127,14 @@
                     <v-col cols="12" class="pa-2">
                       <v-row
                         class="caption warning--text"
-                        v-show=" duration > reqMaxDuration"
+                        v-show="duration > reqMaxDuration"
                         no-gutters
                         align="center"
                       >
-                        <span>* Club rules limit time to {{ reqMaxDuration }} min.</span>
+                        <span
+                          >* Club rules limit time to
+                          {{ reqMaxDuration }} min.</span
+                        >
                         <v-btn small outlined color="warning">Fix</v-btn>
                       </v-row>
                     </v-col>
@@ -127,7 +150,7 @@
                             item-value="id"
                             item-text="name"
                             required
-                            :rules="[ rules.required ]"
+                            :rules="[rules.required]"
                             v-model="court"
                             :disabled="duration == 0"
                           ></v-select>
@@ -139,24 +162,38 @@
                       </v-row>
                     </v-col>
                     <v-col cols="12" v-show="reqBumpable">
-                      <v-switch dense flat v-model="bumpable" label="Bumpable"></v-switch>
+                      <v-switch
+                        dense
+                        flat
+                        v-model="bumpable"
+                        label="Bumpable"
+                      ></v-switch>
                       <div
                         class="caption warning--text"
                         v-show="reqBumpable !== bumpable"
-                      >* Club Rules call for bumpable switched on</div>
+                      >
+                        * Club Rules call for bumpable switched on
+                      </div>
                     </v-col>
                     <v-col cols="12">
                       <v-textarea
                         counter
                         v-model="note"
                         label="Note"
-                        :rules="[rules.notelimit,rules.explainRuleChange]"
+                        :rules="[rules.notelimit, rules.explainRuleChange]"
                       ></v-textarea>
                     </v-col>
                   </v-row>
                 </v-form>
                 <v-row dense>
-                  <v-btn color="warning" text outlined class="ma-1" @click="step = 1">Go back</v-btn>
+                  <v-btn
+                    color="warning"
+                    text
+                    outlined
+                    class="ma-1"
+                    @click="step = 1"
+                    >Go back</v-btn
+                  >
                   <v-spacer></v-spacer>
                   <v-btn @click="validateSessionInput">Continue</v-btn>
                 </v-row>
@@ -168,9 +205,15 @@
                 <v-form ref="playerform">
                   <v-row>
                     <v-col cols="12">
-                      <v-alert type="error" dense v-if="playerErrors">{{ this.playerErrors }}</v-alert>
+                      <v-alert type="error" dense v-if="playerErrors">{{
+                        this.playerErrors
+                      }}</v-alert>
                     </v-col>
-                    <v-col cols="12" v-for="(player,index) in selplayers" :key="index">
+                    <v-col
+                      cols="12"
+                      v-for="(player, index) in selplayers"
+                      :key="index"
+                    >
                       <v-row dense>
                         <v-col cols="12" md="6">
                           <v-autocomplete
@@ -197,14 +240,23 @@
                   </v-row>
                 </v-form>
                 <v-row dense>
-                  <v-btn color="warning" text outlined class="ma-1" @click="clearPlayers">Clear</v-btn>
+                  <v-btn
+                    color="warning"
+                    text
+                    outlined
+                    class="ma-1"
+                    @click="clearPlayers"
+                    >Clear</v-btn
+                  >
                   <div class="flex-grow-1"></div>
-                  <v-btn @click="validatePlayerInput" class="ma-1">Continue</v-btn>
+                  <v-btn @click="validatePlayerInput" class="ma-1"
+                    >Continue</v-btn
+                  >
                 </v-row>
               </v-container>
             </v-stepper-content>
 
-            <v-stepper-content step="3" >
+            <v-stepper-content step="3">
               <v-container fluid>
                 <v-row>
                   <v-col cols="12" v-if="error">
@@ -218,15 +270,24 @@
                       <v-col cols="12" class="my-2">
                         <div class="text-body-2">Players:</div>
                       </v-col>
-                      <v-col cols="12" md="6" v-for="(player,index) in playerDetails" :key="index">
+                      <v-col
+                        cols="12"
+                        md="6"
+                        v-for="(player, index) in playerDetails"
+                        :key="index"
+                      >
                         <!-- <v-row dense align="center">
                           <v-col cols="1">
                             <div class="text-h4">{{ index + 1 }}</div>
                           </v-col>
                           <v-col cols="11"> -->
-                            <div class="text-h6">{{ player.firstname }} {{ player.lastname }}</div>
-                            <div class="text-caption">{{ player.repeater_lbl }}</div>
-                          <!-- </v-col>
+                        <div class="text-h6">
+                          {{ player.firstname }} {{ player.lastname }}
+                        </div>
+                        <div class="text-caption">
+                          {{ player.repeater_lbl }}
+                        </div>
+                        <!-- </v-col>
                         </v-row> -->
                       </v-col>
                     </v-row>
@@ -239,21 +300,25 @@
                     <div class="text-body-2">Date</div>
                   </v-col>
                   <v-col cols="12">
-                    <div class="text-body-1">{{ s_time  }}  - {{ e_time }} ({{ duration }} min)</div>
+                    <div class="text-body-1">
+                      {{ s_time }} - {{ e_time }} ({{ duration }} min)
+                    </div>
                     <div class="text-body-2">Time</div>
                   </v-col>
                   <v-col cols="12">
                     <v-divider></v-divider>
                   </v-col>
                   <v-col cols="12">
-                    <div class="text-body-1">{{ bumpable ? 'Yes' : 'No' }}</div>
+                    <div class="text-body-1">{{ bumpable ? "Yes" : "No" }}</div>
                     <div class="text-body-2">Bumpable</div>
                   </v-col>
                   <v-col cols="12">
                     <v-divider></v-divider>
                   </v-col>
                   <v-col>
-                    <div class="text-body-1">{{ note ? note : 'No notes'}}</div>
+                    <div class="text-body-1">
+                      {{ note ? note : "No notes" }}
+                    </div>
                     <div class="text-body-2">Notes</div>
                   </v-col>
                 </v-row>
@@ -264,9 +329,17 @@
                     outlined
                     class="ma-1"
                     @click="changeBookingParams"
-                  >Go back</v-btn>
+                    >Go back</v-btn
+                  >
                   <v-spacer></v-spacer>
-                  <v-btn :loading="loading" :disabled="loading" color="primary" large @click="submitMatch()">Book</v-btn>
+                  <v-btn
+                    :loading="loading"
+                    :disabled="loading"
+                    color="primary"
+                    large
+                    @click="submitMatch()"
+                    >Book</v-btn
+                  >
                 </v-row>
               </v-container>
             </v-stepper-content>
@@ -282,6 +355,8 @@ import vnumberpad from "./booking/vuetify-numberpad";
 import apihandler from "./../services/db";
 import utils from "./../services/utils";
 import moment from "moment-timezone";
+
+const MATCH_TYPE_ID = 1000;
 
 export default {
   components: {
@@ -329,15 +404,15 @@ export default {
       error: null,
     };
   },
-   filters: {
-    formatTime: function(timestring){
-      if( ! timestring ) return 'N/A'
-      return moment(timestring).format('h:mm a')
+  filters: {
+    formatTime: function (timestring) {
+      if (!timestring) return "N/A";
+      return moment(timestring).format("h:mm a");
     },
-    formatDate: function(timestring){
-      if( ! timestring ) return 'N/A'
-      return moment(timestring).format('MMM Do, Y')
-    }
+    formatDate: function (timestring) {
+      if (!timestring) return "N/A";
+      return moment(timestring).format("MMM Do, Y");
+    },
   },
   methods: {
     allowedminutes: (m) => m % 5 === 0,
@@ -501,7 +576,7 @@ export default {
     submitMatch: function () {
       if (!this.validate()) return false;
 
-      const match = {
+      const booking = {
         court: this.court,
         bumpable: this.bumpable == true ? 1 : 0,
         date: this.date,
@@ -509,10 +584,11 @@ export default {
         end: this.e_time,
         note: this.note,
         players: this.playerInfo,
+        type: MATCH_TYPE_ID,
       };
 
       //console.log("Will send ", match)
-      this.sendData(match);
+      this.sendData(booking);
     },
   },
   watch: {
@@ -612,7 +688,8 @@ export default {
     playerInfo: function () {
       return this.selplayers.reduce((accumulator, player) => {
         if (player.id && player.repeater) {
-          accumulator.push({ id: player.id, repeater: player.repeater });
+          //Player type defined in player_type table
+          accumulator.push({ id: player.id, type: player.repeater });
         }
 
         return accumulator;

@@ -80,6 +80,9 @@ const actions = {
         })
 
     },
+    clearEligiblePersons({commit}){
+        commit('CLEAR_ELIGIBLE_PERSONS');
+    },
     async loadMembers({ commit }) {
 
         try {

@@ -21,7 +21,7 @@ const mutations = {
 
 const actions = {
     clearBookings({commit}){
-        console.log("Clearing");
+        //console.log("Clearing");
         commit('REMOVE_BOOKINGS')
     },
     loadBookings({commit},date){
@@ -34,8 +34,8 @@ const actions = {
             })
             .then(function (response) {
                 const bookings = response.data
-                bookings.forEach((match) => {
-                    commit('ADD_BOOKING',JSON.parse(match))
+                bookings.forEach((booking) => {
+                    commit('ADD_BOOKING',JSON.parse(booking))
                 })
             })
             .catch(function (error) {

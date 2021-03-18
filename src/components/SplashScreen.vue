@@ -13,11 +13,11 @@
               class="pa-3"
               style="border-radius: 10px;border: 5px solid white;background-color: green;"
             >
-              <div class="title">Knickerbocker Field Club</div>
+              <div class="text-h5">Knickerbocker Field Club</div>
               <div>
                 <v-progress-linear v-if="loading" indeterminate color="white"></v-progress-linear>
               </div>
-              <div class="caption text-center" v-if="error">Error: {{ error }}</div>
+              <div class="text-caption text-center" v-if="error">Error: {{ error }}</div>
             </div>
           </v-row>
         </v-img>
@@ -43,5 +43,3 @@ export default {
   },
 };
 </script>
-
-<style lang="stylus" scoped></style>
