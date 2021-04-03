@@ -28,7 +28,7 @@
 
 3. Move SSL certificates to `./ssl` folder. See `./ssl/README` for details
 
-4. Edit `nginx.conf` to include correct certificate names ( and possbile other settings as needed).
+4. Edit nginx configurations in `./nginx/templates/*.conf`  to include correct certificate names and other settings as needed. Nginx Docker image (https://hub.docker.com/_/nginx) can replace variables dynamically.
 
 5. Rebuild docker image if needed.
 
