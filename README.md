@@ -16,7 +16,7 @@
     Wildcard certificate.
 
     ```
-    openssl req -x509 -out localhost.crt -keyout localhost.key -newkey rsa:2048 -nodes -sha256 -subj '/CN=domain.test' -extensions EXT -config <( printf "[dn \nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:domain.test,DNS:*.domain.test\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+    openssl req -x509 -out localhost.crt -keyout localhost.key -newkey rsa:2048 -nodes -sha256 -subj '/CN=domain.test' -extensions EXT -config <( printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:domain.test,DNS:*.domain.test\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
     ```
 
   - Let's Encrypt
@@ -28,7 +28,7 @@
 
 3. Move SSL certificates to `./ssl` folder. See `./ssl/README` for details
 
-4. Edit nginx configurations in `./nginx/templates/*.conf`  to include correct certificate names and other settings as needed. Nginx Docker image (https://hub.docker.com/_/nginx) can replace variables dynamically.
+4. Edit nginx configurations in `./nginx/templates/*.conf`  to include correct certificate names and other settings as needed.
 
 5. Rebuild docker image if needed.
 
