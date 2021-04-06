@@ -16,12 +16,12 @@
       </v-toolbar-items>
     </v-toolbar>
     <v-card-text>
-      <v-row v-if="error">
+      <v-row v-if="error" class="my-2" no-gutters>
         <v-col cols="12">
-          <v-alert type="error" dense=""> {{ error }} </v-alert>
+          <v-alert type="error" dense outlined> {{ error }} </v-alert>
         </v-col>
       </v-row>
-      <v-row >
+      <v-row class="my-2" no-gutters>
         <v-col cols="12">
           <v-dialog
             ref="stdialog"
@@ -44,8 +44,6 @@
             </template>
             <v-time-picker
               v-model="s_time"
-              class="mt-3"
-              format="24hr"
               :min="opentime"
               :allowed-minutes="allowedminutes"
             >
@@ -55,8 +53,6 @@
             </v-time-picker>
           </v-dialog>
         </v-col>
-      </v-row>
-      <v-row>
         <v-col cols="12">
           <v-dialog
             ref="etdialog"
@@ -79,8 +75,6 @@
             </template>
             <v-time-picker
               v-model="e_time"
-              class="mt-3"
-              format="24hr"
               :max="closetime"
               :allowed-minutes="allowedminutes"
             >

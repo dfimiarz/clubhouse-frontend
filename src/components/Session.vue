@@ -19,14 +19,11 @@
           :key="index"
           v-bind="playerChipSize"
           label
-          :class="shortSesssion === true ? { 'mx-1': true } : { 'ma-1': true }"
-        >
-          <v-icon v-if="player.type === 2000" small color="#B58872" left
-            >mdi-circle-half-full</v-icon
-          >
-          <v-icon v-if="player.type === 3000" small color="#B58872" left
-            >mdi-circle</v-icon
-          >
+          :class="shortSesssion === true ? { 'mx-1': true } : { 'ma-1': true }">
+
+          <v-icon v-if="player.type === 2000" small color="#B58872" left>mdi-circle-half-full</v-icon>
+          <v-icon v-if="player.type === 3000" small color="#B58872" left>mdi-circle</v-icon>
+          
           {{ formatPlayerName(player) }}
         </v-chip>
       </v-col>

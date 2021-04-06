@@ -1,236 +1,272 @@
 <template>
-  <v-layout fill-height justify-center>
-    <v-flex xs12 sm10 md6 lg3>
-      <v-layout v-if="loading" fill-height justify-center align-center>
-        <v-progress-circular :size="70" :width="7" indeterminate></v-progress-circular>
-      </v-layout>
+  <v-container fluid class="fill-height">
+    <v-row justify="center">
+      <v-col cols="12" sm="10" md="6" lg="3" class="fill-height">
+        <v-row
+          v-if="loading"
+          class="fill-height"
+          justify="center"
+          align="center"
+        >
+          <v-progress-circular
+            :size="70"
+            :width="7"
+            indeterminate
+          ></v-progress-circular>
+        </v-row>
 
-      <v-layout v-if="notfound" fill-height justify-center align-center>
-        <span class="display-1">Not found</span>
-      </v-layout>
+        <v-row
+          v-if="notfound"
+          class="fill-height"
+          justify="center"
+          align="center"
+        >
+          <span class="text-h4">Not Found</span>
+        </v-row>
 
-      <div v-if="error" class="error">{{ error }}</div>
+        <div v-if="error" class="error">{{ error }}</div>
 
-      <v-layout v-if="sessioninfo" class="content" row wrap fill-height justify-center align-center>
-        <v-flex xs12>
-          <v-card>
-            <v-img
-              class="white--text"
-              height="150px"
-              :src="require('@/assets/match.jpg')"
-              :lazy-src="require('@/assets/match_small.jpg')"
-              gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)"
+        <v-row v-if="sessioninfo" no-gutters justify="center" align="center">
+          <v-col xs12>
+            <v-card>
+              <v-img
+                class="white--text"
+                height="150px"
+                :src="require('@/assets/match.jpg')"
+                :lazy-src="require('@/assets/match_small.jpg')"
+                gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)"
+              >
+                <v-container class="fill-height" fluid>
+                  <v-row no-gutters class="fill-height">
+                    <v-col cols="12" align-self="start">
+                      <v-container fluid>
+                        <v-row class="mx-1">
+                          <div class="flex-grow-1 text-start">
+                            <v-btn dark icon :to="{ name: 'calendar' }">
+                              <v-icon>mdi-chevron-left</v-icon>
+                            </v-btn>
+                          </div>
+                          <div style="flex-grow: 2"></div>
+                          <div class="flex-grow-1 text-end"></div>
+                        </v-row>
+                      </v-container>
+                    </v-col>
+
+                    <v-col cols="12" align-self="end">
+                      <span class="display-1 pa-1">Booking Details</span>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-img>
+              <v-card-text>
+                <v-list two-line>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-information</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        sessioninfo.type
+                      }}</v-list-item-title>
+                      <v-list-item-subtitle>Boooking Type</v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-calendar-range</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        sessioninfo.date | formatDate
+                      }}</v-list-item-title>
+                      <v-list-item-subtitle>Date</v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider inset></v-divider>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-clock-start</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        starttime | formatTime
+                      }}</v-list-item-title>
+                      <v-list-item-subtitle>Start</v-list-item-subtitle>
+                    </v-list-item-content>
+
+                    <v-list-item-action>
+                      <v-btn icon v-if="canChangeStart || canChangeEnd">
+                        <v-icon @click="openEditor('timeeditor')"
+                          >mdi-pencil</v-icon
+                        >
+                      </v-btn>
+                      <v-btn icon v-else>
+                        <v-icon>mdi-pencil-off</v-icon>
+                      </v-btn>
+                    </v-list-item-action>
+                  </v-list-item>
+
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-clock-end</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        endtime | formatTime
+                      }}</v-list-item-title>
+                      <v-list-item-subtitle>End</v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider inset></v-divider>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-tennis</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        sessioninfo.court
+                      }}</v-list-item-title>
+                      <v-list-item-subtitle>Court</v-list-item-subtitle>
+                    </v-list-item-content>
+
+                    <v-list-item-action>
+                      <v-btn icon v-if="canChangeCourt">
+                        <v-icon @click="openEditor('courteditor')"
+                          >mdi-pencil</v-icon
+                        >
+                      </v-btn>
+                      <v-btn icon v-else>
+                        <v-icon>mdi-pencil-off</v-icon>
+                      </v-btn>
+                    </v-list-item-action>
+                  </v-list-item>
+                  <v-divider inset></v-divider>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-close-circle</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        sessioninfo.bumpable ? "Yes" : "No"
+                      }}</v-list-item-title>
+                      <v-list-item-subtitle>Bumpable</v-list-item-subtitle>
+                    </v-list-item-content>
+
+                    <v-list-item-action> </v-list-item-action>
+                  </v-list-item>
+
+                  <v-divider inset></v-divider>
+
+                  <v-list-item
+                    v-for="player in sessioninfo.players"
+                    :key="player.id"
+                  >
+                    <v-list-item-icon>
+                      <v-icon>mdi-account</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                      <v-list-item-title
+                        >{{ player.firstname }}
+                        {{ player.lastname }}</v-list-item-title
+                      >
+                      <v-list-item-subtitle>{{
+                        player.type
+                      }}</v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+
+                  <v-divider inset></v-divider>
+
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-note</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        sessioninfo.notes
+                      }}</v-list-item-title>
+                      <v-list-item-subtitle>Note</v-list-item-subtitle>
+                    </v-list-item-content>
+
+                    <v-list-item-action>
+                      <v-btn icon>
+                        <v-icon>mdi-pencil-circle</v-icon>
+                      </v-btn>
+                    </v-list-item-action>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+              <v-card-actions class="mx-2">
+                <v-btn
+                  color="warning"
+                  text
+                  @click="canceldialog = true"
+                  outlined
+                  v-show="canRemove"
+                  >Remove Session</v-btn
+                >
+                <div class="flex-grow-1"></div>
+                <v-btn large @click="enddialog = true" v-show="canEnd"
+                  >End session</v-btn
+                >
+              </v-card-actions>
+            </v-card>
+          </v-col>
+          <valueeditor
+            v-bind:visible.sync="showeditor"
+            :session="sessioninfo"
+            :type="editortype"
+          ></valueeditor>
+        </v-row>
+      </v-col>
+      <v-dialog v-model="canceldialog" max-width="290">
+        <v-card>
+          <v-card-title class="headline">Remove Session</v-card-title>
+
+          <v-card-text>
+            <div>
+              Are you sure you wish to
+              <span class="red--text font-weight-bold">REMOVE</span> this
+              session from club schedule?
+            </div>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-btn text @click="canceldialog = false">No</v-btn>
+
+            <div class="flex-grow-1"></div>
+
+            <v-btn color="warning" text @click="removeSession"
+              >Yes, REMOVE</v-btn
             >
-              <v-container class="fill-height" fluid>
-                <v-row no-gutters class="fill-height">
-                  <v-col cols="12" align-self="start">
-                    <v-container fluid>
-                      <v-row class="mx-1">
-                        <div class="flex-grow-1 text-start">
-                          <v-btn dark icon :to="{name: 'calendar'}">
-                            <v-icon>mdi-chevron-left</v-icon>
-                          </v-btn>
-                        </div>
-                        <div style="Flex-grow:2;"></div>
-                        <div class="flex-grow-1 text-end">
-                          <!-- <v-btn icon :to="{name: 'sessionedit', params: { 'id': id }}">
-                            <v-icon>mdi-pencil</v-icon>
-                          </v-btn>-->
-                        </div>
-                      </v-row>
-                    </v-container>
-                  </v-col>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="enddialog" max-width="290">
+        <v-card>
+          <v-card-title class="headline">End session?</v-card-title>
 
-                  <v-col cols="12" align-self="end">
-                    <span class="display-1 pa-1">Booking Details</span>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-img>
-            <v-card-text>
-              <v-list two-line>
-                 <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-information</v-icon>
-                  </v-list-item-icon>
+          <v-card-text>Are you sure you wish to end this session</v-card-text>
 
-                  <v-list-item-content>
-                    <v-list-item-title>{{ sessioninfo.type }}</v-list-item-title>
-                    <v-list-item-subtitle>Boooking Type</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-calendar-range</v-icon>
-                  </v-list-item-icon>
+          <v-card-actions>
+            <v-btn color="primary" text @click="enddialog = false">No</v-btn>
 
-                  <v-list-item-content>
-                    <v-list-item-title>{{ sessioninfo.date | formatDate }}</v-list-item-title>
-                    <v-list-item-subtitle>Date</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-divider inset></v-divider>
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-clock-start</v-icon>
-                  </v-list-item-icon>
+            <div class="flex-grow-1"></div>
 
-                  <v-list-item-content>
-                    <v-list-item-title>{{ starttime | formatTime }}</v-list-item-title>
-                    <v-list-item-subtitle>Start</v-list-item-subtitle>
-                  </v-list-item-content>
-
-                  <v-list-item-action>
-                    <v-btn icon v-if="canChangeStart || canChangeEnd">
-                      <v-icon @click="openEditor('timeeditor')">mdi-pencil</v-icon>
-                    </v-btn>
-                    <v-btn icon v-else>
-                      <v-icon>mdi-pencil-off</v-icon>
-                    </v-btn>
-                  </v-list-item-action>
-                </v-list-item>
-
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-clock-end</v-icon>
-                  </v-list-item-icon>
-
-                  <v-list-item-content>
-                    <v-list-item-title>{{ endtime | formatTime }}</v-list-item-title>
-                    <v-list-item-subtitle>End</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-divider inset></v-divider>
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-tennis</v-icon>
-                  </v-list-item-icon>
-
-                  <v-list-item-content>
-                    <v-list-item-title>{{ sessioninfo.court }}</v-list-item-title>
-                    <v-list-item-subtitle>Court</v-list-item-subtitle>
-                  </v-list-item-content>
-
-                  <v-list-item-action>
-                    <v-btn icon v-if="canChangeCourt">
-                      <v-icon @click="openEditor('courteditor')">mdi-pencil</v-icon>
-                    </v-btn>
-                    <v-btn icon v-else>
-                      <v-icon>mdi-pencil-off</v-icon>
-                    </v-btn>
-                  </v-list-item-action>
-                </v-list-item>
-                <v-divider inset></v-divider>
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-close-circle</v-icon>
-                  </v-list-item-icon>
-
-                  <v-list-item-content>
-                    <v-list-item-title>{{ sessioninfo.bumpable ? 'Yes' : 'No' }}</v-list-item-title>
-                    <v-list-item-subtitle>Bumpable</v-list-item-subtitle>
-                  </v-list-item-content>
-
-                  <v-list-item-action>
-                    <!-- <v-btn icon>
-                      <v-icon>mdi-pencil-circle</v-icon>
-                    </v-btn> -->
-                  </v-list-item-action>
-                </v-list-item>
-
-                <v-divider inset></v-divider>
-
-                <v-list-item v-for="player in sessioninfo.players" :key="player.id">
-                  <v-list-item-icon>
-                    <v-icon>mdi-account</v-icon>
-                  </v-list-item-icon>
-
-                  <v-list-item-content>
-                    <v-list-item-title>{{ player.firstname }} {{ player.lastname}}</v-list-item-title>
-                    <v-list-item-subtitle>{{ player.type }}</v-list-item-subtitle>
-                  </v-list-item-content>
-                  <!-- <v-list-item-action v-if="index == 0">
-                    <v-btn icon>
-                      <v-icon>mdi-pencil-circle</v-icon>
-                    </v-btn>
-                  </v-list-item-action>-->
-                </v-list-item>
-
-                <v-divider inset></v-divider>
-
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-note</v-icon>
-                  </v-list-item-icon>
-
-                  <v-list-item-content>
-                    <v-list-item-title>{{ sessioninfo.notes }}</v-list-item-title>
-                    <v-list-item-subtitle>Note</v-list-item-subtitle>
-                  </v-list-item-content>
-
-                  <v-list-item-action>
-                    <v-btn icon>
-                      <v-icon>mdi-pencil-circle</v-icon>
-                    </v-btn>
-                  </v-list-item-action>
-                </v-list-item>
-              </v-list>
-            </v-card-text>
-            <v-card-actions class="mx-2">
-              <v-btn
-                color="warning"
-                text
-                @click="canceldialog = true"
-                outlined
-                v-show="canRemove"
-              >Remove Session</v-btn>
-              <div class="flex-grow-1"></div>
-              <v-btn large @click="enddialog = true" v-show="canEnd">End session</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-flex>
-        <!-- <component :is="editortype" v-bind:visible.sync="showeditor" :session="sessioninfo"></component> -->
-        <valueeditor v-bind:visible.sync="showeditor" :session="sessioninfo" :type="editortype"></valueeditor>
-        <!-- <session-time-editor v-bind:visible.sync="showTimeEditor" :session="sessioninfo"></session-time-editor>
-        <session-court-editor v-bind:visible.sync="showCourtEditor" :session="sessioninfo"></session-court-editor>-->
-      </v-layout>
-    </v-flex>
-    <v-dialog v-model="canceldialog" max-width="290">
-      <v-card>
-        <v-card-title class="headline">Remove Session</v-card-title>
-
-        <v-card-text>
-          <div>
-            Are you sure you wish to
-            <span class="red--text font-weight-bold">REMOVE</span> this session from club schedule?
-          </div>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-btn text @click="canceldialog = false">No</v-btn>
-
-          <div class="flex-grow-1"></div>
-
-          <v-btn color="warning" text @click="removeSession">Yes, REMOVE</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="enddialog" max-width="290">
-      <v-card>
-        <v-card-title class="headline">End session?</v-card-title>
-
-        <v-card-text>Are you sure you wish to end this session</v-card-text>
-
-        <v-card-actions>
-          <v-btn color="primary" text @click="enddialog = false">No</v-btn>
-
-          <div class="flex-grow-1"></div>
-
-          <v-btn color="warning" text @click="endSession">End now</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-layout>
+            <v-btn color="warning" text @click="endSession">End now</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -337,10 +373,8 @@ export default {
         .catch((error) => {
           if (error.response) {
             this.error = error.response.data;
-            //console.log(error.response.status)
           } else if (error.request) {
             this.error = error.request;
-            //console.log(error.request);
           } else {
             this.error = error.message;
           }

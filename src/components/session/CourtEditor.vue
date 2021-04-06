@@ -3,6 +3,7 @@
   <v-card tile="" height="100%">
     <v-toolbar
       flat
+      dense
     >
       <v-btn
         icon
@@ -17,12 +18,12 @@
       </v-toolbar-items>
     </v-toolbar>
     <v-card-text>
-      <v-row v-if="error">
+      <v-row v-if="error" class="my-2" no-gutters>
         <v-col cols="12">
-          <v-alert type="error" dense=""> {{ error }} </v-alert>
+          <v-alert type="error" dense outlined> {{ error }} </v-alert>
         </v-col>
       </v-row>
-      <v-row >
+      <v-row class="my-2" no-gutters>
         <v-col cols="12">
           <v-select
             label="Court"
@@ -87,7 +88,7 @@ export default {
 
           if (error.response) {
             this.error = error.response.data 
-            //console.log(error.response.status)
+            
             
           } else if (error.request) {
             this.error = error.request
