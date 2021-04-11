@@ -4,15 +4,11 @@
       <v-col cols="12" sm="8" md="6" lg="4">
         <v-stepper v-model="step">
           <v-stepper-header>
-            <v-stepper-step :complete="step > 1" step="1"
-              >Players</v-stepper-step
-            >
+            <v-stepper-step :complete="step > 1" step="1">Players</v-stepper-step>
 
             <v-divider></v-divider>
 
-            <v-stepper-step :complete="step > 2" step="2"
-              >Court and time</v-stepper-step
-            >
+            <v-stepper-step :complete="step > 2" step="2">Court and time</v-stepper-step>
 
             <v-divider></v-divider>
 
@@ -22,7 +18,7 @@
           <v-stepper-items>
             <v-stepper-content step="2">
               <v-container fluid>
-                <v-form ref="sessionform" lazy>
+                <v-form ref="sessionform" lazy-validation>
                   <v-row dense>
                     <v-col cols="12">
                       <v-row dense>
@@ -33,6 +29,23 @@
                             prepend-icon="mdi-calendar"
                             readonly
                           ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-row dense>
+                        <v-col xs6>
+                          <v-select
+                            label="Court"
+                            :items="courts"
+                            item-value="id"
+                            item-text="name"
+                            required
+                            :rules="[rules.required]"
+                            v-model="court"
+                            :disabled="duration == 0"
+                            prepend-icon="mdi-tennis"
+                          ></v-select>
                         </v-col>
                       </v-row>
                     </v-col>
@@ -82,98 +95,35 @@
                         </v-col>
                       </v-row>
                     </v-col>
-                    <v-col cols="12" md="6">
-                      <v-dialog
-                        ref="durdialog_ref"
-                        v-model="durDialog"
-                        persistent
-                        :return-value.sync="sel_duration"
-                        width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            hint="Minutes"
-                            v-model="sel_duration"
-                            label="Duration"
-                            prepend-icon="mdi-timer"
-                            readonly
-                            v-on="on"
-                            required
-                            :rules="[rules.required, rules.minduration]"
-                            :disabled="!s_time"
-                            suffix="min"
-                          ></v-text-field>
-                        </template>
-
-                        <vnumberpad v-model="sel_duration">
-                          <template v-slot:actions>
-                            <v-spacer></v-spacer>
-                            <v-btn
-                              text
-                              color="primary"
-                              @click="durDialog = false"
-                              >Cancel</v-btn
-                            >
-                            <v-btn
-                              text
-                              color="primary"
-                              @click="$refs.durdialog_ref.save(sel_duration)"
-                              >OK</v-btn
-                            >
-                          </template>
-                        </vnumberpad>
-                      </v-dialog>
+                    <v-col cols="12">
+                       <v-row dense align="center" no-gutters>
+                          <v-col cols="12" md="6">
+                            <duration-picker v-model="sel_duration" :start-time="s_time" :pref="prefDuration" :max="maxDuration"></duration-picker>
+                            <div class="warning--text" v-show="duration > prefDuration">
+                              <v-icon color="warning"> mdi-alert </v-icon>
+                              <span class="pl-2 text-body-2">Club rules: Max duration <b>{{ prefDuration }}</b> min!</span>
+                            </div>
+                          </v-col>
+                       </v-row>
                     </v-col>
-                    <v-col cols="12" class="pa-2">
-                      <v-row
-                        class="caption warning--text"
-                        v-show="duration > reqMaxDuration"
-                        no-gutters
-                        align="center"
-                      >
-                        <span
-                          >* Club rules limit time to
-                          {{ reqMaxDuration }} min.</span
-                        >
-                        <v-btn small outlined color="warning">Fix</v-btn>
-                      </v-row>
-                    </v-col>
-                    <v-col cols="12" class="py-1">
-                      <v-divider></v-divider>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-row dense>
-                        <v-col xs6>
-                          <v-select
-                            label="Court"
-                            :items="courts"
-                            item-value="id"
-                            item-text="name"
-                            required
-                            :rules="[rules.required]"
-                            v-model="court"
-                            :disabled="duration == 0"
-                          ></v-select>
-                          <!-- <div v-show="court">
-                            <div class="caption green--text">Court is availble</div>
-                            <div class="caption red--text">Court is NOT availble</div>
-                          </div>-->
-                        </v-col>
-                      </v-row>
-                    </v-col>
+                    
                     <v-col cols="12" v-show="reqBumpable">
-                      <v-switch
-                        dense
-                        flat
-                        v-model="bumpable"
-                        label="Bumpable"
-                      ></v-switch>
-                      <div
-                        class="caption warning--text"
-                        v-show="reqBumpable !== bumpable"
-                      >
-                        * Club Rules call for bumpable switched on
-                      </div>
+                      <v-row no-gutters>
+                        <v-col cols="12" md="6">
+                        <v-switch
+                          dense
+                          flat
+                          v-model="bumpable"
+                          label="Bumpable"
+                        ></v-switch>
+                        </v-col>
+                        <v-col cols="12">
+                        <div class="warning--text" v-show="reqBumpable !== bumpable">
+                          <v-icon color="warning"> mdi-alert </v-icon>
+                          <span class="pl-2 text-body-2">Club Rules: Bumpable <b>ENABLED</b>!</span>
+                        </div>
+                        </v-col>
+                        </v-row>
                     </v-col>
                     <v-col cols="12">
                       <v-textarea
@@ -181,6 +131,7 @@
                         v-model="note"
                         label="Note"
                         :rules="[rules.notelimit, rules.explainRuleChange]"
+                        clearable
                       ></v-textarea>
                     </v-col>
                   </v-row>
@@ -276,19 +227,12 @@
                         v-for="(player, index) in playerDetails"
                         :key="index"
                       >
-                        <!-- <v-row dense align="center">
-                          <v-col cols="1">
-                            <div class="text-h4">{{ index + 1 }}</div>
-                          </v-col>
-                          <v-col cols="11"> -->
                         <div class="text-h6">
                           {{ player.firstname }} {{ player.lastname }}
                         </div>
                         <div class="text-caption">
                           {{ player.repeater_lbl }}
                         </div>
-                        <!-- </v-col>
-                        </v-row> -->
                       </v-col>
                     </v-row>
                   </v-col>
@@ -297,20 +241,20 @@
                   </v-col>
                   <v-col cols="12">
                     <div class="text-body-1">{{ date }}</div>
-                    <div class="text-body-2">Date</div>
+                    <div class="text-caption">Date</div>
                   </v-col>
                   <v-col cols="12">
                     <div class="text-body-1">
                       {{ s_time }} - {{ e_time }} ({{ duration }} min)
                     </div>
-                    <div class="text-body-2">Time</div>
+                    <div class="text-caption">Time</div>
                   </v-col>
                   <v-col cols="12">
                     <v-divider></v-divider>
                   </v-col>
                   <v-col cols="12">
                     <div class="text-body-1">{{ bumpable ? "Yes" : "No" }}</div>
-                    <div class="text-body-2">Bumpable</div>
+                    <div class="text-caption">Bumpable</div>
                   </v-col>
                   <v-col cols="12">
                     <v-divider></v-divider>
@@ -319,10 +263,10 @@
                     <div class="text-body-1">
                       {{ note ? note : "No notes" }}
                     </div>
-                    <div class="text-body-2">Notes</div>
+                    <div class="text-caption">Notes</div>
                   </v-col>
                 </v-row>
-                <v-row dense>
+                <v-row>
                   <v-btn
                     color="warning"
                     text
@@ -351,16 +295,17 @@
 </template>
 
 <script>
-import vnumberpad from "./booking/vuetify-numberpad";
+
 import apihandler from "./../services/db";
 import utils from "./../services/utils";
 import moment from "moment-timezone";
+import DurationPicker from './booking/DurationPicker.vue';
 
 const MATCH_TYPE_ID = 1000;
 
 export default {
   components: {
-    vnumberpad,
+    DurationPicker,
   },
   name: "MatchBooking",
   data: function () {
@@ -377,7 +322,7 @@ export default {
       datedialog: false,
       stimedialog: false,
       etimedialog: false,
-      durDialog: false,
+      // durDialog: false,
       date: null,
       s_time: null,
       sel_duration: 0,
@@ -392,11 +337,11 @@ export default {
             utils.timeToMinutes(this.s_time);
           return value < max || `Max dur min`;
         },
-        notelimit: (v) => v.length <= 256 || "Max 256 characters",
-        explainRuleChange: () => {
-          return this.duration > this.reqMaxDuration ||
+        notelimit: (v) => !v || (typeof v === 'string' && v.length <= 256) || "Max 256 characters",
+        explainRuleChange: (value) => {
+          return this.duration > this.prefDuration ||
             (this.reqBumpable == 1 && this.bumpable == 0)
-            ? "Explain rules overwrite"
+            ? (!!value || "Explain rules overwrite")
             : true;
         },
       },
@@ -492,6 +437,8 @@ export default {
         return;
       }
 
+      this.date = moment().tz(this.clubtz).format("Y-MM-DD");
+
       var time = moment().tz(this.clubtz).format("HH:mm");
       var current_minutes = utils.timeToMinutes(time);
 
@@ -503,23 +450,26 @@ export default {
 
       var final_start_minutes = hours * 60 + minutes_rounded + minutes_limit;
 
-      //console.log(current_minutes,hours,minutes,minutes_rounded, final_start_minutes)
-
       var open_minutes = utils.timeToMinutes(this.opentime);
       var close_minutes = utils.timeToMinutes(this.closetime);
 
-      if (
-        final_start_minutes >= open_minutes &&
-        final_start_minutes <= close_minutes
-      ) {
-        this.s_time = utils.minToTime(final_start_minutes);
+      
+      if( final_start_minutes < open_minutes ){
+        //if start time is less than open, set it to open
+        this.s_time = this.opentime;
+      }
+      else{
+        if( final_start_minutes <= close_minutes ){
+          //if stat time is between open and close, keep it
+          this.s_time = utils.minToTime(final_start_minutes);
+        }
       }
 
-      if (this.reqMaxDuration) {
+      if (this.prefDuration && this.s_time) {
         const dur =
           final_start_minutes < close_minutes
-            ? final_start_minutes + this.reqMaxDuration < close_minutes
-              ? this.reqMaxDuration
+            ? final_start_minutes + this.prefDuration < close_minutes
+              ? this.prefDuration
               : close_minutes - final_start_minutes
             : 0;
         this.sel_duration = dur;
@@ -631,7 +581,7 @@ export default {
       let rule = this.$store.getters["getBookingRule"](this.matchConfig);
       return rule !== undefined ? rule : {};
     },
-    reqMaxDuration: function () {
+    prefDuration: function () {
       return Object.prototype.hasOwnProperty.call(
         this.bookingRules,
         "maxduration"
@@ -717,9 +667,12 @@ export default {
     maxstarttime: function () {
       return utils.minToTime(utils.timeToMinutes(this.closetime) - 5);
     },
+    maxDuration: function() {
+      return utils.timeToMinutes(this.closetime) - utils.timeToMinutes(this.s_time);
+    }
   },
   created: function () {
-    this.date = moment().tz(this.clubtz).format("Y-MM-DD");
+    //this.date = moment().tz(this.clubtz).format("Y-MM-DD");
   },
   mounted: function () {},
   beforeDestroy() {},

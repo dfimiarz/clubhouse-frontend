@@ -27,23 +27,31 @@ instance.interceptors.request.use(async config => {
         return Promise.reject(err)
     });
 
+function getBookings(date){
+
+    //Build a rest URL and add recaptcha token
+    let url = new URL(process.env.VUE_APP_BACKEND + '/bookings');
+
+    url.searchParams.set('date', date);
+
+    return instance.get(url)
+}
+
 function newMatch(matchdata) {
 
-    //console.log(matchdata)
-
-    return axios.post(process.env.VUE_APP_BACKEND + '/bookings', matchdata)
+    return instance.post(process.env.VUE_APP_BACKEND + '/bookings', matchdata)
 
 }
 
 function getBookingDetails(id) {
 
-    return axios.get(process.env.VUE_APP_BACKEND + '/bookings/' + id)
+    return instance.get(process.env.VUE_APP_BACKEND + '/bookings/' + id)
 
 }
 
 function endSession(params) {
 
-    return axios.patch(process.env.VUE_APP_BACKEND + `/bookings/${params.id}`,
+    return instance.patch(process.env.VUE_APP_BACKEND + `/bookings/${params.id}`,
         {
             "cmd": {
                 "name": "END_SESSION",
@@ -58,7 +66,7 @@ function endSession(params) {
 
 function removeSession(params) {
 
-    return axios.patch(process.env.VUE_APP_BACKEND + `/bookings/${params.id}`,
+    return instance.patch(process.env.VUE_APP_BACKEND + `/bookings/${params.id}`,
         {
             "cmd": {
                 "name": "REMOVE_SESSION",
@@ -72,7 +80,7 @@ function removeSession(params) {
 }
 
 function changeSessionTime(params) {
-    return axios.patch(process.env.VUE_APP_BACKEND + `/bookings/${params.id}`,
+    return instance.patch(process.env.VUE_APP_BACKEND + `/bookings/${params.id}`,
         {
             "cmd": {
                 "name": "CHANGE_TIME",
@@ -87,7 +95,7 @@ function changeSessionTime(params) {
     )
 }
 function changeCourt(params) {
-    return axios.patch(process.env.VUE_APP_BACKEND + `/bookings/${params.id}`,
+    return instance.patch(process.env.VUE_APP_BACKEND + `/bookings/${params.id}`,
         {
             "cmd": {
                 "name": "CHANGE_COURT",
@@ -106,16 +114,16 @@ function getCourts() {
 }
 
 function getMembers() {
-    return axios.get(process.env.VUE_APP_BACKEND + '/persons/members')
+    return instance.get(process.env.VUE_APP_BACKEND + '/persons/members')
 }
 
 function getGuests() {
-    return axios.get(process.env.VUE_APP_BACKEND + '/persons/guests')
+    return instance.get(process.env.VUE_APP_BACKEND + '/persons/guests')
 }
 
 async function addGuest(guest) {
 
-    return await axios.post(process.env.VUE_APP_BACKEND + '/persons/guests', guest)
+    return await instance.post(process.env.VUE_APP_BACKEND + '/persons/guests', guest)
 }
 
 async function getEligiblePersons() {
@@ -123,25 +131,25 @@ async function getEligiblePersons() {
 }
 
 async function getInactiveGuests() {
-    return axios.get(process.env.VUE_APP_BACKEND + '/persons/guests/inactive')
+    return instance.get(process.env.VUE_APP_BACKEND + '/persons/guests/inactive')
 }
 
 async function getCurrentGuestActivations() {
-    return axios.get(process.env.VUE_APP_BACKEND + '/guest_activations/current')
+    return instance.get(process.env.VUE_APP_BACKEND + '/guest_activations/current')
 }
 
 /**
  *  Get Booking Types
  */
 async function getBookingTypes() {
-    return axios.get(process.env.VUE_APP_BACKEND + '/booking_types')
+    return instance.get(process.env.VUE_APP_BACKEND + '/booking_types')
 }
 
 /**
  * Get club managers
  */
 async function getManagers() {
-    return axios.get(process.env.VUE_APP_BACKEND + '/persons/members/managers')
+    return instance.get(process.env.VUE_APP_BACKEND + '/persons/members/managers')
 }
 
 /**
@@ -150,7 +158,7 @@ async function getManagers() {
  * @param {Number[]} guests Array of IDs for inactive guets
  */
 async function activateGuests(memberhost_id, guests) {
-    return axios.post(process.env.VUE_APP_BACKEND + '/guest_activations/bulk', { memberhost: memberhost_id, "guests": guests })
+    return instance.post(process.env.VUE_APP_BACKEND + '/guest_activations/bulk', { memberhost: memberhost_id, "guests": guests })
 }
 
 async function checkGeoAuth() {
@@ -169,7 +177,18 @@ async function getRecaptchaScore(token) {
 
     return result.data;
 }
+
+async function getCaptcha() {
+
+    let url = new URL(process.env.VUE_APP_BACKEND + '/auth/captcha');
+
+    const result = await axios.get(url);
+
+    return result.data;
+}
+
 export default {
+    getBookings,
     newMatch: newMatch,
     getBookingDetails,
     endSession: endSession,
@@ -187,5 +206,6 @@ export default {
     getManagers,
     getBookingTypes,
     checkGeoAuth,
-    getRecaptchaScore
+    getRecaptchaScore,
+    getCaptcha
 }

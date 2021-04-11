@@ -1,6 +1,3 @@
-// import db from '../../firebase'
-// import { isFunction } from 'util';
-// import utils from '../../services/utils'
 import Axios from "axios";
 
 const state = {

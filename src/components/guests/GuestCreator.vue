@@ -15,7 +15,7 @@
         <v-col cols="12" lg="8">
           <v-text-field
             v-model="guest.firstname"
-            label="First name"
+            label="First Name"
             :error-messages="errors.firstname"
             :rules="nameRules"
             :disabled="!formenabled"
@@ -55,19 +55,39 @@
           ></v-text-field>
         </v-col>
       </v-row>
+      <v-row dense v-if="!authenticated">
+        <v-col cols="12" md="8">
+          <knick-captcha
+            :imgdata="imgdata"
+            :error="errors.requestid"
+            v-on:reload:captcha="getCaptcha"
+          ></knick-captcha>
+        </v-col>
+        <v-col cols="12" md="8">
+          <v-text-field
+            v-model="captcha"
+            :rules="captchaRules"
+            label="Captcha Text"
+            :error-messages="errors.captcha"
+            :disabled="!formenabled"
+          ></v-text-field>
+        </v-col>
+      </v-row>
       <v-row no-gutters class="pt-4">
         <v-col cols="12" class="subtitle-2">Terms and Conditions</v-col>
       </v-row>
       <v-divider></v-divider>
       <v-row no-gutters>
         <v-col cols="12">
-          <v-checkbox v-model="agree" :rules="checkBoxRules" :disabled="!formenabled">
+          <v-checkbox
+            v-model="agree"
+            :rules="checkBoxRules"
+            :disabled="!formenabled"
+          >
             <template v-slot:label>
               <div class="caption">
-                I have read, understood, and agree to all club
-                <v-chip color="primary" x-small @click.stop.prevent="showRules"
-                  >rules</v-chip
-                >&nbsp;pertaining to guests visitors
+                I have read, understood, and agree to all club rules pertaining
+                to guests visitors
               </div>
             </template>
             >
@@ -88,32 +108,20 @@
 <script>
 import dbservice from "../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
-import recaptcha from "../../services/recaptcha"
+import KnickCaptcha from "../KnickCaptcha.vue";
 
 export default {
+  components: { KnickCaptcha },
   props: ["loading"],
   name: "RegisterMember",
-  mounted: function () {
-    this.setLoading(true);
-    recaptcha.getToken("/guest")
-    .then( (token) =>{
-      return dbservice.getRecaptchaScore(token);
-    })
-    .then((result) => {
-      if( result.success && result.score >= 0.5 ){
-        this.initialized = true;
-      }
-      
-    })
-    .catch(() => {
-      this.$emit("show:message", "Error loading recaptcha", "error");
-    })
-    .finally(()=>{
-      this.setLoading(false);
-    })
+  created: function () {
+    this.getCaptcha();
   },
   data: function () {
     return {
+      imgdata: null,
+      captcha: null,
+      requestid: null,
       initialized: false,
       valid: true,
       errors: {
@@ -122,6 +130,8 @@ export default {
         email: null,
         age: null,
         phone: null,
+        captcha: null,
+        requestid: null,
       },
       guest: {
         firstname: null,
@@ -130,6 +140,7 @@ export default {
         phone: null,
       },
       agree: false,
+      captchaRules: [(v) => !!v || "Field is required"],
       nameRules: [
         (v) => !!v || "Field is required",
         (v) => (v && v.length >= 2) || "Content must be more than 3 characters",
@@ -150,19 +161,56 @@ export default {
       checkBoxRules: [(v) => !!v || "Agreement required"],
     };
   },
-  computed:{
-    formenabled: function(){
-      return this.loading !== true && this.initialized === true;
-    }
+  computed: {
+    formenabled: function () {
+      return this.authenticated || this.requestid;
+    },
+    authenticated: function () {
+      return this.$store.getters["userstore/isAuthenticated"];
+    },
   },
   methods: {
+    getCaptcha() {
+      //Don't load captcha when authenticated
+      if (this.authenticated) {
+        return;
+      }
+
+      this.setLoading(true);
+      this.errors.requestid = null;
+      this.requestid = null;
+      this.imgdata = null;
+
+      dbservice
+        .getCaptcha()
+        .then((data) => {
+          this.imgdata = data.svg;
+          this.requestid = data.reqid;
+        })
+        .catch((err) => {
+          const error = processAxiosError(err);
+
+          if (Object.prototype.hasOwnProperty.call(error, "captchaerr")) {
+            this.handleCaptchaError(error.captchaerr);
+          } else {
+            this.errors.requestid = error;
+          }
+        })
+        .finally(() => {
+          this.setLoading(false);
+        });
+    },
     resetForm() {
+      this.clearErrors();
+      this.$refs.form.reset();
+      this.getCaptcha();
+    },
+    clearErrors() {
       Object.keys(this.errors).forEach((elem) => {
         this.errors[elem] = null;
       });
-      this.$refs.form.reset();
     },
-    handleFieldErrors({ errors }) {
+    handleFieldErrors(errors) {
       //Loop through each error and add it to array of error for specific field
       if (Array.isArray(errors)) {
         errors.forEach((element) => {
@@ -173,42 +221,39 @@ export default {
           }
         });
       }
-      this.$emit("show:message", "Please fix field errors", "error");
     },
     addGuest: function () {
-      if (!window.grecaptcha) {
-        this.$emit("show:message", "Google recaptcha error", "error");
-      }
 
-      window.grecaptcha.ready(() => {
-        window.grecaptcha
-          .execute("6Lca4D8aAAAAABoNbYpThdZYq4ZcyeLEsa10i-RJ", {
-            action: "GuestRegistration",
-          })
-          .then((token) => {
-            console.log(token);
-          });
-      });
-
+      this.clearErrors();
+      
       if (!this.$refs.form.validate()) {
         return;
       }
 
       this.setLoading(true);
 
+      const guestdata = {
+        ...this.guest,
+        captcha: this.captcha,
+        requestid: this.requestid,
+      };
+
       dbservice
-        .addGuest(this.guest)
+        .addGuest(guestdata)
         .then(() => {
           this.$emit("show:message", "Guest added", "success");
           this.resetForm();
         })
         .catch((err) => {
           const error = processAxiosError(err);
-          if (Object.prototype.hasOwnProperty.call(error, "fielderrors")) {
+
+          if( error.fielderrors ){
             this.handleFieldErrors(error.fielderrors);
-          } else {
-            this.$emit("show:message", error, "error");
           }
+          else{
+            this.$emit("show:message", "Error: "+error, "error");
+          }
+
         })
         .finally(() => {
           this.setLoading(false);

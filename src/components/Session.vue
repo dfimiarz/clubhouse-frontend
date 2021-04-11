@@ -163,11 +163,13 @@ export default {
   width: 100%;
   box-sizing: border-box;
   padding: 1px 2px;
+  
 }
 
 .session_container {
   overflow: hidden;
   border-radius: 3px;
+  border: 1px solid black;
   box-shadow: 2px 2px black;
   color: black;
 }
