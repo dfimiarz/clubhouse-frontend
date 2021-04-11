@@ -155,18 +155,7 @@
             <v-btn outlined @click="$refs.eventbookingform.reset()">Reset</v-btn>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="submitBooking">Book</v-btn>
-          </v-card-actions>
-          <!-- <v-snackbar v-model="snackbar.open" top>
-            {{ snackbar.text }}
-            <template v-slot:action="{ attrs }">
-              <v-btn
-                :color="snackbar.color"
-                text
-                v-bind="attrs"
-                @click="snackbar.open = false"
-              >Close</v-btn>
-            </template>
-          </v-snackbar> -->
+          </v-card-actions>ß
         </v-card>
       </v-col>
     </v-row>

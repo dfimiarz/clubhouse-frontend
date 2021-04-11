@@ -20,11 +20,23 @@
               <v-container fluid>
                 <v-form ref="sessionform" lazy-validation>
                   <v-row dense>
+                    <v-col cols="12" md="6">
+
+                      <v-text-field 
+                        readonly 
+                        :value="playerInfo.length"
+                        label="Player Count"
+                        prepend-icon="mdi-account-multiple" 
+                        
+                      >
+
+                      </v-text-field>
+                    </v-col>
                     <v-col cols="12">
                       <v-row dense>
                         <v-col cols="12" md="6">
                           <v-text-field
-                            v-model="computedDateFormatted"
+                            :value="computedDateFormatted"
                             label="Date"
                             prepend-icon="mdi-calendar"
                             readonly
@@ -32,23 +44,7 @@
                         </v-col>
                       </v-row>
                     </v-col>
-                    <v-col cols="12" md="6">
-                      <v-row dense>
-                        <v-col xs6>
-                          <v-select
-                            label="Court"
-                            :items="courts"
-                            item-value="id"
-                            item-text="name"
-                            required
-                            :rules="[rules.required]"
-                            v-model="court"
-                            :disabled="duration == 0"
-                            prepend-icon="mdi-tennis"
-                          ></v-select>
-                        </v-col>
-                      </v-row>
-                    </v-col>
+                    
                     <v-col cols="12">
                       <v-row dense>
                         <v-col cols="12" md="6">
@@ -106,7 +102,23 @@
                           </v-col>
                        </v-row>
                     </v-col>
-                    
+                    <v-col cols="12" md="6">
+                      <v-row dense>
+                        <v-col xs6>
+                          <v-select
+                            label="Court"
+                            :items="courts"
+                            item-value="id"
+                            item-text="name"
+                            required
+                            :rules="[rules.required]"
+                            v-model="court"
+                            :disabled="duration == 0"
+                            prepend-icon="mdi-tennis"
+                          ></v-select>
+                        </v-col>
+                      </v-row>
+                    </v-col>
                     <v-col cols="12" v-show="reqBumpable">
                       <v-row no-gutters>
                         <v-col cols="12" md="6">
@@ -142,7 +154,7 @@
                     text
                     outlined
                     class="ma-1"
-                    @click="step = 1"
+                    @click="goToBookingStep(1)"
                     >Go back</v-btn
                   >
                   <v-spacer></v-spacer>
@@ -200,7 +212,7 @@
                     >Clear</v-btn
                   >
                   <div class="flex-grow-1"></div>
-                  <v-btn @click="validatePlayerInput" class="ma-1"
+                  <v-btn @click="goToBookingStep(2)" class="ma-1"
                     >Continue</v-btn
                   >
                 </v-row>
@@ -366,6 +378,60 @@ export default {
       this.error = null;
       this.step = 2;
     },
+    goToBookingStep(newstep){
+      
+      if( this.step == 1 && newstep == 2){
+          if( ! this.validatePlayerInput() ){
+            return
+          }
+          this.setMatchParams();
+      }
+
+      if( this.step == 2 && newstep == 1){
+        this.$refs.sessionform.resetValidation();
+      }
+
+      this.step = newstep;
+    },
+    setMatchParams(){
+      this.date = moment().tz(this.clubtz).format("Y-MM-DD");
+
+      var time = moment().tz(this.clubtz).format("HH:mm");
+      var current_minutes = utils.timeToMinutes(time);
+
+      var minutes = current_minutes % 60;
+      var hours = (current_minutes - minutes) / 60;
+
+      var minutes_limit = 5;
+      var minutes_rounded = Math.floor(minutes / minutes_limit) * minutes_limit;
+
+      var final_start_minutes = hours * 60 + minutes_rounded + minutes_limit;
+
+      var open_minutes = utils.timeToMinutes(this.opentime);
+      var close_minutes = utils.timeToMinutes(this.closetime);
+
+      
+      if( final_start_minutes < open_minutes ){
+        //if start time is less than open, set it to open
+        this.s_time = this.opentime;
+      }
+      else{
+        if( final_start_minutes <= close_minutes ){
+          //if stat time is between open and close, keep it
+          this.s_time = utils.minToTime(final_start_minutes);
+        }
+      }
+
+      if (this.prefDuration && this.s_time) {
+        const dur =
+          final_start_minutes < close_minutes
+            ? final_start_minutes + this.prefDuration < close_minutes
+              ? this.prefDuration
+              : close_minutes - final_start_minutes
+            : 0;
+        this.sel_duration = dur;
+      }
+    },
     clearPlayers() {
       this.selplayers.forEach((player) => {
         player.id = player.repeater = null;
@@ -419,7 +485,9 @@ export default {
       //console.log(playerCheck)
 
       if (playerCheck.players.length == 0) {
-        this.playerErrors = "Please select a player";
+        //this.playerErrors = "Please select a player";
+        this.selplayers[0]['playerErrs'].push("Select a player")
+        this.$emit("show:message","Please select a player","errors")
         return;
       }
 
@@ -434,48 +502,11 @@ export default {
           that.selplayers[index][field].push(msg);
         });
 
-        return;
-      }
-
-      this.date = moment().tz(this.clubtz).format("Y-MM-DD");
-
-      var time = moment().tz(this.clubtz).format("HH:mm");
-      var current_minutes = utils.timeToMinutes(time);
-
-      var minutes = current_minutes % 60;
-      var hours = (current_minutes - minutes) / 60;
-
-      var minutes_limit = 5;
-      var minutes_rounded = Math.floor(minutes / minutes_limit) * minutes_limit;
-
-      var final_start_minutes = hours * 60 + minutes_rounded + minutes_limit;
-
-      var open_minutes = utils.timeToMinutes(this.opentime);
-      var close_minutes = utils.timeToMinutes(this.closetime);
-
-      
-      if( final_start_minutes < open_minutes ){
-        //if start time is less than open, set it to open
-        this.s_time = this.opentime;
+        return false;
       }
       else{
-        if( final_start_minutes <= close_minutes ){
-          //if stat time is between open and close, keep it
-          this.s_time = utils.minToTime(final_start_minutes);
-        }
+        return true;
       }
-
-      if (this.prefDuration && this.s_time) {
-        const dur =
-          final_start_minutes < close_minutes
-            ? final_start_minutes + this.prefDuration < close_minutes
-              ? this.prefDuration
-              : close_minutes - final_start_minutes
-            : 0;
-        this.sel_duration = dur;
-      }
-
-      this.step = 2;
     },
     formatDate(date) {
       if (!date) return null;
