@@ -66,9 +66,8 @@
                     </v-list-item-icon>
 
                     <v-list-item-content>
-                      <v-list-item-title>{{
-                        sessioninfo.type
-                      }}</v-list-item-title>
+                      <v-list-item-title v-html="sessioninfo.type_lbl">
+                      </v-list-item-title>
                       <v-list-item-subtitle>Boooking Type</v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>

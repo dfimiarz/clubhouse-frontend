@@ -155,7 +155,7 @@
             <v-btn outlined @click="$refs.eventbookingform.reset()">Reset</v-btn>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="submitBooking">Book</v-btn>
-          </v-card-actions>ß
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
