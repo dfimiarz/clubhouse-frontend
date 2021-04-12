@@ -78,7 +78,7 @@
     </v-navigation-drawer>
     <v-app-bar app elevate-on-scroll>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>KnickerBocker Field Club</v-toolbar-title>
+      <v-toolbar-title>Knickerbocker Field Club</v-toolbar-title>
       <div class="flex-grow-1"></div>
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn text :to="{ name: 'home' }" exact>Home</v-btn>

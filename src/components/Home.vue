@@ -29,7 +29,7 @@
                   aspect-ratio="1.5"
                 >
 
-                  <v-row justify="center" align="end" no-gutters="" class="fill-height" >
+                  <v-row justify="center" align="end" no-gutters class="fill-height" >
                     <v-col cols="12">
                       <div class='tile-text-container'>
                         <h3 class="text-h6 text-xl-h4">{{ card.title }}</h3>
