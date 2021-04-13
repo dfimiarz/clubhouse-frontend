@@ -245,8 +245,7 @@ export default {
           that.$router.push({ name: "calendar" });
         })
         .catch(function (e) {
-          //TODO show errors
-          console.log(e)
+          
           that.$emit( 'show:message',processAxiosError(e));
         })
         .finally(() => {
