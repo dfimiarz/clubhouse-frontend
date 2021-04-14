@@ -52,8 +52,6 @@ function setupFirebaseWatcher() {
 }
 
 InitUtils.checkGeoAuth()
-  //TODO: Don't forget to enable geoauth
-  // eslint-disable-next-line no-unused-vars
   .then((val) => {
     store.dispatch('userstore/setGeoAuth', val);
     setupFirebaseWatcher();
