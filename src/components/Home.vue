@@ -1,18 +1,9 @@
 
 <template>
-<v-container>
-  <v-row justify="center" align="start" no-gutters="" >
+<v-container fluid class="fill-height">
+  <v-row justify="center" align="center" no-gutters="" class="fill-height">
     <v-col cols="12" md="10" lg="8">
         <v-container fluid>
-          <v-row justify="center" align="center" no-gutters="">
-            <v-col cols="12">
-              
-                <div class="text-center text-h3 text-md-h2 text-xl-h1 py-5">
-                  Knickerbocker Tennis
-                </div>
-              
-            </v-col>
-          </v-row>
           <v-row justify="center" align="center" no-gutters="">
             <v-col
               v-for="card in cards"
@@ -20,7 +11,7 @@
               v-bind="{ cols: card.xs, sm: card.sm, md: card.md }"
               class="pa-2"
             >
-              <v-card :to="{name: card.dest}" raised="" >
+              <v-card :to="{name: card.dest}" raised >
                 <v-img
                   :src="require(`@/assets/${card.img}`)"
                   :lazy-src="require(`@/assets/${card.img_small}`)"
