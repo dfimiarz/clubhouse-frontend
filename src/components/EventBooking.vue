@@ -77,8 +77,8 @@
                     </template>
                     <v-date-picker v-model="date" scrollable>
                       <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="datedialog = false">Cancel</v-btn>
-                      <v-btn text color="primary" @click="$refs.ddialog.save(date)">OK</v-btn>
+                      <v-btn text @click="datedialog = false">Cancel</v-btn>
+                      <v-btn text @click="$refs.ddialog.save(date)">OK</v-btn>
                     </v-date-picker>
                   </v-dialog>
                 </v-col>
@@ -108,8 +108,8 @@
                       :max="maxstarttime"
                     >
                       <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="stimedialog = false">Cancel</v-btn>
-                      <v-btn text color="primary" @click="$refs.stdialog.save(s_time)">OK</v-btn>
+                      <v-btn text  @click="stimedialog = false">Cancel</v-btn>
+                      <v-btn text  @click="$refs.stdialog.save(s_time)">OK</v-btn>
                     </v-time-picker>
                   </v-dialog>
                 </v-col>
@@ -139,8 +139,8 @@
                       :max="maxstarttime"
                     >
                       <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="etimedialog = false">Cancel</v-btn>
-                      <v-btn text color="primary" @click="$refs.etdialog.save(e_time)">OK</v-btn>
+                      <v-btn text @click="etimedialog = false">Cancel</v-btn>
+                      <v-btn text @click="$refs.etdialog.save(e_time)">OK</v-btn>
                     </v-time-picker>
                   </v-dialog>
                 </v-col>
@@ -154,7 +154,7 @@
           <v-card-actions>
             <v-btn outlined @click="$refs.eventbookingform.reset()">Reset</v-btn>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="submitBooking">Book</v-btn>
+            <v-btn @click="submitBooking" :disabled="loading">Book</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
