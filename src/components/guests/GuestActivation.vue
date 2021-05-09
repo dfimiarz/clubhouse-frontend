@@ -1,48 +1,57 @@
 <template>
-  <v-container fluid>
-    <div
-      class="text-caption py-2"
-    >Please enter host and guest(s) to activate for today. Guest activation must be repeated each day a guest utilizes club venues.</div>
-    <v-form ref="guestsform">
-      <v-row no-gutters>
-        <v-col cols="12" md="8">
-          <v-autocomplete
-            v-model="host"
-            label="Select Host"
-            :items="activeMembers"
-            item-text="name"
-            item-value="id"
-            :rules="[ rules.notempty]"
-            :error-messages="hosterrors"
-            no-data-text="No active members found"
-          ></v-autocomplete>
-        </v-col>
+  <div>
+    <v-card-text>
+      <v-container fluid>
+        <div class="text-caption py-2">
+          Please enter host and guest(s) to activate for today. Guest activation
+          must be repeated each day a guest utilizes club venues.
+        </div>
+        <v-form ref="guestsform">
+          <v-row no-gutters>
+            <v-col cols="12" md="8">
+              <v-autocomplete
+                v-model="host"
+                label="Select Host"
+                :items="activeMembers"
+                item-text="name"
+                item-value="id"
+                :rules="[rules.notempty]"
+                :error-messages="hosterrors"
+                no-data-text="No active members found"
+              ></v-autocomplete>
+            </v-col>
 
-        <v-col cols="12" class="subtitle-2">Guests</v-col>
-        <v-col cols="12">
-          <v-divider></v-divider>
-        </v-col>
-        <v-col cols="12" md="8" v-for="(guest,index) in selectedGuests" :key="index">
-          <v-autocomplete
-            v-model="guest.id"
-            :label="getGuestLabel(index+1)"
-            :items="inactiveguests"
-            item-text="name"
-            item-value="id"
-            :error-messages="guest.errors"
-            no-data-text="No inactive guests found"
-          ></v-autocomplete>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12" class="d-flex justify-space-between">
-          <v-btn outlined @click="resetForm" color="warning">Clear</v-btn>
-          <v-spacer></v-spacer>
-          <v-btn @click="activateGuests" :disabled="loading">Activate</v-btn>
-        </v-col>
-      </v-row>
-    </v-form>
-  </v-container>
+            <v-col cols="12" class="subtitle-2">Guests</v-col>
+            <v-col cols="12">
+              <v-divider></v-divider>
+            </v-col>
+            <v-col
+              cols="12"
+              md="8"
+              v-for="(guest, index) in selectedGuests"
+              :key="index"
+            >
+              <v-autocomplete
+                v-model="guest.id"
+                :label="getGuestLabel(index + 1)"
+                :items="inactiveguests"
+                item-text="name"
+                item-value="id"
+                :error-messages="guest.errors"
+                no-data-text="No inactive guests found"
+                :disabled="loading"
+              ></v-autocomplete>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-container>
+    </v-card-text>
+    <v-card-actions>
+      <v-btn outlined @click="resetForm">Clear</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn @click="activateAndReload" :disabled="loading">Activate</v-btn>
+    </v-card-actions>
+  </div>
 </template>
 
 <script>
@@ -50,7 +59,7 @@ import dbservice from "./../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
 
 export default {
-  props: ['loading'],
+  props: ["loading"],
   name: "GuestActivation",
   data: function () {
     return {
@@ -68,6 +77,10 @@ export default {
         notempty: (v) => !!v || "Please select a host",
       },
     };
+  },
+  beforeRouteLeave(to, from, next) {
+    this.setLoading(false);
+    next();
   },
   methods: {
     reset() {
@@ -153,11 +166,26 @@ export default {
         guestslot.errors.splice(0);
       });
     },
-    async activateGuests() {
+    activateAndReload() {
       if (!this.validateForm()) {
         return;
       }
 
+      this.setLoading(true);
+
+      this.activateGuests()
+        .then(() => {
+          this.$emit("show:message", `Guests activated`, "success");
+          this.resetForm();
+        })
+        .catch((error) => {
+          this.$emit("show:message", `${error.message}`, "error");
+        })
+        .finally(() => {
+          this.setLoading(false);
+        });
+    },
+    async activateGuests() {
       const host_id = this.host;
       const guest_array = this.selectedGuests.reduce((acc, guest) => {
         if (guest.id) {
@@ -167,36 +195,25 @@ export default {
       }, []);
 
       try {
-        this.setLoading(true);
+        await dbservice.activateGuests(host_id, guest_array);
+      } catch (err) {
+        const error = processAxiosError(err);
+        throw new Error(`${error}`);
+      }
 
-        try {
-          await dbservice.activateGuests(host_id, guest_array);
-        } catch (err) {
-          const error = processAxiosError(err);
-          throw new Error(`Unable to activate guests: ${error}`);
-        }
+      try {
+        const result = await Promise.all([
+          dbservice.getInactiveGuests(),
+          //TO DO: load only new list of active guests no the entire list
+          this.$store.dispatch("memberstore/loadEligiblePersons"),
+        ]);
 
-        try {
-          const result = await Promise.all([
-            dbservice.getInactiveGuests(),
-            //TO DO: load only new list of active guests no the entire list
-            this.$store.dispatch("memberstore/loadEligiblePersons"),
-          ]);
-
-          this.inactiveguests = result[0].data;
-        } catch (err) {
-          const error = processAxiosError(err);
-          throw new Error(
-            `Unable to reload data: ${error}. Contact club admin if error persists`
-          );
-        }
-
-        this.$emit("show:message", `Guests activated`, "success");
-        this.resetForm();
-      } catch (error) {
-        this.$emit("show:message", `${error.message}`, "error");
-      } finally {
-        this.setLoading(false);
+        this.inactiveguests = result[0].data;
+      } catch (err) {
+        const error = processAxiosError(err);
+        throw new Error(
+          `Unable to reload data: ${error}. Contact club admin if error persists`
+        );
       }
     },
     getGuestLabel: (index) => `Guest #${index}`,

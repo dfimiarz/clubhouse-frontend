@@ -1,28 +1,34 @@
 <template>
-  <v-container>
-    <v-row no-gutters dense justify="center">
-      <v-col cols="12" sm="8" xl="4">
-        <v-card class="mx-auto">
+  <v-container fluid >
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="6" lg="4" xl="3">
+        <v-card>
           <v-img
-            class="white--text align-end"
+            class="white--text"
             height="150px"
             :src="require(`@/assets/guestsbg.jpg`)"
             :lazy-src="require(`@/assets/guestsbg_small.jpg`)"
             gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)"
           >
-            <v-card-title>Guest Players</v-card-title>
+            <v-container class="fill-height" fluid>
+              <v-row no-gutters class="fill-height">
+                <v-col cols="12" align-self="end">
+                  <span class="text-h5">Guest Players</span>
+                </v-col>
+              </v-row>
+            </v-container>
             <v-progress-linear indeterminate v-show="loading" absolute bottom></v-progress-linear>
           </v-img>
           <v-tabs dark>
             <v-tab :to="{ 'name':'guestregistration'}" exact>Register</v-tab>
             <v-tab :to="{ 'name':'guestactivation'}" exact>Activate</v-tab>
-            <v-tab :to="{ 'name':'activeguests'}" exact>Active Guests</v-tab>
+            <v-tab :to="{ 'name':'activeguests'}" exact>Manage</v-tab>
           </v-tabs>
-          <v-card-text>
-            <router-view :loading.sync="loading" @show:message="showSnackBar"></router-view>
-          </v-card-text>
+          
+          
+          <router-view :loading.sync="loading" @show:message="showSnackBar"></router-view>
         </v-card>
-        <v-snackbar v-model="snackbar.open" top>
+        <v-snackbar v-model="snackbar.open" bottom>
           {{ snackbar.text }}
           <template v-slot:action="{ attrs }">
             <v-btn :color="snackbar.color" text v-bind="attrs" @click="snackbar.open = false">Close</v-btn>
@@ -50,6 +56,7 @@ export default {
     };
   },
   methods: {
+    
     showSnackBar(text, color) {
       this.snackbar.open = true;
       this.snackbar.text = text;

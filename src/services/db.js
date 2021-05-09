@@ -138,6 +138,15 @@ async function getCurrentGuestActivations() {
     return instance.get(process.env.VUE_APP_BACKEND + '/guest_activations/current')
 }
 
+async function deactivateGuest( activation ){
+
+    //Configure patch commands
+    const patchcommand = { name: "DEACTIVATE", params: { etag: activation.etag }}
+
+    return instance.patch(process.env.VUE_APP_BACKEND + `/guest_activations/${activation.id}`,{ "cmd" : patchcommand} )
+
+}
+
 /**
  *  Get Booking Types
  */
@@ -207,5 +216,6 @@ export default {
     getBookingTypes,
     checkGeoAuth,
     getRecaptchaScore,
-    getCaptcha
+    getCaptcha,
+    deactivateGuest
 }

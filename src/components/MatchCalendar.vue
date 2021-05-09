@@ -1,132 +1,137 @@
 <template>
-  <v-container v-bind:fluid="$vuetify.breakpoint.lgAndDown" class="py-0">
-    <v-row align="start" no-gutters="" justify="center">
-      <v-col cols="12">
-        <v-row
-          align="center"
-          justify="space-between"
-          no-gutters=""
-          class="py-1"
-        >
-          <v-col cols="auto">
-            <v-row align="center" no-gutters="">
-              <v-btn
-                color="primary"
-                small
-                outlined
-                @click="resetDate()"
-                class="mr-2"
-                >Today</v-btn
-              >
-
-              <v-btn icon @click="changeDay(-1)">
-                <v-icon> mdi-arrow-left-bold </v-icon>
-              </v-btn>
-              <span class="title mx-1">{{ this.getTimeString() }}</span>
-              <v-btn icon @click="changeDay(1)">
-                <v-icon> mdi-arrow-right-bold </v-icon></v-btn
-              >
-            </v-row>
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-col cols="12">
-        <div class="main-schedule-container" ref="scheduleContainer">
-          <div
-            class="court-grid-container"
-            v-bind:style="{
-              'grid-template-columns':
-                '40px repeat(' + this.displayableCourts.length + ',1fr)',
-            }"
+  <div>
+    <v-container v-bind:fluid="$vuetify.breakpoint.lgAndDown" class="py-0">
+      <v-row align="start" no-gutters="" justify="center">
+        <v-col cols="12">
+          <v-row
+            align="center"
+            justify="space-between"
+            no-gutters=""
+            class="py-1"
           >
-            <div
-              class="pa-1 court-grid-item"
-              v-for="(court, index) in displayableCourts"
-              :key="court.id"
-              v-bind:style="{ 'grid-column': index + 2, 'grid-row': 1 }"
-            >
-              <v-btn
-                v-if="index == 0"
-                :disabled="firstCourt == 0"
-                small=""
-                @click="changeDisplayedCourts(-1)"
-                style="grid-row: 1; grid-column: 1 / span 1"
-                ><v-icon> mdi-arrow-left </v-icon>
-              </v-btn>
-              <span
-                class="headline"
-                style="grid-row: 1; grid-column: 2 / span 1"
-                >{{ court.name }}</span
-              >
-              <v-btn
-                v-if="index == displayableCourts.length - 1"
-                :disabled="firstCourt + index == courts.length - 1"
-                small=""
-                @click="changeDisplayedCourts(1)"
-                style="grid-row: 1; grid-column: 3 / span 1"
-                ><v-icon> mdi-arrow-right </v-icon>
-              </v-btn>
-            </div>
-          </div>
+            <v-col cols="auto">
+              <v-row align="center" no-gutters="">
+                <v-btn
+                  color="primary"
+                  small
+                  outlined
+                  @click="resetDate()"
+                  class="mr-2"
+                  >Today</v-btn
+                >
 
-          <div class="time-grid-container" ref="tcontainer">
+                <v-btn icon @click="changeDay(-1)">
+                  <v-icon> mdi-arrow-left-bold </v-icon>
+                </v-btn>
+                <span class="title mx-1">{{ this.getTimeString() }}</span>
+                <v-btn icon @click="changeDay(1)">
+                  <v-icon> mdi-arrow-right-bold </v-icon></v-btn
+                >
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12">
+          <div class="main-schedule-container" ref="scheduleContainer">
             <div
-              v-for="n in totalCellCount * 4"
-              :key="n"
-              :class="(n - 1) % 4 == 0 ? 'hourly-cell' : 'cell'"
-              v-bind:style="{ height: cellHeight1H / 4 + 'px' }"
-            >
-              <span v-if="(n - 1) % 4 == 0">{{
-                getCellLabel(parseInt((n - 1) / 4))
-              }}</span>
-            </div>
-
-            <div
-              class="session-grid-container"
+              class="court-grid-container"
               v-bind:style="{
                 'grid-template-columns':
                   '40px repeat(' + this.displayableCourts.length + ',1fr)',
               }"
             >
               <div
+                class="pa-1 court-grid-item"
                 v-for="(court, index) in displayableCourts"
                 :key="court.id"
-                class="court-sessions-container"
-                v-bind:style="{
-                  'grid-column': index + 2,
-                  'grid-row': 1,
-                  height: totalCellCount * cellHeight1H + 'px',
-                }"
+                v-bind:style="{ 'grid-column': index + 2, 'grid-row': 1 }"
               >
-                <transition-group name="fade" mode="out-in">
-                  <session
-                    v-for="match in getMachesForCourt(court.id)"
-                    :key="match.id"
-                    :session="match"
-                  >
-                  </session>
-                </transition-group>
+                <v-btn
+                  v-if="index == 0"
+                  :disabled="firstCourt == 0"
+                  small=""
+                  @click="changeDisplayedCourts(-1)"
+                  style="grid-row: 1; grid-column: 1 / span 1"
+                  ><v-icon> mdi-arrow-left </v-icon>
+                </v-btn>
+                <span
+                  class="headline"
+                  style="grid-row: 1; grid-column: 2 / span 1"
+                  >{{ court.name }}</span
+                >
+                <v-btn
+                  v-if="index == displayableCourts.length - 1"
+                  :disabled="firstCourt + index == courts.length - 1"
+                  small=""
+                  @click="changeDisplayedCourts(1)"
+                  style="grid-row: 1; grid-column: 3 / span 1"
+                  ><v-icon> mdi-arrow-right </v-icon>
+                </v-btn>
               </div>
             </div>
-            <timeindicator
-              :currtime="currtime"
-              v-if="timeIndicatorVisible"
-            ></timeindicator>
+
+            <div class="time-grid-container" ref="tcontainer">
+              <div
+                v-for="n in totalCellCount * 4"
+                :key="n"
+                :class="(n - 1) % 4 == 0 ? 'hourly-cell' : 'cell'"
+                v-bind:style="{ height: cellHeight1H / 4 + 'px' }"
+              >
+                <span v-if="(n - 1) % 4 == 0">{{
+                  getCellLabel(parseInt((n - 1) / 4))
+                }}</span>
+              </div>
+
+              <div
+                class="session-grid-container"
+                v-bind:style="{
+                  'grid-template-columns':
+                    '40px repeat(' + this.displayableCourts.length + ',1fr)',
+                }"
+              >
+                <div
+                  v-for="(court, index) in displayableCourts"
+                  :key="court.id"
+                  class="court-sessions-container"
+                  v-bind:style="{
+                    'grid-column': index + 2,
+                    'grid-row': 1,
+                    height: totalCellCount * cellHeight1H + 'px',
+                  }"
+                >
+                  <transition-group name="fade" mode="out-in">
+                    <session
+                      v-for="match in getMachesForCourt(court.id)"
+                      :key="match.id"
+                      :session="match"
+                    >
+                    </session>
+                  </transition-group>
+                </div>
+              </div>
+              <timeindicator
+                :currtime="currtime"
+                v-if="timeIndicatorVisible"
+              ></timeindicator>
+            </div>
           </div>
-        </div>
-        <v-btn
-          fixed=""
-          fab
-          bottom
-          right
-          color="primary"
-          :to="{ name: 'MatchBooking' }"
-        >
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
+          <v-btn
+            fixed=""
+            fab
+            bottom
+            right
+            color="primary"
+            :to="{ name: 'MatchBooking' }"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-overlay :value="loading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+  </div>
 </template>
 
 <script>
@@ -208,6 +213,7 @@ export default {
       timerHandle: null,
       showTimeIndicator: true,
       bookings: [],
+      loading: false
     };
   },
   methods: {
@@ -317,6 +323,7 @@ export default {
       });
     },
     loadBookings(date) {
+      this.loading = true;
       this.bookings.splice(0);
 
       dbservice
@@ -325,10 +332,12 @@ export default {
           this.bookings = res.data;
         })
         .catch((err) => {
-          const error =  processAxiosError(err);
-          this.$emit("show:message", "Error: "+error, "error");
+          const error = processAxiosError(err);
+          this.$emit("show:message", "Error: " + error, "error");
         })
-        .finally(() => {});
+        .finally(() => {
+          this.loading = false;
+        });
     },
   },
   computed: {

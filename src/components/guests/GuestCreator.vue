@@ -1,108 +1,121 @@
 <template>
-  <v-container fluid>
-    <div class="text-caption py-2">
-      Please use this form to register a guest visitor. Only
-      <span class="font-weight-bold info--text">single</span> registration is
-      required. Once in the system, a guest can be activated for a particular
-      day through the <span class="font-weight-bold">"ACTIVATE"</span> tab.
-    </div>
-    <v-form ref="form" v-model="valid" lazy-validation>
-      <v-row no-gutters class="pt-4">
-        <v-col cols="12" class="subtitle-2">Guest information</v-col>
-      </v-row>
-      <v-divider></v-divider>
-      <v-row no-gutters>
-        <v-col cols="12" lg="8">
-          <v-text-field
-            v-model="guest.firstname"
-            label="First Name"
-            :error-messages="errors.firstname"
-            :rules="nameRules"
-            :disabled="!formenabled"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-      <v-row no-gutters>
-        <v-col cols="12" lg="8">
-          <v-text-field
-            v-model="guest.lastname"
-            label="Last Name"
-            :error-messages="errors.lastname"
-            :rules="nameRules"
-            :disabled="!formenabled"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-      <v-row no-gutters>
-        <v-col cols="12" lg="8">
-          <v-text-field
-            v-model="guest.email"
-            label="E-mail"
-            :error-messages="errors.email"
-            :rules="emailRules"
-            :disabled="!formenabled"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-      <v-row no-gutters>
-        <v-col cols="12" lg="8">
-          <v-text-field
-            v-model="guest.phone"
-            label="Phone"
-            :error-messages="errors.phone"
-            :rules="phoneRules"
-            :disabled="!formenabled"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-      <v-row dense v-if="!authenticated">
-        <v-col cols="12" md="8">
-          <knick-captcha
-            :imgdata="imgdata"
-            :error="errors.requestid"
-            v-on:reload:captcha="getCaptcha"
-          ></knick-captcha>
-        </v-col>
-        <v-col cols="12" md="8">
-          <v-text-field
-            v-model="captcha"
-            :rules="captchaRules"
-            label="Captcha Text"
-            :error-messages="errors.captcha"
-            :disabled="!formenabled"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-      <v-row no-gutters class="pt-4">
-        <v-col cols="12" class="subtitle-2">Terms and Conditions</v-col>
-      </v-row>
-      <v-divider></v-divider>
-      <v-row no-gutters>
-        <v-col cols="12">
-          <v-checkbox
-            v-model="agree"
-            :rules="checkBoxRules"
-            :disabled="!formenabled"
-          >
-            <template v-slot:label>
-              <div class="caption">
-                I have read, understood, and agree to all club rules pertaining
-                to guests visitors
-              </div>
-            </template>
-            >
-          </v-checkbox>
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="12" class="d-flex justify-space-between">
-          <v-btn color="warning" outlined @click="resetForm">Reset</v-btn>
-          <v-btn :disabled="!formenabled" @click="addGuest">Add Guest</v-btn>
-        </v-col>
-      </v-row>
-    </v-form>
-  </v-container>
+  <div>
+    <v-card-text>
+      <v-container fluid>
+        <v-row no-gutters>
+          <v-col cols="12">
+            <div class="text-caption py-2">
+              Please use this form to register a guest visitor. Only
+              <span class="font-weight-bold info--text">single</span>
+              registration is required. Once in the system, a guest can be
+              activated for a particular day through the
+              <span class="font-weight-bold">"ACTIVATE"</span> tab.
+            </div>
+            <v-form ref="form" v-model="valid" lazy-validation>
+              <v-row no-gutters class="pt-4">
+                <v-col cols="12" class="subtitle-2">Guest information</v-col>
+              </v-row>
+              <v-divider></v-divider>
+              <v-row no-gutters>
+                <v-col cols="12" lg="8">
+                  <v-text-field
+                    v-model="guest.firstname"
+                    label="First Name"
+                    :error-messages="errors.firstname"
+                    :rules="nameRules"
+                    :disabled="!formenabled"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col cols="12" lg="8">
+                  <v-text-field
+                    v-model="guest.lastname"
+                    label="Last Name"
+                    :error-messages="errors.lastname"
+                    :rules="nameRules"
+                    :disabled="!formenabled"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col cols="12" lg="8">
+                  <v-text-field
+                    v-model="guest.email"
+                    label="E-mail"
+                    :error-messages="errors.email"
+                    :rules="emailRules"
+                    :disabled="!formenabled"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col cols="12" lg="8">
+                  <v-text-field
+                    v-model="guest.phone"
+                    :error-messages="errors.phone"
+                    :rules="phoneRules"
+                    :disabled="!formenabled"
+                    clearable
+                  >
+                  <template v-slot:label>
+                    <div>
+                      Phone <small>(optional)</small>
+                    </div>
+                  </template>
+                  </v-text-field>
+                </v-col>
+              </v-row>
+              <v-row dense v-if="!authenticated">
+                <v-col cols="12" md="8">
+                  <knick-captcha
+                    :imgdata="imgdata"
+                    :error="errors.requestid"
+                    v-on:reload:captcha="getCaptcha"
+                  ></knick-captcha>
+                </v-col>
+                <v-col cols="12" md="8">
+                  <v-text-field
+                    v-model="captcha"
+                    :rules="captchaRules"
+                    label="Captcha Text"
+                    :error-messages="errors.captcha"
+                    :disabled="!formenabled"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row no-gutters class="pt-4">
+                <v-col cols="12" class="subtitle-2">Terms and Conditions</v-col>
+              </v-row>
+              <v-divider></v-divider>
+              <v-row no-gutters>
+                <v-col cols="12">
+                  <v-checkbox
+                    v-model="agree"
+                    :rules="checkBoxRules"
+                    :disabled="!formenabled"
+                  >
+                    <template v-slot:label>
+                      <div class="caption">
+                        I have read, understood, and agree to all club rules
+                        pertaining to guests visitors
+                      </div>
+                    </template>
+                    >
+                  </v-checkbox>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
+    <v-card-actions>
+      <v-btn outlined @click="resetForm">Reset</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn :disabled="!formenabled" :loading="loading" @click="addGuest">Add Guest</v-btn>
+    </v-card-actions>
+  </div>
 </template>
 
 <script>
@@ -154,9 +167,8 @@ export default {
           "E-mail must be valid",
       ],
       phoneRules: [
-        (v) => !!v || "Phone is required",
-        (v) => (v && v.length >= 10) || "Phone must be at least 10 characters",
-        (v) => (v && v.length <= 24) || "Content must be at most 24 characters",
+        (v) => (!v || (typeof v === 'string' && v.length >= 10)) || "Phone must be at least 10 characters",
+        (v) => (!v || (typeof v === 'string' && v.length <= 24)) || "Content must be at most 24 characters",
       ],
       checkBoxRules: [(v) => !!v || "Agreement required"],
     };
@@ -211,21 +223,21 @@ export default {
       });
     },
     handleFieldErrors(errors) {
+      
       //Loop through each error and add it to array of error for specific field
       if (Array.isArray(errors)) {
         errors.forEach((element) => {
-          if (
-            Object.prototype.hasOwnProperty.call(this.errors, element.param)
-          ) {
+
+          console.log("Checking",element)
+          if ( Object.prototype.hasOwnProperty.call(this.errors, element.param)) {
             this.errors[element.param] = element.msg;
           }
         });
       }
     },
     addGuest: function () {
-
       this.clearErrors();
-      
+
       if (!this.$refs.form.validate()) {
         return;
       }
@@ -247,13 +259,11 @@ export default {
         .catch((err) => {
           const error = processAxiosError(err);
 
-          if( error.fielderrors ){
+          if (error.fielderrors) {
             this.handleFieldErrors(error.fielderrors);
+          } else {
+            this.$emit("show:message", "Error: " + error, "error");
           }
-          else{
-            this.$emit("show:message", "Error: "+error, "error");
-          }
-
         })
         .finally(() => {
           this.setLoading(false);

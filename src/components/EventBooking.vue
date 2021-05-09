@@ -1,6 +1,6 @@
 <template>
-  <v-container fluid class="fill-height">
-    <v-row justify="center" align="start" class="fill-height" no-gutters>
+  <v-container fluid>
+    <v-row justify="center" align="start" no-gutters class="fill-height">
       <v-col cols="12" sm="8" md="6" lg="4" xl="3">
         <v-card>
           <v-img
@@ -10,7 +10,7 @@
             :lazy-src="require('@/assets/specialevent_small.jpg')"
             gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)"
           >
-            <v-container class="fill-height pa=0" fluid>
+            <v-container class="fill-height" fluid>
               <v-row no-gutters class="fill-height">
                 <v-col cols="12" align-self="end">
                   <span class="text-h5">Special Booking</span>
@@ -154,7 +154,7 @@
           <v-card-actions>
             <v-btn outlined @click="$refs.eventbookingform.reset()">Reset</v-btn>
             <v-spacer></v-spacer>
-            <v-btn @click="submitBooking" :disabled="loading">Book</v-btn>
+            <v-btn @click="submitBooking" :loading="loading">Book</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
