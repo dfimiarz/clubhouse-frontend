@@ -227,8 +227,7 @@ export default {
       //Loop through each error and add it to array of error for specific field
       if (Array.isArray(errors)) {
         errors.forEach((element) => {
-
-          console.log("Checking",element)
+          
           if ( Object.prototype.hasOwnProperty.call(this.errors, element.param)) {
             this.errors[element.param] = element.msg;
           }
