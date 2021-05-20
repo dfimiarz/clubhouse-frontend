@@ -111,10 +111,11 @@
                             item-value="id"
                             item-text="name"
                             required
-                            :rules="[rules.required]"
+                            :rules="[rules.courtset]"
                             v-model="court"
                             :disabled="duration == 0"
                             prepend-icon="mdi-tennis"
+                            return-object
                           ></v-select>
                         </v-col>
                       </v-row>
@@ -223,59 +224,97 @@
               <v-container fluid>
                 <v-row>
                   <v-col cols="12" v-if="error">
-                    <v-alert type="error" elevation="2">{{ error }}</v-alert>
+                    <v-alert type="error">{{ error }}</v-alert>
                   </v-col>
+                </v-row>
+                <v-row dense class="pb-5">
                   <v-col cols="12">
-                    <div class="text-h5">Booking Summary</div>
+                    <div class="text-h6 text-md-h4">Booking Summary</div>
                   </v-col>
-                  <v-col cols="12">
-                    <v-row dense>
-                      <v-col cols="12" class="my-2">
-                        <div class="text-body-2">Players:</div>
-                      </v-col>
-                      <v-col
-                        cols="12"
-                        md="6"
-                        v-for="(player, index) in playerDetails"
-                        :key="index"
-                      >
-                        <div class="text-h6">
-                          {{ player.firstname }} {{ player.lastname }}
-                        </div>
-                        <div class="text-caption">
-                          {{ player.repeater_lbl }}
-                        </div>
-                      </v-col>
-                    </v-row>
+                </v-row>
+                <v-row dense>
+                  <v-col cols="12" md="6">
+                    <div class="text-caption">Booking type:</div>
+                    <div class="text-h6">{{ bookingType }}</div>
+                    <div class="text-caption red--text" v-if="errors.date" v-text="errors.type"></div>
                   </v-col>
-                  <v-col cols="12">
+                  <v-col cols="12" md="6">
+                    <div class="text-caption">Court:</div>
+                    <div class="text-h6">{{ court.name }}</div>
+                    <div class="text-caption red--text" v-if="errors.date" v-text="errors.court"></div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" >
                     <v-divider></v-divider>
                   </v-col>
-                  <v-col cols="12">
-                    <div class="text-body-1">{{ date }}</div>
-                    <div class="text-caption">Date</div>
+                </v-row>
+                <v-row dense>
+                  <v-col cols="12" md="6" >
+                    
+                    <div class="text-caption">Date:</div>
+                    <div class="text-h6">{{ date }}</div>
+                    <div class="text-caption red--text" v-if="errors.date" v-text="errors.date"></div>
                   </v-col>
-                  <v-col cols="12">
-                    <div class="text-body-1">
-                      {{ s_time }} - {{ e_time }} ({{ duration }} min)
+                  <v-col cols="12" md="6">
+                    
+                    <div class="text-caption">Time:</div>
+                    <div class="text-h6">
+                      {{ s_time }} - {{ e_time }}
                     </div>
-                    <div class="text-caption">Time</div>
+                    <div class="text-caption red--text" v-if="!!this.errors.start || !!this.errors.end"> Start or End Time Error</div>
                   </v-col>
-                  <v-col cols="12">
+                  <v-col cols="12" md="6">
+                    
+                    <div class="text-caption">Duration:</div>
+                    <div class="text-h6">
+                      {{ duration }} minutes
+                    </div>
+                    
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" >
                     <v-divider></v-divider>
                   </v-col>
+                </v-row>
+                <v-row dense>
+                  <v-col cols="12" class="my-2">
+                    <div class="text-subtitle">Players:</div>
+                    <div class="text-caption red--text" v-if="errors.players" v-text="errors.players"></div>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    md="6"
+                    v-for="(player, index) in playerDetails"
+                    :key="index"
+                  >
+                    <div class="text-h6">
+                      {{ player.firstname }} {{ player.lastname }}
+                    </div>
+                    <div class="text-caption">
+                      {{ player.repeater_lbl }}
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" >
+                    <v-divider></v-divider>
+                  </v-col>
+                </v-row>
+                <v-row dense>
+                 
                   <v-col cols="12">
-                    <div class="text-body-1">{{ bumpable ? "Yes" : "No" }}</div>
                     <div class="text-caption">Bumpable</div>
+                    <div class="text-h6">{{ bumpable ? "Yes" : "No" }}</div>
+                    <div class="text-caption" v-if="errors.bumpable"> {{ errors.bumpable }}</div>
                   </v-col>
+                 
                   <v-col cols="12">
-                    <v-divider></v-divider>
-                  </v-col>
-                  <v-col>
-                    <div class="text-body-1">
-                      {{ note ? note : "No notes" }}
-                    </div>
                     <div class="text-caption">Notes</div>
+                    <div class="text-body-1">
+                      {{ !!(note) ? note : "N/A" }}
+                    </div>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -292,7 +331,7 @@
                     :loading="loading"
                     :disabled="loading"
                     color="primary"
-                    large
+                    x-large
                     @click="submitMatch()"
                     >Book</v-btn
                   >
@@ -312,6 +351,8 @@ import apihandler from "./../services/db";
 import utils from "./../services/utils";
 import moment from "moment-timezone";
 import DurationPicker from './booking/DurationPicker.vue';
+import processAxiosError from "./../utils/AxiosErrorHandler";
+
 
 const MATCH_TYPE_ID = 1000;
 
@@ -322,7 +363,7 @@ export default {
   name: "MatchBooking",
   data: function () {
     return {
-      court: null,
+      court: { id: null, name: null},
       selplayers: [
         { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
         { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
@@ -338,7 +379,7 @@ export default {
       date: null,
       s_time: null,
       sel_duration: 0,
-      note: "",
+      note: null,
       bumpable: false,
       rules: {
         required: (value) => !!value || "Required.",
@@ -353,12 +394,23 @@ export default {
         explainRuleChange: (value) => {
           return this.duration > this.prefDuration ||
             (this.reqBumpable == 1 && this.bumpable == 0)
-            ? (!!value || "Explain rules overwrite")
+            ? (!!( typeof value === 'string' ? value.trim() : value )|| "Explain rules overwrite")
             : true;
         },
+        courtset: (v) => {
+          return (!!v.id && !!v.name) || "Select a court" 
+        }
       },
       loading: false,
       error: null,
+      errors: {
+        note: null,
+        date: null,
+        start: null,
+        end: null,
+        type: null,
+        players: null
+      }
     };
   },
   filters: {
@@ -482,10 +534,8 @@ export default {
         { players: [], errors: [] }
       );
 
-      //console.log(playerCheck)
-
       if (playerCheck.players.length == 0) {
-        //this.playerErrors = "Please select a player";
+
         this.selplayers[0]['playerErrs'].push("Select a player")
         this.$emit("show:message","Please select a player","errors")
         return;
@@ -521,44 +571,32 @@ export default {
       this.loading = true;
       this.error = null;
 
-      let that = this;
-
       apihandler
         .newMatch(match)
-        .then(function () {
-          //console.log(response)
-          that.loading = false;
-          that.$router.push({ name: "calendar" });
+        .then(() => {
+          this.$router.push({ name: "calendar" });
         })
-        .catch(function (error) {
-          // TODO: handle send errors better
+        .catch((err) => {
+          const error = processAxiosError(err);
 
-          if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            that.error = error.response.data;
-            //console.log(error.response.status);
-            //console.log(error.response.headers);
-          } else if (error.request) {
-            // The request was made but no response was received
-            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
-            //console.log(error.request);
+          if (error.fielderrors) {
+            this.error = "Incorrect data format."
           } else {
-            // Something happened in setting up the request that triggered an Error
-            //console.log('Error', error.message);
+            this.error = error;
           }
-          //console.log(error.config);
+
+          this.$vuetify.goTo(0,{durraion: 300, offset: 0, easing: 'easeInOutCubic'});
+
         })
         .finally(() => {
-          that.loading = false;
+          this.loading = false;
         });
     },
     submitMatch: function () {
       if (!this.validate()) return false;
 
       const booking = {
-        court: this.court,
+        court: this.court.id,
         bumpable: this.bumpable == true ? 1 : 0,
         date: this.date,
         start: this.s_time,
@@ -567,10 +605,23 @@ export default {
         players: this.playerInfo,
         type: MATCH_TYPE_ID,
       };
-
-      //console.log("Will send ", match)
+      
       this.sendData(booking);
     },
+    handleFieldErrors(errors) {
+      
+      //Loop through each error and add it to array of error for specific field
+      if (Array.isArray(errors)) {
+
+        errors.forEach((element) => {
+          
+          if ( Object.prototype.hasOwnProperty.call(this.errors, element.param)) {
+            this.errors[element.param] = element.msg;
+          }
+        });
+
+      }
+    }
   },
   watch: {
     reqBumpable: function (newval) {
@@ -665,6 +716,12 @@ export default {
 
         return accumulator;
       }, []);
+    },
+    bookingType: function(){
+      const p_num = this.playerInfo.length;
+
+      return p_num > 2 ? "Doubles" : p_num > 1 ? "Singles" : "Individual";
+
     },
     playerInfo: function () {
       return this.selplayers.reduce((accumulator, player) => {

@@ -101,7 +101,7 @@
                 >
                   <transition-group name="fade" mode="out-in">
                     <session
-                      v-for="match in getMachesForCourt(court.id)"
+                      v-for="match in getBookingsForCourt(court.id)"
                       :key="match.id"
                       :session="match"
                     >
@@ -317,7 +317,7 @@ export default {
 
       this.firstCourt = nextFirstCourt;
     },
-    getMachesForCourt(courtid) {
+    getBookingsForCourt(courtid) {
       return this.bookings.filter((booking) => {
         return booking.court == courtid;
       });

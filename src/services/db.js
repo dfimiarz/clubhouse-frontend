@@ -29,7 +29,6 @@ instance.interceptors.request.use(async config => {
 
 function getBookings(date){
 
-    //Build a rest URL and add recaptcha token
     let url = new URL(process.env.VUE_APP_BACKEND + '/bookings');
 
     url.searchParams.set('date', date);

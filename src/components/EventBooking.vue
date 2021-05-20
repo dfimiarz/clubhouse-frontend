@@ -264,7 +264,7 @@ export default {
         end: this.e_time,
         note: this.note,
         players: [{ id: this.organizer, type: HOST_TYPE_ID }],
-        bookingtype: this.bookingtype
+        type: this.bookingtype
       };
 
       //console.log("Will send ", match)
