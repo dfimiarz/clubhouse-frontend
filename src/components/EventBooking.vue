@@ -136,7 +136,7 @@
                       class="mt-3"
                       :allowed-minutes="allowedminutes"
                       :min="opentime"
-                      :max="maxstarttime"
+                      :max="closetime"
                     >
                       <v-spacer></v-spacer>
                       <v-btn text @click="etimedialog = false">Cancel</v-btn>
@@ -342,7 +342,7 @@ export default {
     },
     maxstarttime: function () {
       return utils.minToTime(utils.timeToMinutes(this.closetime) - 5);
-    },
+    }
   },
   created: function () {
     this.date = moment().tz(this.clubtz).format("Y-MM-DD");

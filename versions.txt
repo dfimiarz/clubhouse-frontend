@@ -4,4 +4,4 @@ Version 0.2.0
 - Added overlay to MatchCalendar to indicate loading state. Important for slower connections.
 - Removed some unused options form the hamburger menu.
 - Added loading check on buttons to prevent double clicking.
-- Removed Knickbocker Field Club time from the home page.
+- Removed Knickbocker Field Club title from the home page.
