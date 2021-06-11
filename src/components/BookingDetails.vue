@@ -243,7 +243,7 @@
 
             <div class="flex-grow-1"></div>
 
-            <v-btn color="warning" text @click="removeSession"
+            <v-btn color="warning" text @click="removeSession" :loading="loading"
               >Yes, REMOVE</v-btn
             >
           </v-card-actions>
@@ -260,7 +260,7 @@
 
             <div class="flex-grow-1"></div>
 
-            <v-btn color="warning" text @click="endSession">End now</v-btn>
+            <v-btn color="warning" text @click="endSession" :loading="loading">End now</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -270,8 +270,17 @@
 
 <script>
 import apihandler from "./../services/db";
-import moment from "moment-timezone";
+//import moment from "moment-timezone";
 import valueeditor from "./session/ValueEditor";
+
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone"
+import advancedFormat from "dayjs/plugin/advancedFormat"
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(advancedFormat);
 
 export default {
   components: {
@@ -386,11 +395,11 @@ export default {
   filters: {
     formatTime: function (timestring) {
       if (!timestring) return "N/A";
-      return moment(timestring).format("h:mm a");
+      return dayjs(timestring).format("h:mm a");
     },
     formatDate: function (timestring) {
       if (!timestring) return "N/A";
-      return moment(timestring).format("MMM Do, Y");
+      return dayjs(timestring).format("MMM Do, YYYY");
     },
   },
   computed: {
@@ -398,12 +407,12 @@ export default {
       return this.$store.state.clubtz;
     },
     starttime: function () {
-      return moment(this.sessioninfo.date.concat("T", this.sessioninfo.start))
+      return dayjs(this.sessioninfo.date.concat("T", this.sessioninfo.start))
         .tz(this.clubtz)
         .format();
     },
     endtime: function () {
-      return moment(this.sessioninfo.date.concat("T", this.sessioninfo.end))
+      return dayjs(this.sessioninfo.date.concat("T", this.sessioninfo.end))
         .tz(this.clubtz)
         .format();
     },

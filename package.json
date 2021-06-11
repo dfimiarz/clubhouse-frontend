@@ -13,9 +13,10 @@
     "@mdi/font": "^5.9.55",
     "axios": "^0.21.1",
     "core-js": "^3.9.1",
+    "date-time-format-timezone": "^1.0.22",
+    "dayjs": "^1.10.5",
     "firebase": "^8.5.0",
-    "moment": "^2.29.1",
-    "moment-timezone": "^0.5.33",
+    "pusher-js": "^7.0.3",
     "vue": "^2.6.12",
     "vue-router": "^3.5.1",
     "vuetify": "^2.5.0",
@@ -38,7 +39,8 @@
     "vue-cli-plugin-vuetify": "^2.3.1",
     "vue-jest": "^3.0.7",
     "vue-template-compiler": "^2.6.11",
-    "vuetify-loader": "^1.7.0"
+    "vuetify-loader": "^1.7.0",
+    "webpack-bundle-analyzer": "^3.9.0"
   },
   "browserslist": [
     "> 1%",

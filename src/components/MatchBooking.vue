@@ -349,9 +349,18 @@
 
 import apihandler from "./../services/db";
 import utils from "./../services/utils";
-import moment from "moment-timezone";
+//import moment from "moment-timezone";
 import DurationPicker from './booking/DurationPicker.vue';
 import processAxiosError from "./../utils/AxiosErrorHandler";
+
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone"
+import advancedFormat from "dayjs/plugin/advancedFormat"
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(advancedFormat);
 
 
 const MATCH_TYPE_ID = 1000;
@@ -416,11 +425,11 @@ export default {
   filters: {
     formatTime: function (timestring) {
       if (!timestring) return "N/A";
-      return moment(timestring).format("h:mm a");
+      return dayjs(timestring).format("h:mm a");
     },
     formatDate: function (timestring) {
       if (!timestring) return "N/A";
-      return moment(timestring).format("MMM Do, Y");
+      return dayjs(timestring).format("MMM Do, YYYY");
     },
   },
   methods: {
@@ -446,9 +455,9 @@ export default {
       this.step = newstep;
     },
     setMatchParams(){
-      this.date = moment().tz(this.clubtz).format("Y-MM-DD");
+      this.date = dayjs().tz(this.clubtz).format("YYYY-MM-DD");
 
-      var time = moment().tz(this.clubtz).format("HH:mm");
+      var time = dayjs().tz(this.clubtz).format("HH:mm");
       var current_minutes = utils.timeToMinutes(time);
 
       var minutes = current_minutes % 60;
@@ -760,7 +769,7 @@ export default {
     }
   },
   created: function () {
-    //this.date = moment().tz(this.clubtz).format("Y-MM-DD");
+    //this.date = dayjs().tz(this.clubtz).format("Y-MM-DD");
   },
   mounted: function () {},
   beforeDestroy() {},

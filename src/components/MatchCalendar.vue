@@ -137,9 +137,22 @@
 <script>
 import Session from "./Session";
 import TimeIndicator from "./TimeIndicator";
-import moment from "moment-timezone";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone"
+import advancedFormat from "dayjs/plugin/advancedFormat"
 import dbservice from "../services/db";
 import processAxiosError from "../utils/AxiosErrorHandler";
+import Pusher from 'pusher-js'
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(advancedFormat);
+
+
+var pusher = null;
+var channel = null;
+const channelname = "bookings"
 
 export default {
   components: {
@@ -214,6 +227,7 @@ export default {
       showTimeIndicator: true,
       bookings: [],
       loading: false
+      
     };
   },
   methods: {
@@ -255,8 +269,8 @@ export default {
       //Get current minutes
 
       var curr_min =
-        moment(this.currtime).tz(this.clubtz).hour() * 60 +
-        moment(this.currtime).tz(this.clubtz).minute();
+        dayjs(this.currtime).tz(this.clubtz).hour() * 60 +
+        dayjs(this.currtime).tz(this.clubtz).minute();
 
       //Adjust current minuate for start and end
       var adj_curr_min =
@@ -290,16 +304,17 @@ export default {
     },
     getTimeString() {
       return this.date != null
-        ? moment(this.date).tz(this.clubtz).format("ddd, MMM Do")
+        ? dayjs(this.date).tz(this.clubtz).format("ddd, MMM Do")
         : "N/A";
     },
     changeDay(day_diff) {
-      this.date = moment(this.date).add(day_diff, "day").format();
-      //console.log("New date", this.date)
+
+      this.date = dayjs(this.date).tz(this.clubtz).add(day_diff, "day").format();
+      this.loadBookings(this.date);
     },
     resetDate() {
-      //this.date = moment().tz(this.clubtz).startOf('day')
-      this.date = moment().startOf("day").format();
+      this.date = dayjs().tz(this.clubtz).startOf('day').format();
+      this.loadBookings(this.date);
     },
     changeDisplayedCourts: function (step) {
       //Compute next first court to display
@@ -323,22 +338,66 @@ export default {
       });
     },
     loadBookings(date) {
+      //console.log("Loading only: ",date)
+
       this.loading = true;
       this.bookings.splice(0);
 
-      dbservice
-        .getBookings(date)
-        .then((res) => {
-          this.bookings = res.data;
-        })
-        .catch((err) => {
-          const error = processAxiosError(err);
-          this.$emit("show:message", "Error: " + error, "error");
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      this.loadAsync(date).then((data) => {
+        this.bookings = data;
+      })
+      .catch((err) => {
+        const error = processAxiosError(err);
+        this.$emit("show:message", "Error: " + error, "error");
+      })
+      .finally(() => {
+        this.loading = false;
+      });
     },
+    subscribe(){
+      
+      pusher = new Pusher(process.env.VUE_APP_PUSHER_KEY, { cluster: process.env.VUE_APP_PUSHER_CLUSTER }) 
+      channel = pusher.subscribe(channelname)
+
+
+      channel.bind('booking_change', (data) => {
+      
+        //console.log("Got data")
+
+        const dateChanged = data.date;
+        const selectedDate = dayjs(this.date).tz(this.clubtz).format("YYYY-MM-DD");
+
+        if( dateChanged === selectedDate && !this.loading){
+          
+          this.loadBookings(dayjs(this.date).tz(this.clubtz).format("YYYY-MM-DD"));
+          
+        }
+        
+      })
+    },
+    loadAndSub(){
+
+      
+
+      this.loading = true;
+      this.bookings.splice(0);
+
+      this.loadAsync(this.date).then((data) => {
+        //console.log("Got results");
+        this.bookings = data;
+        this.subscribe();
+      }).catch((err) => {
+        const error = processAxiosError(err);
+        this.$emit("show:message", "Error: " + error, "error");
+      }).finally(() => {
+        this.loading = false;
+      });
+    },
+    async loadAsync(date){
+      const res = await dbservice.getBookings(date)
+      return res.data
+
+    }
   },
   computed: {
     clubtz: function () {
@@ -398,10 +457,10 @@ export default {
     },
     timeIndicatorVisible: function () {
       //Get current time in ms
-      var now_ms = moment(this.currtime).tz(this.clubtz).valueOf();
+      var now_ms = dayjs(this.currtime).tz(this.clubtz).valueOf();
 
       //Get date start in ms
-      var date_start_ms = moment(this.date).tz(this.clubtz).valueOf();
+      var date_start_ms = dayjs(this.date).tz(this.clubtz).valueOf();
 
       //Get date end in ms
       var date_end_ms = date_start_ms + 86400000;
@@ -415,19 +474,33 @@ export default {
     },
   },
   created: function () {
-    this.resetDate();
-    this.currtime = moment().format();
+    
+    this.currtime = dayjs().tz(this.clubtz).format()
+    this.date = dayjs().tz(this.clubtz).startOf('day').format();
+    this.loadAndSub()
   },
   mounted: function () {
-    this.scrollCalendar();
+    
 
-    this.timerHandle = setInterval(() => {
-      this.currtime = moment().format();
-    }, 30000);
   },
   destroyed: function () {
+
+    if( channel ){
+      channel.unbind();
+      channel = null;
+    }
+
+    if( pusher ){
+      pusher.disconnect();
+      pusher = null;
+    }
+
     this.bookings.splice(0);
-    clearInterval(this.timerHandle);
+
+    //clear the time if still active
+    if ( this.timerHandle ) {
+      clearInterval(this.timerHandle);
+    } 
   },
   watch: {
     maxCourtCount: function (val) {
@@ -438,7 +511,46 @@ export default {
       this.firstCourt = newFirstCourt;
     },
     date: function (val) {
-      this.loadBookings(moment(val).tz(this.clubtz).format("YYYY-MM-DD"));
+
+      //console.log("Date: ",val)
+
+      //Webworker https://www.youtube.com/watch?v=nwQN55oPAfc
+
+      const curr_date = dayjs().tz(this.clubtz).startOf('day').valueOf();
+      const new_cal_date = dayjs(val).tz(this.clubtz).startOf('day').valueOf();
+
+      if( curr_date == new_cal_date ){
+
+        //console.log("Starting timer...")
+
+        this.timerHandle = setInterval(() => {
+          
+          this.currtime = dayjs().tz(this.clubtz).format();
+
+          //Check if date has changed while running timer
+          const curr_date = dayjs().tz(this.clubtz).startOf('day').valueOf();
+          const curr_cal_date = dayjs(this.date).tz(this.clubtz).startOf('day').valueOf();
+
+          
+
+          //Reset date and timer when calendar date is not the same a current date
+          if( curr_date !== curr_cal_date){
+            clearInterval(this.timerHandle);
+            this.timerHandle = null;
+            this.resetDate();
+          }
+
+        }, 10000);
+
+      }
+      else{
+        if ( this.timerHandle ) {
+          //console.log("Stopping timer...")
+          clearInterval(this.timerHandle);
+          this.timerHandle = null;
+        } 
+      }
+
       if (this.timeIndicatorVisible) {
         this.scrollCalendar();
       }

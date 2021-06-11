@@ -165,8 +165,17 @@
 <script>
 import apihandler from "./../services/db";
 import utils from "./../services/utils";
-import moment from "moment-timezone";
+//import moment from "moment-timezone";
 import processAxiosError from "../utils/AxiosErrorHandler";
+
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone"
+import advancedFormat from "dayjs/plugin/advancedFormat"
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(advancedFormat);
 
 const HOST_TYPE_ID = 4000;
 
@@ -345,7 +354,7 @@ export default {
     }
   },
   created: function () {
-    this.date = moment().tz(this.clubtz).format("Y-MM-DD");
+    this.date = dayjs().tz(this.clubtz).format("YYYY-MM-DD");
 
     this.loadData();
   },

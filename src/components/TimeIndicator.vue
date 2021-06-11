@@ -5,7 +5,16 @@
 
 <script>
 
-import moment from 'moment-timezone'
+//import moment from 'moment-timezone'
+
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone"
+import advancedFormat from "dayjs/plugin/advancedFormat"
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(advancedFormat);
 
 export default {
   props: {
@@ -45,7 +54,7 @@ export default {
     },    
     currmin: function(){
       
-      return moment(this.currtime).tz(this.clubtz).hour() * 60 + moment(this.currtime).tz(this.clubtz).minute()
+      return dayjs(this.currtime).tz(this.clubtz).hour() * 60 + dayjs(this.currtime).tz(this.clubtz).minute()
       
     },
     startMin: function(){

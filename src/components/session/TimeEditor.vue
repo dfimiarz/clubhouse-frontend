@@ -102,9 +102,18 @@
 
 <script>
 
-import moment from 'moment-timezone'
+//import moment from 'moment-timezone'
 import apihandler from './../../services/db'
 import { editor } from './EditorMixin'
+
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone"
+import advancedFormat from "dayjs/plugin/advancedFormat"
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(advancedFormat);
 
 export default {
     props: ['session'],
@@ -180,8 +189,8 @@ export default {
       }
     },
     mounted: function(){
-      this.s_time = moment(this.session.date.concat('T',this.session.start)).tz(this.clubtz).format('HH:mm')
-      this.e_time = moment(this.session.date.concat('T',this.session.end)).tz(this.clubtz).format('HH:mm')
+      this.s_time = dayjs(this.session.date.concat('T',this.session.start)).tz(this.clubtz).format('HH:mm')
+      this.e_time = dayjs(this.session.date.concat('T',this.session.end)).tz(this.clubtz).format('HH:mm')
     }
     
 }

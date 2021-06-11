@@ -60,7 +60,16 @@
 <script>
 import dbservice from "./../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
-import moment from "moment-timezone";
+//import moment from "moment-timezone";
+
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone"
+import advancedFormat from "dayjs/plugin/advancedFormat"
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(advancedFormat);
 
 export default {
   props: ["loading"],
@@ -94,7 +103,7 @@ export default {
 
         this.guest_activations = res.data;
         this.loaded = true;
-        this.updated = moment(this.date).tz(this.clubtz).format("h:mm a");
+        this.updated = dayjs(this.date).tz(this.clubtz).format("h:mm a");
         this.$emit("show:message", 'Guest records updated', "success");
       })
       .catch((err) => {
@@ -146,7 +155,7 @@ export default {
         .then((res) => {
           this.guest_activations = res.data;
           this.loaded = true;
-          this.updated = moment(this.date).tz(this.clubtz).format("h:mm a");
+          this.updated = dayjs(this.date).tz(this.clubtz).format("h:mm a");
         })
         .catch((err) => {
           const error = processAxiosError(err);
