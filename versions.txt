@@ -1,3 +1,7 @@
+Version 0.2.1
+
+- Added support for pusher.
+
 Version 0.2.0
 
 - Added guest managment with ability to deactivate guests that have not yet played.
