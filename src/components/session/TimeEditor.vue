@@ -18,7 +18,7 @@
     <v-card-text>
       <v-row v-if="error" class="my-2" no-gutters>
         <v-col cols="12">
-          <v-alert type="error" dense outlined> {{ error }} </v-alert>
+          <v-alert type="error" outlined> {{ error }} </v-alert>
         </v-col>
       </v-row>
       <v-row class="my-2" no-gutters>
@@ -105,6 +105,7 @@
 //import moment from 'moment-timezone'
 import apihandler from './../../services/db'
 import { editor } from './EditorMixin'
+import processAxiosError from "../../utils/AxiosErrorHandler";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -147,20 +148,8 @@ export default {
         apihandler.changeTime(params).then(() => {
           this.$router.push({name: 'calendar'})
         })
-        .catch((error) => {
-
-          if (error.response) {
-            this.error = error.response.data 
-            //console.log(error.response.status)
-            
-          } else if (error.request) {
-            this.error = error.request
-            
-          } else {
-            this.error = error.message
-            
-          }
-          
+        .catch((e) => {
+          this.error = processAxiosError(e)         
         })
         .finally(()=>{
           this.loading = false

@@ -7,6 +7,7 @@
           class="fill-height"
           justify="center"
           align="center"
+          no-gutters
         >
           <v-progress-circular
             :size="70"
@@ -15,16 +16,12 @@
           ></v-progress-circular>
         </v-row>
 
-        <v-row
-          v-if="notfound"
-          class="fill-height"
-          justify="center"
-          align="center"
-        >
-          <span class="text-h4">Not Found</span>
+        <v-row v-if="error" justify="center" no-gutters>
+          <v-alert type="error" outlined>
+            {{ error }}
+          </v-alert>  
+          
         </v-row>
-
-        <div v-if="error" class="error">{{ error }}</div>
 
         <v-row v-if="sessioninfo" no-gutters justify="center" align="center">
           <v-col xs12>
@@ -272,6 +269,7 @@
 import apihandler from "./../services/db";
 //import moment from "moment-timezone";
 import valueeditor from "./session/ValueEditor";
+import processAxiosError from "../utils/AxiosErrorHandler";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -293,13 +291,13 @@ export default {
       loading: false,
       error: null,
       sessioninfo: null,
-      notfound: false,
       canceldialog: false,
       enddialog: false,
       showTimeEditor: false,
       showCourtEditor: false,
       showeditor: false,
       editortype: null,
+      bookingPermissions: new Set()
     };
   },
   methods: {
@@ -322,19 +320,14 @@ export default {
         .then(() => {
           this.$router.push({ name: "calendar" });
         })
-        .catch((error) => {
-          if (error.response) {
-            this.error = error.response.data;
-            //console.log(error.response.status)
-          } else if (error.request) {
-            this.error = error.request;
-            //console.log(error.request);
-          } else {
-            this.error = error.message;
-          }
+        .catch((e) => {
+
+          const err = processAxiosError(e);
+          this.$emit("show:message",err,"errors")
         })
         .finally(() => {
           this.loading = false;
+          this.canceldialog = false;
         });
     },
     endSession: function () {
@@ -346,46 +339,37 @@ export default {
         hash: this.sessioninfo.updated,
       };
 
+
       apihandler
         .endSession(params)
         .then(() => {
           this.$router.push({ name: "calendar" });
         })
-        .catch((error) => {
-          if (error.response) {
-            this.error = error.response.data;
-            //console.log(error.response.status)
-          } else if (error.request) {
-            this.error = error.request;
-            //console.log(error.request);
-          } else {
-            this.error = error.message;
-          }
+        .catch((e) => {
+          const err = processAxiosError(e);
+          this.$emit("show:message",err,"errors")
+
         })
         .finally(() => {
           this.loading = false;
+          this.enddialog = false;
         });
     },
 
     fetchData: function () {
       this.error = this.sessioninfo = null;
+      this.bookingPermissions.clear();
       this.loading = true;
-      this.notfound = false;
 
       apihandler
         .getBookingDetails(this.id)
         .then((val) => {
-          if (val.data != null) this.sessioninfo = val.data;
-          else this.notfound = true;
+            this.sessioninfo = val.data; 
         })
-        .catch((error) => {
-          if (error.response) {
-            this.error = error.response.data;
-          } else if (error.request) {
-            this.error = error.request;
-          } else {
-            this.error = error.message;
-          }
+        .catch((e) => {
+          const err = processAxiosError(e);
+
+          this.error = err;
         })
         .finally(() => {
           this.loading = false;
