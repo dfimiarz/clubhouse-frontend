@@ -341,12 +341,13 @@ export default {
       //console.log("Loading only: ",date)
 
       this.loading = true;
-      this.bookings.splice(0);
+      
 
       this.loadAsync(date).then((data) => {
         this.bookings = data;
       })
       .catch((err) => {
+        this.bookings.splice(0);
         const error = processAxiosError(err);
         this.$emit("show:message", "Error: " + error, "error");
       })
@@ -362,7 +363,7 @@ export default {
 
       channel.bind('booking_change', (data) => {
       
-        //console.log("Got data")
+        console.log("Got data")
 
         const dateChanged = data.date;
         const selectedDate = dayjs(this.date).tz(this.clubtz).format("YYYY-MM-DD");
@@ -375,13 +376,10 @@ export default {
         
       })
     },
-    loadAndSub(){
-
-      
+    initData(){
 
       this.loading = true;
-      this.bookings.splice(0);
-
+      
       this.loadAsync(this.date).then((data) => {
         //console.log("Got results");
         this.bookings = data;
@@ -477,7 +475,7 @@ export default {
     
     this.currtime = dayjs().tz(this.clubtz).format()
     this.date = dayjs().tz(this.clubtz).startOf('day').format();
-    this.loadAndSub()
+    this.initData()
   },
   mounted: function () {
     
