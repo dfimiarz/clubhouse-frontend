@@ -151,9 +151,7 @@
                 </v-form>
                 <v-row dense>
                   <v-btn
-                    color="warning"
                     text
-                    outlined
                     class="ma-1"
                     @click="goToBookingStep(1)"
                     >Go back</v-btn
@@ -205,9 +203,7 @@
                 </v-form>
                 <v-row dense>
                   <v-btn
-                    color="warning"
                     text
-                    outlined
                     class="ma-1"
                     @click="clearPlayers"
                     >Clear</v-btn
@@ -319,9 +315,7 @@
                 </v-row>
                 <v-row>
                   <v-btn
-                    color="warning"
                     text
-                    outlined
                     class="ma-1"
                     @click="changeBookingParams"
                     >Go back</v-btn
