@@ -363,7 +363,7 @@ export default {
 
       channel.bind('booking_change', (data) => {
       
-        console.log("Got data")
+        //console.log("Got data")
 
         const dateChanged = data.date;
         const selectedDate = dayjs(this.date).tz(this.clubtz).format("YYYY-MM-DD");
