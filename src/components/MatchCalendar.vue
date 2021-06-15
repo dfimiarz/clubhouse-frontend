@@ -128,8 +128,11 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-overlay :value="loading">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    <v-overlay :value="overlay_visible">
+      <v-progress-circular indeterminate size="64" v-if="loading"></v-progress-circular>
+      <div class="d-flex" v-if="disconnected">
+          <div class="text-h6">Connection lost. Waiting to reconnect ...</div>
+      </div>
     </v-overlay>
   </div>
 </template>
@@ -226,11 +229,24 @@ export default {
       timerHandle: null,
       showTimeIndicator: true,
       bookings: [],
-      loading: false
-      
+      loading: false,
+      disconnected: false
     };
   },
   methods: {
+    handleConnectionStatechange: function(){
+      let online = window.navigator.onLine;
+      
+      if( online ){
+        
+        this.disconnected = false;
+        this.loadBookings(dayjs(this.date).tz(this.clubtz).format("YYYY-MM-DD"));
+
+      } else {
+        this.disconnected = true;
+      }
+    },
+
     /**
      * scrollCalendar moves the scrollbar to the position corresponding to current time
      */
@@ -398,6 +414,9 @@ export default {
     }
   },
   computed: {
+    overlay_visible: function(){
+      return this.loading || this.disconnected
+    },
     clubtz: function () {
       return this.$store.state.clubtz;
     },
@@ -473,6 +492,9 @@ export default {
   },
   created: function () {
     
+    window.addEventListener('offline',this.handleConnectionStatechange);
+    window.addEventListener('online', this.handleConnectionStatechange);
+
     this.currtime = dayjs().tz(this.clubtz).format()
     this.date = dayjs().tz(this.clubtz).startOf('day').format();
     this.initData()
@@ -499,6 +521,9 @@ export default {
     if ( this.timerHandle ) {
       clearInterval(this.timerHandle);
     } 
+
+    window.removeEventListener('offline',this.handleConnectionStatechange);
+    window.removeEventListener('online', this.handleConnectionStatechange);
   },
   watch: {
     maxCourtCount: function (val) {
