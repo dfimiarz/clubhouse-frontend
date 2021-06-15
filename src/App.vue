@@ -13,15 +13,13 @@
 
 <script>
 import splashscreen from "./components/SplashScreen";
+import mainscreen from "./components/MainScreen.vue";
 
 export default {
   name: "app",
   components: {
     splashscreen: splashscreen,
-    mainscreen: () =>
-      import(
-        /* webpackPrelaod: true,webpackChunkName: "main" */ "./components/MainScreen"
-      ),
+    mainscreen: mainscreen
   },
   data: () => ({
     drawer: false,
