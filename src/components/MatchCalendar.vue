@@ -70,7 +70,7 @@
               </div>
             </div>
 
-            <div class="time-grid-container" ref="tcontainer">
+            <div class="time-grid-container" v-bind:style="{ overflow: simplifiedDisplay ? 'hidden' : 'auto'}" ref="tcontainer">
               <div
                 v-for="n in totalCellCount * 4"
                 :key="n"
@@ -316,13 +316,14 @@ export default {
           this.$refs.tcontainer.scrollHeight
       );
 
+
       /**
        * initScrollDistance will align top of the container with current time.
        * We drop that value by clientHeigh / 2 to put current time right in the middle
        * of the screen
        */
       var scrollAdjHeight = Math.ceil(this.$refs.tcontainer.clientHeight / 2);
-
+      
       /**
        * set scrollTop to substracting scrollAjdHeight from initScrollDistnace
        * According to doc scrollTop will ensure that values are not out of bounds
@@ -479,7 +480,7 @@ export default {
       return this.displaymode === "TV"
     },
     displaymode: function(){
-      return this.$store.state.displaymode;
+      return this.$store.getters['getSetting']('displaymode');
     },
     connected: function(){
       return this.$store.state.connected;

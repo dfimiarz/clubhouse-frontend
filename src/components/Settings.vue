@@ -56,10 +56,10 @@ export default {
   computed:{
     displayMode: {
       set: function(val){
-        this.$store.commit('SET_DISPLAYMODE',val)
+        this.$store.dispatch('setSetting',{ value: val, name: 'displaymode'})
       },
       get: function(){
-        return this.$store.state.displaymode;
+        return this.$store.getters['getSetting']('displaymode');
       }
     },
     displaymodes: function(){

@@ -39,6 +39,9 @@ export default {
     },
     loadApp() {
       this.loading = true;
+
+      this.$store.dispatch('loadSettings');
+
       new Promise((resolve) => {
         setTimeout(() => {
           resolve();

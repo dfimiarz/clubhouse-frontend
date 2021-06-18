@@ -1,3 +1,7 @@
+Version 0.2.3 
+
+- System settings are now stored in localStorage and are retained.
+
 Version 0.2.2
 - Added match calendar display settings. TV and DESKTOP can be changed in settings avialble through the hamburger menu.
 - Added suport for detecting diconnect and connection error event. MatchCalendar uses these features to better controll error messages, see TV display mode fore details).

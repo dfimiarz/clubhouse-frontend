@@ -23,10 +23,15 @@ const store = new Vuex.Store(
              * String: init error. Contains error message
              * null: not initialized
              */
-            displaymode: 'DESKTOP',
+            initStatus: null,
+            settings: {
+                displaymode: {
+                    val: null,
+                    default: "DESKTOP"
+                }
+            },
             displaymodes: ['DESKTOP','TV'],
             connected: true,
-            initStatus: null,
             clubtz: "America/New_York",
             loading: false,
             error: null,
@@ -95,11 +100,14 @@ const store = new Vuex.Store(
             SET_INIT_STATUS(state, status) {
                 state.initStatus = status
             },
-            SET_DISPLAYMODE(state,val){
-                state.displaymode = val;
-            },
             SET_CONNECTED(state,val){
                 state.connected = val;
+            },
+            SET_SETTING(state,{ name, val}){
+
+                if( Object.prototype.hasOwnProperty.call(state.settings,name) ){
+                    state.settings[name]['val'] = val
+                }
             }
         },
         actions: {
@@ -118,6 +126,31 @@ const store = new Vuex.Store(
             clearAppResources({ dispatch }){
                 dispatch('memberstore/clearEligiblePersons');
                 dispatch('courtstore/clearCourts');
+            },
+            loadSettings({commit,state}){
+                
+                const settingNames = Object.keys(state.settings)
+
+                settingNames.forEach( name => {
+
+                    const storedValue = window.localStorage ? window.localStorage.getItem(name) : null
+
+                    if( storedValue === null){
+                        commit('SET_SETTING',{name: name, val: state.settings[name]["default"]});
+                    }
+                    else{
+                        commit('SET_SETTING',{name: name, val: storedValue });
+                    }
+                });
+
+            },
+            setSetting({ commit }, { name, value }){
+                
+                if( window.localStorage ){
+                    window.localStorage.setItem(name,value);
+                }
+
+                commit('SET_SETTING', { name: name, val: value } );
             }
         },
         getters: {
@@ -144,7 +177,7 @@ const store = new Vuex.Store(
                 return isNaN(closemin) ? 1439 : closemin
             },
             calCellHeight1H(state) {
-                return Object.prototype.hasOwnProperty.call(state.cellHeightsForMode,state.displaymode) ? state.cellHeightsForMode[state.displaymode] : state.defaultCellHeight1H;
+                return Object.prototype.hasOwnProperty.call(state.cellHeightsForMode,state.settings["displaymode"]["val"]) ? state.cellHeightsForMode[state.settings["displaymode"]["val"]] : state.defaultCellHeight1H;
             },
             repeaterTypes(state) {
                 return state.repeaterTypes
@@ -163,6 +196,11 @@ const store = new Vuex.Store(
                     })
                 }
             },
+            getSetting(state){
+                return (name) => {
+                    return Object.prototype.hasOwnProperty.call(state.settings,name) ? state.settings[name]["val"] : null;
+                }
+            }
             
         }
     }
