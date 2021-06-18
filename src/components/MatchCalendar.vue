@@ -404,9 +404,9 @@ export default {
       
       pusher = new Pusher(process.env.VUE_APP_PUSHER_KEY, { cluster: process.env.VUE_APP_PUSHER_CLUSTER })
 
-      pusher.connection.bind('state_change',(states) => {
-        console.log("Pusher: ",states.current)
-      })
+      // pusher.connection.bind('state_change',(states) => {
+      //   console.log("Pusher: ",states.current)
+      // })
 
       channel = pusher.subscribe(channelname)
 
@@ -434,7 +434,7 @@ export default {
       }
 
       if( pusher ){
-        pusher.connection.unbind('state_change');
+        // pusher.connection.unbind('state_change');
         pusher.disconnect();
         pusher = null;
       }
