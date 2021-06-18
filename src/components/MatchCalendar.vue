@@ -122,6 +122,7 @@
             right
             color="primary"
             :to="{ name: 'MatchBooking' }"
+            v-show="!simplifiedDisplay"
           >
             <v-icon>mdi-plus</v-icon>
           </v-btn>
@@ -470,6 +471,9 @@ export default {
     }
   },
   computed: {
+    simplifiedDisplay: function(){
+      return this.displaymode === "TV"
+    },
     displaymode: function(){
       return this.$store.state.displaymode;
     },
@@ -556,7 +560,7 @@ export default {
     
   },
   updated: function(){
-    if( this.displaymode == 'TV'){
+    if( this.simplifiedDisplay ){
           this.scrollCalendar();
       }
   },
