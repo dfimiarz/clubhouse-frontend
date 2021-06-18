@@ -130,9 +130,16 @@
     </v-container>
     <v-overlay :value="overlay_visible">
       <v-progress-circular indeterminate size="64" v-if="loading"></v-progress-circular>
-      <div class="d-flex" v-if="disconnected">
-          <div class="text-h6">Connection lost. Waiting to reconnect ...</div>
+      
+      <div class="d-flex flex-column justify-center text-h6" v-else-if="! connected">
+          <div class="text-center">Connection Lost</div>
+          <div class="text-center">Waiting to reconnect ...</div>
       </div>
+      <div class="d-flex flex-column justify-center text-h6" v-else-if="connectionError">
+          <div class="text-center pb-2">Connection Error</div>
+          <v-btn @click="reloadBookings">Reload</v-btn>
+      </div>
+      
     </v-overlay>
   </div>
 </template>
@@ -140,22 +147,16 @@
 <script>
 import Session from "./Session";
 import TimeIndicator from "./TimeIndicator";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone"
-import advancedFormat from "dayjs/plugin/advancedFormat"
 import dbservice from "../services/db";
 import processAxiosError from "../utils/AxiosErrorHandler";
 import Pusher from 'pusher-js'
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.extend(advancedFormat);
-
 
 var pusher = null;
 var channel = null;
-const channelname = "bookings"
+const channelname = "bookings";
+//Timer tick durations
+const TIMER_DUR = 10000;
 
 export default {
   components: {
@@ -230,20 +231,32 @@ export default {
       showTimeIndicator: true,
       bookings: [],
       loading: false,
-      disconnected: false
+      timeIndicatorVisible: false,
+      autoscroll: false,
+      connectionError: false
+
     };
   },
   methods: {
-    handleConnectionStatechange: function(){
-      let online = window.navigator.onLine;
-      
-      if( online ){
-        
-        this.disconnected = false;
-        this.loadBookings(dayjs(this.date).tz(this.clubtz).format("YYYY-MM-DD"));
 
-      } else {
-        this.disconnected = true;
+    timerTickHanlder: function(){
+
+      this.currtime = this.$dayjs().valueOf();
+
+      //Check if date has changed while running timer
+      const curr_date = this.$dayjs().startOf('day').valueOf();
+      const curr_cal_date = this.$dayjs(this.date).startOf('day').valueOf();
+
+      //Reset date and timer when calendar date is not the same a current date
+      if( curr_date !== curr_cal_date){
+        clearInterval(this.timerHandle);
+        this.timerHandle = null;
+        this.resetDate();
+      }
+
+      if( this.connectionError ){
+        //console.log("Trying to reconnect")
+        this.loadDataAndSubscribe();
       }
     },
 
@@ -285,8 +298,8 @@ export default {
       //Get current minutes
 
       var curr_min =
-        dayjs(this.currtime).tz(this.clubtz).hour() * 60 +
-        dayjs(this.currtime).tz(this.clubtz).minute();
+        this.$dayjs(this.currtime).hour() * 60 +
+        this.$dayjs(this.currtime).minute();
 
       //Adjust current minuate for start and end
       var adj_curr_min =
@@ -320,17 +333,21 @@ export default {
     },
     getTimeString() {
       return this.date != null
-        ? dayjs(this.date).tz(this.clubtz).format("ddd, MMM Do")
+        ? this.$dayjs(this.date).format("ddd, MMM Do")
         : "N/A";
     },
     changeDay(day_diff) {
 
-      this.date = dayjs(this.date).tz(this.clubtz).add(day_diff, "day").format();
-      this.loadBookings(this.date);
+      this.date = this.$dayjs(this.date).add(day_diff, "day").format();
+      this.loadBookings(this.$dayjs(this.date).format("YYYY-MM-DD"));
     },
     resetDate() {
-      this.date = dayjs().tz(this.clubtz).startOf('day').format();
-      this.loadBookings(this.date);
+      this.date = this.$dayjs().startOf('day').format();
+      this.reloadBookings();
+      
+    },
+    reloadBookings(){
+      this.loadBookings(this.$dayjs(this.date).format("YYYY-MM-DD"));
     },
     changeDisplayedCourts: function (step) {
       //Compute next first court to display
@@ -354,26 +371,43 @@ export default {
       });
     },
     loadBookings(date) {
-      //console.log("Loading only: ",date)
+      if( ! this.connected ){
+        return;
+      }
 
       this.loading = true;
       
 
       this.loadAsync(date).then((data) => {
         this.bookings = data;
+        this.connectionError = false;
       })
       .catch((err) => {
         this.bookings.splice(0);
         const error = processAxiosError(err);
-        this.$emit("show:message", "Error: " + error, "error");
+        if( error === "Connection Error."){
+         
+          if( this.displaymode == 'TV'){
+            this.connectionError = true;
+          } else {
+            this.$emit("show:message", "Error: " + error, "error");
+          }
+
+        }
       })
       .finally(() => {
         this.loading = false;
+      
       });
     },
     subscribe(){
       
-      pusher = new Pusher(process.env.VUE_APP_PUSHER_KEY, { cluster: process.env.VUE_APP_PUSHER_CLUSTER }) 
+      pusher = new Pusher(process.env.VUE_APP_PUSHER_KEY, { cluster: process.env.VUE_APP_PUSHER_CLUSTER })
+
+      pusher.connection.bind('state_change',(states) => {
+        console.log("Pusher: ",states.current)
+      })
+
       channel = pusher.subscribe(channelname)
 
 
@@ -382,31 +416,53 @@ export default {
         //console.log("Got data")
 
         const dateChanged = data.date;
-        const selectedDate = dayjs(this.date).tz(this.clubtz).format("YYYY-MM-DD");
+        const selectedDate = this.$dayjs(this.date).format("YYYY-MM-DD");
 
         if( dateChanged === selectedDate && !this.loading){
           
-          this.loadBookings(dayjs(this.date).tz(this.clubtz).format("YYYY-MM-DD"));
+          this.reloadBookings();
           
         }
         
       })
     },
-    initData(){
+    unsubsribe: function(){
+      //Disconnet pusher connections
+      if( channel ){
+        channel.unbind();
+        channel = null;
+      }
+
+      if( pusher ){
+        pusher.connection.unbind('state_change');
+        pusher.disconnect();
+        pusher = null;
+      }
+    },
+    loadDataAndSubscribe(){
 
       this.loading = true;
       
-      this.loadAsync(this.date).then((data) => {
+      this.loadAsync(this.$dayjs(this.date).format("YYYY-MM-DD")).then((data) => {
         //console.log("Got results");
         this.bookings = data;
+        this.connectionError = false;
         this.subscribe();
       }).catch((err) => {
         const error = processAxiosError(err);
-        this.$emit("show:message", "Error: " + error, "error");
+        if( error === "Connection Error."){
+         
+          if( this.displaymode == 'TV'){
+            this.connectionError = true;
+          } else {
+            this.$emit("show:message", "Error: " + error, "error");
+          }
+        }
       }).finally(() => {
         this.loading = false;
       });
     },
+
     async loadAsync(date){
       const res = await dbservice.getBookings(date)
       return res.data
@@ -414,8 +470,14 @@ export default {
     }
   },
   computed: {
+    displaymode: function(){
+      return this.$store.state.displaymode;
+    },
+    connected: function(){
+      return this.$store.state.connected;
+    },
     overlay_visible: function(){
-      return this.loading || this.disconnected
+      return this.loading || ! this.connected || this.connectionError
     },
     clubtz: function () {
       return this.$store.state.clubtz;
@@ -471,49 +533,19 @@ export default {
         If end [here lastIndex] is greater than the length of the sequence, slice extracts through to the end of the sequence (arr.length).
       */
       return this.courts.slice(this.firstCourt, lastIndex);
-    },
-    timeIndicatorVisible: function () {
-      //Get current time in ms
-      var now_ms = dayjs(this.currtime).tz(this.clubtz).valueOf();
-
-      //Get date start in ms
-      var date_start_ms = dayjs(this.date).tz(this.clubtz).valueOf();
-
-      //Get date end in ms
-      var date_end_ms = date_start_ms + 86400000;
-
-      //Check if now_ms falls between date_start and date_end
-      return now_ms < date_start_ms
-        ? false
-        : now_ms >= date_end_ms
-        ? false
-        : true;
-    },
+    }
   },
   created: function () {
-    
-    window.addEventListener('offline',this.handleConnectionStatechange);
-    window.addEventListener('online', this.handleConnectionStatechange);
 
-    this.currtime = dayjs().tz(this.clubtz).format()
-    this.date = dayjs().tz(this.clubtz).startOf('day').format();
-    this.initData()
+    this.$dayjs.tz.setDefault(this.clubtz);
+
+    this.currtime = this.$dayjs().valueOf();
+    this.date = this.$dayjs().startOf('day').format();
+    this.loadDataAndSubscribe()
   },
-  mounted: function () {
-    
+  beforeDestroyed: function () {
 
-  },
-  destroyed: function () {
-
-    if( channel ){
-      channel.unbind();
-      channel = null;
-    }
-
-    if( pusher ){
-      pusher.disconnect();
-      pusher = null;
-    }
+    this.unsubsribe();
 
     this.bookings.splice(0);
 
@@ -521,11 +553,27 @@ export default {
     if ( this.timerHandle ) {
       clearInterval(this.timerHandle);
     } 
-
-    window.removeEventListener('offline',this.handleConnectionStatechange);
-    window.removeEventListener('online', this.handleConnectionStatechange);
+    
+  },
+  updated: function(){
+    if( this.displaymode == 'TV'){
+          this.scrollCalendar();
+      }
   },
   watch: {
+    connectionError: function(val){
+      if( val ){
+        this.unsubsribe()
+      }
+    },
+    //Watch connected status in store. Load Bookings if connected becomes true
+    connected: function(val){
+      if( val ){
+        this.loadDataAndSubscribe();
+      } else {
+        this.unsubsribe();
+      }
+    },
     maxCourtCount: function (val) {
       let newFirstCourt = this.firstCourt - val + 1;
 
@@ -535,45 +583,33 @@ export default {
     },
     date: function (val) {
 
-      //console.log("Date: ",val)
-
       //Webworker https://www.youtube.com/watch?v=nwQN55oPAfc
 
-      const curr_date = dayjs().tz(this.clubtz).startOf('day').valueOf();
-      const new_cal_date = dayjs(val).tz(this.clubtz).startOf('day').valueOf();
+      const curr_date = this.$dayjs().startOf('day').valueOf();
+      const new_cal_date = this.$dayjs(val).startOf('day').valueOf();
 
-      if( curr_date == new_cal_date ){
+      if( curr_date === new_cal_date ){
 
-        //console.log("Starting timer...")
+        //Show time indicator bar when new_date = current_date
+        this.timeIndicatorVisible = true;
 
-        this.timerHandle = setInterval(() => {
-          
-          this.currtime = dayjs().tz(this.clubtz).format();
-
-          //Check if date has changed while running timer
-          const curr_date = dayjs().tz(this.clubtz).startOf('day').valueOf();
-          const curr_cal_date = dayjs(this.date).tz(this.clubtz).startOf('day').valueOf();
-
-          
-
-          //Reset date and timer when calendar date is not the same a current date
-          if( curr_date !== curr_cal_date){
-            clearInterval(this.timerHandle);
-            this.timerHandle = null;
-            this.resetDate();
-          }
-
-        }, 10000);
+        //Set up timer to tick every TIMER_DUR seconds;s
+        this.timerHandle = setInterval(this.timerTickHanlder, TIMER_DUR);
 
       }
       else{
+
+        //Hide time indicator bar when new_date = current_date
+        this.timeIndicatorVisible = false;
+
+        //Stop the timer
         if ( this.timerHandle ) {
-          //console.log("Stopping timer...")
           clearInterval(this.timerHandle);
           this.timerHandle = null;
         } 
       }
 
+      //If time inidicator is visible, scroll calendar to focus on it.
       if (this.timeIndicatorVisible) {
         this.scrollCalendar();
       }
@@ -617,6 +653,7 @@ export default {
   grid-row: 2;
   overflow: auto;
   height: calc(100vh - 212px);
+  scroll-behavior: smooth;
 }
 
 .session-grid-container {

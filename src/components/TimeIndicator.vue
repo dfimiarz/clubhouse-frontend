@@ -5,22 +5,11 @@
 
 <script>
 
-//import moment from 'moment-timezone'
-
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone"
-import advancedFormat from "dayjs/plugin/advancedFormat"
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.extend(advancedFormat);
-
 export default {
   props: {
     currtime: {
       required: true,
-      type: String
+      type: Number
     }
   },
   name: "timeindicator",
@@ -33,8 +22,8 @@ export default {
     
   },
   computed:{
-    clubtz: function(){
-       return this.$store.state.clubtz
+    cellHeight1H: function () {
+      return this.$store.getters["calCellHeight1H"];
     },
     /**
      * Compute vertical position taking into account the start and end time
@@ -42,8 +31,8 @@ export default {
     vpos: function(){
       
       var adj_currmin = this.currmin <= this.startMin ? this.startMin : this.currmin >= this.endMin ? (this.endMin - this.thickness) : this.currmin
-      
-      return this.thickness * (adj_currmin - this.startMin)
+
+      return this.thickness + ((adj_currmin - this.startMin) * this.cellHeight1H/60);
       
     },
     openMin: function(){
@@ -53,9 +42,7 @@ export default {
       return this.$store.getters['closeMin'];
     },    
     currmin: function(){
-      
-      return dayjs(this.currtime).tz(this.clubtz).hour() * 60 + dayjs(this.currtime).tz(this.clubtz).minute()
-      
+      return this.$dayjs(this.currtime).hour() * 60 + this.$dayjs(this.currtime).minute()
     },
     startMin: function(){
       return Math.floor(this.openMin/60)*60;
@@ -65,6 +52,9 @@ export default {
     }
     
 
+  },
+  created: function(){
+    
   }
 }
 </script>

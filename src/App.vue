@@ -28,6 +28,15 @@ export default {
     loadingError: null,
   }),
   methods: {
+    handleConnectionStatechange: function(){
+      const online = window.navigator.onLine;
+
+      if( online ){
+        this.$store.commit('SET_CONNECTED',true)
+      } else {
+        this.$store.commit('SET_CONNECTED',false)
+      }
+    },
     loadApp() {
       this.loading = true;
       new Promise((resolve) => {
@@ -49,7 +58,7 @@ export default {
   computed: {
     initStatus: function () {
       return this.$store.state.initStatus;
-    },
+    }
   },
   mounted: function () {
     if (this.initStatus === true) {
@@ -60,6 +69,18 @@ export default {
       this.loadingError = "Unable to initilize";
     }
   },
+  created: function(){
+
+    this.$dayjs.tz.setDefault(this.$store.state.clubtz);
+
+    window.addEventListener('offline',this.handleConnectionStatechange);
+    window.addEventListener('online', this.handleConnectionStatechange);
+    
+  },
+  beforeDestroyed: function(){
+    window.removeEventListener('offline',this.handleConnectionStatechange);
+    window.removeEventListener('online', this.handleConnectionStatechange);
+  }
 };
 </script>
 

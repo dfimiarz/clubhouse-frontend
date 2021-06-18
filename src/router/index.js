@@ -11,6 +11,7 @@ const MatchCalendar = () => import(/* webpackChunkName: "calendar" */ '@/compone
 const MatchBooking = () => import(/* webpackChunkName: "booking" */ '@/components/MatchBooking')
 const BookingDetails = () => import(/* webpackChunkName: "details" */ '@/components/BookingDetails')
 const EventBooking = () => import(/* webpackChunkName: "manage" */ '@/components/EventBooking')
+const Settings = () => import(/* webpackChunkName: "settings" */ '@/components/Settings')
 import store from '@/store/index'
 
 Vue.use(Router)
@@ -83,6 +84,15 @@ const routes = [
     path: '/bookings/:id',
     name: 'BookingDetails',
     component: BookingDetails,
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/settigns',
+    name: 'settings',
+    component: Settings,
     props: true,
     meta: {
       requiresAuth: true

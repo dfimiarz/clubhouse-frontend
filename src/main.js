@@ -8,6 +8,17 @@ import vuetify from './plugins/vuetify';
 import InitUtils from './utils/InitUtils'
 import auth from './firebase';
 
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone"
+import advancedFormat from "dayjs/plugin/advancedFormat"
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(advancedFormat);
+
+Vue.prototype.$dayjs = dayjs;
+
 Vue.config.productionTip = false
 
 let app = null;

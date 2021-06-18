@@ -23,12 +23,19 @@ const store = new Vuex.Store(
              * String: init error. Contains error message
              * null: not initialized
              */
+            displaymode: 'DESKTOP',
+            displaymodes: ['DESKTOP','TV'],
+            connected: true,
             initStatus: null,
             clubtz: "America/New_York",
             loading: false,
             error: null,
             db: null,
-            cellHeight1H: 120,
+            defaultCellHeight1H: 120,
+            cellHeightsForMode: {
+                'DESKTOP': 120,
+                'TV': 200
+            },
             opentime: "07:30",
             closetime: "20:00",
             repeaterTypes: [
@@ -87,6 +94,12 @@ const store = new Vuex.Store(
             },
             SET_INIT_STATUS(state, status) {
                 state.initStatus = status
+            },
+            SET_DISPLAYMODE(state,val){
+                state.displaymode = val;
+            },
+            SET_CONNECTED(state,val){
+                state.connected = val;
             }
         },
         actions: {
@@ -131,7 +144,7 @@ const store = new Vuex.Store(
                 return isNaN(closemin) ? 1439 : closemin
             },
             calCellHeight1H(state) {
-                return state.cellHeight1H;
+                return Object.prototype.hasOwnProperty.call(state.cellHeightsForMode,state.displaymode) ? state.cellHeightsForMode[state.displaymode] : state.defaultCellHeight1H;
             },
             repeaterTypes(state) {
                 return state.repeaterTypes
@@ -149,7 +162,8 @@ const store = new Vuex.Store(
                         return rule.id == id
                     })
                 }
-            }
+            },
+            
         }
     }
 )
