@@ -134,7 +134,7 @@
       
       <div class="d-flex flex-column justify-center text-h6" v-else-if="! connected">
           <div class="text-center">Connection Lost</div>
-          <div class="text-center">Waiting to reconnect ...</div>
+          <div class="text-center">waiting to reconnect ...</div>
       </div>
       <div class="d-flex flex-column justify-center text-h6" v-else-if="connectionError">
           <div class="text-center pb-2">Connection Error</div>
@@ -388,7 +388,7 @@ export default {
         const error = processAxiosError(err);
         if( error === "Connection Error."){
          
-          if( this.displaymode == 'TV'){
+          if( this.simplifiedDisplay ){
             this.connectionError = true;
           } else {
             this.$emit("show:message", "Error: " + error, "error");
@@ -442,6 +442,10 @@ export default {
     },
     loadDataAndSubscribe(){
 
+      if( ! this.connected ){
+        return;
+      }
+
       this.loading = true;
       
       this.loadAsync(this.$dayjs(this.date).format("YYYY-MM-DD")).then((data) => {
@@ -453,7 +457,7 @@ export default {
         const error = processAxiosError(err);
         if( error === "Connection Error."){
          
-          if( this.displaymode == 'TV'){
+          if( this.simplifiedDisplay ){
             this.connectionError = true;
           } else {
             this.$emit("show:message", "Error: " + error, "error");
