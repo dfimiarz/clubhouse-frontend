@@ -80,7 +80,7 @@ export default {
     window.addEventListener('online', this.handleConnectionStatechange);
     
   },
-  beforeDestroyed: function(){
+  beforeDestroy: function(){
     window.removeEventListener('offline',this.handleConnectionStatechange);
     window.removeEventListener('online', this.handleConnectionStatechange);
   }

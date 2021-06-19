@@ -403,7 +403,7 @@ export default {
       });
     },
     subscribe(){
-      
+
       pusher = new Pusher(process.env.VUE_APP_PUSHER_KEY, { cluster: process.env.VUE_APP_PUSHER_CLUSTER })
 
       // pusher.connection.bind('state_change',(states) => {
@@ -429,6 +429,9 @@ export default {
       })
     },
     unsubsribe: function(){
+
+      console.log("Unsub");
+
       //Disconnet pusher connections
       if( channel ){
         channel.unbind();
@@ -552,7 +555,7 @@ export default {
     this.date = this.$dayjs().startOf('day').format();
     this.loadDataAndSubscribe()
   },
-  beforeDestroyed: function () {
+  beforeDestroy: function () {
 
     this.unsubsribe();
 
