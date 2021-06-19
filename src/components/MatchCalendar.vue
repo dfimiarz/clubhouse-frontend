@@ -430,8 +430,6 @@ export default {
     },
     unsubsribe: function(){
 
-      console.log("Unsub");
-
       //Disconnet pusher connections
       if( channel ){
         channel.unbind();
