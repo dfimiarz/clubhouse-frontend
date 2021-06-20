@@ -266,7 +266,7 @@ export default {
      */
     scrollCalendar: function () {
       //Get total lenght of the day
-      var day_len = this.endMin - this.startMin;
+      var day_len = (this.endHour - this.startHour)*60;
 
       //Do nothing if day is not "long enough"
       if (day_len < 1) {
@@ -296,13 +296,15 @@ export default {
         return;
       }
 
+      
+
       //Get current minutes
 
       var curr_min =
         this.$dayjs(this.currtime).hour() * 60 +
         this.$dayjs(this.currtime).minute();
 
-      //Adjust current minuate for start and end
+      //Make sure that curr_min fits betwen start and end
       var adj_curr_min =
         curr_min <= this.startMin
           ? this.startMin
@@ -310,20 +312,19 @@ export default {
           ? this.endMin
           : curr_min;
 
-      //Calculate scroll distance
+      //Calculate scroll distance. Scrolling from startHour NOT startMin
       var initScrollDistance = Math.ceil(
-        ((adj_curr_min - this.startMin) / day_len) *
+        ((adj_curr_min - (this.startHour*60)) / day_len) *
           this.$refs.tcontainer.scrollHeight
       );
 
-
       /**
        * initScrollDistance will align top of the container with current time.
-       * We drop that value by clientHeigh / 2 to put current time right in the middle
+       * We drop that value by clientHeigh / 3 to put current time 1/3 of way up
        * of the screen
        */
-      var scrollAdjHeight = Math.ceil(this.$refs.tcontainer.clientHeight / 2);
-      
+      var scrollAdjHeight = Math.ceil(this.$refs.tcontainer.clientHeight / 3);
+
       /**
        * set scrollTop to substracting scrollAjdHeight from initScrollDistnace
        * According to doc scrollTop will ensure that values are not out of bounds
