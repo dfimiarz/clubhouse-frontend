@@ -566,9 +566,11 @@ export default {
     
   },
   updated: function(){
-    if( this.simplifiedDisplay ){
-          this.scrollCalendar();
-      }
+    this.$nextTick(function(){
+      if( this.simplifiedDisplay ){
+            this.scrollCalendar();
+        }
+    });
   },
   watch: {
     connectionError: function(val){
