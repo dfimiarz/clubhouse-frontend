@@ -41,8 +41,8 @@ const store = new Vuex.Store(
                 'DESKTOP': 120,
                 'TV': 200
             },
-            opentime: "07:30",
-            closetime: "20:00",
+            opentime: "05:00",
+            closetime: "23:00",
             repeaterTypes: [
                 { id: 1000, label: "Non-repeater" },
                 { id: 2000, label: "First Repeater" },

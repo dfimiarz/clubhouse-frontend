@@ -63,7 +63,7 @@
                     </v-list-item-icon>
 
                     <v-list-item-content>
-                      <v-list-item-title v-html="sessioninfo.type_lbl">
+                      <v-list-item-title v-html="sessioninfo.booking_type_desc">
                       </v-list-item-title>
                       <v-list-item-subtitle>Boooking Type</v-list-item-subtitle>
                     </v-list-item-content>
@@ -94,13 +94,10 @@
                     </v-list-item-content>
 
                     <v-list-item-action>
-                      <v-btn icon v-if="canChangeStart || canChangeEnd">
+                      <v-btn icon v-if="canMove">
                         <v-icon @click="openEditor('timeeditor')"
                           >mdi-pencil</v-icon
                         >
-                      </v-btn>
-                      <v-btn icon v-else>
-                        <v-icon>mdi-pencil-off</v-icon>
                       </v-btn>
                     </v-list-item-action>
                   </v-list-item>
@@ -125,19 +122,16 @@
 
                     <v-list-item-content>
                       <v-list-item-title>{{
-                        sessioninfo.court
+                        sessioninfo.court_name
                       }}</v-list-item-title>
                       <v-list-item-subtitle>Court</v-list-item-subtitle>
                     </v-list-item-content>
 
                     <v-list-item-action>
-                      <v-btn icon v-if="canChangeCourt">
+                      <v-btn icon v-if="canMove">
                         <v-icon @click="openEditor('courteditor')"
                           >mdi-pencil</v-icon
                         >
-                      </v-btn>
-                      <v-btn icon v-else>
-                        <v-icon>mdi-pencil-off</v-icon>
                       </v-btn>
                     </v-list-item-action>
                   </v-list-item>
@@ -173,7 +167,7 @@
                         {{ player.lastname }}</v-list-item-title
                       >
                       <v-list-item-subtitle>{{
-                        player.type
+                        player.player_type_desc
                       }}</v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
@@ -193,8 +187,10 @@
                     </v-list-item-content>
 
                     <v-list-item-action>
-                      <v-btn icon>
-                        <v-icon>mdi-pencil-circle</v-icon>
+                      <v-btn icon v-if="canChangeNote">
+                        <v-icon @click="openEditor('noteeditor')"
+                          >mdi-pencil</v-icon
+                        >
                       </v-btn>
                     </v-list-item-action>
                   </v-list-item>
@@ -267,7 +263,6 @@
 
 <script>
 import apihandler from "./../services/db";
-//import moment from "moment-timezone";
 import valueeditor from "./session/ValueEditor";
 import processAxiosError from "../utils/AxiosErrorHandler";
 
@@ -406,7 +401,7 @@ export default {
         "permissions"
       )
         ? Array.isArray(this.sessioninfo.permissions)
-          ? this.sessioninfo.permissions.includes("CAN_END")
+          ? this.sessioninfo.permissions.includes("end")
           : false
         : false;
     },
@@ -416,40 +411,30 @@ export default {
         "permissions"
       )
         ? Array.isArray(this.sessioninfo.permissions)
-          ? this.sessioninfo.permissions.includes("CAN_REMOVE")
+          ? this.sessioninfo.permissions.includes("cancel")
           : false
         : false;
     },
-    canChangeStart: function () {
+    canMove: function() {
       return Object.prototype.hasOwnProperty.call(
         this.sessioninfo,
         "permissions"
       )
         ? Array.isArray(this.sessioninfo.permissions)
-          ? this.sessioninfo.permissions.includes("CHANGE_START")
+          ? this.sessioninfo.permissions.includes("move")
           : false
         : false;
     },
-    canChangeEnd: function () {
-      return Object.prototype.hasOwnProperty.call(
+    canChangeNote: function() {
+       return Object.prototype.hasOwnProperty.call(
         this.sessioninfo,
         "permissions"
       )
         ? Array.isArray(this.sessioninfo.permissions)
-          ? this.sessioninfo.permissions.includes("CHANGE_END")
+          ? this.sessioninfo.permissions.includes("change_note")
           : false
         : false;
-    },
-    canChangeCourt: function () {
-      return Object.prototype.hasOwnProperty.call(
-        this.sessioninfo,
-        "permissions"
-      )
-        ? Array.isArray(this.sessioninfo.permissions)
-          ? this.sessioninfo.permissions.includes("CHANGE_COURT")
-          : false
-        : false;
-    },
+    }
   },
   watch: {
     //needed to get new data when route changes
