@@ -42,7 +42,7 @@ export default {
       return this.$store.getters['closeMin'];
     },    
     currmin: function(){
-      return this.$dayjs(this.currtime).hour() * 60 + this.$dayjs(this.currtime).minute()
+      return this.$dayjs(this.currtime).tz().hour() * 60 + this.$dayjs(this.currtime).tz().minute()
     },
     startMin: function(){
       return Math.floor(this.openMin/60)*60;
@@ -50,8 +50,6 @@ export default {
     endMin: function(){
       return Math.ceil(this.closeMin/60)*60;
     }
-    
-
   },
   created: function(){
     

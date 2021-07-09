@@ -242,11 +242,11 @@ export default {
 
     timerTickHanlder: function(){
 
-      this.currtime = this.$dayjs().valueOf();
+      this.currtime = this.$dayjs().tz().valueOf();
 
       //Check if date has changed while running timer
-      const curr_date = this.$dayjs().startOf('day').valueOf();
-      const curr_cal_date = this.$dayjs(this.date).startOf('day').valueOf();
+      const curr_date = this.$dayjs().tz().startOf('day').valueOf();
+      const curr_cal_date = this.$dayjs(this.date).tz().startOf('day').valueOf();
 
       //Reset date and timer when calendar date is not the same a current date
       if( curr_date !== curr_cal_date){
@@ -301,8 +301,8 @@ export default {
       //Get current minutes
 
       var curr_min =
-        this.$dayjs(this.currtime).hour() * 60 +
-        this.$dayjs(this.currtime).minute();
+        this.$dayjs(this.currtime).tz().hour() * 60 +
+        this.$dayjs(this.currtime).tz().minute();
 
       //Make sure that curr_min fits betwen start and end
       var adj_curr_min =
@@ -336,21 +336,21 @@ export default {
     },
     getTimeString() {
       return this.date != null
-        ? this.$dayjs(this.date).format("ddd, MMM Do")
+        ? this.$dayjs(this.date).tz().format("ddd, MMM Do")
         : "N/A";
     },
     changeDay(day_diff) {
 
-      this.date = this.$dayjs(this.date).add(day_diff, "day").format();
-      this.loadBookings(this.$dayjs(this.date).format("YYYY-MM-DD"));
+      this.date = this.$dayjs(this.date).tz().add(day_diff, "day").format();
+      this.loadBookings(this.$dayjs(this.date).tz().format("YYYY-MM-DD"));
     },
     resetDate() {
-      this.date = this.$dayjs().startOf('day').format();
+      this.date = this.$dayjs().tz().startOf('day').format();
       this.reloadBookings();
       
     },
     reloadBookings(){
-      this.loadBookings(this.$dayjs(this.date).format("YYYY-MM-DD"));
+      this.loadBookings(this.$dayjs(this.date).tz().format("YYYY-MM-DD"));
     },
     changeDisplayedCourts: function (step) {
       //Compute next first court to display
@@ -419,7 +419,7 @@ export default {
         //console.log("Got data")
 
         const dateChanged = data.date;
-        const selectedDate = this.$dayjs(this.date).format("YYYY-MM-DD");
+        const selectedDate = this.$dayjs(this.date).tz().format("YYYY-MM-DD");
 
         if( dateChanged === selectedDate && !this.loading){
           
@@ -451,7 +451,7 @@ export default {
 
       this.loading = true;
       
-      this.loadAsync(this.$dayjs(this.date).format("YYYY-MM-DD")).then((data) => {
+      this.loadAsync(this.$dayjs(this.date).tz().format("YYYY-MM-DD")).then((data) => {
         //console.log("Got results");
         this.bookings = data;
         this.connectionError = false;
@@ -489,9 +489,6 @@ export default {
     },
     overlay_visible: function(){
       return this.loading || ! this.connected || this.connectionError
-    },
-    clubtz: function () {
-      return this.$store.state.clubtz;
     },
     startMin: function () {
       return this.$store.getters["openMin"];
@@ -548,10 +545,8 @@ export default {
   },
   created: function () {
 
-    this.$dayjs.tz.setDefault(this.clubtz);
-
-    this.currtime = this.$dayjs().valueOf();
-    this.date = this.$dayjs().startOf('day').format();
+    this.currtime = this.$dayjs().tz().valueOf();
+    this.date = this.$dayjs().tz().startOf('day').format();
     this.loadDataAndSubscribe()
   },
   beforeDestroy: function () {
@@ -598,8 +593,8 @@ export default {
 
       //Webworker https://www.youtube.com/watch?v=nwQN55oPAfc
 
-      const curr_date = this.$dayjs().startOf('day').valueOf();
-      const new_cal_date = this.$dayjs(val).startOf('day').valueOf();
+      const curr_date = this.$dayjs().tz().startOf('day').valueOf();
+      const new_cal_date = this.$dayjs(val).tz().startOf('day').valueOf();
 
       if( curr_date === new_cal_date ){
 

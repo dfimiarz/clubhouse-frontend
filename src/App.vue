@@ -74,6 +74,7 @@ export default {
   },
   created: function(){
 
+    //Set default time zone for the club
     this.$dayjs.tz.setDefault(this.$store.state.clubtz);
 
     window.addEventListener('offline',this.handleConnectionStatechange);
