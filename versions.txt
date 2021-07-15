@@ -1,3 +1,7 @@
+Version 0.3.0 
+
+- Using new permission system.
+
 Version 0.2.3 
 
 - System settings are now stored in localStorage and are retained.

@@ -78,7 +78,7 @@ export default {
 
         var params = {
            id: this.session.id,
-           hash: this.session.updated,
+           hash: this.session.etag,
            court: this.court
         }
 

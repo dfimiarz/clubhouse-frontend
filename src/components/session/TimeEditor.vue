@@ -39,7 +39,7 @@
                 readonly
                 v-on="on"
                 required=""
-                :disabled="! canChangeStart"
+                :disabled="! canMove"
               ></v-text-field>
             </template>
             <v-time-picker
@@ -70,7 +70,7 @@
                 readonly
                 v-on="on"
                 required=""
-                :disabled="! canChangeEnd"
+                :disabled="! canMove"
               ></v-text-field>
             </template>
             <v-time-picker
@@ -107,14 +107,6 @@ import apihandler from './../../services/db'
 import { editor } from './EditorMixin'
 import processAxiosError from "../../utils/AxiosErrorHandler";
 
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone"
-import advancedFormat from "dayjs/plugin/advancedFormat"
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.extend(advancedFormat);
 
 export default {
     props: ['session'],
@@ -138,7 +130,7 @@ export default {
 
         var params = {
           id: this.session.id,
-          hash: this.session.updated,
+          hash: this.session.etag,
           start: this.s_time,
           end: this.e_time
         }
@@ -157,29 +149,23 @@ export default {
       }
     },
     computed: {
-      clubtz: function(){
-        return this.$store.state.clubtz
-      },
       opentime(){
         return this.$store.state.opentime
       },
       closetime(){
         return this.$store.state.closetime
       },
-      canChangeStart: function(){
+      canMove: function(){
       return Object.prototype.hasOwnProperty.call(this.session,"permissions")    ?
               (Array.isArray(this.session.permissions)      ? 
-              this.session.permissions.includes('CHANGE_START') : false) : false
-      },
-      canChangeEnd: function(){
-        return Object.prototype.hasOwnProperty.call(this.session,"permissions")       ?
-                (Array.isArray(this.session.permissions)         ? 
-                this.session.permissions.includes('CHANGE_END') : false) : false
+              this.session.permissions.includes('move') : false) : false
       }
     },
     mounted: function(){
-      this.s_time = dayjs(this.session.date.concat('T',this.session.start)).tz(this.clubtz).format('HH:mm')
-      this.e_time = dayjs(this.session.date.concat('T',this.session.end)).tz(this.clubtz).format('HH:mm')
+
+      console.log(this.session)
+      this.s_time = this.$dayjs(this.session.date.concat('T',this.session.start)).format('HH:mm')
+      this.e_time = this.$dayjs(this.session.date.concat('T',this.session.end)).format('HH:mm')
     }
     
 }

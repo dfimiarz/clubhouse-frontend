@@ -307,7 +307,7 @@ export default {
 
       var params = {
         id: this.sessioninfo.id,
-        hash: this.sessioninfo.updated,
+        hash: this.sessioninfo.etag,
       };
 
       apihandler
@@ -331,7 +331,7 @@ export default {
 
       var params = {
         id: this.sessioninfo.id,
-        hash: this.sessioninfo.updated,
+        hash: this.sessioninfo.etag
       };
 
 
