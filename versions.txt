@@ -1,3 +1,7 @@
+Version 0.3.1
+
+ - Change version name to match backend.
+
 Version 0.3.0 
 
 - Using new permission system.
