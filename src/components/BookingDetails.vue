@@ -209,6 +209,8 @@
                 <v-btn large @click="enddialog = true" v-show="canEnd"
                   >End session</v-btn
                 >
+                <v-btn large outlined color="primary" @click="bookagain"  text :loading="loading" v-if="booking_ended">Rebook</v-btn>
+
               </v-card-actions>
             </v-card>
           </v-col>
@@ -254,6 +256,7 @@
             <div class="flex-grow-1"></div>
 
             <v-btn color="warning" text @click="endSession" :loading="loading">End now</v-btn>
+            
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -296,6 +299,12 @@ export default {
     };
   },
   methods: {
+    getPlayerIds(){
+      return this.sessioninfo.players.map(p => p.person_id);
+    },
+    bookagain(){
+      console.log(this.getPlayerIds());
+    },
     openEditor(val) {
       this.editortype = val;
       this.showeditor = true;
@@ -434,6 +443,9 @@ export default {
           ? this.sessioninfo.permissions.includes("change_note")
           : false
         : false;
+    },
+    booking_ended: function() {
+      return this.sessioninfo.utc_req_time > this.sessioninfo.utc_end;
     }
   },
   watch: {

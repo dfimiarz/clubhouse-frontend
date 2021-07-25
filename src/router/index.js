@@ -70,6 +70,24 @@ const routes = [
     component: MatchBooking,
     meta: {
       requiresAuth: true
+    },
+    props: route => {
+
+      const _req_players = typeof route.query.pls === "string" ? route.query.pls.split(',',4).reduce((acc,val) => {
+        const parsedval = parseInt(val);
+      
+        if( ! isNaN(parsedval)){
+          acc.push(parsedval);
+        }
+
+        return acc;
+      },[]) : null;     
+
+      return { 
+        req_players: _req_players,
+        req_bookingtype: route.query.bt || null
+      }
+      
     }
   },
   {

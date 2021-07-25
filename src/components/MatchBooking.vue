@@ -360,6 +360,7 @@ dayjs.extend(advancedFormat);
 const MATCH_TYPE_ID = 1000;
 
 export default {
+  props: ['req_players','req_bookingtype'],
   components: {
     DurationPicker,
   },
@@ -763,9 +764,21 @@ export default {
     }
   },
   created: function () {
-    //this.date = dayjs().tz(this.clubtz).format("Y-MM-DD");
+    
   },
-  mounted: function () {},
+  mounted: function () {
+
+    if( Array.isArray(this.req_players) && this.req_players.length !== 0 ){
+      this.req_players.forEach((player,index) => {
+        if( typeof player === "number" ){
+          if( index < this.selplayers.length){
+            this.selplayers[index].id = player;
+          }
+        }
+      })
+    }
+
+  },
   beforeDestroy() {},
 };
 </script>
