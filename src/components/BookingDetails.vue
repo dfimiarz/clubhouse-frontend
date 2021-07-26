@@ -299,11 +299,8 @@ export default {
     };
   },
   methods: {
-    getPlayerIds(){
-      return this.sessioninfo.players.map(p => p.person_id);
-    },
     bookagain(){
-      console.log(this.getPlayerIds());
+      this.$router.replace({ name: 'MatchBooking', query: { pls: this.playerIds.toString() }});
     },
     openEditor(val) {
       this.editortype = val;
@@ -446,6 +443,9 @@ export default {
     },
     booking_ended: function() {
       return this.sessioninfo.utc_req_time > this.sessioninfo.utc_end;
+    },
+    playerIds: function() {
+      return Object.prototype.hasOwnProperty.call(this.sessioninfo,"players") ? this.sessioninfo.players.map(p => p.person_id) : []
     }
   },
   watch: {
