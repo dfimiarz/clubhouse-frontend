@@ -24,7 +24,7 @@
 
                       <v-text-field 
                         readonly 
-                        :value="playerInfo.length"
+                        :value="playerDetails.length"
                         label="Player Count"
                         prepend-icon="mdi-account-multiple" 
                         
@@ -347,6 +347,8 @@ import utils from "./../services/utils";
 import DurationPicker from './booking/DurationPicker.vue';
 import processAxiosError from "./../utils/AxiosErrorHandler";
 
+import { BOOKING_TYPE_MATCH } from '../constants/constants';
+
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone"
@@ -355,9 +357,6 @@ import advancedFormat from "dayjs/plugin/advancedFormat"
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(advancedFormat);
-
-
-const MATCH_TYPE_ID = 1000;
 
 export default {
   props: ['req_players','req_bookingtype'],
@@ -517,13 +516,26 @@ export default {
       let playerCheck = this.selplayers.reduce(
         (accumulator, player, index) => {
           if (player.id !== null) {
-            accumulator["players"].indexOf(player.id) != -1
-              ? accumulator["errors"].push({
-                  index: index,
-                  field: "player",
-                  message: "Duplicate player",
+
+            //Check if a id is for a valid person
+            const person = this.$store.getters["memberstore/getEligiblePersonById"](player.id);
+
+            if( ! person ){
+                accumulator["errors"].push({
+                    index: index,
+                    field: "player",
+                    message: "Invalid player",
                 })
-              : accumulator["players"].push(player.id);
+            } else {
+
+              accumulator["players"].indexOf(player.id) != -1
+                ? accumulator["errors"].push({
+                    index: index,
+                    field: "player",
+                    message: "Duplicate player",
+                  })
+                : accumulator["players"].push(player.id);
+            }
 
             if (player.repeater === null)
               accumulator["errors"].push({
@@ -606,8 +618,10 @@ export default {
         start: this.s_time,
         end: this.e_time,
         note: this.note,
-        players: this.playerInfo,
-        type: MATCH_TYPE_ID,
+        players: this.playerDetails.map((player) => {
+          return { id: player.id, type: player.repeater }
+        }),
+        type: BOOKING_TYPE_MATCH,
       };
       
       this.sendData(booking);
@@ -722,20 +736,10 @@ export default {
       }, []);
     },
     bookingType: function(){
-      const p_num = this.playerInfo.length;
+      const p_num = this.playerDetails.length;
 
       return p_num > 2 ? "Doubles" : p_num > 1 ? "Singles" : "Individual";
 
-    },
-    playerInfo: function () {
-      return this.selplayers.reduce((accumulator, player) => {
-        if (player.id && player.repeater) {
-          //Player type defined in player_type table
-          accumulator.push({ id: player.id, type: player.repeater });
-        }
-
-        return accumulator;
-      }, []);
     },
     computedDateFormatted() {
       return this.formatDate(this.date);
@@ -768,7 +772,7 @@ export default {
   },
   mounted: function () {
 
-    if( Array.isArray(this.req_players) && this.req_players.length !== 0 ){
+    if( Array.isArray(this.req_players) ){
       this.req_players.forEach((player,index) => {
         if( typeof player === "number" ){
           if( index < this.selplayers.length){

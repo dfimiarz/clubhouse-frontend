@@ -209,7 +209,7 @@
                 <v-btn large @click="enddialog = true" v-show="canEnd"
                   >End session</v-btn
                 >
-                <v-btn large outlined color="primary" @click="bookagain"  text :loading="loading" v-if="booking_ended">Rebook</v-btn>
+                <v-btn large outlined color="primary" @click="bookagain"  text :loading="loading" v-if="canRebook">Rebook</v-btn>
 
               </v-card-actions>
             </v-card>
@@ -273,6 +273,8 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone"
 import advancedFormat from "dayjs/plugin/advancedFormat"
+
+import { BOOKING_TYPE_MATCH } from '../constants/constants';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -441,8 +443,8 @@ export default {
           : false
         : false;
     },
-    booking_ended: function() {
-      return this.sessioninfo.utc_req_time > this.sessioninfo.utc_end;
+    canRebook: function() {
+      return this.sessioninfo.utc_req_time > this.sessioninfo.utc_end && this.sessioninfo.type === BOOKING_TYPE_MATCH;
     },
     playerIds: function() {
       return Object.prototype.hasOwnProperty.call(this.sessioninfo,"players") ? this.sessioninfo.players.map(p => p.person_id) : []

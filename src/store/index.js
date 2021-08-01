@@ -49,9 +49,9 @@ const store = new Vuex.Store(
                 { id: 3000, label: "Second Repeater" }
             ],
             bookingRules: [
-                { id: 100, bumpable: false, maxduration: 30 * 60000 },
-                { id: 10, bumpable: false, maxduration: 15 * 60000 },
-                { id: 1, bumpable: true, maxduration: 15 * 60000 },
+                { id: 100, bumpable: false, maxduration: 45 * 60000 },
+                { id: 10, bumpable: false, maxduration: 45 * 60000 },
+                { id: 1, bumpable: true, maxduration: 45 * 60000 },
                 { id: 200, bumpable: false, maxduration: 60 * 60000 },
                 { id: 110, bumpable: false, maxduration: 30 * 60000 },
                 { id: 20, bumpable: false, maxduration: 30 * 60000 },
