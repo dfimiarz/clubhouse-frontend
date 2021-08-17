@@ -14,6 +14,7 @@
         "
         class="d-flex fill-height"
       >
+      <template v-if="isMatch">
         <v-chip
           v-for="(player, index) in players"
           :key="index"
@@ -28,19 +29,23 @@
           
           
         </v-chip>
+      </template>
+      <template v-else>
+        <v-chip
+          v-bind="playerChipSize"
+          label
+          :class="shortSesssion === true ? { 'mx-1': true } : { 'ma-1': true }">
+          {{ session.booking_type_desc }}  
+        </v-chip>
+      </template>
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
-const BOOKING_TYPES = {
-  match: 1000,
-  lesson: 5000,
-  tournament: 6000,
-  maintenance: 7000,
-  event: 8000,
-};
+
+import { BOOKING_TYPE_MATCH } from '../constants/constants';
 
 const MIN_SESSION_HEIGHT = 26;
 const PLAYER_CHIP_SIZE = 24;
@@ -97,7 +102,7 @@ export default {
       );
 
       styles.push(
-        this.session.type === BOOKING_TYPES.match
+        this.session.type === BOOKING_TYPE_MATCH
           ? this.session.bumpable == 1
             ? "match_bumpable"
             : "match_not_bumpable"
@@ -107,6 +112,9 @@ export default {
     },
   },
   computed: {
+    isMatch: function() {
+      return Object.prototype.hasOwnProperty.call(this.session,'type') ? this.session.type == BOOKING_TYPE_MATCH ? true : false : false;
+    },
     height: function () {
       const _height = (this.cellHeight1H / 60) * this.duration;
       return _height <= MIN_SESSION_HEIGHT ? MIN_SESSION_HEIGHT : _height;

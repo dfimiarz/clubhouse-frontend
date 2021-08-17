@@ -100,12 +100,19 @@
                   }"
                 >
                   <transition-group name="fade" mode="out-in">
-                    <session
+                    <!-- <session
                       v-for="match in getBookingsForCourt(court.id)"
                       :key="match.id"
                       :session="match"
                     >
-                    </session>
+                    </session> -->
+                    <match-booking
+                      v-for="item in getBookingsForCourt(court.id)"
+                      :key="item.id"
+                      :booking="item"
+                    >
+
+                    </match-booking>
                   </transition-group>
                 </div>
               </div>
@@ -146,7 +153,8 @@
 </template>
 
 <script>
-import Session from "./Session";
+//import Session from "./Session";
+import MatchBooking from './../components/calendar/MatchBooking.vue'
 import TimeIndicator from "./TimeIndicator";
 import dbservice from "../services/db";
 import processAxiosError from "../utils/AxiosErrorHandler";
@@ -161,7 +169,8 @@ const TIMER_DUR = 10000;
 
 export default {
   components: {
-    session: Session,
+    //session: Session,
+    MatchBooking,
     timeindicator: TimeIndicator,
   },
   name: "MatchCalendar",

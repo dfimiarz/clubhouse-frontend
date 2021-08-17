@@ -1,0 +1,115 @@
+<template>
+  <div
+    class="sessioncell"
+    :style="{ top: +vpos + 'px', height: height + 'px' }"
+  >
+    <v-row no-gutters class="session_container fill-height" v-bind:style="{ 'background-color' : bgColor }">
+      <v-col
+        cols="12"
+        class="d-flex fill-height "
+      >
+        <slot v-bind:height="height"> 
+          <v-row class="fill-height" no-gutters>
+            <v-col cols="12">
+              Item 
+            </v-col>
+          </v-row>
+        </slot>
+      </v-col>
+    </v-row>
+  </div>
+</template>
+
+<script>
+
+const MIN_SESSION_HEIGHT = 26;
+
+export default {
+  props: {
+    date: {
+      type: String,
+      required: true,
+    },
+    start: {
+      type: String,
+      required: true
+    },
+    end: {
+      type: String,
+      required: true
+    },
+    bgColor: {
+      type: String,
+      default: 'lightgrey'
+    }
+  },
+  name: "Item",
+  data: function () {
+    return {};
+  },
+  methods: {
+    
+  },
+  computed: {
+    height: function () {
+      const _height = (this.cellHeight1H / 60) * this.duration;
+      return _height <= MIN_SESSION_HEIGHT ? MIN_SESSION_HEIGHT : _height;
+    },
+    // shortSesssion: function () {
+    //   return this.height <= PLAYER_CHIP_SIZE + 8 ? true : false;
+    // },
+    // showSessionType: function () {
+    //   return this.height > 2 * MIN_SESSION_HEIGHT;
+    // },
+    vpos: function () {
+      return (this.cellHeight1H / 60) * (this.startMin - this.calStartMin);
+    },
+    cellHeight1H: function () {
+      return this.$store.getters["calCellHeight1H"];
+    },
+    openMin: function () {
+      return this.$store.getters["openMin"];
+    },
+    closeMin: function () {
+      return this.$store.getters["closeMin"];
+    },
+    calStartMin: function () {
+      return Math.floor(this.openMin / 60) * 60;
+    },
+    calEndMin: function () {
+      return Math.ceil(this.closeMin / 60) * 60;
+    },
+    
+    duration: function () {
+      return this.endMin - this.startMin;
+    },
+    startMin: function () {
+      let s_dt = new Date(this.date.concat("T", this.start));
+      return s_dt.getHours() * 60 + s_dt.getMinutes();
+    },
+    endMin: function () {
+      let e_dt = new Date(this.date.concat("T", this.end));
+      return e_dt.getHours() * 60 + e_dt.getMinutes();
+    },
+  },
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+.sessioncell {
+  position: absolute;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.session_container {
+  overflow: hidden;
+  border-radius: 3px;
+  border: 1px solid black;
+  box-shadow: 1px 2px black;
+  color: black;
+}
+
+
+</style>
