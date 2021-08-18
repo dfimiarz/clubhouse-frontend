@@ -1,6 +1,8 @@
 <template>
   <booking-item :date="booking.date" :start="booking.start" :end="booking.end" :bgColor="matchcolor" v-slot="{height}">
-      <v-chip
+    <v-row no-gutters>
+      <v-col cols="12">
+        <v-chip
           v-for="(player, index) in players"
           :key="index"
           v-bind="getChipSize(height)"
@@ -15,6 +17,8 @@
           
           
         </v-chip>
+      </v-col>
+    </v-row>
   </booking-item>
 </template>
 
@@ -48,8 +52,8 @@ export default {
             ? { "x-small": true }
             : { small: true };
       },
-      isShortSession(){
-        return this.height <= PLAYER_CHIP_SIZE + 8 ? true : false;
+      isShortSession(height){
+        return height <= PLAYER_CHIP_SIZE + 8 ? true : false;
       },
       formatPlayerName: function (player) {
       const lastname =

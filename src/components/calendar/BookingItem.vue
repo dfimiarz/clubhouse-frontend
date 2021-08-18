@@ -3,11 +3,7 @@
     class="sessioncell"
     :style="{ top: +vpos + 'px', height: height + 'px' }"
   >
-    <v-row no-gutters class="session_container fill-height" v-bind:style="{ 'background-color' : bgColor }">
-      <v-col
-        cols="12"
-        class="d-flex fill-height "
-      >
+    <div class="session_container fill-height d-flex flex-wrap" v-bind:style="{ 'background-color' : bgColor }">
         <slot v-bind:height="height"> 
           <v-row class="fill-height" no-gutters>
             <v-col cols="12">
@@ -15,8 +11,7 @@
             </v-col>
           </v-row>
         </slot>
-      </v-col>
-    </v-row>
+    </div>
   </div>
 </template>
 
@@ -55,12 +50,6 @@ export default {
       const _height = (this.cellHeight1H / 60) * this.duration;
       return _height <= MIN_SESSION_HEIGHT ? MIN_SESSION_HEIGHT : _height;
     },
-    // shortSesssion: function () {
-    //   return this.height <= PLAYER_CHIP_SIZE + 8 ? true : false;
-    // },
-    // showSessionType: function () {
-    //   return this.height > 2 * MIN_SESSION_HEIGHT;
-    // },
     vpos: function () {
       return (this.cellHeight1H / 60) * (this.startMin - this.calStartMin);
     },
