@@ -2,10 +2,11 @@
   <div
     class="sessioncell"
     :style="{ top: +vpos + 'px', height: height + 'px' }"
+    @click="showBookingDetails"
   >
-    <div class="session_container fill-height d-flex flex-wrap" v-bind:style="{ 'background-color' : bgColor }">
+    <div class="session_container fill-height d-flex flex-wrap">
         <slot v-bind:height="height"> 
-          <v-row class="fill-height" no-gutters>
+          <v-row class="fill-height" no-gutters v-bind:style="{ 'background-color' : bgColor }">
             <v-col cols="12">
               Item 
             </v-col>
@@ -33,9 +34,13 @@ export default {
       type: String,
       required: true
     },
-    bgColor: {
-      type: String,
-      default: 'lightgrey'
+    id: {
+      type: Number,
+      required: false
+    },
+    showDetails: {
+      type: Boolean,
+      default: false
     }
   },
   name: "Item",
@@ -43,7 +48,14 @@ export default {
     return {};
   },
   methods: {
-    
+    showBookingDetails: function () {
+      if( this.showDetails ){
+        this.$router.push({
+          name: "BookingDetails",
+          params: { id: this.id },
+        });
+      }
+    },
   },
   computed: {
     height: function () {

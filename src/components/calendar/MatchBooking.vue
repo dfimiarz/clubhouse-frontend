@@ -1,7 +1,14 @@
 <template>
-  <booking-item :date="booking.date" :start="booking.start" :end="booking.end" :bgColor="matchcolor" v-slot="{height}">
-    <v-row no-gutters>
-      <v-col cols="12">
+  <booking-item :date="booking.date" :start="booking.start" :end="booking.end" :id="booking.id" showDetails v-slot="{height}">
+    <v-row v-bind:style="{ 'background-color' : matchcolor }" no-gutters class="fill-height">
+      <v-col cols="12"
+        :class="
+            isShortSession(height) === true
+              ? { 'align-center': true }
+              : { 'align-content-start': true, 'flex-wrap': true }
+          "
+          class="d-flex fill-height"
+      >
         <v-chip
           v-for="(player, index) in players"
           :key="index"
