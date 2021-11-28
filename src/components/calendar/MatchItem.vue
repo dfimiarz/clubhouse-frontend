@@ -15,7 +15,7 @@
             >
               
               <span style="white-space: nowrap;">{{ index + 1 }}.{{ formatName(player) }}</span>
-              <v-icon v-if="player.person_type === 2" small light>mdi-alpha-g-circle</v-icon>
+              <v-icon v-if="player.person_type === 2" small light>mdi-alpha-g-box-outline</v-icon>
               <v-icon v-if="player.type === 2000" small light>mdi-circle-half-full</v-icon>
               <v-icon v-if="player.type === 3000" small light>mdi-circle</v-icon>
             </div>
