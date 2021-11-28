@@ -39,7 +39,7 @@
                       <v-container fluid>
                         <v-row class="mx-1">
                           <div class="flex-grow-1 text-start">
-                            <v-btn dark icon :to="{ name: 'calendar' }">
+                            <v-btn icon @click="$router.go(-1)">
                               <v-icon>mdi-chevron-left</v-icon>
                             </v-btn>
                           </div>

@@ -23,7 +23,7 @@
                 <v-btn icon @click="changeDay(-1)">
                   <v-icon> mdi-arrow-left-bold </v-icon>
                 </v-btn>
-                <span class="title mx-1">{{ this.getTimeString() }}</span>
+                <span class="text-sm-body-1 text-md-h6 mx-1">{{ this.getTimeString() }}</span>
                 <v-btn icon @click="changeDay(1)">
                   <v-icon> mdi-arrow-right-bold </v-icon></v-btn
                 >
@@ -106,13 +106,14 @@
                       :session="match"
                     >
                     </session> -->
-                    <match-booking
+                    <component
                       v-for="item in getBookingsForCourt(court.id)"
                       :key="item.id"
                       :booking="item"
+                      :is="getCalendarItemType(item.type)"
                     >
 
-                    </match-booking>
+                    </component>
                   </transition-group>
                 </div>
               </div>
@@ -153,12 +154,16 @@
 </template>
 
 <script>
-//import Session from "./Session";
-import MatchBooking from './../components/calendar/MatchBooking.vue'
+
+import { BOOKING_TYPE_MATCH, BOOKING_TYPE_LESSON} from '../constants/constants';
+
+import MatchItem from './calendar/MatchItem.vue'
 import TimeIndicator from "./TimeIndicator";
 import dbservice from "../services/db";
 import processAxiosError from "../utils/AxiosErrorHandler";
 import Pusher from 'pusher-js'
+import EventItem from './calendar/EventItem.vue';
+import LessonItem from './calendar/LessonItem.vue'
 
 
 var pusher = null;
@@ -170,7 +175,9 @@ const TIMER_DUR = 10000;
 export default {
   components: {
     //session: Session,
-    MatchBooking,
+    'match-item': MatchItem,
+    'event-item': EventItem,
+    'lesson-item': LessonItem,
     timeindicator: TimeIndicator,
   },
   name: "MatchCalendar",
@@ -248,7 +255,16 @@ export default {
     };
   },
   methods: {
-
+    getCalendarItemType(type_id){
+      switch(type_id){
+        case BOOKING_TYPE_MATCH:
+          return 'match-item';
+        case BOOKING_TYPE_LESSON:
+          return 'lesson-item';
+        default:
+          return 'event-item';
+      }
+    },
     timerTickHanlder: function(){
 
       this.currtime = this.$dayjs().tz().valueOf();

@@ -16,6 +16,7 @@
           required
           :rules="[rules.required, rules.minduration, rules.lessThanMax]"
           :disabled="! isStartSet"
+          :loading="loading"
           suffix="min"
       >
       </v-text-field>
@@ -54,6 +55,10 @@ export default {
       },
       pref: {
           type: Number
+      },
+      loading: {
+          type: Boolean,
+          default: false
       }
   },
   components: {

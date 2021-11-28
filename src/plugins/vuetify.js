@@ -9,7 +9,7 @@ export default new Vuetify({
     VChip,VDivider, VListItem, VItemGroup, VDialog, VAlert
   },
   icons: {
-    iconfont: 'mdi',
+    iconfont: 'mdiSvg',
   },
   theme: {
     dark: true

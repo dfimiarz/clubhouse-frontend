@@ -195,6 +195,20 @@ async function getCaptcha() {
     return result.data;
 }
 
+async function getOverlappingBookings(date,start,end,court){
+
+    let url = new URL(process.env.VUE_APP_BACKEND + '/bookings/overlapping');
+
+    url.searchParams.set('date', date);
+    url.searchParams.set('start', start);
+    url.searchParams.set('end', end);
+    url.searchParams.set('court', court);
+
+    const result = await instance.get(url);
+
+    return result.data;
+}
+
 export default {
     getBookings,
     newMatch: newMatch,
@@ -216,5 +230,6 @@ export default {
     checkGeoAuth,
     getRecaptchaScore,
     getCaptcha,
-    deactivateGuest
+    deactivateGuest,
+    getOverlappingBookings
 }

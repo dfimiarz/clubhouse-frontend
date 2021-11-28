@@ -13,13 +13,13 @@
 
 <script>
 import splashscreen from "./components/SplashScreen";
-import mainscreen from "./components/MainScreen.vue";
+//import mainscreen from "./components/MainScreen.vue";
 
 export default {
   name: "app",
   components: {
-    splashscreen: splashscreen,
-    mainscreen: mainscreen
+    'splashscreen': splashscreen,
+    'mainscreen': () => import(/* webpackChunkName:  "mainscreen" */ './components/MainScreen.vue')
   },
   data: () => ({
     drawer: false,
@@ -91,11 +91,12 @@ export default {
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.25s ease-out;
+  transition: opacity 0.3s ease-out;
 }
 
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
 }
+
 </style>
