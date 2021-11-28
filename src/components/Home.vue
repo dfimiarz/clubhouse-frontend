@@ -18,6 +18,7 @@
                   min-height="100"
                   max-height="325"
                   aspect-ratio="1.5"
+                  :transition="false"
                 >
 
                   <v-row justify="center" align="end" no-gutters class="fill-height" >
