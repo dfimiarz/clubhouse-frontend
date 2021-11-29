@@ -40,7 +40,7 @@
                         <v-row class="mx-1">
                           <div class="flex-grow-1 text-start">
                             <v-btn icon @click="$router.go(-1)">
-                              <v-icon>mdi-chevron-left</v-icon>
+                              <v-icon>{{ chevronLeftIcon }}</v-icon>
                             </v-btn>
                           </div>
                           <div style="flex-grow: 2"></div>
@@ -59,7 +59,7 @@
                 <v-list two-line>
                   <v-list-item>
                     <v-list-item-icon>
-                      <v-icon>mdi-information</v-icon>
+                      <v-icon>{{ informationIcon }}</v-icon>
                     </v-list-item-icon>
 
                     <v-list-item-content>
@@ -70,7 +70,7 @@
                   </v-list-item>
                   <v-list-item>
                     <v-list-item-icon>
-                      <v-icon>mdi-calendar-range</v-icon>
+                      <v-icon>{{ calendarRangeIcon }}</v-icon>
                     </v-list-item-icon>
 
                     <v-list-item-content>
@@ -83,7 +83,7 @@
                   <v-divider inset></v-divider>
                   <v-list-item>
                     <v-list-item-icon>
-                      <v-icon>mdi-clock-start</v-icon>
+                      <v-icon>{{ clockStartIcon }}</v-icon>
                     </v-list-item-icon>
 
                     <v-list-item-content>
@@ -96,7 +96,7 @@
                     <v-list-item-action>
                       <v-btn icon v-if="canMove">
                         <v-icon @click="openEditor('timeeditor')"
-                          >mdi-pencil</v-icon
+                          >{{ pencilIcon }}</v-icon
                         >
                       </v-btn>
                     </v-list-item-action>
@@ -104,7 +104,7 @@
 
                   <v-list-item>
                     <v-list-item-icon>
-                      <v-icon>mdi-clock-end</v-icon>
+                      <v-icon> {{ clockEndIcon }} </v-icon>
                     </v-list-item-icon>
 
                     <v-list-item-content>
@@ -117,7 +117,7 @@
                   <v-divider inset></v-divider>
                   <v-list-item>
                     <v-list-item-icon>
-                      <v-icon>mdi-tennis</v-icon>
+                      <v-icon> {{ tennisIcon }} </v-icon>
                     </v-list-item-icon>
 
                     <v-list-item-content>
@@ -130,7 +130,7 @@
                     <v-list-item-action>
                       <v-btn icon v-if="canMove">
                         <v-icon @click="openEditor('courteditor')"
-                          >mdi-pencil</v-icon
+                          >{{ pencilIcon }}</v-icon
                         >
                       </v-btn>
                     </v-list-item-action>
@@ -138,7 +138,7 @@
                   <v-divider inset></v-divider>
                   <v-list-item>
                     <v-list-item-icon>
-                      <v-icon>mdi-close-circle</v-icon>
+                      <v-icon>{{ closeCircleIcon }}</v-icon>
                     </v-list-item-icon>
 
                     <v-list-item-content>
@@ -158,7 +158,7 @@
                     :key="player.id"
                   >
                     <v-list-item-icon>
-                      <v-icon>mdi-account</v-icon>
+                      <v-icon>{{ accountIcon }}</v-icon>
                     </v-list-item-icon>
 
                     <v-list-item-content>
@@ -176,7 +176,7 @@
 
                   <v-list-item>
                     <v-list-item-icon>
-                      <v-icon>mdi-note</v-icon>
+                      <v-icon>{{ noteIcon }}</v-icon>
                     </v-list-item-icon>
 
                     <v-list-item-content>
@@ -189,7 +189,7 @@
                     <v-list-item-action>
                       <v-btn icon v-if="canChangeNote">
                         <v-icon @click="openEditor('noteeditor')"
-                          >mdi-pencil</v-icon
+                          >{{ pencilIcon }}</v-icon
                         >
                       </v-btn>
                     </v-list-item-action>
@@ -276,6 +276,8 @@ import advancedFormat from "dayjs/plugin/advancedFormat"
 
 import { BOOKING_TYPE_MATCH } from '../constants/constants';
 
+import { mdiChevronLeft, mdiInformation, mdiCalendarRange, mdiClockStart, mdiPencil, mdiClockEnd, mdiTennis, mdiCloseCircle, mdiNote, mdiAccount} from '@mdi/js'
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(advancedFormat);
@@ -288,6 +290,16 @@ export default {
   name: "BookingDetails",
   data: function () {
     return {
+      chevronLeftIcon: mdiChevronLeft,
+      informationIcon: mdiInformation,
+      calendarRangeIcon: mdiCalendarRange,
+      clockStartIcon: mdiClockStart,
+      clockEndIcon: mdiClockEnd,
+      pencilIcon: mdiPencil,
+      tennisIcon: mdiTennis,
+      closeCircleIcon: mdiCloseCircle,
+      noteIcon: mdiNote,
+      accountIcon: mdiAccount,
       loading: false,
       error: null,
       sessioninfo: null,

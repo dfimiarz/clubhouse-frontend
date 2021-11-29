@@ -8,7 +8,7 @@
         dark
         @click="close"
       >
-        <v-icon>mdi-close</v-icon>
+        <v-icon> {{ closeIcon }}</v-icon>
       </v-btn>
       <v-toolbar-title>Edit Session Time</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -35,7 +35,7 @@
               <v-text-field
                 v-model="s_time"
                 label="Start time"
-                prepend-icon="mdi-clock-start"
+                :prepend-icon=clockStartIcon
                 readonly
                 v-on="on"
                 required=""
@@ -66,7 +66,7 @@
               <v-text-field
                 v-model="e_time"
                 label="End time"
-                prepend-icon="mdi-clock-end"
+                :prepend-icon=clockEndIcon
                 readonly
                 v-on="on"
                 required=""
@@ -107,12 +107,16 @@ import apihandler from './../../services/db'
 import { editor } from './EditorMixin'
 import processAxiosError from "../../utils/AxiosErrorHandler";
 
+import { mdiClose, mdiClockStart, mdiClockEnd} from '@mdi/js'
 
 export default {
     props: ['session'],
     mixins: [ editor ],
     data () {
         return {
+          closeIcon: mdiClose,
+          clockStartIcon: mdiClockStart,
+          clockEndIcon: mdiClockEnd,
           stimedialog: false,
           s_time: null,
           etimedialog: false,

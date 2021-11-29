@@ -5,7 +5,7 @@
         <template v-if="height > item_text_container_height">
           <div class="text-body-1 text-lg-subtitle-1 px-1 d-flex align-content-center">
             <div>MATCH</div>
-            <v-icon v-if="isBumpable" color="black">mdi-alpha-b-box-outline</v-icon>
+            <v-icon v-if="isBumpable" color="black">{{ bBoxOutlineIcon }}</v-icon>
           </div>
           <div class="d-flex flex-wrap">
             <div
@@ -15,16 +15,16 @@
             >
               
               <span style="white-space: nowrap;">{{ index + 1 }}.{{ formatName(player) }}</span>
-              <v-icon v-if="player.person_type === 2" small light>mdi-alpha-g-box-outline</v-icon>
-              <v-icon v-if="player.type === 2000" small light>mdi-circle-half-full</v-icon>
-              <v-icon v-if="player.type === 3000" small light>mdi-circle</v-icon>
+              <v-icon v-if="player.person_type === 2" small light>{{ gBoxOutlineIcon }}</v-icon>
+              <v-icon v-if="player.type === 2000" small light>{{ circleHalfFullIcon }}</v-icon>
+              <v-icon v-if="player.type === 3000" small light>{{ circleIcon }}</v-icon>
             </div>
           </div>
         </template>
         <template v-else>
           <div class="caption px-1 d-flex align-content-center flex-wrap">
             <div>MATCH</div>
-            <v-icon v-if="isBumpable" color="black" small>mdi-alpha-b-box-outline</v-icon>
+            <v-icon v-if="isBumpable" color="black" small>{{ bBoxOutlineIcon }}</v-icon>
             <div class="mx-1">- {{ player_count }} player(s)</div>
           </div> 
         </template>
@@ -37,6 +37,7 @@
 
 const PLAYER_CHIP_SIZE = 24;
 
+import { mdiAlphaBBoxOutline, mdiCircle, mdiAlphaGBoxOutline, mdiCircleHalfFull } from '@mdi/js'
 import CalendarItem from './CalendarItem.vue'
 import { itemmixin } from './ItemMixin'
 
@@ -44,6 +45,14 @@ export default {
 
   components: { CalendarItem },
   mixins: [itemmixin],
+  data: function() {
+    return {
+      bBoxOutlineIcon: mdiAlphaBBoxOutline,
+      circleIcon: mdiCircle,
+      gBoxOutlineIcon: mdiAlphaGBoxOutline,
+      circleHalfFullIcon: mdiCircleHalfFull
+    }
+  },
   props :{
       booking: {
         type: Object,

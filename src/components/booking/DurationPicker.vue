@@ -10,7 +10,7 @@
       <v-text-field
           v-model="duration"
           label="Duration"
-          prepend-icon="mdi-timer"
+          :prepend-icon=timerIcon
           readonly
           v-on="on"
           required
@@ -40,6 +40,8 @@
 <script>
 import vnumberpad from "./vuetify-numberpad";
 
+import { mdiTimer } from '@mdi/js'
+
 export default {
   name: "duration-picker",
   props: {
@@ -66,6 +68,7 @@ export default {
   },
   data() {
     return {
+        timerIcon: mdiTimer,
         durDialog: false,
         rules: {
             required: (value) => !!value || "Required.",

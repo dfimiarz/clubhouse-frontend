@@ -20,7 +20,7 @@
                     label="Password"
                     outlined
                     v-model="password"
-                    :append-icon="showpassword ? 'mdi-eye' : 'mdi-eye-off'"
+                    :append-icon="showpassword ? eyeIcon : eyeOffIcon"
                     :type="showpassword ? 'text' : 'password'"
                     :rules="[rules.required, rules.min]"
                     @click:append="showpassword = !showpassword"
@@ -45,10 +45,14 @@
 <script>
 import fbErrHandler from "@/utils/FirebaseErrorHandler";
 
+import { mdiEye, mdiEyeOff } from '@mdi/js'
+
 export default {
   name: "login",
   data: function () {
     return {
+      eyeIcon: mdiEye,
+      eyeOffIcon: mdiEyeOff,
       email: null,
       password: null,
       showpassword: false,

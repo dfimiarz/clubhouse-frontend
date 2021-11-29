@@ -1,4 +1,4 @@
-import '@mdi/font/css/materialdesignicons.css'
+// import '@mdi/font/css/materialdesignicons.css'
 import Vue from 'vue';
 import Vuetify,{ VChip,VDivider, VItemGroup, VListItem, VDialog, VAlert } from 'vuetify/lib';
 

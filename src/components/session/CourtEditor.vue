@@ -10,7 +10,7 @@
         dark
         @click="close"
       >
-        <v-icon>mdi-close</v-icon>
+        <v-icon>{{ closeIcon }}</v-icon>
       </v-btn>
       <v-toolbar-title>Change Court</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -60,11 +60,14 @@ import apihandler from './../../services/db'
 import { editor } from './EditorMixin'
 import processAxiosError from "../../utils/AxiosErrorHandler";
 
+import { mdiClose } from '@mdi/js'
+
 export default {
     props: ['session'],
     mixins: [editor],
     data () {
         return {
+          closeIcon: mdiClose,
           court: null,
           rules: {
             required: value => !!value || 'Required'

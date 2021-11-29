@@ -4,7 +4,7 @@
       <v-list>
         <v-list-item :to="{ name: 'home' }" exact>
           <v-list-item-action>
-            <v-icon>mdi-home</v-icon>
+            <v-icon>{{ homeIcon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Home</v-list-item-title>
@@ -12,7 +12,7 @@
         </v-list-item>
         <v-list-item :to="{ name: 'calendar' }" exact>
           <v-list-item-action>
-            <v-icon>mdi-calendar</v-icon>
+            <v-icon>{{ calendarIcon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Schedule</v-list-item-title>
@@ -20,7 +20,7 @@
         </v-list-item>
         <v-list-item :to="{ name: 'MatchBooking' }" exact>
           <v-list-item-action>
-            <v-icon>mdi-calendar-plus</v-icon>
+            <v-icon>{{ calendarPlusIcon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Book a court</v-list-item-title>
@@ -28,23 +28,15 @@
         </v-list-item>
         <v-list-item :to="{ name: 'guestregistration' }" exact>
           <v-list-item-action>
-            <v-icon>mdi-account-multiple</v-icon>
+            <v-icon>{{ accountMultipleIcon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Guests</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <!-- <v-list-item>
-          <v-list-item-action>
-            <v-icon>mdi-view-dashboard</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Dashboard</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item> -->
         <v-list-item :to="{ name: 'settings' }" exact>
           <v-list-item-action>
-            <v-icon>mdi-cog</v-icon>
+            <v-icon>{{ cogIcon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Settings</v-list-item-title>
@@ -52,7 +44,7 @@
         </v-list-item>
         <v-list-item>
           <v-list-item-action>
-            <v-icon>mdi-help</v-icon>
+            <v-icon>{{ helpIcon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Help</v-list-item-title>
@@ -60,7 +52,7 @@
         </v-list-item>
         <v-list-item :to="{ name: 'login' }" exact v-if="!loggedin">
           <v-list-item-action>
-            <v-icon>mdi-login</v-icon>
+            <v-icon>{{ loginIcon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Club Login</v-list-item-title>
@@ -68,7 +60,7 @@
         </v-list-item>
         <v-list-item v-else @click="logout">
           <v-list-item-action>
-            <v-icon>mdi-logout</v-icon>
+            <v-icon>{{ logoutIcon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Log Out</v-list-item-title>
@@ -117,9 +109,20 @@
 </template>
 
 <script>
+
+import { mdiHome, mdiCalendar, mdiLogin, mdiLogout, mdiHelp, mdiCog, mdiCalendarPlus, mdiAccountMultiple } from '@mdi/js';
+
 export default {
   data() {
     return {
+      homeIcon: mdiHome,
+      calendarIcon: mdiCalendar,
+      calendarPlusIcon: mdiCalendarPlus,
+      loginIcon: mdiLogin,
+      logoutIcon: mdiLogout,
+      helpIcon: mdiHelp,
+      cogIcon: mdiCog,
+      accountMultipleIcon: mdiAccountMultiple,
       drawer: false,
       sbvis: false,
       sbmsg: null

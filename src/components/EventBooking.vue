@@ -27,7 +27,7 @@
                     v-model="organizer"
                     :items="managers"
                     label="Authorized Person"
-                    prepend-icon="mdi-account"
+                    :prepend-icon=accountIcon
                     no-data-text="No available organizers"
                     :rules="[ rules.required ]"
                   ></v-select>
@@ -36,7 +36,7 @@
                   <v-select
                     v-model="bookingtype"
                     label="Booking Type"
-                    prepend-icon="mdi-form-select"
+                    :prepend-icon=formSelectIcon
                     no-data-text="No type found"
                     :rules="[ rules.required ]"
                     :items="bookingtypes"
@@ -52,7 +52,7 @@
                     :rules="[ rules.required ]"
                     v-model="court"
                     no-data-text="No courts found"
-                    prepend-icon="mdi-form-select"
+                    :prepend-icon=formSelectIcon
                   ></v-select>
                 </v-col>
 
@@ -68,7 +68,7 @@
                       <v-text-field
                         v-model="formattedDate"
                         label="Booking date"
-                        prepend-icon="mdi-calendar"
+                        :prepend-icon=clockStartIcon
                         readonly
                         v-bind="attrs"
                         v-on="on"
@@ -94,7 +94,7 @@
                       <v-text-field
                         v-model="s_time"
                         label="Start time"
-                        prepend-icon="mdi-clock-start"
+                        :prepend-icon=clockStartIcon
                         v-on="on"
                         required
                         :rules="[ rules.required ]"
@@ -125,7 +125,7 @@
                       <v-text-field
                         v-model="e_time"
                         label="End time"
-                        prepend-icon="mdi-clock-end"
+                        :prepend-icon=clockEndIcon
                         v-on="on"
                         required
                         :rules="[ rules.required, rules.endAfterStart ]"
@@ -165,8 +165,9 @@
 <script>
 import apihandler from "./../services/db";
 import utils from "./../services/utils";
-//import moment from "moment-timezone";
 import processAxiosError from "../utils/AxiosErrorHandler";
+
+import { mdiAccount, mdiFormSelect, mdiCalendar, mdiClockStart, mdiClockEnd } from '@mdi/js'
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -184,6 +185,11 @@ export default {
   name: "EventBooking",
   data: function () {
     return {
+      accountIcon: mdiAccount,
+      formSelectIcon: mdiFormSelect,
+      calendarIcon: mdiCalendar,
+      clockStartIcon: mdiClockStart,
+      clockEndIcon: mdiClockEnd,
       court: null,
       organizer: null,
       bookingtype: null,

@@ -21,11 +21,11 @@
                 >
 
                 <v-btn icon @click="changeDay(-1)">
-                  <v-icon> mdi-arrow-left-bold </v-icon>
+                  <v-icon> {{ leftArrowIcon }} </v-icon>
                 </v-btn>
                 <span class="text-sm-body-1 text-md-h6 mx-1">{{ this.getTimeString() }}</span>
                 <v-btn icon @click="changeDay(1)">
-                  <v-icon> mdi-arrow-right-bold </v-icon></v-btn
+                  <v-icon> {{ rightArrowIcon }} </v-icon></v-btn
                 >
               </v-row>
             </v-col>
@@ -52,7 +52,7 @@
                   small=""
                   @click="changeDisplayedCourts(-1)"
                   style="grid-row: 1; grid-column: 1 / span 1"
-                  ><v-icon> mdi-arrow-left </v-icon>
+                  ><v-icon> {{ leftArrowIcon }} </v-icon>
                 </v-btn>
                 <span
                   class="headline"
@@ -65,7 +65,7 @@
                   small=""
                   @click="changeDisplayedCourts(1)"
                   style="grid-row: 1; grid-column: 3 / span 1"
-                  ><v-icon> mdi-arrow-right </v-icon>
+                  ><v-icon> {{ rightArrowIcon }} </v-icon>
                 </v-btn>
               </div>
             </div>
@@ -132,7 +132,7 @@
             :to="{ name: 'MatchBooking' }"
             v-show="!simplifiedDisplay"
           >
-            <v-icon>mdi-plus</v-icon>
+            <v-icon> {{ plusIcon }}</v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -156,6 +156,8 @@
 <script>
 
 import { BOOKING_TYPE_MATCH, BOOKING_TYPE_LESSON} from '../constants/constants';
+
+import { mdiArrowLeftBold, mdiArrowRightBold, mdiPlus } from '@mdi/js'
 
 import MatchItem from './calendar/MatchItem.vue'
 import TimeIndicator from "./TimeIndicator";
@@ -183,6 +185,9 @@ export default {
   name: "MatchCalendar",
   data: function () {
     return {
+      leftArrowIcon: mdiArrowLeftBold,
+      rightArrowIcon: mdiArrowRightBold,
+      plusIcon: mdiPlus,
       message: "This is grid view",
       milTimeLabels: [
         "12",

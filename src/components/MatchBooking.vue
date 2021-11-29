@@ -12,7 +12,7 @@
           <v-list>
             <v-list-item two-line>
               <v-list-item-icon>
-                <v-icon> mdi-tennis </v-icon>
+                <v-icon> {{ icons.tennis }} </v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>{{ selCourtName }}</v-list-item-title>
@@ -21,7 +21,7 @@
             </v-list-item>
             <v-list-item two-line>
               <v-list-item-icon>
-                <v-icon> mdi-clock </v-icon>
+                <v-icon> {{ icons.clock }} </v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>{{ formatTime(newStartTime) }} - {{ formatTime(newEndTime) }}</v-list-item-title>
@@ -31,7 +31,7 @@
             <v-divider inset></v-divider>
             <v-list-item two-line>
               <v-list-item-icon>
-                <v-icon> mdi-clock </v-icon>
+                <v-icon> {{ icons.clock }} </v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>{{ formatTime(overlappingStartTime) }} - {{ formatTime(overlappingEndTime) }}</v-list-item-title>
@@ -41,7 +41,7 @@
             <v-divider inset></v-divider>
             <v-list-item two-line color="error" input-value="true">
               <v-list-item-icon>
-                <v-icon> mdi-alert-circle </v-icon>
+                <v-icon> {{ icons.alertCircle }} </v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>{{ bookingOverlap }}</v-list-item-title>
@@ -54,7 +54,7 @@
         <v-card-actions>
           <v-btn @click="$router.push({ name: 'calendar'})">
             <v-icon>
-              mdi-calendar-month
+              {{icons.calendarMonth}}
             </v-icon>
           </v-btn>
           <v-spacer></v-spacer>
@@ -109,7 +109,7 @@
                         readonly 
                         :value="playerDetails.length"
                         label="Player Count"
-                        prepend-icon="mdi-account-multiple" 
+                        :prepend-icon=icons.accountMultiple
                         
                       >
 
@@ -121,7 +121,7 @@
                           <v-text-field
                             :value="computedDateFormatted"
                             label="Date"
-                            prepend-icon="mdi-calendar"
+                            :prepend-icon=icons.calendar
                             readonly
                           ></v-text-field>
                         </v-col>
@@ -142,7 +142,7 @@
                               <v-text-field
                                 v-model="s_time"
                                 label="Start time"
-                                prepend-icon="mdi-clock-start"
+                                :prepend-icon=icons.clockStart
                                 readonly
                                 v-on="on"
                                 required
@@ -180,7 +180,7 @@
                           <v-col cols="12" md="6">
                             <duration-picker v-model="sel_duration" :start-time="s_time" :pref="prefDuration" :max="maxDuration" :loading="loading"></duration-picker>
                             <div class="warning--text" v-show="duration > prefDuration">
-                              <v-icon color="warning"> mdi-alert </v-icon>
+                              <v-icon color="warning"> {{ icons.alert }} </v-icon>
                               <span class="pl-2 text-body-2">Club rules: Max duration <b>{{ prefDuration }}</b> min!</span>
                             </div>
                           </v-col>
@@ -199,7 +199,7 @@
                             v-model="court"
                             :disabled="duration == 0"
                             :loading="loading"
-                            prepend-icon="mdi-tennis"
+                            :prepend-icon=icons.tennis
                           ></v-select>
                         </v-col>
                       </v-row>
@@ -216,7 +216,7 @@
                         </v-col>
                         <v-col cols="12">
                         <div class="warning--text" v-show="reqBumpable !== bumpable">
-                          <v-icon color="warning"> mdi-alert </v-icon>
+                          <v-icon color="warning"> {{ icons.alert }} </v-icon>
                           <span class="pl-2 text-body-2">Club Rules: Bumpable <b>ENABLED</b>!</span>
                         </div>
                         </v-col>
@@ -432,6 +432,7 @@ import DurationPicker from './booking/DurationPicker.vue';
 import processAxiosError from "./../utils/AxiosErrorHandler";
 
 import { BOOKING_TYPE_MATCH } from '../constants/constants';
+import { mdiAccountMultiple, mdiAlert, mdiAlertCircle, mdiCalendar, mdiCalendarMonth, mdiClock, mdiClockStart, mdiTennis } from '@mdi/js';
 
 
 export default {
@@ -442,6 +443,16 @@ export default {
   name: "MatchBooking",
   data: function () {
     return {
+      icons: {
+        tennis: mdiTennis,
+        clock: mdiClock,
+        alertCircle: mdiAlertCircle,
+        calendarMonth: mdiCalendarMonth,
+        accountMultiple: mdiAccountMultiple,
+        calendar: mdiCalendar,
+        clockStart: mdiClockStart,
+        alert: mdiAlert
+      },
       court: null,
       selplayers: [
         { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
