@@ -50,7 +50,7 @@
                     </v-col>
 
                     <v-col cols="12" align-self="end">
-                      <span class="display-1 pa-1">Booking Details</span>
+                      <span class="text-h4 pa-1">Booking Details</span>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -75,7 +75,7 @@
 
                     <v-list-item-content>
                       <v-list-item-title>{{
-                        sessioninfo.date | formatDate
+                        formatDate(sessioninfo.date)
                       }}</v-list-item-title>
                       <v-list-item-subtitle>Date</v-list-item-subtitle>
                     </v-list-item-content>
@@ -88,7 +88,7 @@
 
                     <v-list-item-content>
                       <v-list-item-title>{{
-                        starttime | formatTime
+                        formatTime(starttime)
                       }}</v-list-item-title>
                       <v-list-item-subtitle>Start</v-list-item-subtitle>
                     </v-list-item-content>
@@ -109,7 +109,7 @@
 
                     <v-list-item-content>
                       <v-list-item-title>{{
-                        endtime | formatTime
+                        formatTime(endtime)
                       }}</v-list-item-title>
                       <v-list-item-subtitle>End</v-list-item-subtitle>
                     </v-list-item-content>
@@ -269,18 +269,9 @@ import apihandler from "./../services/db";
 import valueeditor from "./session/ValueEditor";
 import processAxiosError from "../utils/AxiosErrorHandler";
 
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone"
-import advancedFormat from "dayjs/plugin/advancedFormat"
-
 import { BOOKING_TYPE_MATCH } from '../constants/constants';
 
 import { mdiChevronLeft, mdiInformation, mdiCalendarRange, mdiClockStart, mdiPencil, mdiClockEnd, mdiTennis, mdiCloseCircle, mdiNote, mdiAccount} from '@mdi/js'
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.extend(advancedFormat);
 
 export default {
   components: {
@@ -313,6 +304,14 @@ export default {
     };
   },
   methods: {
+    formatTime(timestring) {
+      if (!timestring) return "N/A";
+      return this.$dayjs(timestring).tz().format("h:mm a");    
+    },
+    formatDate( datestring ) {
+      if (!datestring) return "N/A";
+      return this.$dayjs(datestring).tz().format("MMM Do, YYYY");
+    },
     bookagain(){
       this.$router.replace({ name: 'MatchBooking', query: { pls: this.playerIds.toString() }});
     },
@@ -392,28 +391,16 @@ export default {
     },
   },
   filters: {
-    formatTime: function (timestring) {
-      if (!timestring) return "N/A";
-      return dayjs(timestring).format("h:mm a");
-    },
-    formatDate: function (timestring) {
-      if (!timestring) return "N/A";
-      return dayjs(timestring).format("MMM Do, YYYY");
-    },
   },
   computed: {
     clubtz: function () {
       return this.$store.state.clubtz;
     },
     starttime: function () {
-      return dayjs(this.sessioninfo.date.concat("T", this.sessioninfo.start))
-        .tz(this.clubtz)
-        .format();
+      return this.$dayjs.tz(this.sessioninfo.date.concat(" ", this.sessioninfo.start)).format();
     },
     endtime: function () {
-      return dayjs(this.sessioninfo.date.concat("T", this.sessioninfo.end))
-        .tz(this.clubtz)
-        .format();
+      return this.$dayjs.tz(this.sessioninfo.date.concat(" ", this.sessioninfo.end)).format();
     },
     canEnd: function () {
       return Object.prototype.hasOwnProperty.call(

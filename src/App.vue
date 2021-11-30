@@ -13,7 +13,6 @@
 
 <script>
 import splashscreen from "./components/SplashScreen";
-//import mainscreen from "./components/MainScreen.vue";
 
 export default {
   name: "app",

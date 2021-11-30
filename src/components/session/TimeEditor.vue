@@ -166,8 +166,8 @@ export default {
       }
     },
     mounted: function(){
-      this.s_time = this.$dayjs(this.session.date.concat('T',this.session.start)).format('HH:mm')
-      this.e_time = this.$dayjs(this.session.date.concat('T',this.session.end)).format('HH:mm')
+      this.s_time = this.$dayjs(this.session.date.concat('T',this.session.start)).tz().format('HH:mm')
+      this.e_time = this.$dayjs(this.session.date.concat('T',this.session.end)).tz().format('HH:mm')
     }
     
 }
