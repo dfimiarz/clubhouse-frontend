@@ -11,6 +11,14 @@
           <v-alert dense type="error" outlined v-show="errMessage" v-text="errMessage"></v-alert>
           <div v-if="hasGuests">
             <v-row no-gutters>
+              <v-col>
+                <span class="mr-2">Last Updated: {{ updated }}</span>
+                <v-chip label small @click="getCurrentActivations">
+                  Reload
+                </v-chip>
+              </v-col>
+            </v-row>
+            <v-row no-gutters>
               <v-col cols="12">
                 <v-list subheader >
                   <v-subheader>Active guests</v-subheader>
@@ -50,7 +58,6 @@
       </v-row>
     </v-card-text>
     <v-card-actions>
-      <v-btn :disabled="loading" @click="getCurrentActivations" > Reload </v-btn>
       <v-spacer></v-spacer>
       <v-btn text :disabled="! guest_selected || loading" @click="deactivateGuests">Deactivate</v-btn>
     </v-card-actions>
@@ -60,16 +67,6 @@
 <script>
 import dbservice from "./../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
-//import moment from "moment-timezone";
-
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone"
-import advancedFormat from "dayjs/plugin/advancedFormat"
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.extend(advancedFormat);
 
 export default {
   props: ["loading"],
@@ -103,7 +100,7 @@ export default {
 
         this.guest_activations = res.data;
         this.loaded = true;
-        this.updated = dayjs(this.date).tz(this.clubtz).format("h:mm a");
+        this.updated = this.$dayjs(this.date).tz().format("h:mm a");
         this.$emit("show:message", 'Guest records updated', "success");
       })
       .catch((err) => {
@@ -155,7 +152,7 @@ export default {
         .then((res) => {
           this.guest_activations = res.data;
           this.loaded = true;
-          this.updated = dayjs(this.date).tz(this.clubtz).format("h:mm a");
+          this.updated = this.$dayjs(this.date).tz().format("h:mm a");
         })
         .catch((err) => {
           const error = processAxiosError(err);
