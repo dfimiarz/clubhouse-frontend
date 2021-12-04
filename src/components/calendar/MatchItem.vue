@@ -11,7 +11,7 @@
             <div
               v-for="(player, index) in players"
               :key="index"
-              class="text-caption mx-1 d-flex"
+              class="text-caption mx-1 d-flex align-center"
             >
               
               <span style="white-space: nowrap;">{{ index + 1 }}.{{ formatName(player) }}</span>

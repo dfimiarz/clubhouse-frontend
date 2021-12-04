@@ -14,6 +14,7 @@
               <v-col>
                 <span class="mr-2">Last Updated: {{ updated }}</span>
                 <v-chip label small @click="getCurrentActivations">
+                  <v-icon small left> {{ reloadIcon }}</v-icon>
                   Reload
                 </v-chip>
               </v-col>
@@ -67,12 +68,14 @@
 <script>
 import dbservice from "./../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
+import { mdiReload } from '@mdi/js'
 
 export default {
   props: ["loading"],
   name: "GuestActivation",
   data: function () {
     return {
+      reloadIcon: mdiReload,
       guest_activations: null,
       loaded: false,
       updated: "N/A",
