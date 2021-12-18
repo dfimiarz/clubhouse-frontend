@@ -80,7 +80,9 @@
       </v-toolbar-items>
     </v-app-bar>
     <v-main>
-      <router-view @show:message="showMessage"></router-view>
+      <v-fade-transition hide-on-leave>
+        <router-view @show:message="showMessage"></router-view>
+      </v-fade-transition>
     </v-main>
     <v-footer app>
       <v-row>

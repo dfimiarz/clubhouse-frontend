@@ -1,13 +1,6 @@
 <template>
   <v-app dark>
-    
-      <!-- <splashscreen
-        v-if="!loaded"
-        :loading="loading"
-        :error="loadingError"
-      ></splashscreen> -->
       <mainscreen></mainscreen>
-    
   </v-app>
 </template>
 
@@ -23,9 +16,9 @@ export default {
   },
   data: () => ({
     drawer: false,
-    loaded: false,
-    loading: false,
-    loadingError: null,
+    // loaded: false,
+    // loading: false,
+    // loadingError: null,
   }),
   methods: {
     handleConnectionStatechange: function(){
@@ -38,40 +31,40 @@ export default {
       }
     },
     loadApp() {
-      this.loading = true;
+      // this.loading = true;
 
       this.$store.dispatch('loadPersistantSettings');
 
-      new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 1000);
-      })
-        .then(() => {
-          this.loaded = true;
-        })
-        .catch((err) => {
-          this.loadingError = err.message;
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      // new Promise((resolve) => {
+      //   setTimeout(() => {
+      //     resolve();
+      //   }, 1000);
+      // })
+      //   .then(() => {
+      //     this.loaded = true;
+      //   })
+      //   .catch((err) => {
+      //     this.loadingError = err.message;
+      //   })
+      //   .finally(() => {
+      //     this.loading = false;
+      //   });
     },
   },
   computed: {
-    initStatus: function () {
-      return this.$store.state.initStatus;
-    }
+    // initStatus: function () {
+    //   return this.$store.state.initStatus;
+    // }
   },
-  mounted: function(){
-    if ( this.initStatus === true) {
-        this.loadApp();
-      } else if (typeof this.initStatus === "string") {
-        this.loadingError = this.initStatus;
-      } else {
-        this.loadingError = "Unable to initilize";
-      }
-  },
+  // mounted: function(){
+  //   if ( this.initStatus === true) {
+  //       this.loadApp();
+  //     } else if (typeof this.initStatus === "string") {
+  //       this.loadingError = this.initStatus;
+  //     } else {
+  //       this.loadingError = "Unable to initilize";
+  //     }
+  // },
   created: function(){
 
     //Set default time zone for the club
@@ -89,7 +82,7 @@ export default {
 </script>
 
 <style scoped>
-.fade-enter-active,
+/* .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease-out;
 }
@@ -97,6 +90,6 @@ export default {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
-}
+} */
 
 </style>
