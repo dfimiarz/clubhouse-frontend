@@ -18,12 +18,7 @@ const store = new Vuex.Store(
             courtstore: courtmodule
         },
         state: {
-            /**
-             * true: init ok
-             * String: init error. Contains error message
-             * null: not initialized
-             */
-            initStatus: null,
+            
             settings: {
                 displaymode: {
                     val: null,
@@ -96,9 +91,6 @@ const store = new Vuex.Store(
             },
             clearError(state) {
                 state.error = null
-            },
-            SET_INIT_STATUS(state, status) {
-                state.initStatus = status
             },
             SET_CONNECTED(state,val){
                 state.connected = val;
