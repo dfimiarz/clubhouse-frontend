@@ -5,20 +5,16 @@
 </template>
 
 <script>
-//import splashscreen from "./components/SplashScreen";
+
 import maincreen from "./components/MainScreen"
 
 export default {
   name: "app",
   components: {
-    // 'splashscreen': splashscreen,
     'mainscreen': maincreen
   },
   data: () => ({
-    drawer: false,
-    // loaded: false,
-    // loading: false,
-    // loadingError: null,
+    drawer: false
   }),
   methods: {
     handleConnectionStatechange: function(){
@@ -29,43 +25,12 @@ export default {
       } else {
         this.$store.commit('SET_CONNECTED',false)
       }
-    },
-    loadApp() {
-      // this.loading = true;
-
-      this.$store.dispatch('loadPersistantSettings');
-
-      // new Promise((resolve) => {
-      //   setTimeout(() => {
-      //     resolve();
-      //   }, 1000);
-      // })
-      //   .then(() => {
-      //     this.loaded = true;
-      //   })
-      //   .catch((err) => {
-      //     this.loadingError = err.message;
-      //   })
-      //   .finally(() => {
-      //     this.loading = false;
-      //   });
-    },
+    }
   },
-  computed: {
-    // initStatus: function () {
-    //   return this.$store.state.initStatus;
-    // }
-  },
-  // mounted: function(){
-  //   if ( this.initStatus === true) {
-  //       this.loadApp();
-  //     } else if (typeof this.initStatus === "string") {
-  //       this.loadingError = this.initStatus;
-  //     } else {
-  //       this.loadingError = "Unable to initilize";
-  //     }
-  // },
+
   created: function(){
+
+    this.$store.dispatch('loadPersistantSettings');
 
     //Set default time zone for the club
     this.$dayjs.tz.setDefault(this.$store.state.clubtz);
@@ -82,14 +47,6 @@ export default {
 </script>
 
 <style scoped>
-/* .fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease-out;
-}
 
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-} */
 
 </style>
