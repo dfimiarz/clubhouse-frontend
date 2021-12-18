@@ -127,7 +127,7 @@ const store = new Vuex.Store(
                 dispatch('memberstore/clearEligiblePersons');
                 dispatch('courtstore/clearCourts');
             },
-            loadSettings({commit,state}){
+            loadPersistantSettings({commit,state}){
                 
                 const settingNames = Object.keys(state.settings)
 

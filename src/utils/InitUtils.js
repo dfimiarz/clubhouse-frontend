@@ -10,7 +10,7 @@ function checkFirebaseLogin() {
     return new Promise((resolve, reject) => {
       const unsubscribe = auth.onAuthStateChanged((user) => {
         unsubscribe();
-        resolve({ firebaseuser: user})
+        resolve({ result : user})
       }, reject)
     })
   
@@ -21,10 +21,27 @@ function checkFirebaseLogin() {
  */
 async function checkGeoAuth(){
   const result = await api.checkGeoAuth();
-  return Object.prototype.hasOwnProperty.call(result.data,'geoauth') ? result.data.geoauth  : null;
+  return Object.prototype.hasOwnProperty.call(result.data,'geoauth') ? { result : result.data.geoauth }  : { result : null };
+}
+
+/**
+ * Return values returned from checkGeoAuth and checkFireBaseLogin
+ */
+ function getInitStatus( geoAuthResult, firebaseResult ){
+
+  if( geoAuthResult.status === "rejected" ) {
+    return "GEOAUTH check failed"
+  }
+
+  if( firebaseResult.status === "rejected" ){
+    return "Unable to check login status"
+  }
+  
+  return true;
 }
 
 export default {
     checkFirebaseLogin,
-    checkGeoAuth
+    checkGeoAuth,
+    getInitStatus
 }

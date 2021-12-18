@@ -1,24 +1,25 @@
 <template>
   <v-app dark>
-    <transition name="fade">
-      <splashscreen
+    
+      <!-- <splashscreen
         v-if="!loaded"
         :loading="loading"
         :error="loadingError"
-      ></splashscreen>
-      <mainscreen v-else></mainscreen>
-    </transition>
+      ></splashscreen> -->
+      <mainscreen></mainscreen>
+    
   </v-app>
 </template>
 
 <script>
-import splashscreen from "./components/SplashScreen";
+//import splashscreen from "./components/SplashScreen";
+import maincreen from "./components/MainScreen"
 
 export default {
   name: "app",
   components: {
-    'splashscreen': splashscreen,
-    'mainscreen': () => import(/* webpackChunkName:  "mainscreen" */ './components/MainScreen.vue')
+    // 'splashscreen': splashscreen,
+    'mainscreen': maincreen
   },
   data: () => ({
     drawer: false,
@@ -39,7 +40,7 @@ export default {
     loadApp() {
       this.loading = true;
 
-      this.$store.dispatch('loadSettings');
+      this.$store.dispatch('loadPersistantSettings');
 
       new Promise((resolve) => {
         setTimeout(() => {
@@ -62,14 +63,14 @@ export default {
       return this.$store.state.initStatus;
     }
   },
-  mounted: function () {
-    if (this.initStatus === true) {
-      this.loadApp();
-    } else if (typeof this.initStatus === "string") {
-      this.loadingError = this.initStatus;
-    } else {
-      this.loadingError = "Unable to initilize";
-    }
+  mounted: function(){
+    if ( this.initStatus === true) {
+        this.loadApp();
+      } else if (typeof this.initStatus === "string") {
+        this.loadingError = this.initStatus;
+      } else {
+        this.loadingError = "Unable to initilize";
+      }
   },
   created: function(){
 

@@ -5,18 +5,71 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
     <meta name="Description" content="Knicks Field Club scheduling application"> 
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="icon" href="<%= BASE_URL %>favicon.png">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <title>Knickerbocker Tennis Club</title>
     <style>
-      .grecaptcha-badge { visibility: hidden; }
+      .movingdots:after {
+          content: '.';
+          animation: dots 3s steps(1, end) infinite;
+      }
+      @keyframes dots {
+          0%, 12.5% {
+              opacity: 0;
+          }
+          25% {
+              opacity: 1;
+          }
+          37.5% {
+              text-shadow: .5em 0;
+          }
+          50% {
+              text-shadow: .5em 0, 1em 0;
+          }
+          62.5% {
+              text-shadow: .5em 0, 1em 0, 1.5em 0;
+          }
+          75% {
+              text-shadow: .5em 0, 1em 0, 1.5em 0, 2em 0;
+          }
+          87.5%, 100%{
+              text-shadow: .5em 0, 1em 0, 1.5em 0, 2em 0, 2.5em;
+          }
+      }
+
+      #loader_error {
+        color: red;
+        padding-top: 10px;
+      }
+
+      .logoimg[data-src] {
+        filter: blur(0.2em);
+      }
+
+      .logoimg {
+        filter: blur(0em);
+        transition: filter 0.5s;
+      }
+
+      .logo_img_container {
+        width: 80%; 
+        max-width: 640px;
+      }
+
     </style>
   </head>
-  <body>
+  <body style="margin: 0px;">
     <noscript>
       <strong>We're sorry but this site doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
-    <div id="app"></div>
+    <div id="app" style="height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; background-color: black; font-family: Roboto, Arial;">
+      <div class="logo_img_container">
+        <img data-src="<%= BASE_URL %>clublogo.png" class="logoimg"
+          src="data:image/png;base64,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"
+          style="width: 100%;"/></div>
+      <div id="loader" style="padding-top: 10px; color: white;">Loading <span class="movingdots"></span></div>
+      <div id="loader_error"></div>
+    </div>
     <!-- built files will be auto injected -->
   </body>
 </html>
