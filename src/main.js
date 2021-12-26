@@ -5,12 +5,12 @@ import router from './router'
 
 import vuetify from './plugins/vuetify';
 
-import InitUtils from './utils/InitUtils'
+// import InitUtils from './utils/InitUtils'
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone"
-import advancedFormat from "dayjs/plugin/advancedFormat"
+import timezone from "dayjs/plugin/timezone";
+import advancedFormat from "dayjs/plugin/advancedFormat";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -20,63 +20,36 @@ Vue.prototype.$dayjs = dayjs;
 
 Vue.config.productionTip = false;
 
-// eslint-disable-next-line no-unused-vars
-function initializeVueApp(){
-  new Vue({
-      router,
-      store,
-      vuetify,
-      render: h => h(App)
-    }).$mount('#app')
-}
 
-function showLoadingError(text){
-  const loader_error_elem = document.getElementById('loader_error');
-  const loader_elem = document.getElementById('loader');
-  
-  loader_elem.remove();
-  loader_error_elem.textContent = text;
-}
+//---
+//Register global onnline, offline listeners and use them to set flag in store
+window.addEventListener('offline', handleConnectionStatechange);
+window.addEventListener('online', handleConnectionStatechange);
 
-function startApp(){
+handleConnectionStatechange();
 
-    let initStatus = null;
+function handleConnectionStatechange() {
 
-    Promise.allSettled([InitUtils.checkFirebaseLogin(),InitUtils.checkGeoAuth()])
-      .then( values => {
-        
-        const geoAuthResult = values[1];
-        const fireBaseResult = values[0];
+  const online = window.navigator.onLine;
 
-        initStatus = InitUtils.getInitStatus(geoAuthResult,fireBaseResult);
-
-        if( initStatus === true ){
-
-          const geoauth = geoAuthResult.value.result;
-          store.dispatch('userstore/setGeoAuth', geoauth);
-
-          const user = fireBaseResult.value.result
-          
-          if (user) {
-            store.dispatch('userstore/setUser', user.email);
-          }
-          else {
-            store.dispatch('userstore/setUser', null);
-          }
-        } else {
-          showLoadingError(initStatus);
-        }
-      } )
-      .then(() => new Promise((resolve) => setTimeout(resolve,1000)))
-      .catch( () => {
-        showLoadingError("Unable to verify auth data");
-      })
-      .finally(() => {
-        if( initStatus === true ){
-          initializeVueApp()
-        }
-      })
+  if (online) {
+    store.commit('SET_CONNECTED', true)
+  } else {
+    store.commit('SET_CONNECTED', false)
   }
+}
+//---
+
+// eslint-disable-next-line no-unused-vars
+function initializeVueApp() {
+  new Vue({
+    router,
+    store,
+    vuetify,
+    render: h => h(App)
+  }).$mount('#app')
+
+}
 
 /**
  * https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Loading
@@ -93,7 +66,11 @@ imagesToLoad.forEach((img) => {
   loadImages(img)
 })
 
-startApp();
- 
+
+setTimeout(function(){
+  initializeVueApp();
+},1000);
+
+
 
 

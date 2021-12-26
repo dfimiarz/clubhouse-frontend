@@ -23,7 +23,9 @@
                 <v-btn icon @click="changeDay(-1)">
                   <v-icon> {{ leftArrowIcon }} </v-icon>
                 </v-btn>
-                <span class="text-sm-body-1 text-md-h6 mx-1">{{ this.getTimeString() }}</span>
+                <span class="text-sm-body-1 text-md-h6 mx-1">{{
+                  this.getTimeString()
+                }}</span>
                 <v-btn icon @click="changeDay(1)">
                   <v-icon> {{ rightArrowIcon }} </v-icon></v-btn
                 >
@@ -70,7 +72,11 @@
               </div>
             </div>
 
-            <div class="time-grid-container" v-bind:style="{ overflow: simplifiedDisplay ? 'hidden' : 'auto'}" ref="tcontainer">
+            <div
+              class="time-grid-container"
+              v-bind:style="{ overflow: simplifiedDisplay ? 'hidden' : 'auto' }"
+              ref="tcontainer"
+            >
               <div
                 v-for="n in totalCellCount * 4"
                 :key="n"
@@ -112,7 +118,6 @@
                       :booking="item"
                       :is="getCalendarItemType(item.type)"
                     >
-
                     </component>
                   </transition-group>
                 </div>
@@ -137,36 +142,24 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-overlay :value="overlay_visible">
-      <v-progress-circular indeterminate size="64" v-if="loading"></v-progress-circular>
-      
-      <div class="d-flex flex-column justify-center text-h6" v-else-if="! connected">
-          <div class="text-center">Connection Lost</div>
-          <div class="text-center">waiting to reconnect ...</div>
-      </div>
-      <div class="d-flex flex-column justify-center text-h6" v-else-if="connectionError">
-          <div class="text-center pb-2">Connection Error</div>
-          <v-btn @click="reloadBookings">Reload</v-btn>
-      </div>
-      
-    </v-overlay>
   </div>
 </template>
 
 <script>
+import {
+  BOOKING_TYPE_MATCH,
+  BOOKING_TYPE_LESSON,
+} from "../constants/constants";
 
-import { BOOKING_TYPE_MATCH, BOOKING_TYPE_LESSON} from '../constants/constants';
+import { mdiArrowLeftBold, mdiArrowRightBold, mdiPlus } from "@mdi/js";
 
-import { mdiArrowLeftBold, mdiArrowRightBold, mdiPlus } from '@mdi/js'
-
-import MatchItem from './calendar/MatchItem.vue'
+import MatchItem from "./calendar/MatchItem.vue";
 import TimeIndicator from "./TimeIndicator";
 import dbservice from "../services/db";
 import processAxiosError from "../utils/AxiosErrorHandler";
-import Pusher from 'pusher-js'
-import EventItem from './calendar/EventItem.vue';
-import LessonItem from './calendar/LessonItem.vue'
-
+import Pusher from "pusher-js";
+import EventItem from "./calendar/EventItem.vue";
+import LessonItem from "./calendar/LessonItem.vue";
 
 var pusher = null;
 var channel = null;
@@ -177,9 +170,9 @@ const TIMER_DUR = 10000;
 export default {
   components: {
     //session: Session,
-    'match-item': MatchItem,
-    'event-item': EventItem,
-    'lesson-item': LessonItem,
+    "match-item": MatchItem,
+    "event-item": EventItem,
+    "lesson-item": LessonItem,
     timeindicator: TimeIndicator,
   },
   name: "MatchCalendar",
@@ -188,7 +181,6 @@ export default {
       leftArrowIcon: mdiArrowLeftBold,
       rightArrowIcon: mdiArrowRightBold,
       plusIcon: mdiPlus,
-      message: "This is grid view",
       milTimeLabels: [
         "12",
         "1",
@@ -241,51 +233,59 @@ export default {
         "10 pm",
         "11 pm",
       ],
-      dialog: false,
       date: null,
       courtSlots: null,
       maxDisplayableCourts: 5,
       firstCourt: 0,
-      resizeTimeout: null,
       currtime: null,
-      menu2: false,
       timerHandle: null,
-      showTimeIndicator: true,
       bookings: [],
-      loading: false,
-      timeIndicatorVisible: false,
-      autoscroll: false,
-      connectionError: false
-
+      timeIndicatorVisible: false, //Controls display of current time indicator
     };
   },
+  beforeRouteEnter(to,from, next){
+    next((vm) => {
+      vm.$store.getters["userstore/isAuthenticated"] ? next() : next({ name: 'login' })
+    });
+  },
   methods: {
-    getCalendarItemType(type_id){
-      switch(type_id){
-        case BOOKING_TYPE_MATCH:
-          return 'match-item';
-        case BOOKING_TYPE_LESSON:
-          return 'lesson-item';
-        default:
-          return 'event-item';
+    cleanUp() {
+      this.unsubsribe();
+      this.bookings.splice(0);
+
+      //clear the time if still active
+      if (this.timerHandle) {
+        clearInterval(this.timerHandle);
       }
     },
-    timerTickHanlder: function(){
-
+    getCalendarItemType(type_id) {
+      switch (type_id) {
+        case BOOKING_TYPE_MATCH:
+          return "match-item";
+        case BOOKING_TYPE_LESSON:
+          return "lesson-item";
+        default:
+          return "event-item";
+      }
+    },
+    timerTickHanlder: function () {
       this.currtime = this.$dayjs().tz().valueOf();
 
       //Check if date has changed while running timer
-      const curr_date = this.$dayjs().tz().startOf('day').valueOf();
-      const curr_cal_date = this.$dayjs(this.date).tz().startOf('day').valueOf();
+      const curr_date = this.$dayjs().tz().startOf("day").valueOf();
+      const curr_cal_date = this.$dayjs(this.date)
+        .tz()
+        .startOf("day")
+        .valueOf();
 
       //Reset date and timer when calendar date is not the same a current date
-      if( curr_date !== curr_cal_date){
+      if (curr_date !== curr_cal_date) {
         clearInterval(this.timerHandle);
         this.timerHandle = null;
         this.resetDate();
       }
 
-      if( this.connectionError ){
+      if (this.error) {
         //console.log("Trying to reconnect")
         this.loadDataAndSubscribe();
       }
@@ -296,7 +296,7 @@ export default {
      */
     scrollCalendar: function () {
       //Get total lenght of the day
-      var day_len = (this.endHour - this.startHour)*60;
+      var day_len = (this.endHour - this.startHour) * 60;
 
       //Do nothing if day is not "long enough"
       if (day_len < 1) {
@@ -326,8 +326,6 @@ export default {
         return;
       }
 
-      
-
       //Get current minutes
 
       var curr_min =
@@ -344,7 +342,7 @@ export default {
 
       //Calculate scroll distance. Scrolling from startHour NOT startMin
       var initScrollDistance = Math.ceil(
-        ((adj_curr_min - (this.startHour*60)) / day_len) *
+        ((adj_curr_min - this.startHour * 60) / day_len) *
           this.$refs.tcontainer.scrollHeight
       );
 
@@ -370,16 +368,14 @@ export default {
         : "N/A";
     },
     changeDay(day_diff) {
-
       this.date = this.$dayjs(this.date).tz().add(day_diff, "day").format();
       this.loadBookings(this.$dayjs(this.date).tz().format("YYYY-MM-DD"));
     },
     resetDate() {
-      this.date = this.$dayjs().tz().startOf('day').format();
+      this.date = this.$dayjs().tz().startOf("day").format();
       this.reloadBookings();
-      
     },
-    reloadBookings(){
+    reloadBookings() {
       this.loadBookings(this.$dayjs(this.date).tz().format("YYYY-MM-DD"));
     },
     changeDisplayedCourts: function (step) {
@@ -404,121 +400,123 @@ export default {
       });
     },
     loadBookings(date) {
-      if( ! this.connected ){
-        return;
-      }
 
       this.loading = true;
-      
 
-      this.loadAsync(date).then((data) => {
-        this.bookings = data;
-        this.connectionError = false;
-      })
-      .catch((err) => {
-        this.bookings.splice(0);
-        const error = processAxiosError(err);
-        if( error === "Connection Error."){
-         
-          if( this.simplifiedDisplay ){
-            this.connectionError = true;
-          } else {
-            this.$emit("show:message", "Error: " + error, "error");
-          }
+      this.loadAsync(date)
+        .then((data) => {
+          this.bookings = data;
+          this.error = false;
+        })
+        .catch((err) => {
+          this.bookings.splice(0);
+          this.error = processAxiosError(err);
+          // if( error === "Connection Error."){
 
-        }
-      })
-      .finally(() => {
-        this.loading = false;
-      
-      });
+          //   if( this.simplifiedDisplay ){
+          //     this.error = true;
+          //   } else {
+          //     this.$emit("show:message", "Error: " + error, "error");
+          //   }
+
+          // }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
-    subscribe(){
-
-      pusher = new Pusher(process.env.VUE_APP_PUSHER_KEY, { cluster: process.env.VUE_APP_PUSHER_CLUSTER })
+    subscribe() {
+      pusher = new Pusher(process.env.VUE_APP_PUSHER_KEY, {
+        cluster: process.env.VUE_APP_PUSHER_CLUSTER,
+      });
 
       // pusher.connection.bind('state_change',(states) => {
       //   console.log("Pusher: ",states.current)
       // })
 
-      channel = pusher.subscribe(channelname)
+      channel = pusher.subscribe(channelname);
 
-
-      channel.bind('booking_change', (data) => {
-      
+      channel.bind("booking_change", (data) => {
         //console.log("Got data")
 
         const dateChanged = data.date;
         const selectedDate = this.$dayjs(this.date).tz().format("YYYY-MM-DD");
 
-        if( dateChanged === selectedDate && !this.loading){
-          
+        if (dateChanged === selectedDate && !this.loading) {
           this.reloadBookings();
-          
         }
-        
-      })
+      });
     },
-    unsubsribe: function(){
-
+    unsubsribe: function () {
       //Disconnet pusher connections
-      if( channel ){
+      if (channel) {
         channel.unbind();
         channel = null;
       }
 
-      if( pusher ){
+      if (pusher) {
         // pusher.connection.unbind('state_change');
         pusher.disconnect();
         pusher = null;
       }
     },
-    loadDataAndSubscribe(){
-
-      if( ! this.connected ){
-        return;
-      }
+    loadDataAndSubscribe() {
 
       this.loading = true;
-      
-      this.loadAsync(this.$dayjs(this.date).tz().format("YYYY-MM-DD")).then((data) => {
-        //console.log("Got results");
-        this.bookings = data;
-        this.connectionError = false;
-        this.subscribe();
-      }).catch((err) => {
-        const error = processAxiosError(err);
-        if( error === "Connection Error."){
-         
-          if( this.simplifiedDisplay ){
-            this.connectionError = true;
-          } else {
-            this.$emit("show:message", "Error: " + error, "error");
-          }
-        }
-      }).finally(() => {
-        this.loading = false;
-      });
+
+      this.loadAsync(this.$dayjs(this.date).tz().format("YYYY-MM-DD"))
+        .then((data) => {
+          //console.log("Got results");
+          this.bookings = data;
+          this.error = false;
+          this.subscribe();
+        })
+        .catch((err) => {
+          this.error = processAxiosError(err);
+          // if( error === "Connection Error."){
+
+          //   if( this.simplifiedDisplay ){
+          //     this.error = true;
+          //   } else {
+          //     this.$emit("show:message", "Error: " + error, "error");
+          //   }
+          // }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
 
-    async loadAsync(date){
-      const res = await dbservice.getBookings(date)
-      return res.data
-
-    }
+    async loadAsync(date) {
+      const res = await dbservice.getBookings(date);
+      return res.data;
+    },
   },
   computed: {
-    simplifiedDisplay: function(){
-      return this.displaymode === "TV"
+    authenticated: function () {
+      return this.$store.getters["userstore/isAuthenticated"];
     },
-    displaymode: function(){
-      return this.$store.getters['getSetting']('displaymode');
+    loading: {
+      get: function () {
+        return this.$store.state.loading;
+      },
+      set: function (val) {
+        this.$store.dispatch("setLoading", val);
+      },
     },
-    connected: function(){
-      return this.$store.state.connected;
+    error: {
+      get: function () {
+        return this.$store.state.error;
+      },
+      set: function (val) {
+        this.$store.dispatch("setError", val);
+      },
     },
-    overlay_visible: function(){
-      return this.loading || ! this.connected || this.connectionError
+    simplifiedDisplay: function () {
+      return this.displaymode === "TV";
+    },
+    displaymode: function () {
+      return this.$store.getters["getSetting"]("displaymode");
     },
     startMin: function () {
       return this.$store.getters["openMin"];
@@ -560,10 +558,6 @@ export default {
           return 5;
       }
     },
-
-    visiableCourtSlots: function () {
-      return null;
-    },
     displayableCourts: function () {
       const lastIndex = this.firstCourt + this.maxCourtCount;
       /* 
@@ -571,44 +565,28 @@ export default {
         If end [here lastIndex] is greater than the length of the sequence, slice extracts through to the end of the sequence (arr.length).
       */
       return this.courts.slice(this.firstCourt, lastIndex);
-    }
+    },
   },
   created: function () {
 
     this.currtime = this.$dayjs().tz().valueOf();
-    this.date = this.$dayjs().tz().startOf('day').format();
-    this.loadDataAndSubscribe()
+    this.date = this.$dayjs().tz().startOf("day").format();
+    this.loadDataAndSubscribe();
+   
   },
   beforeDestroy: function () {
-
-    this.unsubsribe();
-
-    this.bookings.splice(0);
-
-    //clear the time if still active
-    if ( this.timerHandle ) {
-      clearInterval(this.timerHandle);
-    } 
-    
+    this.cleanUp();
   },
-  updated: function(){
-    this.$nextTick(function(){
-      if( this.simplifiedDisplay ){
-            this.scrollCalendar();
-        }
+  updated: function () {
+    this.$nextTick(function () {
+      if (this.simplifiedDisplay) {
+        this.scrollCalendar();
+      }
     });
   },
   watch: {
-    connectionError: function(val){
+    error: function(val){
       if( val ){
-        this.unsubsribe()
-      }
-    },
-    //Watch connected status in store. Load Bookings if connected becomes true
-    connected: function(val){
-      if( val ){
-        this.loadDataAndSubscribe();
-      } else {
         this.unsubsribe();
       }
     },
@@ -620,37 +598,34 @@ export default {
       this.firstCourt = newFirstCourt;
     },
     date: function (val) {
-
       //Webworker https://www.youtube.com/watch?v=nwQN55oPAfc
 
-      const curr_date = this.$dayjs().tz().startOf('day').valueOf();
-      const new_cal_date = this.$dayjs(val).tz().startOf('day').valueOf();
+      const curr_date = this.$dayjs().tz().startOf("day").valueOf();
+      const new_cal_date = this.$dayjs(val).tz().startOf("day").valueOf();
 
-      if( curr_date === new_cal_date ){
-
+      if (curr_date === new_cal_date) {
         //Show time indicator bar when new_date = current_date
         this.timeIndicatorVisible = true;
 
         //Set up timer to tick every TIMER_DUR seconds;s
         this.timerHandle = setInterval(this.timerTickHanlder, TIMER_DUR);
-
-      }
-      else{
-
-        //Hide time indicator bar when new_date = current_date
+      } else {
+        //Hide time indicator bar when new_date is not current_date
         this.timeIndicatorVisible = false;
 
         //Stop the timer
-        if ( this.timerHandle ) {
+        if (this.timerHandle) {
           clearInterval(this.timerHandle);
           this.timerHandle = null;
-        } 
+        }
       }
 
-      //If time inidicator is visible, scroll calendar to focus on it.
-      if (this.timeIndicatorVisible) {
-        this.scrollCalendar();
+      if ( this.timeIndicatorVisible ) {
+        this.$nextTick(function () {
+          this.scrollCalendar();
+        });
       }
+
     },
   },
 };

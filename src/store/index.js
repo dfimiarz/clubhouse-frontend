@@ -18,19 +18,18 @@ const store = new Vuex.Store(
             courtstore: courtmodule
         },
         state: {
-            
             settings: {
                 displaymode: {
                     val: null,
                     default: "DESKTOP"
                 }
             },
+            dataloaded: false,
             displaymodes: ['DESKTOP','TV'],
-            connected: true,
+            connected: null,
             clubtz: "America/New_York",
             loading: false,
             error: null,
-            db: null,
             defaultCellHeight1H: 120,
             cellHeightsForMode: {
                 'DESKTOP': 120,
@@ -83,14 +82,11 @@ const store = new Vuex.Store(
         },
         mutations: {
 
-            setLoading(state, value) {
+            SET_LOADING(state, value) {
                 state.loading = value
             },
-            setError(state, value) {
+            SET_ERROR(state, value) {
                 state.error = value
-            },
-            clearError(state) {
-                state.error = null
             },
             SET_CONNECTED(state,val){
                 state.connected = val;
@@ -100,24 +96,27 @@ const store = new Vuex.Store(
                 if( Object.prototype.hasOwnProperty.call(state.settings,name) ){
                     state.settings[name]['val'] = val
                 }
+            },
+            SET_DATA_LOADED( state, val ){
+                state.dataloaded = val;
             }
         },
         actions: {
-            clearError({ commit }) {
-                commit('clearError')
-            },
+            
             loadAppResources({ dispatch, getters }) {
 
                 //Load app resources only when user is authenticated
-                if( getters['userstore/isAuthenticated'] === true ) 
+                if( getters['userstore/isAuthenticated'] === true ){
                     return Promise.all([dispatch('memberstore/loadEligiblePersons'), dispatch('courtstore/loadCourts')])
-                else
+                }
+                else {
                     return Promise.resolve(true);
-                
+                }
             },
-            clearAppResources({ dispatch }){
+            clearAppResources({ commit,dispatch }){
                 dispatch('memberstore/clearEligiblePersons');
                 dispatch('courtstore/clearCourts');
+                commit('SET_DATA_LOADED',false);
             },
             loadPersistantSettings({commit,state}){
                 
@@ -143,6 +142,19 @@ const store = new Vuex.Store(
                 }
 
                 commit('SET_SETTING', { name: name, val: value } );
+            },
+            setLoading({commit},val){
+                commit('SET_LOADING',val);
+            },
+            setError({commit},val){
+                commit("SET_ERROR",val)
+            },
+            clearError({ commit }) {
+                commit('SET_ERROR',null)
+            },
+            setDataLoaded({commit},val) {
+                console.log("setting DL to",val)
+                commit('SET_DATA_LOADED',val)
             }
         },
         getters: {
@@ -192,6 +204,9 @@ const store = new Vuex.Store(
                 return (name) => {
                     return Object.prototype.hasOwnProperty.call(state.settings,name) ? state.settings[name]["val"] : null;
                 }
+            },
+            appActive(state,getters){
+                return getters['userstore/isInitialized'] && state.dataloaded;
             }
             
         }

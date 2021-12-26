@@ -12,7 +12,7 @@ const MatchBooking = () => import(/* webpackChunkName: "booking" */ '@/component
 const BookingDetails = () => import(/* webpackChunkName: "details" */ '@/components/BookingDetails')
 const EventBooking = () => import(/* webpackChunkName: "manage" */ '@/components/EventBooking')
 const Settings = () => import(/* webpackChunkName: "settings" */ '@/components/Settings')
-import store from '@/store/index'
+// import store from '@/store/index'
 
 Vue.use(Router)
 
@@ -128,17 +128,17 @@ let router = new Router({
   mode: 'history'
 })
 
-router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (store.state.userstore.user || store.state.userstore.geoauth) {
-      next();
-    }
-    else {
-      next('/login');
-    }
-  } else {
-    next()
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   if (to.matched.some(record => record.meta.requiresAuth)) {
+//     if (store.getters['userstore/isAuthenticated']) {
+//       next();
+//     }
+//     else {
+//       next('/login');
+//     }
+//   } else {
+//     next()
+//   }
+// })
 
 export default router

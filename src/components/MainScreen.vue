@@ -91,7 +91,7 @@
             <span class="white--text">&copy; 2021</span>
             <div class="d-inline">
               <span class="text-body-2">
-                User: <b>{{ access_status }}</b></span
+                User: <b>{{ user }}</b></span
               >
             </div>
           </div>
@@ -131,13 +131,29 @@ export default {
     };
   },
   computed: {
+    loading: {
+      get: function(){
+        return this.$store.state.loading;
+      },
+      set: function(val) {
+        this.$store.dispatch('setLoading',val)
+      }
+    },
+    error: {
+      get: function(){
+        return this.$store.state.error;
+      },
+      set: function(val){
+        this.$store.dispatch('setError',val)
+      }
+    },
     loggedin: function () {
       return !!this.$store.state.userstore.user;
     },
     authenticated: function () {
       return this.$store.getters["userstore/isAuthenticated"];
     },
-    access_status: function () {
+    user: function () {
       if (this.authenticated) {
         if (this.loggedin) {
           return this.$store.state.userstore.user;
@@ -149,29 +165,9 @@ export default {
       }
     },
   },
-  watch: {
-    authenticated: {
-      immediate: true,
-      handler: function (newval) {
-        if (newval === true) {
-          
-          this.$store
-            .dispatch("loadAppResources")
-            .then(() => {})
-            .catch((err) => {
-              this.showMessage("Error loading club info: " + err);
-            })
-            .finally(() => {
-              
-            });
-        } else {
-          this.$store.dispatch("clearAppResources");
-        }
-      },
-    },
-  },
+  
   methods: {
-    getAuthStatus: function () {},
+    
     showMessage: function (text) {
       this.sbmsg = text;
       this.sbvis = true;

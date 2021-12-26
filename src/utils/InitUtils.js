@@ -5,12 +5,17 @@ import api from '../services/db'
  * Return a promise that subscribes to firebase's onAuthStateChange
  * gets the username and unsubscribes
  */
-function checkFirebaseLogin() {
+function getUser() {
 
     return new Promise((resolve, reject) => {
       const unsubscribe = auth.onAuthStateChanged((user) => {
         unsubscribe();
-        resolve({ result : user})
+        if( user ){
+          resolve({result: user.email})
+        }
+        else {
+          resolve({result: null} )
+        }
       }, reject)
     })
   
@@ -27,21 +32,21 @@ async function checkGeoAuth(){
 /**
  * Return values returned from checkGeoAuth and checkFireBaseLogin
  */
- function getInitStatus( geoAuthResult, firebaseResult ){
+ function getInitStatus( geoAuthResult, appDataResult ){
 
   if( geoAuthResult.status === "rejected" ) {
-    return "GEOAUTH check failed"
+    return "Geoauth check failed"
   }
 
-  if( firebaseResult.status === "rejected" ){
-    return "Unable to check login status"
+  if( appDataResult.status === "rejected" ){
+    return "User auth check failed"
   }
   
   return true;
 }
 
 export default {
-    checkFirebaseLogin,
+    getUser,
     checkGeoAuth,
     getInitStatus
 }
