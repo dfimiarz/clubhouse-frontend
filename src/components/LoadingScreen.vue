@@ -17,32 +17,32 @@
                     </v-col>
                 </v-row>
                 <v-row dense justify="center">
-                    <v-col cols="12" class="text-center">
-                        Initilizing...               
+                    <v-col cols="10" lg="4" class="text-center caption">
+                        Initilizing ...               
                     </v-col>
                 </v-row>
                 <v-row dense justify="center">
-                    <v-col cols="10" lg="4" class="text-center">
-                        GEO AUTH [ 
-                        <v-icon :color="geoInitColor" v-if="! geo_err">{{ checkOutlineIcon }}</v-icon>
-                        <v-icon color="error" v-else>{{ alertIcon }}</v-icon>
-                        ]
-                        
+                    <v-col cols="6" class="text-right">
+                        <span> GEO AUTH </span>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-icon :color="geoInitColor" :class="{ 'animate-flicker': !geo_init && !error_exisits }">{{ ! geo_err ? checkOutlineIcon : alertIcon }}</v-icon>
                     </v-col>
                 </v-row>
                 <v-row dense justify="center">
-                    <v-col cols="10" lg="4" class="text-center">
-                        
-                        USER AUTH [
-                        <v-icon :color="userInitColor">{{ checkOutlineIcon }}</v-icon>
-                        ]
+                    <v-col cols="6" class="text-right">
+                        <span> USER AUTH </span>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-icon :color="userInitColor" :class="{ 'animate-flicker': !user_init && !error_exisits }">{{ ! user_err ? checkOutlineIcon : alertIcon }}</v-icon>
                     </v-col>
                 </v-row>
                 <v-row dense justify="center">
-                    <v-col cols="10" class="text-center">
-                        SHARED DATA [
-                        <v-icon :color="dataLoadedColor">{{ checkOutlineIcon }}</v-icon>
-                        ]
+                    <v-col cols="6" class="text-right">
+                        <span> SHARED DATA</span>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-icon :color="dataLoadedColor" :class="{ 'animate-flicker': !data_loaded && !error_exisits }">{{ ! shared_err ? checkOutlineIcon : alertIcon }}</v-icon>
                     </v-col>
                 </v-row>
             </v-col>
@@ -81,24 +81,39 @@
             connected: function (){
                 return this.$store.state.connected;
             },
-            userInit: function(){
+            user_init: function(){
                 return this.$store.state.userstore.userInitialized;
             },
-            geoInit: function(){
+            geo_init: function(){
                 return this.$store.state.userstore.geoInitialized;
             },
-            dataLoaded: function(){
+            data_loaded: function(){
                 return this.$store.state.dataloaded;
             },
             userInitColor: function(){
-                return this.userInit ? "success" : "warning"
+                return this.user_err ? "error" : this.user_init ? "success" : "warning"
             },
             geoInitColor: function(){
-                return this.geoInit ? "success" : "warning"
+                return this.geo_err ? "error" : this.geo_init ? "success" : "warning"
             },
             dataLoadedColor: function(){
-                return this.dataLoaded ? "success" : "warning"
+                return this.shared_err ? "error" : this.data_loaded ? "success" : "warning"
+            },
+            error_exisits: function(){
+                return !!this.geo_err || !!this.user_err || !!this.shared_err;
             }
         }
     }
 </script>
+
+<style scoped>
+@keyframes flickerAnimation {
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+
+.animate-flicker {
+    animation: flickerAnimation 1s infinite;
+}
+</style>
