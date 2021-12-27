@@ -1,9 +1,9 @@
 <template>
   <v-app dark>
-      <v-fade-transition hide-on-leave>
-        <mainscreen v-if="active"></mainscreen>
-        <loading-screen v-else :errors="initErrors"></loading-screen>
-      </v-fade-transition>
+    <transition name="slide-fade" mode="out-in">
+      <mainscreen v-if="active"></mainscreen>
+      <loading-screen v-bind="initErrors" v-else></loading-screen>
+    </transition>
       <v-overlay :value="overlay_visible">
         <v-progress-circular indeterminate size="64" v-if="loading"></v-progress-circular>
         <div class="d-flex flex-column text-h6 black" v-else-if="error">
@@ -31,9 +31,9 @@ export default {
   data: function() {
     return {
       initErrors:{
-        geoauth: null,
-        userauth: null,
-        data: null
+        geo_err: null,
+        user_err: null,
+        shared_err: null
       }
     }
   },
@@ -75,7 +75,7 @@ export default {
         this.$store.dispatch('setDataLoaded',true)
       })
       .catch(() => {
-        this.initErrors["data"] = "Unable to load shared resoruces";
+        this.initErrors["shared_err"] = "Unable to load shared resoruces";
       })
       .finally(() => {
         
@@ -93,7 +93,7 @@ export default {
         }
 
       },() => {
-        this.initErrors["userauth"] = "Error in user init"
+        this.initErrors["user_err"] = "Error in user init"
       })
     },
     unsubAuthListener(){
@@ -109,7 +109,7 @@ export default {
         this.$store.dispatch('userstore/setGeoAuth',result.data.geoauth);
       })
       .catch(() => {
-        this.initErrors["geoauth"] = "Failed to check geoauth."
+        this.initErrors["geo_err"] = "Failed to check geoauth."
       })
       .finally(() => {
 
@@ -164,5 +164,16 @@ export default {
 
 <style scoped>
 
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
 
 </style>

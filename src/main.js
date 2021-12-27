@@ -54,22 +54,20 @@ function initializeVueApp() {
 /**
  * https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Loading
  */
-let imagesToLoad = document.querySelectorAll('img[data-src]');
-const loadImages = (image) => {
-  image.setAttribute('src', image.getAttribute('data-src'));
-  image.onload = () => {
-    image.removeAttribute('data-src');
-  };
-};
+// let imagesToLoad = document.querySelectorAll('img[data-src]');
+// const loadImages = (image) => {
+//   image.setAttribute('src', image.getAttribute('data-src'));
+//   image.onload = () => {
+//     image.removeAttribute('data-src');
+//   };
+// };
 
-imagesToLoad.forEach((img) => {
-  loadImages(img)
-})
+// imagesToLoad.forEach((img) => {
+//   loadImages(img)
+// })
 
 
-setTimeout(function(){
-  initializeVueApp();
-},1000);
+initializeVueApp();
 
 
 
