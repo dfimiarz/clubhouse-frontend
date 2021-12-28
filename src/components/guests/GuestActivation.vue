@@ -78,6 +78,11 @@ export default {
       },
     };
   },
+  beforeRouteEnter(to,from, next){
+    next((vm) => {
+      vm.$store.getters["userstore/isAuthenticated"] ? next() : next({ name: 'login' })
+    });
+  },
   beforeRouteLeave(to, from, next) {
     this.setLoading(false);
     next();

@@ -504,6 +504,11 @@ export default {
       }
     };
   },
+  beforeRouteEnter(to,from, next){
+    next((vm) => {
+      vm.$store.getters["userstore/isAuthenticated"] ? next() : next({ name: 'login' })
+    });
+  },
   methods: {
     formatTime: function( timestring ){
       return !timestring ? "N/A" : this.$dayjs.tz(timestring).format("hh:mm A");

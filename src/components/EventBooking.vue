@@ -218,6 +218,11 @@ export default {
       error: null,
     };
   },
+  beforeRouteEnter(to,from, next){
+    next((vm) => {
+      vm.$store.getters["userstore/isAuthenticated"] ? next() : next({ name: 'login' })
+    });
+  },
   methods: {
     allowedminutes: (m) => m % 5 === 0,
     formatDate(date) {

@@ -35,17 +35,17 @@ const routes = [
         path: 'activate',
         component: GuestActivation,
         name: 'guestactivation',
-        meta: {
-          requiresAuth: true
-        }
+        // meta: {
+        //   requiresAuth: true
+        // }
       },
       {
         path: 'active',
         component: ActiveGuestList,
         name: 'activeguests',
-        meta: {
-          requiresAuth: true
-        }
+        // meta: {
+        //   requiresAuth: true
+        // }
       }
 
       
@@ -60,17 +60,17 @@ const routes = [
     path: '/calendar',
     name: 'calendar',
     component: MatchCalendar,
-    meta: {
-      requiresAuth: true
-    }
+    // meta: {
+    //   requiresAuth: true
+    // }
   },
   {
     path: '/bookings/matches/new',
     name: 'MatchBooking',
     component: MatchBooking,
-    meta: {
-      requiresAuth: true
-    },
+    // meta: {
+    //   requiresAuth: true
+    // },
     props: route => {
 
       const _req_players = typeof route.query.pls === "string" ? route.query.pls.split(',',4).reduce((acc,val) => {
@@ -94,27 +94,27 @@ const routes = [
     path: '/manage/eventbooking',
     name: 'EventBooking',
     component: EventBooking,
-    meta: {
-      requiresAuth: true
-    }
+    // meta: {
+    //   requiresAuth: true
+    // }
   },
   {
     path: '/bookings/:id',
     name: 'BookingDetails',
     component: BookingDetails,
     props: true,
-    meta: {
-      requiresAuth: true
-    }
+    // meta: {
+    //   requiresAuth: true
+    // }
   },
   {
     path: '/settigns',
     name: 'settings',
     component: Settings,
     props: true,
-    meta: {
-      requiresAuth: true
-    }
+    // meta: {
+    //   requiresAuth: true
+    // }
   },
   {
     path: '*',
