@@ -16,12 +16,15 @@
                         ></v-img>
                     </v-col>
                 </v-row>
-                <v-row dense justify="center">
-                    <v-col cols="10" lg="4" class="text-center caption">
+                <v-row dense justify="center" class="text-caption text-lg-body-1">
+                    <v-col cols="10" lg="4" class="text-center error--text" v-if="error_exisits">
+                        <div v-for="(err,index) in errors" :key="index">{{ err }}</div>             
+                    </v-col>
+                    <v-col cols="10" lg="4" class="text-center" v-else>
                         Initilizing ...               
                     </v-col>
                 </v-row>
-                <v-row dense justify="center">
+                <v-row dense justify="start">
                     <v-col cols="6" class="text-right">
                         <span> GEO AUTH </span>
                     </v-col>
@@ -100,7 +103,10 @@
                 return this.shared_err ? "error" : this.data_loaded ? "success" : "warning"
             },
             error_exisits: function(){
-                return !!this.geo_err || !!this.user_err || !!this.shared_err;
+                return this.errors.length
+            },
+            errors: function(){
+                return [this.geo_err,this.user_err,this.shared_err].filter((val) => !!val);
             }
         }
     }

@@ -75,7 +75,7 @@ export default {
         this.$store.dispatch('setDataLoaded',true)
       })
       .catch(() => {
-        this.initErrors["shared_err"] = "Unable to load shared resoruces";
+        this.initErrors["shared_err"] = "Unable to load shared data";
       })
       .finally(() => {
         
@@ -109,7 +109,7 @@ export default {
         this.$store.dispatch('userstore/setGeoAuth',result.data.geoauth);
       })
       .catch(() => {
-        this.initErrors["geo_err"] = "Failed to check geoauth."
+        this.initErrors["geo_err"] = "Geoauth check failed."
       })
       .finally(() => {
 
