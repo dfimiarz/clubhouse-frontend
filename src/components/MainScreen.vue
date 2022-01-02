@@ -176,6 +176,7 @@ export default {
       this.$store
         .dispatch("userstore/logout")
         .then(() => {
+          this.$store.dispatch('userstore/setUser',null);
           this.showMessage("You are logged out");
         })
         .catch((err) => {

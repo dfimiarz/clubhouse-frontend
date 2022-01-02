@@ -52,6 +52,8 @@ const actions = {
             commit('ADD_COURT', c)
         });
 
+        return true;
+
     },
     clearCourts({commit}){
         commit('CLEAR_COURTS')

@@ -1,5 +1,7 @@
 
-import auth from '../../firebase'
+import auth from "../../firebase";
+import api from "../../services/db";
+import processAxiosError from "../../utils/AxiosErrorHandler";
 
 const state = {
     user: null,
@@ -28,9 +30,14 @@ const actions = {
         commit('SET_USER',user);
         commit('SET_USER_INIT', true );
     },
+    setUserInit({commit},value){
+        commit("SET_USER_INIT",value);
+    },
     async login( _ , payload) {
-        //onAuthStateChanged observer should be setup to handle change in user signin. See main.js
-        await auth.signInWithEmailAndPassword(payload.login, payload.password);
+        
+        const usercredentials = await auth.signInWithEmailAndPassword(payload.login, payload.password);
+
+        return usercredentials.user.email;
     },
     async logout() {
         await auth.signOut();
@@ -39,6 +46,13 @@ const actions = {
         commit('SET_GEOAUTH', value);
         commit('SET_GEO_INIT', true );
     },
+    setGeoInit({commit},value){
+        commit("SET_GEO_INIT",value);
+    },
+    resetAuth({dispatch}){
+        dispatch("resetGeoAuthState");
+        dispatch("resetUserAuthState");
+    },
     resetGeoAuthState({commit}){
         commit('SET_GEOAUTH', null);
         commit('SET_GEO_INIT', null);
@@ -46,6 +60,51 @@ const actions = {
     resetUserAuthState({commit}){
         commit('SET_USER',null);
         commit('SET_USER_INIT', null);
+    },
+    setUpUserAuth({commit}){
+
+        return new Promise((resolve,reject) => {
+            let unsubAuthListenerFun = auth.onAuthStateChanged((user) => {
+      
+              //Check if user is set
+              if( user ){
+                commit('SET_USER',user.email);
+              }
+              else {
+                commit('SET_USER',null);
+              }
+
+              //Set user user init state to true
+              commit('SET_USER_INIT', true );
+
+              //Done checking, unsub auth observer
+              unsubAuthListenerFun();
+              resolve(true)
+            },() => {
+
+              //Handle error
+              commit('SET_USER',null);
+              commit('SET_USER_INIT', false );
+              reject();
+            })
+        });
+    },
+    async setUpGeoAuth({commit}){
+
+        try{
+            const result = await api.checkGeoAuth();
+        
+            commit('SET_GEOAUTH', result.data.geoauth);
+            commit('SET_GEO_INIT', true);
+
+            return true;
+        }
+        catch (err) {
+            commit('SET_GEOAUTH', null);
+            commit('SET_GEO_INIT', null);
+
+            throw new Error(processAxiosError(err));
+        }
     }
    
 }
@@ -58,7 +117,12 @@ const getters = {
         return state.geoauth === true || !!state.user
     },
     isInitialized(state){
-        return state.userInitialized === true && state.geoInitialized === true;
+        if( !!state.userInitialized && !!state.geoInitialized){
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
 

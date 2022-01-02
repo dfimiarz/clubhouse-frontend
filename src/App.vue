@@ -1,13 +1,14 @@
 <template>
   <v-app dark>
     <transition name="slide-fade" mode="out-in">
-      <mainscreen v-if="active"></mainscreen>
-      <loading-screen v-bind="initErrors" v-else></loading-screen>
+      <loading-screen v-if=" ! active "></loading-screen>
+      <mainscreen v-else></mainscreen>
+      
     </transition>
-      <v-overlay :value="overlay_visible">
+    <v-overlay :value="overlay_visible">
         <v-progress-circular indeterminate size="64" v-if="loading"></v-progress-circular>
         <div class="d-flex flex-column text-h6 black" v-else-if="error">
-            <div class="text-center pb-2"> {{ error }} </div>
+            <div class="text-center pa-2"> {{ error }} </div>
         </div>
     </v-overlay>
   </v-app>
@@ -16,11 +17,7 @@
 <script>
 
 import mainscreen from "./components/MainScreen"
-import auth from './firebase';
-import api from './services/db'
 import LoadingScreen from './components/LoadingScreen.vue';
-
-let unsubAuthListenerFun = null;
 
 export default {
   name: "app",
@@ -33,7 +30,8 @@ export default {
       initErrors:{
         geo_err: null,
         user_err: null,
-        shared_err: null
+        shared_err: null,
+        targetRouteName: null
       }
     }
   },
@@ -57,94 +55,68 @@ export default {
     connected: function(){
       return this.$store.state.connected;
     },
-    authInitilized: function(){
-      return this.$store.getters['userstore/isInitialized'];
-    },
     overlay_visible: function() {
       return this.loading || this.error;
     },
     active: function () {
       return this.$store.getters["appActive"];
     },
+    userAuthenticated: function(){
+      return this.$store.getters['userstore/isAuthenticated'];
+    },
+    isAppInitializing: function(){
+      return this.$store.state.initializing;
+    }
   },
   methods: {
-    loadSharedAppData(){
-      
-      this.$store.dispatch('loadAppResources')
-      .then(()=> {
-        this.$store.dispatch('setDataLoaded',true)
-      })
-      .catch(() => {
-        this.initErrors["shared_err"] = "Unable to load shared data";
-      })
-      .finally(() => {
-        
-      })
-    },
-    subAuthListener(){
-
-      unsubAuthListenerFun = auth.onAuthStateChanged((user) => {
-
-        if( user ){
-          this.$store.dispatch('userstore/setUser',user.email)
-        }
-        else {
-          this.$store.dispatch('userstore/setUser',null)
-        }
-
-      },() => {
-        this.initErrors["user_err"] = "Error in user init"
-      })
-    },
-    unsubAuthListener(){
-
-      this.$store.dispatch('userstore/resetUserAuthState');
-      if( unsubAuthListenerFun && typeof unsubAuthListenerFun === 'function' ){
-        unsubAuthListenerFun();
-      }
-    },
-    checkGeoAuth(){
-      api.checkGeoAuth()
-      .then((result) => {
-        this.$store.dispatch('userstore/setGeoAuth',result.data.geoauth);
-      })
-      .catch(() => {
-        this.initErrors["geo_err"] = "Geoauth check failed."
-      })
-      .finally(() => {
-
-      })
-    }
+    
   },
   watch: {
     connected: {
       handler: function(newval){
         if( newval === true ){
-          //console.log("Setup auth and check geo")
-          this.subAuthListener();
-          this.checkGeoAuth();
+
+          if( ! this.$store.getters['appActive'] ){
+
+            this.$store.dispatch("initializeApplication")
+            .then(() => {
+              
+            })
+            .catch((err) =>{
+              this.error = err.message;
+            })
+            .finally(() => {
+              
+            })
+          }
+          
         }
         else {
-          //console.log("Remove auth and reset geo")
-          this.unsubAuthListener();
-          this.$store.dispatch('userstore/resetGeoAuthState');
+          this.$store.dispatch("userstore/resetAuth");
         }
         
-      },
-      immediate: true
+      }
     },
-    authInitilized: {
+    userAuthenticated: {
       handler: function(newval){
-        console.log("authInitialized changed", newval)
+
         if( newval ){
-          console.log("Loading share app data");
-          this.loadSharedAppData();
+          if( ! this.isAppInitializing ){
+            this.$store.dispatch("loadAppResources")
+            .then(() => {
+
+            })
+            .catch(() => {
+
+            })
+            .finally(() => {
+              
+            })
+          }
         } else {
-          console.log("Removing shared app data");
-          this.$store.dispatch('clearAppResources');
+          this.$store.dispatch("clearAppResources");
         }
-      },
-      immediate: true
+      }
     }
   },
   created: function(){
@@ -157,9 +129,9 @@ export default {
     
   },
   beforeDestroy: function(){
-    this.unsubAuthListener();
+    
   }
-};
+}
 </script>
 
 <style scoped>

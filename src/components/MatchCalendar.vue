@@ -243,11 +243,6 @@ export default {
       timeIndicatorVisible: false, //Controls display of current time indicator
     };
   },
-  beforeRouteEnter(to,from, next){
-    next((vm) => {
-      vm.$store.getters["userstore/isAuthenticated"] ? next() : next({ name: 'login' })
-    });
-  },
   methods: {
     cleanUp() {
       this.unsubsribe();

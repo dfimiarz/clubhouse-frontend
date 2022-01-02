@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import NotFound from '@/components/NotFound'
 import LoginView from '@/components/Login'
+import store from '../store'
 const GuestCreator = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestCreator')
 const GuestManager = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestManager')
 const GuestActivation = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestActivation')
@@ -12,7 +13,8 @@ const MatchBooking = () => import(/* webpackChunkName: "booking" */ '@/component
 const BookingDetails = () => import(/* webpackChunkName: "details" */ '@/components/BookingDetails')
 const EventBooking = () => import(/* webpackChunkName: "manage" */ '@/components/EventBooking')
 const Settings = () => import(/* webpackChunkName: "settings" */ '@/components/Settings')
-// import store from '@/store/index'
+// import Error from "@/components/Error";
+import LoadingScreen from "@/components/LoadingScreen";
 
 Vue.use(Router)
 
@@ -60,9 +62,9 @@ const routes = [
     path: '/calendar',
     name: 'calendar',
     component: MatchCalendar,
-    // meta: {
-    //   requiresAuth: true
-    // }
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/bookings/matches/new',
@@ -117,6 +119,12 @@ const routes = [
     // }
   },
   {
+    path: '/error',
+    name: 'error',
+    component: LoadingScreen,
+    props: true,
+  },
+  {
     path: '*',
     name: 'NotFound',
     component: NotFound
@@ -128,17 +136,52 @@ let router = new Router({
   mode: 'history'
 })
 
-// router.beforeEach((to, from, next) => {
-//   if (to.matched.some(record => record.meta.requiresAuth)) {
-//     if (store.getters['userstore/isAuthenticated']) {
-//       next();
-//     }
-//     else {
-//       next('/login');
-//     }
-//   } else {
-//     next()
-//   }
-// })
+/**
+ * 
+ * @param {Route} to Route
+ * @param {function} next Next function
+ * 
+ * Function checks if route navigated to requires authentication and redirects to login if needed.
+ */
+function checkAuthRoutes(to,next) {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (store.getters['userstore/isAuthenticated']) {
+      next();
+    }
+    else {
+      next('/login');
+    }
+  }
+  else {
+      next();
+  }
+}
+
+router.beforeEach((to, from, next) => {
+
+  //If starting route is null and app is not active, init app
+  if( from === Router.START_LOCATION && ! store.getters['appActive']){
+
+      store.dispatch("initializeApplication")
+      .then(() => {
+        checkAuthRoutes(to,next);
+      })
+      .catch((err) =>{
+        next(err)
+      })
+      .finally(() => {
+        
+      })
+
+  }
+  else {
+      checkAuthRoutes(to,next);
+    }
+  }
+)
+
+router.onError((err) => {
+  console.log("Got err", err)
+})
 
 export default router

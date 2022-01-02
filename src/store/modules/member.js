@@ -79,6 +79,8 @@ const actions = {
             commit('ADD_ELIGIBLE_PERSON', person)
         })
 
+        return true;
+
     },
     clearEligiblePersons({commit}){
         commit('CLEAR_ELIGIBLE_PERSONS');
@@ -91,6 +93,7 @@ const actions = {
                 commit('ADD_MEMBER', member)
             })
 
+            return true;
         }
         finally {
             /* Continue regardless of errro */
@@ -105,6 +108,7 @@ const actions = {
                 commit('ADD_GUEST', guest)
             })
 
+            return true;
         }
         finally {
             /* Continue regardless of errro */

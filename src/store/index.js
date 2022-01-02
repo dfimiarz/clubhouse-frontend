@@ -24,11 +24,12 @@ const store = new Vuex.Store(
                     default: "DESKTOP"
                 }
             },
-            dataloaded: false,
+            dataloaded: null,
             displaymodes: ['DESKTOP','TV'],
             connected: null,
             clubtz: "America/New_York",
             loading: false,
+            initializing: false,
             error: null,
             defaultCellHeight1H: 120,
             cellHeightsForMode: {
@@ -85,6 +86,9 @@ const store = new Vuex.Store(
             SET_LOADING(state, value) {
                 state.loading = value
             },
+            SET_INITIALIZING(state, value) {
+                state.initializing = value
+            },
             SET_ERROR(state, value) {
                 state.error = value
             },
@@ -99,24 +103,76 @@ const store = new Vuex.Store(
             },
             SET_DATA_LOADED( state, val ){
                 state.dataloaded = val;
+            },
+            SET_IS_APP_LOADING( state, val ){
+                state.isAppLoading = val;
             }
         },
         actions: {
-            
-            loadAppResources({ dispatch, getters }) {
+            async initializeApplication({dispatch, getters})
+            {
+                if( ! getters['isAppActive'] ){
+                    try{
+                        dispatch('setInitializing',true);
+                        const auth_result = await Promise.all([dispatch('userstore/setUpUserAuth'),dispatch('userstore/setUpGeoAuth')]);
+                        
+                        const userRes = auth_result[0];
+                        const geoRes = auth_result[1];
 
-                //Load app resources only when user is authenticated
-                if( getters['userstore/isAuthenticated'] === true ){
-                    return Promise.all([dispatch('memberstore/loadEligiblePersons'), dispatch('courtstore/loadCourts')])
+                        if( userRes.status === "rejected" ){
+                            throw new Error(userRes.reason)
+                        }
+
+                        if( geoRes.status === "rejected" ){
+                            throw new Error(geoRes.reason)
+                        }
+
+                        await dispatch('loadAppResources');
+                    }
+                    finally{
+                        dispatch('setInitializing',false);
+                    }
                 }
-                else {
+                else{
                     return Promise.resolve(true);
                 }
+
             },
-            clearAppResources({ commit,dispatch }){
+            
+            async loadAppResources({ dispatch, getters }) {
+
+                console.log("Loading app resources");
+
+                //List of actions to run for authorized users
+                const authActions = ['memberstore/loadEligiblePersons','courtstore/loadCourts'];
+
+                const selectedActions = getters['userstore/isAuthenticated'] === true ? authActions : [];
+
+                //Load app resources only when user is authenticated
+                if( selectedActions.length !== 0 ){
+
+                    //setup and run promises
+                    const results = await Promise.all(selectedActions.map((name) => dispatch(name)));
+
+                    //find promise rejections
+                    const index = results.map((val) => val.status).findIndex((val) => val === "rejected");
+
+                    //return reason for rejections if available or true if no error found with index set to -1
+                    if( index > 0 ){
+                        throw new Error(results[index].reason)
+                    } else {
+                        dispatch('setDataLoaded',true);
+                        return true;
+                    }
+                }
+                else {
+                    dispatch('setDataLoaded',true);
+                    return true;
+                }
+            },
+            clearAppResources({ dispatch }){
                 dispatch('memberstore/clearEligiblePersons');
                 dispatch('courtstore/clearCourts');
-                commit('SET_DATA_LOADED',false);
             },
             loadPersistantSettings({commit,state}){
                 
@@ -146,6 +202,9 @@ const store = new Vuex.Store(
             setLoading({commit},val){
                 commit('SET_LOADING',val);
             },
+            setInitializing({commit},val){
+                commit('SET_INITIALIZING',val);
+            },
             setError({commit},val){
                 commit("SET_ERROR",val)
             },
@@ -153,8 +212,10 @@ const store = new Vuex.Store(
                 commit('SET_ERROR',null)
             },
             setDataLoaded({commit},val) {
-                console.log("setting DL to",val)
                 commit('SET_DATA_LOADED',val)
+            },
+            setIsAppLoading({commit},val){
+                commit("SET_IS_APP_LOADING",val);
             }
         },
         getters: {
@@ -205,8 +266,12 @@ const store = new Vuex.Store(
                     return Object.prototype.hasOwnProperty.call(state.settings,name) ? state.settings[name]["val"] : null;
                 }
             },
-            appActive(state,getters){
-                return getters['userstore/isInitialized'] && state.dataloaded;
+            appActive(state, getters){
+                if(!!getters["userstore/isInitialized"] && !!state.dataloaded){
+                    return true;
+                } else {
+                    return false;
+                }
             }
             
         }
