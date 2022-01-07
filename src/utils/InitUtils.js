@@ -1,3 +1,4 @@
+import {  onAuthStateChanged } from "firebase/auth";
 import auth from '../firebase'
 import api from '../services/db'
 
@@ -8,7 +9,7 @@ import api from '../services/db'
 function getUser() {
 
     return new Promise((resolve, reject) => {
-      const unsubscribe = auth.onAuthStateChanged((user) => {
+      const unsubscribe = onAuthStateChanged(auth,(user) => {
         unsubscribe();
         if( user ){
           resolve({result: user.email})

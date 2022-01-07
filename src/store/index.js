@@ -165,7 +165,6 @@ const store = new Vuex.Store(
             clearAppResources({ dispatch }){
                 dispatch('memberstore/clearEligiblePersons');
                 dispatch('courtstore/clearCourts');
-                dispatch('setDataLoaded',false);
             },
             loadPersistantSettings({commit,state}){
                 

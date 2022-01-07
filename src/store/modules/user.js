@@ -1,4 +1,5 @@
 
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth"
 import auth from "../../firebase";
 import api from "../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
@@ -39,7 +40,7 @@ const actions = {
     },
     async login( {commit } , payload) {
         
-        const usercredentials = await auth.signInWithEmailAndPassword(payload.login, payload.password);
+        const usercredentials = await signInWithEmailAndPassword(auth,payload.login, payload.password);
         const { role, geoauth } = await api.getUserProfile();
 
         commit("SET_USER",usercredentials.user.email);
@@ -80,7 +81,7 @@ const actions = {
     setUpUserAuth({commit}){
 
         return new Promise((resolve,reject) => {
-            let unsubAuthListenerFun = auth.onAuthStateChanged((user) => {
+            let unsubAuthListenerFun = onAuthStateChanged(auth,(user) => {
       
               //Check if user is set
               if( user ){

@@ -1,5 +1,5 @@
-import firebase from 'firebase/app'
-import 'firebase/auth'
+import { initializeApp } from "firebase/app"
+import { getAuth } from "firebase/auth";
 
 
 // firebase init - add your own config here
@@ -13,10 +13,10 @@ const firebaseConfig = {
   appId: process.env.VUE_APP_FB_APP_ID
 };
 
-firebase.initializeApp(firebaseConfig)
+const firebaseApp = initializeApp(firebaseConfig);
 
 
-const auth = firebase.auth()
+const auth = getAuth(firebaseApp);
 
 
 // export utils/refs
