@@ -114,18 +114,10 @@ const store = new Vuex.Store(
                 if( ! getters['isAppActive'] ){
                     try{
                         dispatch('setInitializing',true);
-                        const auth_result = await Promise.all([dispatch('userstore/setUpUserAuth'),dispatch('userstore/setUpGeoAuth')]);
-                        
-                        const userRes = auth_result[0];
-                        const geoRes = auth_result[1];
 
-                        if( userRes.status === "rejected" ){
-                            throw new Error(userRes.reason)
-                        }
+                        await dispatch('userstore/setUpUserAuth');
 
-                        if( geoRes.status === "rejected" ){
-                            throw new Error(geoRes.reason)
-                        }
+                        await dispatch('userstore/getUserProfile');
 
                         await dispatch('loadAppResources');
                     }
@@ -173,6 +165,7 @@ const store = new Vuex.Store(
             clearAppResources({ dispatch }){
                 dispatch('memberstore/clearEligiblePersons');
                 dispatch('courtstore/clearCourts');
+                dispatch('setDataLoaded',false);
             },
             loadPersistantSettings({commit,state}){
                 

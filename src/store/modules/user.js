@@ -5,6 +5,7 @@ import processAxiosError from "../../utils/AxiosErrorHandler";
 
 const state = {
     user: null,
+    role: null,
     geoauth: null,
     userInitialized: null,
     geoInitialized: null
@@ -22,6 +23,9 @@ const mutations = {
     },
     SET_GEO_INIT(state,val){
         state.geoInitialized = val;
+    },
+    SET_ROLE(state,val){
+        state.role = val;
     }
 }
 
@@ -33,14 +37,22 @@ const actions = {
     setUserInit({commit},value){
         commit("SET_USER_INIT",value);
     },
-    async login( _ , payload) {
+    async login( {commit } , payload) {
         
         const usercredentials = await auth.signInWithEmailAndPassword(payload.login, payload.password);
+        const { role, geoauth } = await api.getUserProfile();
 
-        return usercredentials.user.email;
+        commit("SET_USER",usercredentials.user.email);
+        commit("SET_USER_INIT", true);
+        commit("SET_ROLE",role);
+        commit('SET_GEOAUTH', geoauth);
+        commit('SET_GEO_INIT', true);
+        
     },
-    async logout() {
+    async logout({commit}) {
         await auth.signOut();
+        commit("SET_USER",null);
+        commit("SET_ROLE",null);
     },
     setGeoAuth({ commit },value) {
         commit('SET_GEOAUTH', value);
@@ -58,8 +70,12 @@ const actions = {
         commit('SET_GEO_INIT', null);
     },
     resetUserAuthState({commit}){
-        commit('SET_USER',null);
-        commit('SET_USER_INIT', null);
+        commit("SET_USER",null);
+        commit("SET_USER_INIT", null);
+        commit("SET_ROLE",null)
+    },
+    setUserRole({commit},val){
+        commit('SET_ROLE',val);
     },
     setUpUserAuth({commit}){
 
@@ -100,6 +116,39 @@ const actions = {
             return true;
         }
         catch (err) {
+            commit('SET_GEOAUTH', null);
+            commit('SET_GEO_INIT', null);
+
+            throw new Error(processAxiosError(err));
+        }
+    },
+    async getUserRole({commit}){
+        try{
+            const result = await api.getUserRole();
+        
+            commit('SET_ROLE', result.role);
+
+            return true;
+        }
+        catch (err) {
+            commit('SET_ROLE', null);
+
+            throw new Error(processAxiosError(err));
+        }
+    },
+    async getUserProfile({commit}){
+        try{
+
+            const { role, geoauth } = await api.getUserProfile();
+
+            commit("SET_ROLE",role);
+            commit('SET_GEOAUTH', geoauth);
+            commit('SET_GEO_INIT', true);
+            
+            return true;
+        }
+        catch(err) {
+            commit('SET_ROLE',null);
             commit('SET_GEOAUTH', null);
             commit('SET_GEO_INIT', null);
 

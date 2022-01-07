@@ -209,6 +209,24 @@ async function getOverlappingBookings(date,start,end,court){
     return result.data;
 }
 
+async function getUserRole(){
+
+    let url = new URL(process.env.VUE_APP_BACKEND + "/auth/user/role");
+
+    const result = await instance.get(url);
+
+    return result.data;
+}
+
+async function getUserProfile(){
+
+    let url = new URL(process.env.VUE_APP_BACKEND + "/auth/user/profile");
+
+    const result = await instance.get(url);
+
+    return result.data;
+}
+
 export default {
     getBookings,
     newMatch: newMatch,
@@ -231,5 +249,7 @@ export default {
     getRecaptchaScore,
     getCaptcha,
     deactivateGuest,
-    getOverlappingBookings
+    getOverlappingBookings,
+    getUserRole,
+    getUserProfile
 }

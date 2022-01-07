@@ -76,8 +76,8 @@ export default {
           login: this.email,
           password: this.password,
         })
-        .then((username) => {
-          this.$store.dispatch('userstore/setUser',username)
+        .then(() => {
+          
           this.$router.push({ name: "home" });
         })
         .catch((err) => {
