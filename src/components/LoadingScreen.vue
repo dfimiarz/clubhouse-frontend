@@ -24,28 +24,28 @@
                         Initilizing ...               
                     </v-col>
                 </v-row>
+                <v-row dense justify="center">
+                    <v-col cols="6" class="text-right">
+                        <span>USER AUTH</span>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-icon :color="userInitColor" :class="{ 'animate-flicker': !user_init && !error_exisits }">{{ ! user_error ? checkOutlineIcon : alertIcon }}</v-icon>
+                    </v-col>
+                </v-row>
                 <v-row dense justify="start">
                     <v-col cols="6" class="text-right">
-                        <span> GEO AUTH </span>
+                        <span>UESR PROFILE</span>
                     </v-col>
                     <v-col cols="6">
-                        <v-icon :color="geoInitColor" :class="{ 'animate-flicker': !geo_init && !error_exisits }">{{ ! geo_err ? checkOutlineIcon : alertIcon }}</v-icon>
+                        <v-icon :color="profileInitColor" :class="{ 'animate-flicker': !profile_init && !error_exisits }">{{ ! profile_error ? checkOutlineIcon : alertIcon }}</v-icon>
                     </v-col>
                 </v-row>
                 <v-row dense justify="center">
                     <v-col cols="6" class="text-right">
-                        <span> USER AUTH </span>
+                        <span>APPLICATION DATA</span>
                     </v-col>
                     <v-col cols="6">
-                        <v-icon :color="userInitColor" :class="{ 'animate-flicker': !user_init && !error_exisits }">{{ ! user_err ? checkOutlineIcon : alertIcon }}</v-icon>
-                    </v-col>
-                </v-row>
-                <v-row dense justify="center">
-                    <v-col cols="6" class="text-right">
-                        <span> SHARED DATA</span>
-                    </v-col>
-                    <v-col cols="6">
-                        <v-icon :color="dataLoadedColor" :class="{ 'animate-flicker': !data_loaded && !error_exisits }">{{ ! shared_err ? checkOutlineIcon : alertIcon }}</v-icon>
+                        <v-icon :color="dataLoadedColor" :class="{ 'animate-flicker': !data_loaded && !error_exisits }">{{ ! data_error ? checkOutlineIcon : alertIcon }}</v-icon>
                     </v-col>
                 </v-row>
             </v-col>
@@ -59,20 +59,6 @@
     import { mdiLanDisconnect, mdiCheckOutline, mdiAlertCircle } from "@mdi/js";
 
     export default {
-        props:{
-            shared_err: {
-                type: [String,null],
-                default: null
-            },
-            geo_err: {
-                type: [String,null],
-                default: null
-            },
-            user_err: {
-                type: [String,null],
-                default: null
-            }
-        },
         data(){
             return {
                 disconnectIcon: mdiLanDisconnect,
@@ -81,32 +67,41 @@
             }
         },
         computed: {
+            user_error: function(){
+                return this.$store.state.userstore.user_error;
+            },
+            profile_error: function(){
+                return this.$store.state.userstore.profile_error;
+            },
+            data_error: function(){
+                return this.$store.state.data_error;
+            },
             connected: function (){
                 return this.$store.state.connected;
             },
             user_init: function(){
                 return this.$store.state.userstore.userInitialized;
             },
-            geo_init: function(){
+            profile_init: function(){
                 return this.$store.state.userstore.geoInitialized;
             },
             data_loaded: function(){
-                return this.$store.state.dataloaded;
+                return this.$store.state.data_loaded;
             },
             userInitColor: function(){
-                return this.user_err ? "error" : this.user_init ? "success" : "warning"
+                return this.user_error ? "error" : this.user_init ? "success" : "warning"
             },
-            geoInitColor: function(){
-                return this.geo_err ? "error" : this.geo_init ? "success" : "warning"
+            profileInitColor: function(){
+                return this.profile_error ? "error" : this.profile_init ? "success" : "warning"
             },
             dataLoadedColor: function(){
-                return this.shared_err ? "error" : this.data_loaded ? "success" : "warning"
+                return this.data_error ? "error" : this.data_loaded ? "success" : "warning"
             },
             error_exisits: function(){
                 return this.errors.length
             },
             errors: function(){
-                return [this.geo_err,this.user_err,this.shared_err].filter((val) => !!val);
+                return [this.profile_error,this.user_error,this.data_error].filter((val) => !!val);
             }
         }
     }

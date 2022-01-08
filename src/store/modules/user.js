@@ -9,7 +9,9 @@ const state = {
     role: null,
     geoauth: null,
     userInitialized: null,
-    geoInitialized: null
+    geoInitialized: null,
+    user_error: null,
+    profile_error: null
 }
 
 const mutations = {
@@ -27,6 +29,12 @@ const mutations = {
     },
     SET_ROLE(state,val){
         state.role = val;
+    },
+    SET_USER_ERROR(state,val){
+        state.user_error = val;
+    },
+    SET_PROFILE_ERROR(state,val){
+        state.profile_error = val;
     }
 }
 
@@ -82,27 +90,30 @@ const actions = {
 
         return new Promise((resolve,reject) => {
             let unsubAuthListenerFun = onAuthStateChanged(auth,(user) => {
-      
-              //Check if user is set
-              if( user ){
-                commit('SET_USER',user.email);
-              }
-              else {
-                commit('SET_USER',null);
-              }
 
-              //Set user user init state to true
-              commit('SET_USER_INIT', true );
+                commit('SET_USER_ERROR',null);
 
-              //Done checking, unsub auth observer
-              unsubAuthListenerFun();
-              resolve(true)
+                //Check if user is set
+                if( user ){
+                    commit('SET_USER',user.email);
+                }
+                else {
+                    commit('SET_USER',null);
+                }
+
+                //Set user user init state to true
+                commit('SET_USER_INIT', true );
+
+                //Done checking, unsub auth observer
+                unsubAuthListenerFun();
+                resolve(true);
             },() => {
 
-              //Handle error
-              commit('SET_USER',null);
-              commit('SET_USER_INIT', false );
-              reject();
+                //Handle error
+                commit('SET_USER',null);
+                commit('SET_USER_INIT', false );
+                commit('SET_USER_ERROR',"User auth failed");
+                reject();
             })
         });
     },
@@ -153,7 +164,8 @@ const actions = {
             commit('SET_GEOAUTH', null);
             commit('SET_GEO_INIT', null);
 
-            throw new Error(processAxiosError(err));
+            const errText = processAxiosError(err)
+            commit('SET_PROFILE_ERROR',errText);
         }
     }
    

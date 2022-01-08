@@ -24,7 +24,8 @@ const store = new Vuex.Store(
                     default: "DESKTOP"
                 }
             },
-            dataloaded: null,
+            data_loaded: null,
+            data_error: null,
             displaymodes: ['DESKTOP','TV'],
             connected: null,
             clubtz: "America/New_York",
@@ -102,13 +103,22 @@ const store = new Vuex.Store(
                 }
             },
             SET_DATA_LOADED( state, val ){
-                state.dataloaded = val;
+                state.data_loaded = val;
+            },
+            SET_DATA_ERROR( state, val ){
+                state.data_error = val;
             },
             SET_IS_APP_LOADING( state, val ){
                 state.isAppLoading = val;
             }
         },
         actions: {
+
+            resetApplicationState({dispatch}){
+                dispatch("userstore/resetAuth");
+                dispatch("clearAppResources");
+                dispatch("setDataLoaded",null);
+            },
             async initializeApplication({dispatch, getters})
             {
                 if( ! getters['isAppActive'] ){
@@ -126,21 +136,19 @@ const store = new Vuex.Store(
                     }
                 }
                 else{
-                    return Promise.resolve(true);
+                    return true;
                 }
 
             },
             
             async loadAppResources({ dispatch, getters }) {
 
-                console.log("Loading app resources");
-
                 //List of actions to run for authorized users
                 const authActions = ['memberstore/loadEligiblePersons','courtstore/loadCourts'];
 
                 const selectedActions = getters['userstore/isAuthenticated'] === true ? authActions : [];
 
-                //Load app resources only when user is authenticated
+                //Load app resources if needed
                 if( selectedActions.length !== 0 ){
 
                     //setup and run promises
@@ -149,17 +157,17 @@ const store = new Vuex.Store(
                     //find promise rejections
                     const index = results.map((val) => val.status).findIndex((val) => val === "rejected");
 
-                    //return reason for rejections if available or true if no error found with index set to -1
-                    if( index > 0 ){
-                        throw new Error(results[index].reason)
+                    //Assign reason for rejection to data_error index is not -1
+                    if( index >= 0 ){
+                        dispatch('setDataLoaded',false);
+                        dispatch('setDataError',results[index].reason);
                     } else {
                         dispatch('setDataLoaded',true);
-                        return true;
+                        dispatch('setDataError',null);
                     }
                 }
                 else {
                     dispatch('setDataLoaded',true);
-                    return true;
                 }
             },
             clearAppResources({ dispatch }){
@@ -205,6 +213,9 @@ const store = new Vuex.Store(
             },
             setDataLoaded({commit},val) {
                 commit('SET_DATA_LOADED',val)
+            },
+            setDataError({commit},val) {
+                commit('SET_DATA_ERROR',val)
             },
             setIsAppLoading({commit},val){
                 commit("SET_IS_APP_LOADING",val);
@@ -259,7 +270,7 @@ const store = new Vuex.Store(
                 }
             },
             appActive(state, getters){
-                if(!!getters["userstore/isInitialized"] && !!state.dataloaded){
+                if(!!getters["userstore/isInitialized"] && !!state.data_loaded){
                     return true;
                 } else {
                     return false;

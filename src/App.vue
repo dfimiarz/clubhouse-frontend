@@ -74,6 +74,7 @@ export default {
   watch: {
     connected: {
       handler: function(newval){
+
         if( newval === true ){
 
           if( ! this.$store.getters['appActive'] ){
@@ -92,7 +93,7 @@ export default {
           
         }
         else {
-          this.$store.dispatch("userstore/resetAuth");
+          this.$store.dispatch("resetApplicationState");
         }
         
       }

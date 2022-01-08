@@ -176,9 +176,8 @@ router.beforeEach((to, from, next) => {
   }
   else {
       checkAuthRoutes(to,next);
-    }
   }
-)
+})
 
 router.onError((err) => {
   console.log("Got err", err)
