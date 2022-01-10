@@ -303,11 +303,6 @@ export default {
       bookingPermissions: new Set()
     };
   },
-  beforeRouteEnter(to,from, next){
-    next((vm) => {
-      vm.$store.getters["userstore/isAuthenticated"] ? next() : next({ name: 'login' })
-    });
-  },
   methods: {
     formatTime(timestring) {
       if (!timestring) return "N/A";

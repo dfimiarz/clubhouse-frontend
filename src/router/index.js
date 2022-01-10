@@ -37,17 +37,17 @@ const routes = [
         path: 'activate',
         component: GuestActivation,
         name: 'guestactivation',
-        // meta: {
-        //   requiresAuth: true
-        // }
+        meta: {
+          requiresAuth: true
+        }
       },
       {
         path: 'active',
         component: ActiveGuestList,
         name: 'activeguests',
-        // meta: {
-        //   requiresAuth: true
-        // }
+        meta: {
+          requiresAuth: true
+        }
       }
 
       
@@ -56,7 +56,14 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: LoginView
+    component: LoginView,
+    beforeEnter: (to,from,next) => {
+      if( store.getters["userstore/user"]){
+        next({ name: "home"});
+      } else {
+        next();
+      }
+    }
   },
   {
     path: '/calendar',
@@ -70,9 +77,9 @@ const routes = [
     path: '/bookings/matches/new',
     name: 'MatchBooking',
     component: MatchBooking,
-    // meta: {
-    //   requiresAuth: true
-    // },
+    meta: {
+      requiresAuth: true
+    },
     props: route => {
 
       const _req_players = typeof route.query.pls === "string" ? route.query.pls.split(',',4).reduce((acc,val) => {
@@ -96,27 +103,27 @@ const routes = [
     path: '/manage/eventbooking',
     name: 'EventBooking',
     component: EventBooking,
-    // meta: {
-    //   requiresAuth: true
-    // }
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/bookings/:id',
     name: 'BookingDetails',
     component: BookingDetails,
     props: true,
-    // meta: {
-    //   requiresAuth: true
-    // }
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/settigns',
     name: 'settings',
     component: Settings,
     props: true,
-    // meta: {
-    //   requiresAuth: true
-    // }
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/error',
@@ -167,7 +174,8 @@ router.beforeEach((to, from, next) => {
         checkAuthRoutes(to,next);
       })
       .catch((err) =>{
-        next(err)
+        store.dispatch("setLoadingError",err.message)
+        next(false);
       })
       .finally(() => {
         
@@ -180,7 +188,7 @@ router.beforeEach((to, from, next) => {
 })
 
 router.onError((err) => {
-  console.log("Got err", err)
+  console.log(err.message)
 })
 
 export default router

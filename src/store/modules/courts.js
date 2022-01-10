@@ -45,11 +45,11 @@ const actions = {
     },
     async loadCourts({ commit }) {
 
-        let courtdata = await dbservice.getCourts()
+        let courtdata = await dbservice.getCourts();
 
-        commit('CLEAR_COURTS')
+        commit('CLEAR_COURTS');
         courtdata.data.forEach(function (c) {
-            commit('ADD_COURT', c)
+            commit('ADD_COURT', c);
         });
 
         return true;

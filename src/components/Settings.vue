@@ -45,11 +45,6 @@ export default {
       }
     };
   },
-  beforeRouteEnter(to,from, next){
-    next((vm) => {
-      vm.$store.getters["userstore/isAuthenticated"] ? next() : next({ name: 'login' })
-    });
-  },
   methods: {
     saveSettings(){
       this.displayMode = this.settings.displayMode;

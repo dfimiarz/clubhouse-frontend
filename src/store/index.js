@@ -25,11 +25,11 @@ const store = new Vuex.Store(
                 }
             },
             data_loaded: null,
-            data_error: null,
             displaymodes: ['DESKTOP','TV'],
             connected: null,
             clubtz: "America/New_York",
             loading: false,
+            loading_error: null,
             initializing: false,
             error: null,
             defaultCellHeight1H: 120,
@@ -87,6 +87,9 @@ const store = new Vuex.Store(
             SET_LOADING(state, value) {
                 state.loading = value
             },
+            SET_LOADING_ERROR(state, value) {
+                state.loading_error = value
+            },
             SET_INITIALIZING(state, value) {
                 state.initializing = value
             },
@@ -105,9 +108,6 @@ const store = new Vuex.Store(
             SET_DATA_LOADED( state, val ){
                 state.data_loaded = val;
             },
-            SET_DATA_ERROR( state, val ){
-                state.data_error = val;
-            },
             SET_IS_APP_LOADING( state, val ){
                 state.isAppLoading = val;
             }
@@ -125,13 +125,12 @@ const store = new Vuex.Store(
                     try{
                         dispatch('setInitializing',true);
 
-                        await dispatch('userstore/setUpUserAuth');
-
-                        await dispatch('userstore/getUserProfile');
+                        await dispatch('userstore/setupAuth');
 
                         await dispatch('loadAppResources');
                     }
                     finally{
+
                         dispatch('setInitializing',false);
                     }
                 }
@@ -148,22 +147,20 @@ const store = new Vuex.Store(
 
                 const selectedActions = getters['userstore/isAuthenticated'] === true ? authActions : [];
 
+                dispatch('clearAppResources');
+
                 //Load app resources if needed
                 if( selectedActions.length !== 0 ){
 
-                    //setup and run promises
-                    const results = await Promise.all(selectedActions.map((name) => dispatch(name)));
+                    try{
+                        //setup and run promises
+                        await Promise.all(selectedActions.map((name) => dispatch(name)));
 
-                    //find promise rejections
-                    const index = results.map((val) => val.status).findIndex((val) => val === "rejected");
-
-                    //Assign reason for rejection to data_error index is not -1
-                    if( index >= 0 ){
-                        dispatch('setDataLoaded',false);
-                        dispatch('setDataError',results[index].reason);
-                    } else {
                         dispatch('setDataLoaded',true);
-                        dispatch('setDataError',null);
+                        
+                    } catch(err) {
+                        dispatch('setDataLoaded',false);
+                        throw new Error("Unable to load application data");
                     }
                 }
                 else {
@@ -214,12 +211,12 @@ const store = new Vuex.Store(
             setDataLoaded({commit},val) {
                 commit('SET_DATA_LOADED',val)
             },
-            setDataError({commit},val) {
-                commit('SET_DATA_ERROR',val)
-            },
             setIsAppLoading({commit},val){
                 commit("SET_IS_APP_LOADING",val);
-            }
+            },
+            setLoadingError({commit},val){
+                commit("SET_LOADING_ERROR",val)
+            },
         },
         getters: {
             error(state) {
@@ -270,11 +267,8 @@ const store = new Vuex.Store(
                 }
             },
             appActive(state, getters){
-                if(!!getters["userstore/isInitialized"] && !!state.data_loaded){
-                    return true;
-                } else {
-                    return false;
-                }
+                
+                return getters["userstore/isInitialized"] && !!state.data_loaded;
             }
             
         }

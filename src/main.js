@@ -33,9 +33,9 @@ function handleConnectionStatechange() {
   const online = window.navigator.onLine;
 
   if (online) {
-    store.commit('SET_CONNECTED', true)
+    store.commit('SET_CONNECTED', true);
   } else {
-    store.commit('SET_CONNECTED', false)
+    store.commit('SET_CONNECTED', false);
   }
 }
 //---

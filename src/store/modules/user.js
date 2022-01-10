@@ -3,15 +3,13 @@ import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth"
 import auth from "../../firebase";
 import api from "../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
+import fbErrHandler from "@/utils/FirebaseErrorHandler";
 
 const state = {
     user: null,
     role: null,
     geoauth: null,
-    userInitialized: null,
-    geoInitialized: null,
-    user_error: null,
-    profile_error: null
+    authinit: false
 }
 
 const mutations = {
@@ -21,42 +19,53 @@ const mutations = {
     SET_GEOAUTH(state, val){
         state.geoauth = val;
     },
-    SET_USER_INIT(state,val){
-        state.userInitialized = val;
-    },
-    SET_GEO_INIT(state,val){
-        state.geoInitialized = val;
+    SET_AUTH_INIT(state,val){
+        state.authinit = val;
     },
     SET_ROLE(state,val){
         state.role = val;
-    },
-    SET_USER_ERROR(state,val){
-        state.user_error = val;
-    },
-    SET_PROFILE_ERROR(state,val){
-        state.profile_error = val;
     }
 }
 
 const actions = {
     setUser({ commit }, user ) {
         commit('SET_USER',user);
-        commit('SET_USER_INIT', true );
     },
-    setUserInit({commit},value){
-        commit("SET_USER_INIT",value);
+    setAuthInit({commit},value){
+        commit("SET_AUTH_INIT",value);
     },
-    async login( {commit } , payload) {
-        
-        const usercredentials = await signInWithEmailAndPassword(auth,payload.login, payload.password);
-        const { role, geoauth } = await api.getUserProfile();
+    async login({ commit }, payload) {
 
-        commit("SET_USER",usercredentials.user.email);
-        commit("SET_USER_INIT", true);
-        commit("SET_ROLE",role);
-        commit('SET_GEOAUTH', geoauth);
-        commit('SET_GEO_INIT', true);
-        
+        let errors = []
+        let username = null;
+        let geoauth = null;
+        let role = null;
+
+        try {
+            const usercredentials = await signInWithEmailAndPassword(auth, payload.login, payload.password);
+            username = usercredentials.user.email;
+        }
+        catch (err) {
+            errors.push(fbErrHandler(err));
+        }
+
+        try {
+            ({ role, geoauth } = await api.getUserProfile());
+        } catch (err) {
+            errors.push(err.message);
+        }
+
+        const error_count = errors.length;
+
+        if( error_count === 0) {
+            commit("SET_USER", username);
+            commit("SET_ROLE",role);
+            commit('SET_GEOAUTH', geoauth);
+            return true;
+        } else {
+            throw new Error(errors[0]);
+        }
+
     },
     async logout({commit}) {
         await auth.signOut();
@@ -65,10 +74,6 @@ const actions = {
     },
     setGeoAuth({ commit },value) {
         commit('SET_GEOAUTH', value);
-        commit('SET_GEO_INIT', true );
-    },
-    setGeoInit({commit},value){
-        commit("SET_GEO_INIT",value);
     },
     resetAuth({dispatch}){
         dispatch("resetGeoAuthState");
@@ -76,22 +81,32 @@ const actions = {
     },
     resetGeoAuthState({commit}){
         commit('SET_GEOAUTH', null);
-        commit('SET_GEO_INIT', null);
     },
     resetUserAuthState({commit}){
         commit("SET_USER",null);
-        commit("SET_USER_INIT", null);
         commit("SET_ROLE",null)
     },
     setUserRole({commit},val){
         commit('SET_ROLE',val);
     },
+    async setupAuth({dispatch}){
+        
+        try{
+
+            await dispatch("setUpUserAuth");
+            await dispatch("getUserProfile");
+            dispatch('setAuthInit',true);
+        }
+        catch(err){
+            dispatch('setAuthInit',false);
+            throw new Error(`${err.message}`);
+        }
+
+    },
     setUpUserAuth({commit}){
 
         return new Promise((resolve,reject) => {
             let unsubAuthListenerFun = onAuthStateChanged(auth,(user) => {
-
-                commit('SET_USER_ERROR',null);
 
                 //Check if user is set
                 if( user ){
@@ -101,19 +116,13 @@ const actions = {
                     commit('SET_USER',null);
                 }
 
-                //Set user user init state to true
-                commit('SET_USER_INIT', true );
-
                 //Done checking, unsub auth observer
                 unsubAuthListenerFun();
                 resolve(true);
             },() => {
-
                 //Handle error
                 commit('SET_USER',null);
-                commit('SET_USER_INIT', false );
-                commit('SET_USER_ERROR',"User auth failed");
-                reject();
+                reject("Unable to auth user");
             })
         });
     },
@@ -123,14 +132,11 @@ const actions = {
             const result = await api.checkGeoAuth();
         
             commit('SET_GEOAUTH', result.data.geoauth);
-            commit('SET_GEO_INIT', true);
-
             return true;
+
         }
         catch (err) {
-            commit('SET_GEOAUTH', null);
-            commit('SET_GEO_INIT', null);
-
+            commit('SET_GEOAUTH', false);
             throw new Error(processAxiosError(err));
         }
     },
@@ -149,23 +155,21 @@ const actions = {
         }
     },
     async getUserProfile({commit}){
+
         try{
 
             const { role, geoauth } = await api.getUserProfile();
 
             commit("SET_ROLE",role);
             commit('SET_GEOAUTH', geoauth);
-            commit('SET_GEO_INIT', true);
             
             return true;
         }
         catch(err) {
             commit('SET_ROLE',null);
-            commit('SET_GEOAUTH', null);
-            commit('SET_GEO_INIT', null);
+            commit('SET_GEOAUTH', false);
 
-            const errText = processAxiosError(err)
-            commit('SET_PROFILE_ERROR',errText);
+            throw new Error("Error while loading user profile.")
         }
     }
    
@@ -176,15 +180,10 @@ const getters = {
         return state.user;
     },
     isAuthenticated(state){
-        return state.geoauth === true || !!state.user
+        return state.authinit && (state.geoauth === true || !!state.user);
     },
     isInitialized(state){
-        if( !!state.userInitialized && !!state.geoInitialized){
-            return true;
-        }
-        else {
-            return false;
-        }
+        return state.authinit;
     }
 }
 

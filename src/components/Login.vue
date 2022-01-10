@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="fill-height">
     <v-row justify="center" no-gutters>
       <v-col cols="12" md="6" lg="4" xl="3">
         <v-card>
@@ -32,9 +32,9 @@
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn text small @click="$refs.form.reset()">Clear</v-btn>
+            <v-btn text @click="$refs.form.reset()">Clear</v-btn>
             <v-spacer></v-spacer>
-            <v-btn @click="login">Login</v-btn>
+            <v-btn large @click="login">Login</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -43,9 +43,9 @@
 </template>
 
 <script>
-import fbErrHandler from "@/utils/FirebaseErrorHandler";
+//import fbErrHandler from "@/utils/FirebaseErrorHandler";
 
-import { mdiEye, mdiEyeOff } from '@mdi/js'
+import { mdiEye, mdiEyeOff } from "@mdi/js";
 
 export default {
   name: "login",
@@ -76,12 +76,8 @@ export default {
           login: this.email,
           password: this.password,
         })
-        .then(() => {
-          
-          this.$router.push({ name: "home" });
-        })
         .catch((err) => {
-          this.$emit("show:message", fbErrHandler(err));
+          this.$emit("show:message", err.message);
         });
     },
   },

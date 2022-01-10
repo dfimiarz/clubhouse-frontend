@@ -84,7 +84,7 @@ export default {
               
             })
             .catch((err) =>{
-              this.error = err.message;
+              this.$store.dispatch("setLoadingError",err.message);
             })
             .finally(() => {
               
@@ -101,21 +101,31 @@ export default {
     userAuthenticated: {
       handler: function(newval){
 
-        if( newval ){
-          if( ! this.isAppInitializing ){
+        if( ! this.isAppInitializing ){
+
+          if( newval ){
+
+            this.loading = true;
+
             this.$store.dispatch("loadAppResources")
             .then(() => {
-
+              this.$router.push({ name: "home" });
             })
-            .catch(() => {
-
+            .catch((err) => {
+              this.$store.dispatch("setLoadingError",err.message);
             })
             .finally(() => {
-              
+              this.loading = false;
             })
+
+          } else {
+
+            this.$store.dispatch("clearAppResources");
+            if (this.$route.name !== "home") {
+              this.$router.push({ name: "home" });
+            }
+            
           }
-        } else {
-          this.$store.dispatch("clearAppResources");
         }
       }
     }

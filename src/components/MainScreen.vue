@@ -55,7 +55,7 @@
             <v-icon>{{ loginIcon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Club Login</v-list-item-title>
+            <v-list-item-title>Login</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item v-else @click="logout">

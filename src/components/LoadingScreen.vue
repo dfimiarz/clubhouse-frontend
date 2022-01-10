@@ -17,14 +17,14 @@
                     </v-col>
                 </v-row>
                 <v-row dense justify="center" class="text-caption text-lg-body-1">
-                    <v-col cols="10" lg="4" class="text-center error--text" v-if="error_exisits">
-                        <div v-for="(err,index) in errors" :key="index">{{ err }}</div>             
+                    <v-col cols="10" lg="4" class="text-center error--text" v-if="loading_error">
+                        <div>{{ loading_error }}</div>             
                     </v-col>
                     <v-col cols="10" lg="4" class="text-center" v-else>
                         Initilizing ...               
                     </v-col>
                 </v-row>
-                <v-row dense justify="center">
+                <!-- <v-row dense justify="center">
                     <v-col cols="6" class="text-right">
                         <span>USER AUTH</span>
                     </v-col>
@@ -47,7 +47,7 @@
                     <v-col cols="6">
                         <v-icon :color="dataLoadedColor" :class="{ 'animate-flicker': !data_loaded && !error_exisits }">{{ ! data_error ? checkOutlineIcon : alertIcon }}</v-icon>
                     </v-col>
-                </v-row>
+                </v-row> -->
             </v-col>
         </v-row>
     </v-container>
@@ -67,15 +67,7 @@
             }
         },
         computed: {
-            user_error: function(){
-                return this.$store.state.userstore.user_error;
-            },
-            profile_error: function(){
-                return this.$store.state.userstore.profile_error;
-            },
-            data_error: function(){
-                return this.$store.state.data_error;
-            },
+            
             connected: function (){
                 return this.$store.state.connected;
             },
@@ -88,21 +80,10 @@
             data_loaded: function(){
                 return this.$store.state.data_loaded;
             },
-            userInitColor: function(){
-                return this.user_error ? "error" : this.user_init ? "success" : "warning"
-            },
-            profileInitColor: function(){
-                return this.profile_error ? "error" : this.profile_init ? "success" : "warning"
-            },
-            dataLoadedColor: function(){
-                return this.data_error ? "error" : this.data_loaded ? "success" : "warning"
-            },
-            error_exisits: function(){
-                return this.errors.length
-            },
-            errors: function(){
-                return [this.profile_error,this.user_error,this.data_error].filter((val) => !!val);
+            loading_error: function(){
+                return this.$store.state.loading_error;
             }
+            
         }
     }
 </script>
