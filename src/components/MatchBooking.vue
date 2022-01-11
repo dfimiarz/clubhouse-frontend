@@ -68,7 +68,7 @@
       </v-card>
     </v-dialog>
     <v-row justify="center" align="center" class="fill-height" no-gutters>
-      <v-col cols="12" sm="8" md="6" lg="4">
+      <v-col cols="12" sm="8" md="6" lg="4" xl="3">
         <v-stepper v-model="step">
           <v-stepper-header>
             <v-stepper-step :complete="step > 1" step="1">Players</v-stepper-step>
