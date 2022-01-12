@@ -30,7 +30,6 @@ const store = new Vuex.Store(
             clubtz: "America/New_York",
             loading: false,
             loading_error: null,
-            initializing: false,
             error: null,
             defaultCellHeight1H: 120,
             cellHeightsForMode: {
@@ -90,9 +89,6 @@ const store = new Vuex.Store(
             SET_LOADING_ERROR(state, value) {
                 state.loading_error = value
             },
-            SET_INITIALIZING(state, value) {
-                state.initializing = value
-            },
             SET_ERROR(state, value) {
                 state.error = value
             },
@@ -115,27 +111,15 @@ const store = new Vuex.Store(
         actions: {
 
             resetApplicationState({dispatch}){
-                dispatch("userstore/resetAuth");
                 dispatch("clearAppResources");
                 dispatch("setDataLoaded",null);
+                dispatch("userstore/resetAuth");
             },
             async initializeApplication({dispatch, getters})
             {
                 if( ! getters['isAppActive'] ){
-                    try{
-                        dispatch('setInitializing',true);
-
-                        await dispatch('userstore/setupAuth');
-
-                        await dispatch('loadAppResources');
-                    }
-                    finally{
-
-                        dispatch('setInitializing',false);
-                    }
-                }
-                else{
-                    return true;
+                    await dispatch('userstore/setupAuth');
+                    await dispatch('loadAppResources');
                 }
 
             },
@@ -198,9 +182,6 @@ const store = new Vuex.Store(
             },
             setLoading({commit},val){
                 commit('SET_LOADING',val);
-            },
-            setInitializing({commit},val){
-                commit('SET_INITIALIZING',val);
             },
             setError({commit},val){
                 commit("SET_ERROR",val)

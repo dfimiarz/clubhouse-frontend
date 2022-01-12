@@ -75,7 +75,8 @@ const actions = {
     setGeoAuth({ commit },value) {
         commit('SET_GEOAUTH', value);
     },
-    resetAuth({dispatch}){
+    resetAuth({commit,dispatch}){
+        commit("SET_AUTH_INIT",false);
         dispatch("resetGeoAuthState");
         dispatch("resetUserAuthState");
     },

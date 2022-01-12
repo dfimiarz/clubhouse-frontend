@@ -3,7 +3,6 @@
     <transition name="slide-fade" mode="out-in">
       <loading-screen v-if=" ! active "></loading-screen>
       <mainscreen v-else></mainscreen>
-      
     </transition>
     <v-overlay :value="overlay_visible">
         <v-progress-circular indeterminate size="64" v-if="loading"></v-progress-circular>
@@ -69,7 +68,11 @@ export default {
     }
   },
   methods: {
-    
+    navigateToHome: function(){
+      if (this.$route.name !== "home") {
+        this.$router.push({ name: "home" });
+      }
+    }
   },
   watch: {
     connected: {
@@ -101,7 +104,8 @@ export default {
     userAuthenticated: {
       handler: function(newval){
 
-        if( ! this.isAppInitializing ){
+
+        if( this.active ){
 
           if( newval ){
 
@@ -109,7 +113,7 @@ export default {
 
             this.$store.dispatch("loadAppResources")
             .then(() => {
-              this.$router.push({ name: "home" });
+              this.navigateToHome();
             })
             .catch((err) => {
               this.$store.dispatch("setLoadingError",err.message);
@@ -121,9 +125,7 @@ export default {
           } else {
 
             this.$store.dispatch("clearAppResources");
-            if (this.$route.name !== "home") {
-              this.$router.push({ name: "home" });
-            }
+            this.navigateToHome();
             
           }
         }

@@ -166,8 +166,8 @@ function checkAuthRoutes(to,next) {
 
 router.beforeEach((to, from, next) => {
 
-  //If starting route is null and app is not active, init app
-  if( from === Router.START_LOCATION && ! store.getters['appActive']){
+  //If app is not active, run init action
+  if( ! store.getters['appActive']){
 
       store.dispatch("initializeApplication")
       .then(() => {

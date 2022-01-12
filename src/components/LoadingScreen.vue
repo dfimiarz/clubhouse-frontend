@@ -24,30 +24,6 @@
                         Initilizing ...               
                     </v-col>
                 </v-row>
-                <!-- <v-row dense justify="center">
-                    <v-col cols="6" class="text-right">
-                        <span>USER AUTH</span>
-                    </v-col>
-                    <v-col cols="6">
-                        <v-icon :color="userInitColor" :class="{ 'animate-flicker': !user_init && !error_exisits }">{{ ! user_error ? checkOutlineIcon : alertIcon }}</v-icon>
-                    </v-col>
-                </v-row>
-                <v-row dense justify="start">
-                    <v-col cols="6" class="text-right">
-                        <span>UESR PROFILE</span>
-                    </v-col>
-                    <v-col cols="6">
-                        <v-icon :color="profileInitColor" :class="{ 'animate-flicker': !profile_init && !error_exisits }">{{ ! profile_error ? checkOutlineIcon : alertIcon }}</v-icon>
-                    </v-col>
-                </v-row>
-                <v-row dense justify="center">
-                    <v-col cols="6" class="text-right">
-                        <span>APPLICATION DATA</span>
-                    </v-col>
-                    <v-col cols="6">
-                        <v-icon :color="dataLoadedColor" :class="{ 'animate-flicker': !data_loaded && !error_exisits }">{{ ! data_error ? checkOutlineIcon : alertIcon }}</v-icon>
-                    </v-col>
-                </v-row> -->
             </v-col>
         </v-row>
     </v-container>
@@ -70,15 +46,6 @@
             
             connected: function (){
                 return this.$store.state.connected;
-            },
-            user_init: function(){
-                return this.$store.state.userstore.userInitialized;
-            },
-            profile_init: function(){
-                return this.$store.state.userstore.geoInitialized;
-            },
-            data_loaded: function(){
-                return this.$store.state.data_loaded;
             },
             loading_error: function(){
                 return this.$store.state.loading_error;

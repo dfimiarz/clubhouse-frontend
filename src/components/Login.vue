@@ -2,7 +2,7 @@
   <v-container fluid class="fill-height">
     <v-row justify="center" align-sm="end">
       <v-col cols="12" sm="6" md="4" xl="2">
-        <v-card>
+        <v-card rounded="" raised>
           <v-card-subtitle>Log in</v-card-subtitle>
           <v-card-text>
             <v-form v-model="formvalid" ref="form">
@@ -33,8 +33,6 @@
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <!-- <v-btn text @click="$refs.form.reset()">Clear</v-btn>
-            <v-spacer></v-spacer> -->
             <v-btn large block @click="login">Login</v-btn>
           </v-card-actions>
         </v-card>
