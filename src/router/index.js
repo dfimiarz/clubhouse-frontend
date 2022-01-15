@@ -13,6 +13,7 @@ const MatchBooking = () => import(/* webpackChunkName: "booking" */ '@/component
 const BookingDetails = () => import(/* webpackChunkName: "details" */ '@/components/BookingDetails')
 const EventBooking = () => import(/* webpackChunkName: "manage" */ '@/components/EventBooking')
 const Settings = () => import(/* webpackChunkName: "settings" */ '@/components/Settings')
+const Reports = () => import(/* webpackChunkName: "reports" */ '@/components/Reports')
 // import Error from "@/components/Error";
 import LoadingScreen from "@/components/LoadingScreen";
 
@@ -23,6 +24,15 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home
+  },
+  {
+    path: '/reports',
+    name: 'reports',
+    component: Reports,
+    meta: {
+      role: 'ADMIN'
+    }
+
   },
   {
     path: '/guests',

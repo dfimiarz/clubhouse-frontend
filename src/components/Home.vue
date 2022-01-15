@@ -52,7 +52,7 @@ export default {
         { title: 'Book court', text: 'Regular court booking', img: 'tennisracquet.jpg', img_small: 'tennisracquet_small.jpg', xs: 12, sm: 6, md: 6, dest: "MatchBooking", enabled: true },
         { title: 'Guests', text: 'Guest management', img: 'guests_btn_bg.jpg', img_small: 'clubhouse_small.jpg', xs: 12, sm: 6,md: 3, dest: "guestregistration", enabled: true },
         { title: 'Manage', text: 'Club management',  img: 'manager.jpg', img_small: 'manager_small.jpg', xs: 12, sm: 6,md: 3, dest: "EventBooking", enabled: true },
-        { title: 'Reports', text: 'Reports',  img: 'reports.jpg', img_small: 'reports_small.jpg', xs: 12, sm: 6,md: 3, enabled: false },
+        { title: 'Reports', text: 'Reports',  img: 'reports.jpg', img_small: 'reports_small.jpg', xs: 12, sm: 6,md: 3, dest: "reports", enabled: true },
         { title: 'The Knick', text: 'More about the club', img: 'curr_matches.jpg', img_small: 'curr_matches_small.jpg', xs: 12, sm: 6,md: 3, enabled: false },
         
       ]
