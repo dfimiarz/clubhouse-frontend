@@ -88,7 +88,7 @@
       <v-row>
         <v-col cols="12">
           <div class="d-flex justify-space-between">
-            <span class="white--text">&copy; 2021</span>
+            <span class="white--text">&copy; {{ (new Date()).getFullYear() }}</span>
             <div class="d-inline">
               <span class="text-body-2">
                 User: <b>{{ user }}</b></span
