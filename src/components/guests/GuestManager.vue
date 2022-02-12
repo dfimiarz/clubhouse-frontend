@@ -20,9 +20,9 @@
             <v-progress-linear indeterminate v-show="loading" absolute bottom></v-progress-linear>
           </v-img>
           <v-tabs dark>
-            <v-tab :to="{ 'name':'guestregistration'}" exact>Register</v-tab>
-            <v-tab :to="{ 'name':'guestactivation'}" exact>Activate</v-tab>
-            <v-tab :to="{ 'name':'activeguests'}" exact>Manage</v-tab>
+            <v-tab :to="{ 'name':'guestregistration'}" :disabled="loading"  exact>Register</v-tab>
+            <v-tab :to="{ 'name':'guestactivation'}" :disabled="loading" exact>Activate</v-tab>
+            <v-tab :to="{ 'name':'activeguests'}" :disabled="loading" exact>List</v-tab>
           </v-tabs>
           
           

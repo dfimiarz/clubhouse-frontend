@@ -1,57 +1,61 @@
 <template>
-  <div>
-    <v-card-text>
-      <v-container fluid>
-        <div class="text-caption py-2">
-          Please enter host and guest(s) to activate for today. Guest activation
-          must be repeated each day a guest utilizes club venues.
-        </div>
-        <v-form ref="guestsform">
-          <v-row no-gutters>
-            <v-col cols="12" md="8">
-              <v-autocomplete
-                v-model="host"
-                label="Select Host"
-                :items="activeMembers"
-                item-text="name"
-                item-value="id"
-                :rules="[rules.notempty]"
-                :error-messages="hosterrors"
-                no-data-text="No active members found"
-              ></v-autocomplete>
-            </v-col>
+  <v-container fluid class="fill-height">
+    <v-row no-gutters class="fill-height">
+      <v-col class="fill-height">
+        <v-card-text>
+          <v-container fluid>
+            <div class="text-caption py-2">
+              Please enter a host and guest(s) to activate for today. Guest activation
+              must be repeated each day a guest utilizes club venues.
+            </div>
+            <v-form ref="guestsform">
+              <v-row no-gutters>
+                <v-col cols="12" md="8">
+                  <v-autocomplete
+                    v-model="host"
+                    label="Select Host"
+                    :items="activeMembers"
+                    item-text="name"
+                    item-value="id"
+                    :rules="[rules.notempty]"
+                    :error-messages="hosterrors"
+                    no-data-text="No active members found"
+                  ></v-autocomplete>
+                </v-col>
 
-            <v-col cols="12" class="subtitle-2">Guests</v-col>
-            <v-col cols="12">
-              <v-divider></v-divider>
-            </v-col>
-            <v-col
-              cols="12"
-              md="8"
-              v-for="(guest, index) in selectedGuests"
-              :key="index"
-            >
-              <v-autocomplete
-                v-model="guest.id"
-                :label="getGuestLabel(index + 1)"
-                :items="inactiveguests"
-                item-text="name"
-                item-value="id"
-                :error-messages="guest.errors"
-                no-data-text="No inactive guests found"
-                :disabled="loading"
-              ></v-autocomplete>
-            </v-col>
-          </v-row>
-        </v-form>
-      </v-container>
-    </v-card-text>
-    <v-card-actions>
-      <v-btn outlined @click="resetForm">Clear</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn @click="activateAndReload" :disabled="loading">Activate</v-btn>
-    </v-card-actions>
-  </div>
+                <v-col cols="12" class="subtitle-2">Guests</v-col>
+                <v-col cols="12">
+                  <v-divider></v-divider>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="8"
+                  v-for="(guest, index) in selectedGuests"
+                  :key="index"
+                >
+                  <v-autocomplete
+                    v-model="guest.id"
+                    :label="getGuestLabel(index + 1)"
+                    :items="inactiveguests"
+                    item-text="name"
+                    item-value="id"
+                    :error-messages="guest.errors"
+                    no-data-text="No inactive guests found"
+                    :disabled="loading"
+                  ></v-autocomplete>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn text @click="resetForm" :disabled="loading">Clear</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn large @click="activateAndReload" :disabled="loading">Activate</v-btn>
+        </v-card-actions>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

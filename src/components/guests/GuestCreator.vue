@@ -88,12 +88,30 @@
                 <v-col cols="12" class="subtitle-2">Terms and Conditions</v-col>
               </v-row>
               <v-divider></v-divider>
+               <v-row no-gutters>
+                <v-col cols="12">
+                  <v-checkbox
+                    v-model="vaccinated"
+                    :rules="checkBoxRules"
+                    :disabled="!formenabled"
+                    :error-messages="errors.vaccinated"
+                  >
+                    <template v-slot:label>
+                      <div class="caption">
+                        I affirm that I have seen proof of vaccination of my guest and take full responsibility for this verification.
+                      </div>
+                    </template>
+                    >
+                  </v-checkbox>
+                </v-col>
+              </v-row>
               <v-row no-gutters>
                 <v-col cols="12">
                   <v-checkbox
                     v-model="agree"
                     :rules="checkBoxRules"
                     :disabled="!formenabled"
+                    :error-messages="errors.agree"
                   >
                     <template v-slot:label>
                       <div class="caption">
@@ -111,9 +129,9 @@
       </v-container>
     </v-card-text>
     <v-card-actions>
-      <v-btn outlined @click="resetForm">Reset</v-btn>
+      <v-btn text @click="resetForm">Reset</v-btn>
       <v-spacer></v-spacer>
-      <v-btn :disabled="!formenabled" :loading="loading" @click="addGuest">Add Guest</v-btn>
+      <v-btn large :disabled="!formenabled" :loading="loading" @click="addGuest">Add Guest</v-btn>
     </v-card-actions>
   </div>
 </template>
@@ -145,6 +163,8 @@ export default {
         phone: null,
         captcha: null,
         requestid: null,
+        agree: null,
+        vaccinated: null
       },
       guest: {
         firstname: null,
@@ -153,6 +173,7 @@ export default {
         phone: null,
       },
       agree: false,
+      vaccinated: false,
       captchaRules: [(v) => !!v || "Field is required"],
       nameRules: [
         (v) => !!v || "Field is required",
@@ -247,6 +268,8 @@ export default {
         ...this.guest,
         captcha: this.captcha,
         requestid: this.requestid,
+        agree: this.agree,
+        vaccinated: this.vaccinated
       };
 
       dbservice
