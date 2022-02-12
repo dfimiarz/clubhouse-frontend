@@ -108,14 +108,14 @@
               <v-row no-gutters>
                 <v-col cols="12">
                   <v-checkbox
-                    v-model="agree"
+                    v-model="agreement"
                     :rules="checkBoxRules"
                     :disabled="!formenabled"
-                    :error-messages="errors.agree"
+                    :error-messages="errors.agreement"
                   >
                     <template v-slot:label>
                       <div class="caption">
-                        I have read, understood, and agree to all club rules
+                        I have read, understood, and agreement to all club rules
                         pertaining to guests visitors
                       </div>
                     </template>
@@ -163,7 +163,7 @@ export default {
         phone: null,
         captcha: null,
         requestid: null,
-        agree: null,
+        agreement: null,
         vaccinated: null
       },
       guest: {
@@ -172,7 +172,7 @@ export default {
         email: null,
         phone: null,
       },
-      agree: false,
+      agreement: false,
       vaccinated: false,
       captchaRules: [(v) => !!v || "Field is required"],
       nameRules: [
@@ -191,7 +191,7 @@ export default {
         (v) => (!v || (typeof v === 'string' && v.length >= 10)) || "Phone must be at least 10 characters",
         (v) => (!v || (typeof v === 'string' && v.length <= 24)) || "Content must be at most 24 characters",
       ],
-      checkBoxRules: [(v) => !!v || "Agreement required"],
+      checkBoxRules: [(v) => !!v || "Check required"],
     };
   },
   computed: {
@@ -268,7 +268,7 @@ export default {
         ...this.guest,
         captcha: this.captcha,
         requestid: this.requestid,
-        agree: this.agree,
+        agreement: this.agreement,
         vaccinated: this.vaccinated
       };
 
