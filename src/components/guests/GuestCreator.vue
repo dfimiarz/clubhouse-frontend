@@ -191,7 +191,7 @@ export default {
         (v) => (!v || (typeof v === 'string' && v.length >= 10)) || "Phone must be at least 10 characters",
         (v) => (!v || (typeof v === 'string' && v.length <= 24)) || "Content must be at most 24 characters",
       ],
-      checkBoxRules: [(v) => !!v || "Check required"],
+      checkBoxRules: [(v) => !!v || "Agreement required"],
     };
   },
   computed: {
