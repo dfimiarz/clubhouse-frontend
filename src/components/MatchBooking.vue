@@ -505,6 +505,19 @@ export default {
     };
   },
   methods: {
+    getPlayers: function(){
+      this.$store.dispatch('setLoading',true)
+      this.$store.dispatch('memberstore/loadEligiblePersons')
+      .then((val) => {
+        console.log(val)
+      })
+      .catch((err) => {
+        this.$emit('show:message',err)
+      })
+      .finally(() => {
+        this.$store.dispatch('setLoading',false)
+      })
+    },
     formatTime: function( timestring ){
       return !timestring ? "N/A" : this.$dayjs.tz(timestring).format("hh:mm A");
     },
@@ -932,7 +945,7 @@ export default {
     }
   },
   created: function () {
-    
+    this.getPlayers();
   },
   mounted: function () {
 

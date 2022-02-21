@@ -88,16 +88,34 @@
                 <v-col cols="12" class="subtitle-2">Terms and Conditions</v-col>
               </v-row>
               <v-divider></v-divider>
-              <v-row no-gutters>
+               <v-row no-gutters>
                 <v-col cols="12">
                   <v-checkbox
-                    v-model="agree"
+                    v-model="vaccinated"
                     :rules="checkBoxRules"
                     :disabled="!formenabled"
+                    :error-messages="errors.vaccinated"
                   >
                     <template v-slot:label>
                       <div class="caption">
-                        I have read, understood, and agree to all club rules
+                        I affirm that I have seen proof of vaccination of my guest and take full responsibility for this verification.
+                      </div>
+                    </template>
+                    >
+                  </v-checkbox>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col cols="12">
+                  <v-checkbox
+                    v-model="agreement"
+                    :rules="checkBoxRules"
+                    :disabled="!formenabled"
+                    :error-messages="errors.agreement"
+                  >
+                    <template v-slot:label>
+                      <div class="caption">
+                        I have read, understood, and agreement to all club rules
                         pertaining to guests visitors
                       </div>
                     </template>
@@ -111,9 +129,9 @@
       </v-container>
     </v-card-text>
     <v-card-actions>
-      <v-btn outlined @click="resetForm">Reset</v-btn>
+      <v-btn text @click="resetForm">Reset</v-btn>
       <v-spacer></v-spacer>
-      <v-btn :disabled="!formenabled" :loading="loading" @click="addGuest">Add Guest</v-btn>
+      <v-btn large :disabled="!formenabled" :loading="loading" @click="addGuest">Add Guest</v-btn>
     </v-card-actions>
   </div>
 </template>
@@ -145,6 +163,8 @@ export default {
         phone: null,
         captcha: null,
         requestid: null,
+        agreement: null,
+        vaccinated: null
       },
       guest: {
         firstname: null,
@@ -152,7 +172,8 @@ export default {
         email: null,
         phone: null,
       },
-      agree: false,
+      agreement: false,
+      vaccinated: false,
       captchaRules: [(v) => !!v || "Field is required"],
       nameRules: [
         (v) => !!v || "Field is required",
@@ -247,6 +268,8 @@ export default {
         ...this.guest,
         captcha: this.captcha,
         requestid: this.requestid,
+        agreement: this.agreement,
+        vaccinated: this.vaccinated
       };
 
       dbservice

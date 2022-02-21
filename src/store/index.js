@@ -127,7 +127,7 @@ const store = new Vuex.Store(
             async loadAppResources({ dispatch, getters }) {
 
                 //List of actions to run for authorized users
-                const authActions = ['memberstore/loadEligiblePersons','courtstore/loadCourts'];
+                const authActions = [/*'memberstore/loadEligiblePersons',*/'courtstore/loadCourts'];
 
                 const selectedActions = getters['userstore/isAuthenticated'] === true ? authActions : [];
 

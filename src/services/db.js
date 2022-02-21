@@ -116,6 +116,10 @@ function getMembers() {
     return instance.get(process.env.VUE_APP_BACKEND + '/persons/members')
 }
 
+function getActiveMembers(){
+    return instance.get(process.env.VUE_APP_BACKEND + '/persons/members/active')
+}
+
 function getGuests() {
     return instance.get(process.env.VUE_APP_BACKEND + '/persons/guests')
 }
@@ -251,5 +255,6 @@ export default {
     deactivateGuest,
     getOverlappingBookings,
     getUserRole,
-    getUserProfile
+    getUserProfile,
+    getActiveMembers
 }
