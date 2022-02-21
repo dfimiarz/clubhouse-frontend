@@ -51,7 +51,7 @@
         <v-card-actions>
           <v-btn text @click="resetForm" :disabled="loading">Clear</v-btn>
           <v-spacer></v-spacer>
-          <v-btn large @click="activateAndReload" :disabled="loading">Activate</v-btn>
+          <v-btn large @click="activateAndReload" :disabled="loading || error">Activate</v-btn>
         </v-card-actions>
       </v-col>
     </v-row>
@@ -80,6 +80,9 @@ export default {
       rules: {
         notempty: (v) => !!v || "Please select a host",
       },
+      error: false,
+      activeMembers: [],
+      inactiveguest: []
     };
   },
   beforeRouteLeave(to, from, next) {
@@ -90,26 +93,8 @@ export default {
     reset() {
       this.selected.splice(0);
     },
-    getInactiveGuests() {
-      this.inactiveguests.splice(0);
-      this.setLoading(true);
-
-      dbservice
-        .getInactiveGuests()
-        .then((result) => {
-          this.inactiveguests = result.data;
-        })
-        .catch((err) => {
-          const error = processAxiosError(err);
-          this.$emit(
-            "show:message",
-            `Unable to load guests: ${error}`,
-            "error"
-          );
-        })
-        .finally(() => {
-          this.setLoading(false);
-        });
+    async getMembersAndInactiveGuest(){
+      return await Promise.all([dbservice.getActiveMembers(),dbservice.getInactiveGuests()]);
     },
     validateForm() {
       let hostValid = this.validateHost();
@@ -131,29 +116,27 @@ export default {
     validateGuests() {
       this.clearGuestErrors();
 
-      let guestCheck = this.selectedGuests.reduce(
-        (accumulator, guest, index) => {
-          if (guest.id !== null) {
-            accumulator["guests"].indexOf(guest.id) != -1
-              ? accumulator["errors"].push({
-                  index: index,
-                  message: "Duplicate Guest",
-                })
-              : accumulator["guests"].push(guest.id);
-          }
+      const guestIds = new Set();
+      const guestErrors = [];
 
-          return accumulator;
-        },
-        { guests: [], errors: [] }
-      );
+      this.selectedGuests.forEach((guest,index) => {
+        
+        if( guest.id !==  null){
+          guestIds.has(guest.id) ? guestErrors.push({
+              index: index,
+              message: "Duplicate Guest",
+            })
+            : guestIds.add(guest.id);
+        }
+      })
 
-      if (guestCheck.guests.length === 0) {
+      if (guestIds.size === 0) {
         this.selectedGuests[0]["errors"].push("Select a guest");
         return false;
       }
 
-      if (guestCheck.errors.length != 0) {
-        guestCheck.errors.forEach((error) => {
+      if (guestErrors.length != 0) {
+        guestErrors.forEach((error) => {
           let index = error.index;
           let msg = error.message;
 
@@ -206,13 +189,15 @@ export default {
       }
 
       try {
-        const result = await Promise.all([
-          dbservice.getInactiveGuests(),
-          //TO DO: load only new list of active guests no the entire list
-          this.$store.dispatch("memberstore/loadEligiblePersons"),
-        ]);
+        const results = await this.getMembersAndInactiveGuest()
 
-        this.inactiveguests = result[0].data;
+        this.activeMembers = results[0].data.map((member) => ({
+        name:  `${member.firstname} ${member.lastname}`,
+        id: member.id
+        }));
+
+        this.inactiveguests = results[1].data;
+
       } catch (err) {
         const error = processAxiosError(err);
         throw new Error(
@@ -237,15 +222,6 @@ export default {
     },
   },
   computed: {
-    guestcount: function () {
-      return this.guests.length;
-    },
-    clubmembers: function () {
-      return this.$store.getters["memberstore/clubMembers"];
-    },
-    activeMembers: function () {
-      return this.$store.getters["memberstore/getActiveMembers"];
-    },
     selGuestList: function () {
       return this.selectedGuets.reduce((acc, curr) => {
         if (curr.id) {
@@ -256,7 +232,30 @@ export default {
     },
   },
   created: function () {
-    this.getInactiveGuests();
+
+    //Load both active members and inactive guests
+
+    this.getMembersAndInactiveGuest()
+    .then((results) => {
+
+      this.error = false;
+
+      this.activeMembers = results[0].data.map((member) => ({
+        name:  `${member.firstname} ${member.lastname}`,
+        id: member.id
+        }));
+
+      this.inactiveguests = results[1].data;
+
+    })
+    .catch((error) => {
+      this.error = true;
+      this.$emit("show:message", `${error.message}`, "error");
+    })
+    .finally(() => {
+
+    })
+   
   },
 };
 </script>

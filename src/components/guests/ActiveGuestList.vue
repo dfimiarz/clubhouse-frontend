@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title> Active Guests List </v-card-title>
+    <v-card-title> Current Active Guests</v-card-title>
     <!-- <v-divider></v-divider> -->
     <v-card-text>
       <v-sheet v-if="!loaded" :height="containerHeight">
@@ -102,7 +102,6 @@ export default {
       containerHeight: 450,
       guest_activations: null,
       loaded: false,
-      updated: "N/A",
       errMessage: undefined
     };
   },
@@ -128,8 +127,6 @@ export default {
       this.deactivateAndReload(ga_data)
         .then((res) => {
           this.guest_activations = res.data;
-          
-          //this.updated = this.$dayjs(this.date).tz().format("h:mm a");
           this.$emit("show:message", "Guest records updated", "success");
         })
         .catch((err) => {
