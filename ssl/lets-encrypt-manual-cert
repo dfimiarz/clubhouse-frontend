@@ -1,0 +1,12 @@
+Series of commands used to move newly issued certificates from letsencrypt archive to project direcory for docker deployment
+
+certbot-auto certonly --manual --preferred-challenges=dns --email email@email.com --agree-tos -d mydomain.com.com,*.mydomain.com
+
+cd /etc/letsencrypt/archive/
+cd mydomain.com/
+cp -r *X.pem /projectfolder/clubhouse-frontend/ssl/
+cd /projectfolder/clubhouse-frontend/ssl/
+mv certX.pem cert.pem
+mv chainX.pem chain.pem
+mv fullchainX.pem fullchain.pem 
+mv privkeyX.pem privkey.pem 
