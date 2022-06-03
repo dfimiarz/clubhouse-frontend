@@ -5,19 +5,20 @@
     @click="showBookingDetails"
   >
     <div class="session_container fill-height d-flex flex-wrap">
-        <slot v-bind:height="height"> 
-          <v-row class="fill-height" no-gutters v-bind:style="{ 'background-color' : bgColor }">
-            <v-col cols="12">
-              Item 
-            </v-col>
-          </v-row>
-        </slot>
+      <slot :height="height">
+        <v-row
+          class="fill-height"
+          no-gutters
+          :style="{ 'background-color': bgColor }"
+        >
+          <v-col cols="12"> Item </v-col>
+        </v-row>
+      </slot>
     </div>
   </div>
 </template>
 
 <script>
-
 const MIN_SESSION_HEIGHT = 26;
 
 export default {
@@ -28,28 +29,28 @@ export default {
     },
     start: {
       type: String,
-      required: true
+      required: true,
     },
     end: {
       type: String,
-      required: true
+      required: true,
     },
     id: {
       type: Number,
-      required: false
+      required: false,
     },
     showDetails: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-  name: "Item",
+  name: "CalendarItem",
   data: function () {
     return {};
   },
   methods: {
     showBookingDetails: function () {
-      if( this.showDetails ){
+      if (this.showDetails) {
         this.$router.push({
           name: "BookingDetails",
           params: { id: this.id },
@@ -80,7 +81,7 @@ export default {
     calEndMin: function () {
       return Math.ceil(this.closeMin / 60) * 60;
     },
-    
+
     duration: function () {
       return this.endMin - this.startMin;
     },
@@ -111,6 +112,4 @@ export default {
   box-shadow: 1px 2px black;
   color: black;
 }
-
-
 </style>

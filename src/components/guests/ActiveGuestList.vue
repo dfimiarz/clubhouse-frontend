@@ -1,96 +1,116 @@
 <template>
-  <div>
-    <v-card-title> Current Active Guests</v-card-title>
-    <!-- <v-divider></v-divider> -->
-    <v-card-text>
-      <v-sheet v-if="!loaded" :height="containerHeight">
-        <v-row>
-          <v-col cols="12" md="8">
-            <v-skeleton-loader
-              type="list-item-avatar-two-line@6"
-            ></v-skeleton-loader>
-          </v-col>
-        </v-row>
-      </v-sheet>
-      <template v-else>
-        <v-sheet :height="containerHeight" v-if="errMessage">
-          <v-row justify="center" align="center" class="fill-height">
-            <v-col class="text-center">
-              <div class="text-body-1">{{ errMessage }}</div>
-              <v-icon large>
-                {{ alertCircleIcon }}
-              </v-icon>
-            </v-col>
-          </v-row>
-        </v-sheet>
-        <v-list
-          v-else-if="hasGuests"
-          three-line
-          subheader
-          :height="containerHeight"
-          class="overflow-y-auto"
-          elevation="2"
-        >
-          <template v-for="(item, index) in sorted_activations">
-            <v-list-item :key="item.id">
-              <v-list-item-avatar>
-                <v-avatar color="green" size="56" class="white--text">
-                  {{ item.guest_lastname.charAt(0) }}
-                </v-avatar>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ item.guest_firstname }}
-                  {{ item.guest_lastname }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  Activated: {{ item.time_activated }}
-                </v-list-item-subtitle>
-                <v-list-item-subtitle>
-                  Host: {{ item.host_lastname }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-btn
-                  icon
-                  @click="deactivateGuest(index)"
-                  :disabled="item.has_played"
-                >
-                  <v-icon>
-                    {{ accountMinusIcon }}
+  <v-container fluid class="fill-height">
+    <v-row no-gutters class="fill-height">
+      <v-col class="fill-height">
+        <v-card-title> Current Active Guests </v-card-title>
+        <v-card-text>
+          <v-sheet v-if="!loaded" :height="containerHeight">
+            <v-row>
+              <v-col cols="12" md="8">
+                <v-skeleton-loader type="list-item-avatar-two-line@6" />
+              </v-col>
+            </v-row>
+          </v-sheet>
+          <template v-else>
+            <v-sheet :height="containerHeight" v-if="errMessage">
+              <v-row justify="center" align="center" class="fill-height">
+                <v-col class="text-center">
+                  <div class="text-body-1">
+                    {{ errMessage }}
+                  </div>
+                  <v-icon large>
+                    {{ alertCircleIcon }}
                   </v-icon>
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
-            <v-divider :key="index"></v-divider>
+                </v-col>
+              </v-row>
+            </v-sheet>
+            <v-list
+              v-else-if="hasGuests"
+              three-line
+              subheader
+              :height="containerHeight"
+              class="overflow-y-auto"
+              elevation="2"
+            >
+              <template v-for="(item, index) in sorted_activations">
+                <v-list-item :key="item.id">
+                  <v-list-item-avatar>
+                    <v-avatar color="green" size="56" class="white--text">
+                      {{ item.guest_lastname.charAt(0) }}
+                    </v-avatar>
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ item.guest_firstname }}
+                      {{ item.guest_lastname }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      Activated: {{ item.time_activated }}
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle>
+                      Host: {{ item.host_lastname }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-btn
+                      icon
+                      @click="deactivateGuest(index)"
+                      :disabled="item.has_played"
+                    >
+                      <v-icon>
+                        {{ accountMinusIcon }}
+                      </v-icon>
+                    </v-btn>
+                  </v-list-item-action>
+                </v-list-item>
+                <v-divider :key="index" />
+              </template>
+            </v-list>
+            <v-sheet :height="containerHeight" v-else>
+              <v-row justify="center" align="center" class="fill-height">
+                <v-col class="text-center">
+                  <div class="text-body-1">No Active Guests</div>
+                  <v-icon large>
+                    {{ accountOffIcon }}
+                  </v-icon>
+                </v-col>
+              </v-row>
+            </v-sheet>
           </template>
-        </v-list>
-        <v-sheet :height="containerHeight" v-else>
-          <v-row justify="center" align="center" class="fill-height">
-            <v-col class="text-center">
-              <div class="text-body-1">No Active Guests</div>
-              <v-icon large>
-                {{ accountOffIcon }}
-              </v-icon>
-            </v-col>
-          </v-row>
-        </v-sheet>
-      </template>
-    </v-card-text>
-    <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn large :disabled="loading" @click="getCurrentActivations">Reload</v-btn>
-    </v-card-actions>
-  </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            large
+            color="primary"
+            :disabled="loading"
+            @click="getCurrentActivations"
+          >
+            Refresh
+          </v-btn>
+        </v-card-actions>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 import dbservice from "./../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
-import { mdiReload, mdiAccountOff, mdiAccountMinus, mdiAccount, mdiAlertCircle } from "@mdi/js";
+import {
+  mdiReload,
+  mdiAccountOff,
+  mdiAccountMinus,
+  mdiAccount,
+  mdiAlertCircle,
+} from "@mdi/js";
+import { notification } from "../NotificationMixin";
 
 export default {
-  props: ["loading"],
+  mixins: [notification],
+  props: {
+    loading: Boolean,
+  },
   name: "GuestActivation",
   data: function () {
     return {
@@ -102,7 +122,7 @@ export default {
       containerHeight: 450,
       guest_activations: null,
       loaded: false,
-      errMessage: undefined
+      errMessage: undefined,
     };
   },
   beforeRouteLeave(to, from, next) {
@@ -127,12 +147,12 @@ export default {
       this.deactivateAndReload(ga_data)
         .then((res) => {
           this.guest_activations = res.data;
-          this.$emit("show:message", "Guest records updated", "success");
+          this.showNotification("Guest records updated", "success");
         })
         .catch((err) => {
           const error = processAxiosError(err);
 
-          this.$emit("show:message",`${error}`,"error");
+          this.showNotification(`${error}`, "error");
 
           this.errMessage = "Error deactivating guest";
         })
@@ -142,11 +162,9 @@ export default {
         });
     },
     async deactivateAndReload(data) {
-
       await dbservice.deactivateGuest(data);
-      
-      return await dbservice.getCurrentGuestActivations();
 
+      return await dbservice.getCurrentGuestActivations();
     },
     getCurrentActivations: function () {
       this.setLoading(true);
@@ -163,7 +181,7 @@ export default {
         .catch((err) => {
           const error = processAxiosError(err);
           this.errMessage = "Unable to load guest list";
-          this.$emit("show:message", `${error}`, "error");
+          this.showNotification(`${error}`, "error");
         })
         .finally(() => {
           this.loaded = true;

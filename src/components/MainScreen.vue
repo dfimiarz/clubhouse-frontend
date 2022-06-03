@@ -69,52 +69,74 @@
       </v-list>
     </v-navigation-drawer>
     <v-app-bar app elevate-on-scroll>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title>Knickerbocker Field Club</v-toolbar-title>
-      <div class="flex-grow-1"></div>
+      <div class="flex-grow-1" />
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn text :to="{ name: 'home' }" exact>Home</v-btn>
-        <v-btn text :to="{ name: 'calendar' }" exact>Schedule</v-btn>
-        <v-btn text :to="{ name: 'MatchBooking' }" exact>Book a Court</v-btn>
-        <v-btn text exact>Help</v-btn>
+        <v-btn text :to="{ name: 'home' }" exact> Home </v-btn>
+        <v-btn text :to="{ name: 'calendar' }" exact> Schedule </v-btn>
+        <v-btn text :to="{ name: 'MatchBooking' }" exact> Book a Court </v-btn>
+        <v-btn text exact> Help </v-btn>
       </v-toolbar-items>
     </v-app-bar>
     <v-main>
       <v-fade-transition hide-on-leave>
-        <router-view @show:message="showMessage"></router-view>
+        <router-view />
       </v-fade-transition>
     </v-main>
     <v-footer app>
-      <v-row>
+      <v-row no-gutters>
         <v-col cols="12">
-          <div class="d-flex justify-space-between">
-            <span class="white--text">&copy; {{ (new Date()).getFullYear() }}</span>
-            <div class="d-inline">
-              <span class="text-body-2">
-                User: <b>{{ user }}</b></span
-              >
+          <div class="d-flex justify-space-between align-center">
+            <div class="d-inline mx-1">
+              <v-icon v-if="geoAuthenticated" color="success">
+                {{ networkIcon }}
+              </v-icon>
+              <v-icon v-else>
+                {{ networkOffOutlineIcon }}
+              </v-icon>
+              <v-btn icon v-if="user">
+                <v-icon>
+                  {{ accountIcon }}
+                </v-icon>
+              </v-btn>
+              <v-btn icon v-else :to="{ name: 'login' }">
+                <v-icon>
+                  {{ accountOffIcon }}
+                </v-icon>
+              </v-btn>
+              <span class="text-caption hidden-xs-only" v-if="user">
+                {{ user }}
+              </span>
             </div>
+            <span> &copy; {{ new Date().getFullYear() }} </span>
           </div>
         </v-col>
       </v-row>
     </v-footer>
-    <v-snackbar v-model="sbvis" elevation="24">
-      {{ sbmsg }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn color="pink" text v-bind="attrs" @click="sbvis = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
   </div>
 </template>
 
 <script>
+import {
+  mdiHome,
+  mdiCalendar,
+  mdiLogin,
+  mdiLogout,
+  mdiHelp,
+  mdiCog,
+  mdiCalendarPlus,
+  mdiAccountMultiple,
+  mdiNetworkOutline,
+  mdiNetworkOffOutline,
+  mdiAccount,
+  mdiAccountOff,
+} from "@mdi/js";
 
-import { mdiHome, mdiCalendar, mdiLogin, mdiLogout, mdiHelp, mdiCog, mdiCalendarPlus, mdiAccountMultiple } from '@mdi/js';
+import { notification } from "./NotificationMixin";
 
 export default {
+  mixins: [notification],
   data() {
     return {
       homeIcon: mdiHome,
@@ -125,61 +147,53 @@ export default {
       helpIcon: mdiHelp,
       cogIcon: mdiCog,
       accountMultipleIcon: mdiAccountMultiple,
+      networkIcon: mdiNetworkOutline,
+      networkOffOutlineIcon: mdiNetworkOffOutline,
+      accountIcon: mdiAccount,
+      accountOffIcon: mdiAccountOff,
       drawer: false,
-      sbvis: false,
-      sbmsg: null
     };
   },
   computed: {
     loading: {
-      get: function(){
+      get: function () {
         return this.$store.state.loading;
       },
-      set: function(val) {
-        this.$store.dispatch('setLoading',val)
-      }
+      set: function (val) {
+        this.$store.dispatch("setLoading", val);
+      },
     },
     error: {
-      get: function(){
+      get: function () {
         return this.$store.state.error;
       },
-      set: function(val){
-        this.$store.dispatch('setError',val)
-      }
+      set: function (val) {
+        this.$store.dispatch("setError", val);
+      },
     },
     loggedin: function () {
       return !!this.$store.state.userstore.user;
     },
-    authenticated: function () {
-      return this.$store.getters["userstore/isAuthenticated"];
+    geoAuthenticated: function () {
+      return this.$store.getters["userstore/isGeoAuthenticated"];
+    },
+    userAuthenticated: function () {
+      return this.$store.getters["userstore/isUserAuthenticated"];
     },
     user: function () {
-      if (this.authenticated) {
-        if (this.loggedin) {
-          return this.$store.state.userstore.user;
-        } else {
-          return "Club Computer";
-        }
-      } else {
-        return "Anonymous";
-      }
+      return this.$store.state.userstore.user;
     },
   },
-  
+
   methods: {
-    
-    showMessage: function (text) {
-      this.sbmsg = text;
-      this.sbvis = true;
-    },
     logout: function () {
       this.$store
         .dispatch("userstore/logout")
         .then(() => {
-          this.showMessage("You are logged out");
+          this.showNotification("You are logged out", "success");
         })
         .catch((err) => {
-          this.showMessage("Error logging out" + err.code);
+          this.showNotification("Error logging out: " + err.code, "error");
         })
         .finally(() => {
           //Redirect to home
@@ -192,5 +206,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

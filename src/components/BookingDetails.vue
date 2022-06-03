@@ -19,8 +19,7 @@
         <v-row v-if="error" justify="center" no-gutters>
           <v-alert type="error" outlined>
             {{ error }}
-          </v-alert>  
-          
+          </v-alert>
         </v-row>
 
         <v-row v-if="sessioninfo" no-gutters justify="center" align="center">
@@ -95,9 +94,9 @@
 
                     <v-list-item-action>
                       <v-btn icon v-if="canMove">
-                        <v-icon @click="openEditor('timeeditor')"
-                          >{{ pencilIcon }}</v-icon
-                        >
+                        <v-icon @click="openEditor('timeeditor')">{{
+                          pencilIcon
+                        }}</v-icon>
                       </v-btn>
                     </v-list-item-action>
                   </v-list-item>
@@ -129,9 +128,9 @@
 
                     <v-list-item-action>
                       <v-btn icon v-if="canMove">
-                        <v-icon @click="openEditor('courteditor')"
-                          >{{ pencilIcon }}</v-icon
-                        >
+                        <v-icon @click="openEditor('courteditor')">{{
+                          pencilIcon
+                        }}</v-icon>
                       </v-btn>
                     </v-list-item-action>
                   </v-list-item>
@@ -188,9 +187,9 @@
 
                     <v-list-item-action>
                       <v-btn icon v-if="canChangeNote">
-                        <v-icon @click="openEditor('noteeditor')"
-                          >{{ pencilIcon }}</v-icon
-                        >
+                        <v-icon @click="openEditor('noteeditor')">{{
+                          pencilIcon
+                        }}</v-icon>
                       </v-btn>
                     </v-list-item-action>
                   </v-list-item>
@@ -209,8 +208,16 @@
                 <v-btn large @click="enddialog = true" v-show="canEnd"
                   >End session</v-btn
                 >
-                <v-btn large outlined color="primary" @click="bookagain"  text :loading="loading" v-if="canRebook">Rebook</v-btn>
-
+                <v-btn
+                  large
+                  outlined
+                  color="primary"
+                  @click="bookagain"
+                  text
+                  :loading="loading"
+                  v-if="canRebook"
+                  >Rebook</v-btn
+                >
               </v-card-actions>
             </v-card>
           </v-col>
@@ -238,7 +245,11 @@
 
             <div class="flex-grow-1"></div>
 
-            <v-btn color="warning" text @click="removeSession" :loading="loading"
+            <v-btn
+              color="warning"
+              text
+              @click="removeSession"
+              :loading="loading"
               >Yes, REMOVE</v-btn
             >
           </v-card-actions>
@@ -255,8 +266,9 @@
 
             <div class="flex-grow-1"></div>
 
-            <v-btn color="warning" text @click="endSession" :loading="loading">End now</v-btn>
-            
+            <v-btn color="warning" text @click="endSession" :loading="loading"
+              >End now</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -269,9 +281,20 @@ import apihandler from "./../services/db";
 import valueeditor from "./session/ValueEditor";
 import processAxiosError from "../utils/AxiosErrorHandler";
 
-import { BOOKING_TYPE_MATCH } from '../constants/constants';
+import { BOOKING_TYPE_MATCH } from "../constants/constants";
 
-import { mdiChevronLeft, mdiInformation, mdiCalendarRange, mdiClockStart, mdiPencil, mdiClockEnd, mdiTennis, mdiCloseCircle, mdiNote, mdiAccount} from '@mdi/js'
+import {
+  mdiChevronLeft,
+  mdiInformation,
+  mdiCalendarRange,
+  mdiClockStart,
+  mdiPencil,
+  mdiClockEnd,
+  mdiTennis,
+  mdiCloseCircle,
+  mdiNote,
+  mdiAccount,
+} from "@mdi/js";
 
 export default {
   components: {
@@ -300,20 +323,23 @@ export default {
       showCourtEditor: false,
       showeditor: false,
       editortype: null,
-      bookingPermissions: new Set()
+      bookingPermissions: new Set(),
     };
   },
   methods: {
     formatTime(timestring) {
       if (!timestring) return "N/A";
-      return this.$dayjs(timestring).tz().format("h:mm a");    
+      return this.$dayjs(timestring).tz().format("h:mm a");
     },
-    formatDate( datestring ) {
+    formatDate(datestring) {
       if (!datestring) return "N/A";
       return this.$dayjs(datestring).tz().format("MMM Do, YYYY");
     },
-    bookagain(){
-      this.$router.replace({ name: 'MatchBooking', query: { pls: this.playerIds.toString() }});
+    bookagain() {
+      this.$router.replace({
+        name: "MatchBooking",
+        query: { pls: this.playerIds.toString() },
+      });
     },
     openEditor(val) {
       this.editortype = val;
@@ -335,9 +361,8 @@ export default {
           this.$router.push({ name: "calendar" });
         })
         .catch((e) => {
-
           const err = processAxiosError(e);
-          this.$emit("show:message",err,"errors")
+          this.$emit("show:message", err, "errors");
         })
         .finally(() => {
           this.loading = false;
@@ -350,9 +375,8 @@ export default {
 
       var params = {
         id: this.sessioninfo.id,
-        hash: this.sessioninfo.etag
+        hash: this.sessioninfo.etag,
       };
-
 
       apihandler
         .endSession(params)
@@ -361,8 +385,7 @@ export default {
         })
         .catch((e) => {
           const err = processAxiosError(e);
-          this.$emit("show:message",err,"errors")
-
+          this.$emit("show:message", err, "errors");
         })
         .finally(() => {
           this.loading = false;
@@ -378,7 +401,7 @@ export default {
       apihandler
         .getBookingDetails(this.id)
         .then((val) => {
-            this.sessioninfo = val.data; 
+          this.sessioninfo = val.data;
         })
         .catch((e) => {
           const err = processAxiosError(e);
@@ -390,17 +413,20 @@ export default {
         });
     },
   },
-  filters: {
-  },
+  filters: {},
   computed: {
     clubtz: function () {
       return this.$store.state.clubtz;
     },
     starttime: function () {
-      return this.$dayjs.tz(this.sessioninfo.date.concat(" ", this.sessioninfo.start)).format();
+      return this.$dayjs
+        .tz(this.sessioninfo.date.concat(" ", this.sessioninfo.start))
+        .format();
     },
     endtime: function () {
-      return this.$dayjs.tz(this.sessioninfo.date.concat(" ", this.sessioninfo.end)).format();
+      return this.$dayjs
+        .tz(this.sessioninfo.date.concat(" ", this.sessioninfo.end))
+        .format();
     },
     canEnd: function () {
       return Object.prototype.hasOwnProperty.call(
@@ -422,7 +448,7 @@ export default {
           : false
         : false;
     },
-    canMove: function() {
+    canMove: function () {
       return Object.prototype.hasOwnProperty.call(
         this.sessioninfo,
         "permissions"
@@ -432,8 +458,8 @@ export default {
           : false
         : false;
     },
-    canChangeNote: function() {
-       return Object.prototype.hasOwnProperty.call(
+    canChangeNote: function () {
+      return Object.prototype.hasOwnProperty.call(
         this.sessioninfo,
         "permissions"
       )
@@ -442,12 +468,17 @@ export default {
           : false
         : false;
     },
-    canRebook: function() {
-      return this.sessioninfo.utc_req_time > this.sessioninfo.utc_end && this.sessioninfo.type === BOOKING_TYPE_MATCH;
+    canRebook: function () {
+      return (
+        this.sessioninfo.utc_req_time > this.sessioninfo.utc_end &&
+        this.sessioninfo.type === BOOKING_TYPE_MATCH
+      );
     },
-    playerIds: function() {
-      return Object.prototype.hasOwnProperty.call(this.sessioninfo,"players") ? this.sessioninfo.players.map(p => p.person_id) : []
-    }
+    playerIds: function () {
+      return Object.prototype.hasOwnProperty.call(this.sessioninfo, "players")
+        ? this.sessioninfo.players.map((p) => p.person_id)
+        : [];
+    },
   },
   watch: {
     //needed to get new data when route changes
@@ -462,5 +493,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>

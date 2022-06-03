@@ -1,6 +1,5 @@
-import { initializeApp } from "firebase/app"
+import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-
 
 // firebase init - add your own config here
 const firebaseConfig = {
@@ -10,14 +9,12 @@ const firebaseConfig = {
   projectId: process.env.VUE_APP_FB_PROJECT_ID,
   storageBucket: process.env.VUE_APP_FB_STORAGE_BUCKET,
   messagingSenderId: process.env.VUE_APP_FB_MSG_SENDER_ID,
-  appId: process.env.VUE_APP_FB_APP_ID
+  appId: process.env.VUE_APP_FB_APP_ID,
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
 
-
 const auth = getAuth(firebaseApp);
 
-
 // export utils/refs
-export default auth
+export default auth;

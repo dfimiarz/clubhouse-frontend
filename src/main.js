@@ -1,9 +1,9 @@
-import Vue from 'vue'
-import App from './App.vue'
-import store from './store/index.js'
-import router from './router'
+import Vue from "vue";
+import App from "./App.vue";
+import store from "./store/index.js";
+import router from "./router";
 
-import vuetify from './plugins/vuetify';
+import vuetify from "./plugins/vuetify";
 
 // import InitUtils from './utils/InitUtils'
 
@@ -20,35 +20,14 @@ Vue.prototype.$dayjs = dayjs;
 
 Vue.config.productionTip = false;
 
-
-//---
-//Register global onnline, offline listeners and use them to set flag in store
-window.addEventListener('offline', handleConnectionStatechange);
-window.addEventListener('online', handleConnectionStatechange);
-
-handleConnectionStatechange();
-
-function handleConnectionStatechange() {
-
-  const online = window.navigator.onLine;
-
-  if (online) {
-    store.commit('SET_CONNECTED', true);
-  } else {
-    store.commit('SET_CONNECTED', false);
-  }
-}
-//---
-
 // eslint-disable-next-line no-unused-vars
 function initializeVueApp() {
   new Vue({
     router,
     store,
     vuetify,
-    render: h => h(App)
-  }).$mount('#app')
-
+    render: (h) => h(App),
+  }).$mount("#app");
 }
 
 /**
@@ -66,9 +45,11 @@ function initializeVueApp() {
 //   loadImages(img)
 // })
 
-
-initializeVueApp();
-
-
-
-
+store
+  .dispatch("checkConnection")
+  .then(() => {
+    store.dispatch("setUpConnectionWatcher");
+  })
+  .finally(() => {
+    initializeVueApp();
+  });

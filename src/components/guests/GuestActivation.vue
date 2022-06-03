@@ -5,8 +5,8 @@
         <v-card-text>
           <v-container fluid>
             <div class="text-caption py-2">
-              Please enter a host and guest(s) to activate for today. Guest activation
-              must be repeated each day a guest utilizes club venues.
+              Please enter a host and guest(s) to activate for today. Guest
+              activation must be repeated each day a guest utilizes club venues.
             </div>
             <v-form ref="guestsform">
               <v-row no-gutters>
@@ -20,12 +20,12 @@
                     :rules="[rules.notempty]"
                     :error-messages="hosterrors"
                     no-data-text="No active members found"
-                  ></v-autocomplete>
+                  />
                 </v-col>
 
-                <v-col cols="12" class="subtitle-2">Guests</v-col>
+                <v-col cols="12" class="subtitle-2"> Guests </v-col>
                 <v-col cols="12">
-                  <v-divider></v-divider>
+                  <v-divider />
                 </v-col>
                 <v-col
                   cols="12"
@@ -42,16 +42,23 @@
                     :error-messages="guest.errors"
                     no-data-text="No inactive guests found"
                     :disabled="loading"
-                  ></v-autocomplete>
+                  />
                 </v-col>
               </v-row>
             </v-form>
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-btn text @click="resetForm" :disabled="loading">Clear</v-btn>
-          <v-spacer></v-spacer>
-          <v-btn large @click="activateAndReload" :disabled="loading || error">Activate</v-btn>
+          <v-btn text @click="resetForm" :disabled="loading"> Clear </v-btn>
+          <v-spacer />
+          <v-btn
+            large
+            color="primary"
+            @click="activateAndReload"
+            :disabled="loading || error"
+          >
+            Activate
+          </v-btn>
         </v-card-actions>
       </v-col>
     </v-row>
@@ -61,9 +68,13 @@
 <script>
 import dbservice from "./../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
+import { notification } from "../NotificationMixin";
 
 export default {
-  props: ["loading"],
+  mixins: [notification],
+  props: {
+    loading: Boolean,
+  },
   name: "GuestActivation",
   data: function () {
     return {
@@ -82,7 +93,7 @@ export default {
       },
       error: false,
       activeMembers: [],
-      inactiveguest: []
+      inactiveguest: [],
     };
   },
   beforeRouteLeave(to, from, next) {
@@ -93,8 +104,11 @@ export default {
     reset() {
       this.selected.splice(0);
     },
-    async getMembersAndInactiveGuest(){
-      return await Promise.all([dbservice.getActiveMembers(),dbservice.getInactiveGuests()]);
+    async getMembersAndInactiveGuest() {
+      return await Promise.all([
+        dbservice.getActiveMembers(),
+        dbservice.getInactiveGuests(),
+      ]);
     },
     validateForm() {
       let hostValid = this.validateHost();
@@ -119,16 +133,16 @@ export default {
       const guestIds = new Set();
       const guestErrors = [];
 
-      this.selectedGuests.forEach((guest,index) => {
-        
-        if( guest.id !==  null){
-          guestIds.has(guest.id) ? guestErrors.push({
-              index: index,
-              message: "Duplicate Guest",
-            })
+      this.selectedGuests.forEach((guest, index) => {
+        if (guest.id !== null) {
+          guestIds.has(guest.id)
+            ? guestErrors.push({
+                index: index,
+                message: "Duplicate Guest",
+              })
             : guestIds.add(guest.id);
         }
-      })
+      });
 
       if (guestIds.size === 0) {
         this.selectedGuests[0]["errors"].push("Select a guest");
@@ -162,11 +176,11 @@ export default {
 
       this.activateGuests()
         .then(() => {
-          this.$emit("show:message", `Guests activated`, "success");
+          this.showNotification("Guest activated", "success");
           this.resetForm();
         })
         .catch((error) => {
-          this.$emit("show:message", `${error.message}`, "error");
+          this.showNotification(`${error.message}`, "error");
         })
         .finally(() => {
           this.setLoading(false);
@@ -189,15 +203,14 @@ export default {
       }
 
       try {
-        const results = await this.getMembersAndInactiveGuest()
+        const results = await this.getMembersAndInactiveGuest();
 
         this.activeMembers = results[0].data.map((member) => ({
-        name:  `${member.firstname} ${member.lastname}`,
-        id: member.id
+          name: `${member.firstname} ${member.lastname}`,
+          id: member.id,
         }));
 
         this.inactiveguests = results[1].data;
-
       } catch (err) {
         const error = processAxiosError(err);
         throw new Error(
@@ -232,34 +245,26 @@ export default {
     },
   },
   created: function () {
-
     //Load both active members and inactive guests
 
     this.getMembersAndInactiveGuest()
-    .then((results) => {
+      .then((results) => {
+        this.error = false;
 
-      this.error = false;
-
-      this.activeMembers = results[0].data.map((member) => ({
-        name:  `${member.firstname} ${member.lastname}`,
-        id: member.id
+        this.activeMembers = results[0].data.map((member) => ({
+          name: `${member.firstname} ${member.lastname}`,
+          id: member.id,
         }));
 
-      this.inactiveguests = results[1].data;
-
-    })
-    .catch((error) => {
-      this.error = true;
-      this.$emit("show:message", `${error.message}`, "error");
-    })
-    .finally(() => {
-
-    })
-   
+        this.inactiveguests = results[1].data;
+      })
+      .catch((error) => {
+        this.error = true;
+        this.showNotification(`${error.message}`, "error");
+      })
+      .finally(() => {});
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>

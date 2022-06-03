@@ -1,19 +1,12 @@
 <template>
   <v-card tile="" height="100%">
-    <v-toolbar
-      flat
-    >
-      <v-btn
-        icon
-        dark
-        @click="close"
-      >
+    <v-toolbar flat>
+      <v-btn icon dark @click="close">
         <v-icon> {{ closeIcon }}</v-icon>
       </v-btn>
       <v-toolbar-title>Edit Session Time</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-toolbar-items>
-      </v-toolbar-items>
+      <v-toolbar-items> </v-toolbar-items>
     </v-toolbar>
     <v-card-text>
       <v-row v-if="error" class="my-2" no-gutters>
@@ -29,17 +22,16 @@
             :return-value.sync="s_time"
             persistent
             width="290px"
-            
           >
             <template v-slot:activator="{ on }">
               <v-text-field
                 v-model="s_time"
                 label="Start time"
-                :prepend-icon=clockStartIcon
+                :prepend-icon="clockStartIcon"
                 readonly
                 v-on="on"
                 required=""
-                :disabled="! canMove"
+                :disabled="!canMove"
               ></v-text-field>
             </template>
             <v-time-picker
@@ -47,9 +39,16 @@
               :min="opentime"
               :allowed-minutes="allowedminutes"
             >
-            <v-spacer></v-spacer>
-              <v-btn text="" color="primary" @click="stimedialog = false">Cancel</v-btn>
-              <v-btn text="" color="primary" @click="$refs.stdialog.save(s_time)">OK</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn text="" color="primary" @click="stimedialog = false"
+                >Cancel</v-btn
+              >
+              <v-btn
+                text=""
+                color="primary"
+                @click="$refs.stdialog.save(s_time)"
+                >OK</v-btn
+              >
             </v-time-picker>
           </v-dialog>
         </v-col>
@@ -60,17 +59,16 @@
             :return-value.sync="e_time"
             persistent
             width="290px"
-            
           >
             <template v-slot:activator="{ on }">
               <v-text-field
                 v-model="e_time"
                 label="End time"
-                :prepend-icon=clockEndIcon
+                :prepend-icon="clockEndIcon"
                 readonly
                 v-on="on"
                 required=""
-                :disabled="! canMove"
+                :disabled="!canMove"
               ></v-text-field>
             </template>
             <v-time-picker
@@ -78,9 +76,16 @@
               :max="closetime"
               :allowed-minutes="allowedminutes"
             >
-            <v-spacer></v-spacer>
-              <v-btn text="" color="primary" @click="etimedialog = false">Cancel</v-btn>
-              <v-btn text="" color="primary" @click="$refs.etdialog.save(e_time)">OK</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn text="" color="primary" @click="etimedialog = false"
+                >Cancel</v-btn
+              >
+              <v-btn
+                text=""
+                color="primary"
+                @click="$refs.etdialog.save(e_time)"
+                >OK</v-btn
+              >
             </v-time-picker>
           </v-dialog>
         </v-col>
@@ -88,90 +93,85 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn
-          color="primary"
-          text
-          :loading="loading"
-          @click="changeTime"
-        >
-          Save
-        </v-btn>
+      <v-btn color="primary" text :loading="loading" @click="changeTime">
+        Save
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-
 //import moment from 'moment-timezone'
-import apihandler from './../../services/db'
-import { editor } from './EditorMixin'
+import apihandler from "./../../services/db";
+import { editor } from "./EditorMixin";
 import processAxiosError from "../../utils/AxiosErrorHandler";
 
-import { mdiClose, mdiClockStart, mdiClockEnd} from '@mdi/js'
+import { mdiClose, mdiClockStart, mdiClockEnd } from "@mdi/js";
 
 export default {
-    props: ['session'],
-    mixins: [ editor ],
-    data () {
-        return {
-          closeIcon: mdiClose,
-          clockStartIcon: mdiClockStart,
-          clockEndIcon: mdiClockEnd,
-          stimedialog: false,
-          s_time: null,
-          etimedialog: false,
-          e_time: null,
-          
-        }
-    },
-    methods: {
-      
-      allowedminutes: m => m % 5 === 0,
-      
-      changeTime: function(){
-        this.error = null
-        this.loading = true
+  props: ["session"],
+  mixins: [editor],
+  data() {
+    return {
+      closeIcon: mdiClose,
+      clockStartIcon: mdiClockStart,
+      clockEndIcon: mdiClockEnd,
+      stimedialog: false,
+      s_time: null,
+      etimedialog: false,
+      e_time: null,
+    };
+  },
+  methods: {
+    allowedminutes: (m) => m % 5 === 0,
 
-        var params = {
-          id: this.session.id,
-          hash: this.session.etag,
-          start: this.s_time,
-          end: this.e_time
-        }
+    changeTime: function () {
+      this.error = null;
+      this.loading = true;
 
-        
+      var params = {
+        id: this.session.id,
+        hash: this.session.etag,
+        start: this.s_time,
+        end: this.e_time,
+      };
 
-        apihandler.changeTime(params).then(() => {
-          this.$router.push({name: 'calendar'})
+      apihandler
+        .changeTime(params)
+        .then(() => {
+          this.$router.push({ name: "calendar" });
         })
         .catch((e) => {
-          this.error = processAxiosError(e)         
+          this.error = processAxiosError(e);
         })
-        .finally(()=>{
-          this.loading = false
-        })
-      }
+        .finally(() => {
+          this.loading = false;
+        });
     },
-    computed: {
-      opentime(){
-        return this.$store.state.opentime
-      },
-      closetime(){
-        return this.$store.state.closetime
-      },
-      canMove: function(){
-      return Object.prototype.hasOwnProperty.call(this.session,"permissions")    ?
-              (Array.isArray(this.session.permissions)      ? 
-              this.session.permissions.includes('move') : false) : false
-      }
+  },
+  computed: {
+    opentime() {
+      return this.$store.state.opentime;
     },
-    mounted: function(){
-      this.s_time = this.$dayjs(this.session.date.concat('T',this.session.start)).tz().format('HH:mm')
-      this.e_time = this.$dayjs(this.session.date.concat('T',this.session.end)).tz().format('HH:mm')
-    }
-    
-}
+    closetime() {
+      return this.$store.state.closetime;
+    },
+    canMove: function () {
+      return Object.prototype.hasOwnProperty.call(this.session, "permissions")
+        ? Array.isArray(this.session.permissions)
+          ? this.session.permissions.includes("move")
+          : false
+        : false;
+    },
+  },
+  mounted: function () {
+    this.s_time = this.$dayjs(this.session.date.concat("T", this.session.start))
+      .tz()
+      .format("HH:mm");
+    this.e_time = this.$dayjs(this.session.date.concat("T", this.session.end))
+      .tz()
+      .format("HH:mm");
+  },
+};
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>

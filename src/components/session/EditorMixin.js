@@ -1,13 +1,13 @@
 export const editor = {
-    data(){
-        return {
-            loading: false,
-            error: null
-        }
+  data() {
+    return {
+      loading: false,
+      error: null,
+    };
+  },
+  methods: {
+    close() {
+      this.$emit("update:show");
     },
-    methods: {
-        close() {
-            this.$emit('update:show')
-        }
-    }
-}
+  },
+};

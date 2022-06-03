@@ -1,4 +1,3 @@
-
 <template>
   <v-container fluid class="fill-height" v-resize="onResize">
     <v-row justify="center" align="center" class="fill-height">
@@ -7,13 +6,15 @@
           <v-row justify="start" align="center">
             <v-col cols="12" sm="6" lg="4">
               <v-row dense>
-                <v-col cols="12">
-                  Utilization Highlights
-                </v-col>
+                <v-col cols="12"> Utilization Highlights </v-col>
                 <v-col cols="6">
                   <v-card raised rounded="" height="150px">
-                    <v-card-title class="text-body-1 text-sm-subtitle-1">Club Utilization</v-card-title>
-                    <v-card-text class="text-h6 text-lg-h4 text-center"> 60% </v-card-text>
+                    <v-card-title class="text-body-1 text-sm-subtitle-1"
+                      >Club Utilization</v-card-title
+                    >
+                    <v-card-text class="text-h6 text-lg-h4 text-center">
+                      60%
+                    </v-card-text>
                   </v-card>
                 </v-col>
                 <v-col cols="6">
@@ -21,7 +22,9 @@
                     <v-card-title class="text-body-1 text-sm-subtitle-1"
                       >Most Utilized</v-card-title
                     >
-                    <v-card-text class="text-h6 text-lg-h4 text-center"> #1 </v-card-text>
+                    <v-card-text class="text-h6 text-lg-h4 text-center">
+                      #1
+                    </v-card-text>
                   </v-card>
                 </v-col>
                 <v-col cols="6">
@@ -36,13 +39,15 @@
                 </v-col>
                 <v-col cols="6">
                   <v-card raised height="150px">
-                    <v-card-title class="text-body-1 text-sm-subtitle-1"> Most Upkeep</v-card-title>
-                    <v-card-text class="text-h6 text-lg-h4 text-center"> #5 </v-card-text>
+                    <v-card-title class="text-body-1 text-sm-subtitle-1">
+                      Most Upkeep</v-card-title
+                    >
+                    <v-card-text class="text-h6 text-lg-h4 text-center">
+                      #5
+                    </v-card-text>
                   </v-card>
                 </v-col>
-                <v-col cols="12">
-                  Utilization/Court (%)
-                </v-col>
+                <v-col cols="12"> Utilization/Court (%) </v-col>
                 <v-col cols="12">
                   <!-- 
                     Should go to settings along with courts
@@ -67,7 +72,9 @@
                     <v-card-title class="text-body-1 text-sm-subtitle-1">
                       Player
                     </v-card-title>
-                    <v-card-text class="text-h6 text-lg-h4 text-center"> 335 min </v-card-text>
+                    <v-card-text class="text-h6 text-lg-h4 text-center">
+                      335 min
+                    </v-card-text>
                   </v-card>
                 </v-col>
                 <v-col cols="6">
@@ -100,15 +107,12 @@
                     </v-card-text>
                   </v-card>
                 </v-col>
-                 <v-col cols="12">
+                <v-col cols="12">
                   <div class="px-2">Activity times (min)</div>
                 </v-col>
                 <v-col cols="12">
                   <v-card height="300px" class="pa-2" raised rounded="">
-                    <v-chart
-                      :option="timePlayedOption"
-                      ref="bar2"
-                    ></v-chart>
+                    <v-chart :option="timePlayedOption" ref="bar2"></v-chart>
                   </v-card>
                 </v-col>
               </v-row>
@@ -123,7 +127,9 @@
                     <v-card-title class="text-body-1 text-sm-subtitle-1">
                       # Singles
                     </v-card-title>
-                    <v-card-text class="text-h6 text-lg-h4 text-center"> 5 </v-card-text>
+                    <v-card-text class="text-h6 text-lg-h4 text-center">
+                      5
+                    </v-card-text>
                   </v-card>
                 </v-col>
                 <v-col cols="6">
@@ -141,7 +147,9 @@
                     <v-card-title class="text-body-1 text-sm-subtitle-1">
                       # Modified
                     </v-card-title>
-                    <v-card-text class="text-h6 text-lg-h4 text-center"> 35 </v-card-text>
+                    <v-card-text class="text-h6 text-lg-h4 text-center">
+                      35
+                    </v-card-text>
                   </v-card>
                 </v-col>
                 <v-col cols="6">
@@ -159,10 +167,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-card height="300px" class="pa-2" raised rounded="">
-                    <v-chart
-                      :option="waitTimeOption"
-                      ref="bar3"
-                    ></v-chart>
+                    <v-chart :option="waitTimeOption" ref="bar3"></v-chart>
                   </v-card>
                 </v-col>
               </v-row>
@@ -184,14 +189,14 @@ import VChart, { THEME_KEY } from "vue-echarts";
 use([SVGRenderer, BarChart, TitleComponent, GridComponent]);
 
 export default {
-  name: "Reports",
+  name: "Reports-Page",
   components: { VChart },
   provide: {
     [THEME_KEY]: "dark",
   },
   data: () => {
     return {
-      timeranges: ["All","Morning","Afternoon","Evening"],
+      timeranges: ["All", "Morning", "Afternoon", "Evening"],
       utilizationOption: {
         title: {
           text: "Court Utilization (%)",
@@ -274,5 +279,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>

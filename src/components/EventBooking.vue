@@ -17,7 +17,12 @@
                 </v-col>
               </v-row>
             </v-container>
-            <v-progress-linear indeterminate v-show="loading" absolute bottom></v-progress-linear>
+            <v-progress-linear
+              indeterminate
+              v-show="loading"
+              absolute
+              bottom
+            ></v-progress-linear>
           </v-img>
           <v-card-text>
             <v-form ref="eventbookingform" lazy>
@@ -27,18 +32,18 @@
                     v-model="organizer"
                     :items="managers"
                     label="Authorized Person"
-                    :prepend-icon=accountIcon
+                    :prepend-icon="accountIcon"
                     no-data-text="No available organizers"
-                    :rules="[ rules.required ]"
+                    :rules="[rules.required]"
                   ></v-select>
                 </v-col>
                 <v-col cols="12" md="8">
                   <v-select
                     v-model="bookingtype"
                     label="Booking Type"
-                    :prepend-icon=formSelectIcon
+                    :prepend-icon="formSelectIcon"
                     no-data-text="No type found"
-                    :rules="[ rules.required ]"
+                    :rules="[rules.required]"
                     :items="bookingtypes"
                   ></v-select>
                 </v-col>
@@ -49,10 +54,10 @@
                     item-value="id"
                     item-text="name"
                     required
-                    :rules="[ rules.required ]"
+                    :rules="[rules.required]"
                     v-model="court"
                     no-data-text="No courts found"
-                    :prepend-icon=formSelectIcon
+                    :prepend-icon="formSelectIcon"
                   ></v-select>
                 </v-col>
 
@@ -68,11 +73,11 @@
                       <v-text-field
                         v-model="formattedDate"
                         label="Booking date"
-                        :prepend-icon=clockStartIcon
+                        :prepend-icon="clockStartIcon"
                         readonly
                         v-bind="attrs"
                         v-on="on"
-                        :rules="[ rules.required ]"
+                        :rules="[rules.required]"
                       ></v-text-field>
                     </template>
                     <v-date-picker v-model="date" scrollable>
@@ -94,10 +99,10 @@
                       <v-text-field
                         v-model="s_time"
                         label="Start time"
-                        :prepend-icon=clockStartIcon
+                        :prepend-icon="clockStartIcon"
                         v-on="on"
                         required
-                        :rules="[ rules.required ]"
+                        :rules="[rules.required]"
                       ></v-text-field>
                     </template>
                     <v-time-picker
@@ -108,8 +113,10 @@
                       :max="maxstarttime"
                     >
                       <v-spacer></v-spacer>
-                      <v-btn text  @click="stimedialog = false">Cancel</v-btn>
-                      <v-btn text  @click="$refs.stdialog.save(s_time)">OK</v-btn>
+                      <v-btn text @click="stimedialog = false">Cancel</v-btn>
+                      <v-btn text @click="$refs.stdialog.save(s_time)"
+                        >OK</v-btn
+                      >
                     </v-time-picker>
                   </v-dialog>
                 </v-col>
@@ -125,10 +132,10 @@
                       <v-text-field
                         v-model="e_time"
                         label="End time"
-                        :prepend-icon=clockEndIcon
+                        :prepend-icon="clockEndIcon"
                         v-on="on"
                         required
-                        :rules="[ rules.required, rules.endAfterStart ]"
+                        :rules="[rules.required, rules.endAfterStart]"
                       ></v-text-field>
                     </template>
                     <v-time-picker
@@ -140,13 +147,21 @@
                     >
                       <v-spacer></v-spacer>
                       <v-btn text @click="etimedialog = false">Cancel</v-btn>
-                      <v-btn text @click="$refs.etdialog.save(e_time)">OK</v-btn>
+                      <v-btn text @click="$refs.etdialog.save(e_time)"
+                        >OK</v-btn
+                      >
                     </v-time-picker>
                   </v-dialog>
                 </v-col>
 
                 <v-col cols="12">
-                  <v-text-field v-model="note" label="Note" counter maxlength="200" :rules="[ rules.notelimit ]"></v-text-field>
+                  <v-text-field
+                    v-model="note"
+                    label="Note"
+                    counter
+                    maxlength="200"
+                    :rules="[rules.notelimit]"
+                  ></v-text-field>
                 </v-col>
               </v-row>
             </v-form>
@@ -167,7 +182,13 @@ import apihandler from "./../services/db";
 import utils from "./../services/utils";
 import processAxiosError from "../utils/AxiosErrorHandler";
 
-import { mdiAccount, mdiFormSelect, mdiCalendar, mdiClockStart, mdiClockEnd } from '@mdi/js'
+import {
+  mdiAccount,
+  mdiFormSelect,
+  mdiCalendar,
+  mdiClockStart,
+  mdiClockEnd,
+} from "@mdi/js";
 
 const HOST_TYPE_ID = 4000;
 
@@ -201,18 +222,23 @@ export default {
       rules: {
         required: (value) => !!value || "Required.",
         endAfterStart: (value) => {
-          if( ! this.s_time ){
+          if (!this.s_time) {
             return true;
-          } 
+          }
 
-          if( utils.timeToMinutes(value) - utils.timeToMinutes(this.s_time) <= 0 ){
+          if (
+            utils.timeToMinutes(value) - utils.timeToMinutes(this.s_time) <=
+            0
+          ) {
             return "End must be after start";
           }
 
           return true;
-
         },
-        notelimit: (v) => (typeof(v) === 'object' || (typeof(v) === 'string' && v.length <= 200)) || "Max 256 characters",
+        notelimit: (v) =>
+          typeof v === "object" ||
+          (typeof v === "string" && v.length <= 200) ||
+          "Max 256 characters",
       },
       loading: false,
       error: null,
@@ -229,10 +255,9 @@ export default {
     validate: function () {
       return true;
     },
-    validateFields(){
-
-      if( !this.$refs.eventbookingform.validate() ){
-        return false
+    validateFields() {
+      if (!this.$refs.eventbookingform.validate()) {
+        return false;
       }
 
       return true;
@@ -251,16 +276,14 @@ export default {
           that.$router.push({ name: "calendar" });
         })
         .catch(function (e) {
-          
-          that.$emit( 'show:message',processAxiosError(e));
+          that.$emit("show:message", processAxiosError(e));
         })
         .finally(() => {
           that.loading = false;
         });
     },
     submitBooking: function () {
-      
-      if (! this.validateFields()) return false;
+      if (!this.validateFields()) return false;
 
       const booking = {
         court: this.court,
@@ -270,7 +293,7 @@ export default {
         end: this.e_time,
         note: this.note,
         players: [{ id: this.organizer, type: HOST_TYPE_ID }],
-        type: this.bookingtype
+        type: this.bookingtype,
       };
 
       //console.log("Will send ", match)
@@ -298,7 +321,7 @@ export default {
             });
         })
         .catch((err) => {
-          this.$emit( 'show:message',processAxiosError(err));
+          this.$emit("show:message", processAxiosError(err));
         })
         .finally(() => {
           this.loading = false;
@@ -326,9 +349,9 @@ export default {
       get() {
         return this.formatDate(this.date);
       },
-      set(val){
-        this.date = val
-      }
+      set(val) {
+        this.date = val;
+      },
     },
     opentime() {
       return this.$store.state.opentime;
@@ -348,7 +371,7 @@ export default {
     },
     maxstarttime: function () {
       return utils.minToTime(utils.timeToMinutes(this.closetime) - 5);
-    }
+    },
   },
   created: function () {
     this.date = this.$dayjs().tz().format("YYYY-MM-DD");
@@ -361,5 +384,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>

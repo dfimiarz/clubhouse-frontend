@@ -1,164 +1,205 @@
 <template>
   <v-app dark>
     <transition name="slide-fade" mode="out-in">
-      <loading-screen v-if=" ! active "></loading-screen>
-      <mainscreen v-else></mainscreen>
+      <loading-screen v-if="!active" />
+      <mainscreen v-else />
     </transition>
     <v-overlay :value="overlay_visible">
-        <v-progress-circular indeterminate size="64" v-if="loading"></v-progress-circular>
-        <div class="d-flex flex-column text-h6 black" v-else-if="error">
-            <div class="text-center pa-2"> {{ error }} </div>
+      <v-progress-circular indeterminate size="64" v-if="loading" />
+      <div class="d-flex flex-column text-h6 black" v-else-if="error">
+        <div class="text-center pa-2">
+          {{ error }}
         </div>
+      </div>
     </v-overlay>
+    <v-snackbar
+      v-model="sbvis"
+      elevation="24"
+      :app="this.active"
+      outlined
+      :color="sbcolor"
+    >
+      {{ sbmsg }}
+
+      <template #action="{ attrs }">
+        <v-btn text v-bind="attrs" @click="sbvis = false"> Close </v-btn>
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 
 <script>
-
-import mainscreen from "./components/MainScreen"
-import LoadingScreen from './components/LoadingScreen.vue';
+import mainscreen from "./components/MainScreen";
+import LoadingScreen from "./components/LoadingScreen.vue";
 
 export default {
-  name: "app",
+  name: "App",
   components: {
-    'mainscreen': mainscreen,
-    LoadingScreen
+    mainscreen: mainscreen,
+    LoadingScreen,
   },
-  data: function() {
+  data: function () {
     return {
-      initErrors:{
+      initErrors: {
         geo_err: null,
         user_err: null,
         shared_err: null,
-        targetRouteName: null
-      }
-    }
+        targetRouteName: null,
+      },
+      sbvis: false,
+      sbmsg: null,
+      sbcolor: null,
+    };
   },
   computed: {
     loading: {
-      get: function(){
+      get: function () {
         return this.$store.state.loading;
       },
-      set: function(val) {
-        this.$store.dispatch('setLoading',val)
-      }
+      set: function (val) {
+        this.$store.dispatch("setLoading", val);
+      },
     },
     error: {
-      get: function(){
+      get: function () {
         return this.$store.state.error;
       },
-      set: function(val){
-        this.$store.dispatch('setError',val)
-      }
+      set: function (val) {
+        this.$store.dispatch("setError", val);
+      },
     },
-    connected: function(){
+    connected: function () {
       return this.$store.state.connected;
     },
-    overlay_visible: function() {
+    overlay_visible: function () {
       return this.loading || this.error;
     },
     active: function () {
       return this.$store.getters["appActive"];
     },
-    userAuthenticated: function(){
-      return this.$store.getters['userstore/isAuthenticated'];
+    userAuthenticated: function () {
+      return this.$store.getters["userstore/isUserAuthenticated"];
     },
-    isAppInitializing: function(){
+    authenticated: function () {
+      return this.$store.getters["userstore/isAuthenticated"];
+    },
+    isAppInitializing: function () {
       return this.$store.state.initializing;
-    }
+    },
+    notification: function () {
+      return this.$store.state.notificationstore.notification;
+    },
   },
   methods: {
-    navigateToHome: function(){
+    navigateToHome: function () {
       if (this.$route.name !== "home") {
         this.$router.push({ name: "home" });
       }
-    }
+    },
+    showMessage: function (text, type) {
+      console.log("showing message", text, type);
+
+      this.sbmsg = text;
+
+      switch (type) {
+        case "success":
+          this.sbcolor = "success";
+          break;
+        case "warrning":
+          this.sbcolor = "warrning";
+          break;
+        case "error":
+          this.sbcolor = "error";
+          break;
+
+        default:
+          this.sbcolor = null;
+          break;
+      }
+
+      this.sbvis = true;
+    },
   },
   watch: {
     connected: {
-      handler: function(newval){
-
-        if( newval === true ){
-
-          if( ! this.$store.getters['appActive'] ){
-
-            this.$store.dispatch("initializeApplication")
-            .then(() => {
-              
-            })
-            .catch((err) =>{
-              this.$store.dispatch("setLoadingError",err.message);
-            })
-            .finally(() => {
-              
-            })
+      handler: function (newval) {
+        if (newval === true) {
+          if (!this.active) {
+            this.$store
+              .dispatch("initializeApplication")
+              .then(() => {})
+              .catch((err) => {
+                this.$store.dispatch("setLoadingError", err.message);
+              })
+              .finally(() => {});
           }
-          
-        }
-        else {
+        } else {
           this.$store.dispatch("resetApplicationState");
         }
-        
-      }
+      },
     },
     userAuthenticated: {
-      handler: function(newval){
+      handler: function (newval) {
+        //App active and user logged in
+        if (this.active && newval) {
+          this.loading = true;
 
-
-        if( this.active ){
-
-          if( newval ){
-
-            this.loading = true;
-
-            this.$store.dispatch("loadAppResources")
+          this.$store
+            .dispatch("loadAppResources")
             .then(() => {
               this.navigateToHome();
             })
             .catch((err) => {
-              this.$store.dispatch("setLoadingError",err.message);
+              this.$store.dispatch("setLoadingError", err.message);
             })
             .finally(() => {
               this.loading = false;
-            })
-
-          } else {
-
-            this.$store.dispatch("clearAppResources");
-            this.navigateToHome();
-            
-          }
+            });
         }
+      },
+    },
+    authenticated: {
+      handler: function (newval) {
+        //App is active and no longer authenticated
+        if (this.active && !newval) {
+          this.$store.dispatch("clearAppResources");
+          this.navigateToHome();
+        }
+      },
+    },
+    sbvis: function (newval) {
+      if (!newval) {
+        this.sbmsg = null;
+        this.$store.dispatch("notificationstore/removeNotification");
       }
-    }
+    },
+    notification: function (notification) {
+      if (notification) {
+        this.showMessage(notification.text, notification.type);
+      }
+    },
   },
-  created: function(){
-
+  created: function () {
     //laod settings saved in local storage
-    this.$store.dispatch('loadPersistantSettings');
-    
+    this.$store.dispatch("loadPersistantSettings");
+
     //Set default time zone for the club
     this.$dayjs.tz.setDefault(this.$store.state.clubtz);
-    
   },
-  beforeDestroy: function(){
-    
-  }
-}
+  beforeDestroy: function () {},
+};
 </script>
 
 <style scoped>
-
 .slide-fade-enter-active {
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 .slide-fade-leave-active {
-  transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
 }
-.slide-fade-enter, .slide-fade-leave-to
-{
+.slide-fade-enter,
+.slide-fade-leave-to {
   /* transform: translateX(10px); */
   opacity: 0;
 }
-
 </style>

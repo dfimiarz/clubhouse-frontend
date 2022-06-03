@@ -1,17 +1,25 @@
 // import '@mdi/font/css/materialdesignicons.css'
-import Vue from 'vue';
-import Vuetify,{ VChip,VDivider, VItemGroup, VListItem, VDialog, VAlert } from 'vuetify/lib';
+import Vue from "vue";
+import Vuetify, {
+  VPicker,
+  VTimePickerClock,
+  VTimePickerTitle,
+  VAlert,
+} from "vuetify/lib";
 
 Vue.use(Vuetify);
 
 export default new Vuetify({
-  components:{
-    VChip,VDivider, VListItem, VItemGroup, VDialog, VAlert
+  components: {
+    VPicker,
+    VTimePickerClock,
+    VTimePickerTitle,
+    VAlert,
   },
   icons: {
-    iconfont: 'mdiSvg',
+    iconfont: "mdiSvg",
   },
   theme: {
-    dark: true
-  }
+    dark: true,
+  },
 });

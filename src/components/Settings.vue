@@ -13,19 +13,18 @@
                     :items="displaymodes"
                     v-model="settings.displayMode"
                   >
-
                   </v-select>
                 </v-col>
-                <v-col cols="12">
-                  
-                </v-col>
+                <v-col cols="12"> </v-col>
               </v-row>
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-btn large @click="resetSettings">Reset</v-btn>
             <v-spacer></v-spacer>
-            <v-btn large @click="saveSettings" :disabled="! settingsChanged">Save</v-btn>
+            <v-btn large @click="saveSettings" :disabled="!settingsChanged"
+              >Save</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-col>
@@ -34,47 +33,45 @@
 </template>
 
 <script>
-
 export default {
-  name: "settings",
+  name: "Settings-Page",
   data: function () {
     return {
       formvalid: true,
       settings: {
-        displayMode: null
-      }
+        displayMode: null,
+      },
     };
   },
   methods: {
-    saveSettings(){
+    saveSettings() {
       this.displayMode = this.settings.displayMode;
     },
-    resetSettings(){
+    resetSettings() {
       this.settings.displayMode = this.displayMode;
-    }
-  },
-  computed:{
-    displayMode: {
-      set: function(val){
-        this.$store.dispatch('setSetting',{ value: val, name: 'displaymode'})
-      },
-      get: function(){
-        return this.$store.getters['getSetting']('displaymode');
-      }
     },
-    displaymodes: function(){
+  },
+  computed: {
+    displayMode: {
+      set: function (val) {
+        this.$store.dispatch("setSetting", { value: val, name: "displaymode" });
+      },
+      get: function () {
+        return this.$store.getters["getSetting"]("displaymode");
+      },
+    },
+    displaymodes: function () {
       return this.$store.state.displaymodes;
     },
-    settingsChanged(){
+    settingsChanged() {
       return this.settings.displayMode !== this.displayMode;
-    }
+    },
   },
-  created(){
+  created() {
     this.settings.displayMode = this.displayMode;
-  }
+  },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>

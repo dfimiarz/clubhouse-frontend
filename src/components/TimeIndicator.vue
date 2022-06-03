@@ -1,60 +1,66 @@
 <template>
-  <div class="timeindicator" :style="{'top':  + vpos + 'px', 'border-top-width': + thickness + 'px'  }"> 
-  </div>
+  <div
+    class="timeindicator"
+    :style="{ top: +vpos + 'px', 'border-top-width': +thickness + 'px' }"
+  ></div>
 </template>
 
 <script>
-
 export default {
   props: {
     currtime: {
       required: true,
-      type: Number
-    }
+      type: Number,
+    },
   },
-  name: "timeindicator",
-  data: function() {
+  name: "TimeIndicator",
+  data: function () {
     return {
-      thickness: 2
-    }
+      thickness: 2,
+    };
   },
-  methods:{
-    
-  },
-  computed:{
+  methods: {},
+  computed: {
     cellHeight1H: function () {
       return this.$store.getters["calCellHeight1H"];
     },
     /**
      * Compute vertical position taking into account the start and end time
      */
-    vpos: function(){
-      
-      var adj_currmin = this.currmin <= this.startMin ? this.startMin : this.currmin >= this.endMin ? (this.endMin - this.thickness) : this.currmin
+    vpos: function () {
+      var adj_currmin =
+        this.currmin <= this.startMin
+          ? this.startMin
+          : this.currmin >= this.endMin
+          ? this.endMin - this.thickness
+          : this.currmin;
 
-      return this.thickness + ((adj_currmin - this.startMin) * this.cellHeight1H/60);
-      
+      return (
+        this.thickness +
+        ((adj_currmin - this.startMin) * this.cellHeight1H) / 60
+      );
     },
-    openMin: function(){
-      return this.$store.getters['openMin'];
+    openMin: function () {
+      return this.$store.getters["openMin"];
     },
-    closeMin: function(){
-      return this.$store.getters['closeMin'];
-    },    
-    currmin: function(){
-      return this.$dayjs(this.currtime).tz().hour() * 60 + this.$dayjs(this.currtime).tz().minute()
+    closeMin: function () {
+      return this.$store.getters["closeMin"];
     },
-    startMin: function(){
-      return Math.floor(this.openMin/60)*60;
+    currmin: function () {
+      return (
+        this.$dayjs(this.currtime).tz().hour() * 60 +
+        this.$dayjs(this.currtime).tz().minute()
+      );
     },
-    endMin: function(){
-      return Math.ceil(this.closeMin/60)*60;
-    }
+    startMin: function () {
+      return Math.floor(this.openMin / 60) * 60;
+    },
+    endMin: function () {
+      return Math.ceil(this.closeMin / 60) * 60;
+    },
   },
-  created: function(){
-    
-  }
-}
+  created: function () {},
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -65,9 +71,5 @@ export default {
   border-top-color: yellowgreen;
   border-top-style: dashed;
   height: 0px;
-
 }
-
-
-
 </style>

@@ -17,21 +17,37 @@
                 </v-col>
               </v-row>
             </v-container>
-            <v-progress-linear indeterminate v-show="loading" absolute bottom></v-progress-linear>
+            <v-progress-linear indeterminate v-show="loading" absolute bottom />
           </v-img>
           <v-tabs dark>
-            <v-tab :to="{ 'name':'guestregistration'}" :disabled="loading"  exact>Register</v-tab>
-            <v-tab :to="{ 'name':'guestactivation'}" :disabled="loading" exact>Activate</v-tab>
-            <v-tab :to="{ 'name':'activeguests'}" :disabled="loading" exact>List</v-tab>
+            <v-tab
+              :to="{ name: 'guestregistration' }"
+              :disabled="loading"
+              exact
+            >
+              Register
+            </v-tab>
+            <v-tab :to="{ name: 'guestactivation' }" :disabled="loading" exact>
+              Activate
+            </v-tab>
+            <v-tab :to="{ name: 'activeguests' }" :disabled="loading" exact>
+              List
+            </v-tab>
           </v-tabs>
-          
-          
-          <router-view :loading.sync="loading" @show:message="showSnackBar"></router-view>
+
+          <router-view :loading.sync="loading" @show:message="showSnackBar" />
         </v-card>
         <v-snackbar v-model="snackbar.open" bottom>
           {{ snackbar.text }}
-          <template v-slot:action="{ attrs }">
-            <v-btn :color="snackbar.color" text v-bind="attrs" @click="snackbar.open = false">Close</v-btn>
+          <template #action="{ attrs }">
+            <v-btn
+              :color="snackbar.color"
+              text
+              v-bind="attrs"
+              @click="snackbar.open = false"
+            >
+              Close
+            </v-btn>
           </template>
         </v-snackbar>
       </v-col>
@@ -56,7 +72,6 @@ export default {
     };
   },
   methods: {
-    
     showSnackBar(text, color) {
       this.snackbar.open = true;
       this.snackbar.text = text;
@@ -68,5 +83,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>

@@ -1,21 +1,12 @@
 <template>
-
   <v-card tile="" height="100%">
-    <v-toolbar
-      flat
-      dense
-    >
-      <v-btn
-        icon
-        dark
-        @click="close"
-      >
+    <v-toolbar flat dense>
+      <v-btn icon dark @click="close">
         <v-icon>{{ closeIcon }}</v-icon>
       </v-btn>
       <v-toolbar-title>Change Court</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-toolbar-items>
-      </v-toolbar-items>
+      <v-toolbar-items> </v-toolbar-items>
     </v-toolbar>
     <v-card-text>
       <v-row v-if="error" class="my-2" no-gutters>
@@ -31,87 +22,83 @@
             item-value="id"
             item-text="name"
             required=""
-            :rules="[ rules.required ]"
+            :rules="[rules.required]"
             v-model="court"
           >
-            
           </v-select>
         </v-col>
       </v-row>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn
-          color="primary"
-          text
-          @click="changeCourt"
-          :loading="loading"
-        >
-          Save
-        </v-btn>
+      <v-btn color="primary" text @click="changeCourt" :loading="loading">
+        Save
+      </v-btn>
     </v-card-actions>
   </v-card>
-
 </template>
 
 <script>
-
-import apihandler from './../../services/db'
-import { editor } from './EditorMixin'
+import apihandler from "./../../services/db";
+import { editor } from "./EditorMixin";
 import processAxiosError from "../../utils/AxiosErrorHandler";
 
-import { mdiClose } from '@mdi/js'
+import { mdiClose } from "@mdi/js";
 
 export default {
-    props: ['session'],
-    mixins: [editor],
-    data () {
-        return {
-          closeIcon: mdiClose,
-          court: null,
-          rules: {
-            required: value => !!value || 'Required'
-          },
-        }
-    },
-    methods: {
-      changeCourt: function(){
-        this.error = null
-        this.loading = true
+  props: ["session"],
+  mixins: [editor],
+  data() {
+    return {
+      closeIcon: mdiClose,
+      court: null,
+      rules: {
+        required: (value) => !!value || "Required",
+      },
+    };
+  },
+  methods: {
+    changeCourt: function () {
+      this.error = null;
+      this.loading = true;
 
-        var params = {
-           id: this.session.id,
-           hash: this.session.etag,
-           court: this.court
-        }
+      var params = {
+        id: this.session.id,
+        hash: this.session.etag,
+        court: this.court,
+      };
 
-        apihandler.changeCourt(params).then(() => {
-          this.$router.push({name: 'calendar'})
+      apihandler
+        .changeCourt(params)
+        .then(() => {
+          this.$router.push({ name: "calendar" });
         })
         .catch((e) => {
-            this.error = processAxiosError(e);
+          this.error = processAxiosError(e);
         })
-        .finally(()=>{
-          this.loading = false
-        })
-      }
+        .finally(() => {
+          this.loading = false;
+        });
     },
-    computed: {
-      canChangeCourt: function(){
-      return Object.prototype.hasOwnProperty.call(this.sessioninfo,"permissions")    ?
-              (Array.isArray(this.session.permissions)      ? 
-              this.session.permissions.includes('CHANGE_COURT') : false) : false
-      },
-      courts: function(){
-        return this.$store.getters['courtstore/getCourts']
-      },
+  },
+  computed: {
+    canChangeCourt: function () {
+      return Object.prototype.hasOwnProperty.call(
+        this.sessioninfo,
+        "permissions"
+      )
+        ? Array.isArray(this.session.permissions)
+          ? this.session.permissions.includes("CHANGE_COURT")
+          : false
+        : false;
     },
-    mounted: function(){
-      this.court = this.session.court
-    }
-    
-}
+    courts: function () {
+      return this.$store.getters["courtstore/getCourts"];
+    },
+  },
+  mounted: function () {
+    this.court = this.session.court;
+  },
+};
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>

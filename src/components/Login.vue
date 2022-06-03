@@ -8,14 +8,14 @@
             <v-form v-model="formvalid" ref="form">
               <v-row no-gutters>
                 <v-col cols="12">
-                  <v-img :src="require(`@/assets/clublogo.png`)"></v-img>
+                  <v-img :src="require(`@/assets/clublogo.png`)" />
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
                     label="E-mail"
                     v-model="email"
                     :rules="[rules.required, rules.isEmail]"
-                  ></v-text-field>
+                  />
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
@@ -27,16 +27,15 @@
                     @click:append="showpassword = !showpassword"
                     counter=""
                     hint="Minimum 8 characters"
-                  ></v-text-field>
+                  />
                 </v-col>
               </v-row>
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn large block @click="login">Login</v-btn>
+            <v-btn large block @click="login"> Login </v-btn>
           </v-card-actions>
         </v-card>
-         
       </v-col>
     </v-row>
   </v-container>
@@ -46,9 +45,11 @@
 //import fbErrHandler from "@/utils/FirebaseErrorHandler";
 
 import { mdiEye, mdiEyeOff } from "@mdi/js";
+import { notification } from "./NotificationMixin";
 
 export default {
-  name: "login",
+  mixins: [notification],
+  name: "Login-Page",
   data: function () {
     return {
       eyeIcon: mdiEye,
@@ -76,8 +77,11 @@ export default {
           login: this.email,
           password: this.password,
         })
+        .then(() => {
+          this.showNotification("You are logged in", "success");
+        })
         .catch((err) => {
-          this.$emit("show:message", err.message);
+          this.showNotification(err.message, "error");
         });
     },
   },
@@ -85,5 +89,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>

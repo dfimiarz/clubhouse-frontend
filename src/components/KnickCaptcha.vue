@@ -9,23 +9,19 @@
         ></v-img>
       </div>
       <div>
-        <v-btn x-small outlined @click='$emit("reload:captcha")'>Reload</v-btn>
+        <v-btn x-small outlined @click="$emit('reload:captcha')">Reload</v-btn>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
 export default {
-  props: ["imgdata","error","loading"],
+  props: ["imgdata", "error", "loading"],
   name: "knick-captcha",
   data: function () {
-    return {
-      
-    };
+    return {};
   },
-  methods: {
-  },
+  methods: {},
 };
 </script>

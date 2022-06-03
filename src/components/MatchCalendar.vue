@@ -395,7 +395,6 @@ export default {
       });
     },
     loadBookings(date) {
-
       this.loading = true;
 
       this.loadAsync(date)
@@ -456,7 +455,6 @@ export default {
       }
     },
     loadDataAndSubscribe() {
-
       this.loading = true;
 
       this.loadAsync(this.$dayjs(this.date).tz().format("YYYY-MM-DD"))
@@ -563,11 +561,9 @@ export default {
     },
   },
   created: function () {
-
     this.currtime = this.$dayjs().tz().valueOf();
     this.date = this.$dayjs().tz().startOf("day").format();
     this.loadDataAndSubscribe();
-   
   },
   beforeDestroy: function () {
     this.cleanUp();
@@ -580,8 +576,8 @@ export default {
     });
   },
   watch: {
-    error: function(val){
-      if( val ){
+    error: function (val) {
+      if (val) {
         this.unsubsribe();
       }
     },
@@ -615,12 +611,11 @@ export default {
         }
       }
 
-      if ( this.timeIndicatorVisible ) {
+      if (this.timeIndicatorVisible) {
         this.$nextTick(function () {
           this.scrollCalendar();
         });
       }
-
     },
   },
 };
