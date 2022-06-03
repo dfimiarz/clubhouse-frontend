@@ -1,13 +1,8 @@
 <template>
   <v-container fluid class="fill-height">
-    <v-dialog
-      v-model="showOverlapInfo"
-      max-width="290"
-    >
+    <v-dialog v-model="showOverlapInfo" max-width="290">
       <v-card>
-        <v-card-title class="text-h6">
-          Overlap Details
-        </v-card-title>
+        <v-card-title class="text-h6"> Overlap Details </v-card-title>
         <v-card-text>
           <v-list>
             <v-list-item two-line>
@@ -24,7 +19,10 @@
                 <v-icon> {{ icons.clock }} </v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title>{{ formatTime(newStartTime) }} - {{ formatTime(newEndTime) }}</v-list-item-title>
+                <v-list-item-title
+                  >{{ formatTime(newStartTime) }} -
+                  {{ formatTime(newEndTime) }}</v-list-item-title
+                >
                 <v-list-item-subtitle>Requested time</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -34,7 +32,10 @@
                 <v-icon> {{ icons.clock }} </v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title>{{ formatTime(overlappingStartTime) }} - {{ formatTime(overlappingEndTime) }}</v-list-item-title>
+                <v-list-item-title
+                  >{{ formatTime(overlappingStartTime) }} -
+                  {{ formatTime(overlappingEndTime) }}</v-list-item-title
+                >
                 <v-list-item-subtitle>Overlapping booking</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -52,18 +53,14 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn @click="$router.push({ name: 'calendar'})">
+          <v-btn @click="$router.push({ name: 'calendar' })">
             <v-icon>
-              {{icons.calendarMonth}}
+              {{ icons.calendarMonth }}
             </v-icon>
           </v-btn>
           <v-spacer></v-spacer>
 
-          <v-btn
-            @click="showOverlapInfo = false"
-          >
-            Close
-          </v-btn>
+          <v-btn @click="showOverlapInfo = false"> Close </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -71,11 +68,15 @@
       <v-col cols="12" sm="8" md="6" lg="4" xl="3">
         <v-stepper v-model="step">
           <v-stepper-header>
-            <v-stepper-step :complete="step > 1" step="1">Players</v-stepper-step>
+            <v-stepper-step :complete="step > 1" step="1"
+              >Players</v-stepper-step
+            >
 
             <v-divider></v-divider>
 
-            <v-stepper-step :complete="step > 2" step="2">Court and time</v-stepper-step>
+            <v-stepper-step :complete="step > 2" step="2"
+              >Court and time</v-stepper-step
+            >
 
             <v-divider></v-divider>
 
@@ -98,21 +99,20 @@
                             Overlapping booking found
                           </v-col>
                           <v-col class="shrink">
-                            <v-btn small @click="showOverlapInfo = true">Details</v-btn>
+                            <v-btn small @click="showOverlapInfo = true"
+                              >Details</v-btn
+                            >
                           </v-col>
                         </v-row>
                       </v-alert>
                     </v-col>
                     <v-col cols="12" md="6">
-
-                      <v-text-field 
-                        readonly 
+                      <v-text-field
+                        readonly
                         :value="playerDetails.length"
                         label="Player Count"
-                        :prepend-icon=icons.accountMultiple
-                        
+                        :prepend-icon="icons.accountMultiple"
                       >
-
                       </v-text-field>
                     </v-col>
                     <v-col cols="12">
@@ -121,13 +121,13 @@
                           <v-text-field
                             :value="computedDateFormatted"
                             label="Date"
-                            :prepend-icon=icons.calendar
+                            :prepend-icon="icons.calendar"
                             readonly
                           ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-col>
-                    
+
                     <v-col cols="12">
                       <v-row dense>
                         <v-col cols="12" md="6">
@@ -142,7 +142,7 @@
                               <v-text-field
                                 v-model="s_time"
                                 label="Start time"
-                                :prepend-icon=icons.clockStart
+                                :prepend-icon="icons.clockStart"
                                 readonly
                                 v-on="on"
                                 required
@@ -176,15 +176,27 @@
                       </v-row>
                     </v-col>
                     <v-col cols="12">
-                       <v-row dense align="center" no-gutters>
-                          <v-col cols="12" md="6">
-                            <duration-picker v-model="sel_duration" :start-time="s_time" :pref="prefDuration" :max="maxDuration" :loading="loading"></duration-picker>
-                            <div class="warning--text" v-show="duration > prefDuration">
-                              <v-icon color="warning"> {{ icons.alert }} </v-icon>
-                              <span class="pl-2 text-body-2">Club rules: Max duration <b>{{ prefDuration }}</b> min!</span>
-                            </div>
-                          </v-col>
-                       </v-row>
+                      <v-row dense align="center" no-gutters>
+                        <v-col cols="12" md="6">
+                          <duration-picker
+                            v-model="sel_duration"
+                            :start-time="s_time"
+                            :pref="prefDuration"
+                            :max="maxDuration"
+                            :loading="loading"
+                          ></duration-picker>
+                          <div
+                            class="warning--text"
+                            v-show="duration > prefDuration"
+                          >
+                            <v-icon color="warning"> {{ icons.alert }} </v-icon>
+                            <span class="pl-2 text-body-2"
+                              >Club rules: Max duration
+                              <b>{{ prefDuration }}</b> min!</span
+                            >
+                          </div>
+                        </v-col>
+                      </v-row>
                     </v-col>
                     <v-col cols="12" md="6">
                       <v-row no-gutters>
@@ -199,7 +211,7 @@
                             v-model="court"
                             :disabled="duration == 0"
                             :loading="loading"
-                            :prepend-icon=icons.tennis
+                            :prepend-icon="icons.tennis"
                           ></v-select>
                         </v-col>
                       </v-row>
@@ -207,20 +219,25 @@
                     <v-col cols="12" v-show="reqBumpable">
                       <v-row no-gutters>
                         <v-col cols="12" md="6">
-                        <v-switch
-                          dense
-                          flat
-                          v-model="bumpable"
-                          label="Bumpable"
-                        ></v-switch>
+                          <v-switch
+                            dense
+                            flat
+                            v-model="bumpable"
+                            label="Bumpable"
+                          ></v-switch>
                         </v-col>
                         <v-col cols="12">
-                        <div class="warning--text" v-show="reqBumpable !== bumpable">
-                          <v-icon color="warning"> {{ icons.alert }} </v-icon>
-                          <span class="pl-2 text-body-2">Club Rules: Bumpable <b>ENABLED</b>!</span>
-                        </div>
+                          <div
+                            class="warning--text"
+                            v-show="reqBumpable !== bumpable"
+                          >
+                            <v-icon color="warning"> {{ icons.alert }} </v-icon>
+                            <span class="pl-2 text-body-2"
+                              >Club Rules: Bumpable <b>ENABLED</b>!</span
+                            >
+                          </div>
                         </v-col>
-                        </v-row>
+                      </v-row>
                     </v-col>
                     <v-col cols="12">
                       <v-textarea
@@ -242,7 +259,9 @@
                     >Go back</v-btn
                   >
                   <v-spacer></v-spacer>
-                  <v-btn @click="validateSessionInput" :disabled="loading">Continue</v-btn>
+                  <v-btn @click="validateSessionInput" :disabled="loading"
+                    >Continue</v-btn
+                  >
                 </v-row>
               </v-container>
             </v-stepper-content>
@@ -276,7 +295,7 @@
                           <v-select
                             v-model="selplayers[index].repeater"
                             :items="repeaterTypes"
-                            label="Repeater status:"
+                            label="Player type:"
                             item-text="label"
                             item-value="id"
                             :error-messages="selplayers[index].repeaterErrs"
@@ -287,14 +306,13 @@
                   </v-row>
                 </v-form>
                 <v-row dense>
-                  <v-btn
-                    text
-                    class="ma-1"
-                    @click="clearPlayers"
-                    >Clear</v-btn
-                  >
+                  <v-btn text class="ma-1" @click="clearPlayers">Clear</v-btn>
                   <div class="flex-grow-1"></div>
-                  <v-btn @click="goToBookingStep(2)" class="ma-1" :disabled="loading">
+                  <v-btn
+                    @click="goToBookingStep(2)"
+                    class="ma-1"
+                    :disabled="loading"
+                  >
                     Continue
                   </v-btn>
                 </v-row>
@@ -317,52 +335,65 @@
                   <v-col cols="12" md="6">
                     <div class="text-caption">Booking type:</div>
                     <div class="text-h6">{{ bookingType }}</div>
-                    <div class="text-caption red--text" v-if="errors.date" v-text="errors.type"></div>
+                    <div
+                      class="text-caption red--text"
+                      v-if="errors.date"
+                      v-text="errors.type"
+                    ></div>
                   </v-col>
                   <v-col cols="12" md="6">
                     <div class="text-caption">Court:</div>
                     <div class="text-h6">{{ selCourtName }}</div>
-                    <div class="text-caption red--text" v-if="errors.date" v-text="errors.court"></div>
+                    <div
+                      class="text-caption red--text"
+                      v-if="errors.date"
+                      v-text="errors.court"
+                    ></div>
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="12" >
+                  <v-col cols="12">
                     <v-divider></v-divider>
                   </v-col>
                 </v-row>
                 <v-row dense>
-                  <v-col cols="12" md="6" >
-                    
+                  <v-col cols="12" md="6">
                     <div class="text-caption">Date:</div>
                     <div class="text-h6">{{ date }}</div>
-                    <div class="text-caption red--text" v-if="errors.date" v-text="errors.date"></div>
+                    <div
+                      class="text-caption red--text"
+                      v-if="errors.date"
+                      v-text="errors.date"
+                    ></div>
                   </v-col>
                   <v-col cols="12" md="6">
-                    
                     <div class="text-caption">Time:</div>
-                    <div class="text-h6">
-                      {{ s_time }} - {{ e_time }}
+                    <div class="text-h6">{{ s_time }} - {{ e_time }}</div>
+                    <div
+                      class="text-caption red--text"
+                      v-if="!!this.errors.start || !!this.errors.end"
+                    >
+                      Start or End Time Error
                     </div>
-                    <div class="text-caption red--text" v-if="!!this.errors.start || !!this.errors.end"> Start or End Time Error</div>
                   </v-col>
                   <v-col cols="12" md="6">
-                    
                     <div class="text-caption">Duration:</div>
-                    <div class="text-h6">
-                      {{ duration }} minutes
-                    </div>
-                    
+                    <div class="text-h6">{{ duration }} minutes</div>
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="12" >
+                  <v-col cols="12">
                     <v-divider></v-divider>
                   </v-col>
                 </v-row>
                 <v-row dense>
                   <v-col cols="12" class="my-2">
                     <div class="text-subtitle">Players:</div>
-                    <div class="text-caption red--text" v-if="errors.players" v-text="errors.players"></div>
+                    <div
+                      class="text-caption red--text"
+                      v-if="errors.players"
+                      v-text="errors.players"
+                    ></div>
                   </v-col>
                   <v-col
                     cols="12"
@@ -379,30 +410,28 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="12" >
+                  <v-col cols="12">
                     <v-divider></v-divider>
                   </v-col>
                 </v-row>
                 <v-row dense>
-                 
                   <v-col cols="12">
                     <div class="text-caption">Bumpable</div>
                     <div class="text-h6">{{ bumpable ? "Yes" : "No" }}</div>
-                    <div class="text-caption" v-if="errors.bumpable"> {{ errors.bumpable }}</div>
+                    <div class="text-caption" v-if="errors.bumpable">
+                      {{ errors.bumpable }}
+                    </div>
                   </v-col>
-                 
+
                   <v-col cols="12">
                     <div class="text-caption">Notes</div>
                     <div class="text-body-1">
-                      {{ !!(note) ? note : "N/A" }}
+                      {{ !!note ? note : "N/A" }}
                     </div>
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-btn
-                    text
-                    class="ma-1"
-                    @click="changeBookingParams"
+                  <v-btn text class="ma-1" @click="changeBookingParams"
                     >Go back</v-btn
                   >
                   <v-spacer></v-spacer>
@@ -425,18 +454,25 @@
 </template>
 
 <script>
-
 import apihandler from "./../services/db";
 import utils from "./../services/utils";
-import DurationPicker from './booking/DurationPicker.vue';
+import DurationPicker from "./booking/DurationPicker.vue";
 import processAxiosError from "./../utils/AxiosErrorHandler";
 
-import { BOOKING_TYPE_MATCH } from '../constants/constants';
-import { mdiAccountMultiple, mdiAlert, mdiAlertCircle, mdiCalendar, mdiCalendarMonth, mdiClock, mdiClockStart, mdiTennis } from '@mdi/js';
-
+import { BOOKING_TYPE_MATCH } from "../constants/constants";
+import {
+  mdiAccountMultiple,
+  mdiAlert,
+  mdiAlertCircle,
+  mdiCalendar,
+  mdiCalendarMonth,
+  mdiClock,
+  mdiClockStart,
+  mdiTennis,
+} from "@mdi/js";
 
 export default {
-  props: ['req_players','req_bookingtype'],
+  props: ["req_players", "req_bookingtype"],
   components: {
     DurationPicker,
   },
@@ -451,7 +487,7 @@ export default {
         accountMultiple: mdiAccountMultiple,
         calendar: mdiCalendar,
         clockStart: mdiClockStart,
-        alert: mdiAlert
+        alert: mdiAlert,
       },
       court: null,
       selplayers: [
@@ -479,16 +515,20 @@ export default {
             utils.timeToMinutes(this.s_time);
           return value < max || `Max dur min`;
         },
-        notelimit: (v) => !v || (typeof v === 'string' && v.length <= 256) || "Max 256 characters",
+        notelimit: (v) =>
+          !v ||
+          (typeof v === "string" && v.length <= 256) ||
+          "Max 256 characters",
         explainRuleChange: (value) => {
           return this.duration > this.prefDuration ||
             (this.reqBumpable == 1 && this.bumpable == 0)
-            ? (!!( typeof value === 'string' ? value.trim() : value )|| "Explain rules overwrite")
+            ? !!(typeof value === "string" ? value.trim() : value) ||
+                "Explain rules overwrite"
             : true;
         },
         courtset: (v) => {
-          return (!!v) || "Select a court" 
-        }
+          return !!v || "Select a court";
+        },
       },
       loading: false,
       overlappingBooking: null,
@@ -500,37 +540,41 @@ export default {
         start: null,
         end: null,
         type: null,
-        players: null
-      }
+        players: null,
+      },
     };
   },
   methods: {
-    getPlayers: function(){
-      this.$store.dispatch('setLoading',true)
-      this.$store.dispatch('memberstore/loadEligiblePersons')
-      .then((val) => {
-        console.log(val)
-      })
-      .catch((err) => {
-        this.$emit('show:message',err)
-      })
-      .finally(() => {
-        this.$store.dispatch('setLoading',false)
-      })
+    getPlayers: function () {
+      this.$store.dispatch("setLoading", true);
+      this.$store
+        .dispatch("memberstore/loadEligiblePersons")
+        .then((val) => {
+          console.log(val);
+        })
+        .catch((err) => {
+          this.$emit("show:message", err);
+        })
+        .finally(() => {
+          this.$store.dispatch("setLoading", false);
+        });
     },
-    formatTime: function( timestring ){
+    formatTime: function (timestring) {
       return !timestring ? "N/A" : this.$dayjs.tz(timestring).format("hh:mm A");
     },
-    checkBookingOverlap: async function(){      
+    checkBookingOverlap: async function () {
+      const data = await apihandler.getOverlappingBookings(
+        this.date,
+        this.s_time,
+        this.e_time,
+        this.court
+      );
 
-      const data = await apihandler.getOverlappingBookings(this.date,this.s_time,this.e_time,this.court);
-
-      if( Array.isArray(data) && data.length > 0 ){
+      if (Array.isArray(data) && data.length > 0) {
         return data[0];
       } else {
-        return null
+        return null;
       }
-
     },
     allowedminutes: (m) => m % 5 === 0,
     getPlayerLabel: (index) => "Player " + (index + 1),
@@ -538,23 +582,22 @@ export default {
       this.error = null;
       this.step = 2;
     },
-    goToBookingStep(newstep){
-      
-      if( this.step == 1 && newstep == 2){
-          if( ! this.validatePlayerInput() ){
-            return
-          }
-          this.setMatchParams();
+    goToBookingStep(newstep) {
+      if (this.step == 1 && newstep == 2) {
+        if (!this.validatePlayerInput()) {
+          return;
+        }
+        this.setMatchParams();
       }
 
-      if( this.step == 2 && newstep == 1){
+      if (this.step == 2 && newstep == 1) {
         this.$refs.sessionform.resetValidation();
         this.overlappingBooking = null;
       }
 
       this.step = newstep;
     },
-    setMatchParams(){
+    setMatchParams() {
       this.date = this.$dayjs().tz().format("YYYY-MM-DD");
 
       var time = this.$dayjs().tz().format("HH:mm");
@@ -571,13 +614,11 @@ export default {
       var open_minutes = utils.timeToMinutes(this.opentime);
       var close_minutes = utils.timeToMinutes(this.closetime);
 
-      
-      if( final_start_minutes < open_minutes ){
+      if (final_start_minutes < open_minutes) {
         //if start time is less than open, set it to open
         this.s_time = this.opentime;
-      }
-      else{
-        if( final_start_minutes <= close_minutes ){
+      } else {
+        if (final_start_minutes <= close_minutes) {
           //if stat time is between open and close, keep it
           this.s_time = utils.minToTime(final_start_minutes);
         }
@@ -608,8 +649,8 @@ export default {
       this.playerErrors = null;
     },
     validateSessionInput() {
-      if (!this.$refs.sessionform.validate()){ 
-        return; 
+      if (!this.$refs.sessionform.validate()) {
+        return;
       }
 
       if (!this.s_time) {
@@ -620,38 +661,47 @@ export default {
       this.loading = true;
       this.overlappingBooking = null;
 
-      this.checkBookingOverlap().then(( data ) => {
-        if( data ) {
-          this.overlappingBooking = data;
-          this.$vuetify.goTo(0);
-        } else {
-          this.step = 3
-        }
-      }).catch( ()  =>{
-        this.$emit("show:message","Unable to verify court availibility","errors")
-      }).finally(() => {
-        this.loading = false;
-      })
-      
+      this.checkBookingOverlap()
+        .then((data) => {
+          if (data) {
+            this.overlappingBooking = data;
+            this.$vuetify.goTo(0);
+          } else {
+            this.step = 3;
+          }
+        })
+        .catch(() => {
+          this.$emit(
+            "show:message",
+            "Unable to verify court availibility",
+            "errors"
+          );
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     validatePlayerInput() {
       this.clearPlayerErrors();
 
       let playerCheck = this.selplayers.reduce(
         (accumulator, player, index) => {
+          //Player is set
           if (player.id !== null) {
-
             //Check if a id is for a valid person
-            const person = this.$store.getters["memberstore/getEligiblePersonById"](player.id);
+            const person = this.$store.getters[
+              "memberstore/getEligiblePersonById"
+            ](player.id);
 
-            if( ! person ){
-                accumulator["errors"].push({
-                    index: index,
-                    field: "player",
-                    message: "Invalid player",
-                })
+            if (!person) {
+              //Person not found, show error
+              accumulator["errors"].push({
+                index: index,
+                field: "player",
+                message: "Invalid player",
+              });
             } else {
-
+              //Check for duplicate, show error if found
               accumulator["players"].indexOf(player.id) != -1
                 ? accumulator["errors"].push({
                     index: index,
@@ -661,12 +711,23 @@ export default {
                 : accumulator["players"].push(player.id);
             }
 
+            //Check if repeater set
             if (player.repeater === null)
               accumulator["errors"].push({
                 index: index,
                 field: "repeater",
-                message: "Repeater empty",
+                message: "Type empty",
               });
+          } else {
+            //Player is not set
+            if (player.repeater !== null) {
+              //Player type is set, show error
+              accumulator["errors"].push({
+                index: index,
+                field: "player",
+                message: "Player empty",
+              });
+            }
           }
 
           return accumulator;
@@ -675,26 +736,22 @@ export default {
       );
 
       if (playerCheck.players.length == 0) {
-
-        this.selplayers[0]['playerErrs'].push("Select a player")
-        this.$emit("show:message","Please select a player","errors")
+        this.selplayers[0]["playerErrs"].push("Select a player");
+        this.$emit("show:message", "Please select a player", "errors");
         return;
       }
 
       if (playerCheck.errors.length != 0) {
-        let that = this;
-
         playerCheck.errors.forEach((error) => {
           let index = error.index;
           let field = error.field + "Errs";
           let msg = error.message;
 
-          that.selplayers[index][field].push(msg);
-        });
+          this.selplayers[index][field].push(msg);
+        }, this);
 
         return false;
-      }
-      else{
+      } else {
         return true;
       }
     },
@@ -720,13 +777,16 @@ export default {
           const error = processAxiosError(err);
 
           if (error.fielderrors) {
-            this.error = "Incorrect data format."
+            this.error = "Incorrect data format.";
           } else {
             this.error = error;
           }
 
-          this.$vuetify.goTo(0,{durraion: 300, offset: 0, easing: 'easeInOutCubic'});
-
+          this.$vuetify.goTo(0, {
+            durraion: 300,
+            offset: 0,
+            easing: "easeInOutCubic",
+          });
         })
         .finally(() => {
           this.loading = false;
@@ -743,76 +803,99 @@ export default {
         end: this.e_time,
         note: this.note,
         players: this.playerDetails.map((player) => {
-          return { id: player.id, type: player.repeater }
+          return { id: player.id, type: player.repeater };
         }),
         type: BOOKING_TYPE_MATCH,
       };
-      
+
       this.sendData(booking);
     },
     handleFieldErrors(errors) {
-      
       //Loop through each error and add it to array of error for specific field
       if (Array.isArray(errors)) {
-
         errors.forEach((element) => {
-          
-          if ( Object.prototype.hasOwnProperty.call(this.errors, element.param)) {
+          if (
+            Object.prototype.hasOwnProperty.call(this.errors, element.param)
+          ) {
             this.errors[element.param] = element.msg;
           }
         });
-
       }
-    }
+    },
   },
   watch: {
     reqBumpable: function (newval) {
       this.bumpable = newval;
-    }
+    },
   },
   computed: {
-    bookingOverlap: function(){
-      if( !(this.newStartTime && this.newEndTime && this.overlappingStartTime && this.overlappingEndTime)){
-        return "N/A"
-      } else{
+    bookingOverlap: function () {
+      if (
+        !(
+          this.newStartTime &&
+          this.newEndTime &&
+          this.overlappingStartTime &&
+          this.overlappingEndTime
+        )
+      ) {
+        return "N/A";
+      } else {
         const Rs = this.$dayjs.tz(this.newStartTime).valueOf();
         const Re = this.$dayjs.tz(this.newEndTime).valueOf();
         const Os = this.$dayjs.tz(this.overlappingStartTime).valueOf();
         const Oe = this.$dayjs.tz(this.overlappingEndTime).valueOf();
 
-        const overlap = Os < Rs ? Oe > Re ? { start: Rs, end: Re } : { start: Rs, end: Oe }  : Oe >  Re ? { start: Os, end: Re } : {start: Os , end: Oe }          
+        const overlap =
+          Os < Rs
+            ? Oe > Re
+              ? { start: Rs, end: Re }
+              : { start: Rs, end: Oe }
+            : Oe > Re
+            ? { start: Os, end: Re }
+            : { start: Os, end: Oe };
 
         //console.log("Overlap",overlap);
 
-        return `${this.$dayjs(overlap.start).tz().format("hh:mm A")} - ${this.$dayjs(overlap.end).tz().format("hh:mm A")}`;
+        return `${this.$dayjs(overlap.start)
+          .tz()
+          .format("hh:mm A")} - ${this.$dayjs(overlap.end)
+          .tz()
+          .format("hh:mm A")}`;
       }
     },
-    newStartTime: function(){
-      return !(this.date && this.s_time) ? null : `${this.date} ${this.s_time}:00`;
+    newStartTime: function () {
+      return !(this.date && this.s_time)
+        ? null
+        : `${this.date} ${this.s_time}:00`;
     },
-    newEndTime: function(){
-      return !(this.date && this.e_time) ? null : `${this.date} ${this.e_time}:00`;
+    newEndTime: function () {
+      return !(this.date && this.e_time)
+        ? null
+        : `${this.date} ${this.e_time}:00`;
     },
-    overlappingStartTime: function(){
+    overlappingStartTime: function () {
       const booking = this.overlappingBooking;
-      
-      if( ! booking){
-        return null
+
+      if (!booking) {
+        return null;
       }
 
-      return !(booking.date && booking.start) ? null : `${booking.date} ${booking.start}:00`;
+      return !(booking.date && booking.start)
+        ? null
+        : `${booking.date} ${booking.start}:00`;
     },
-    overlappingEndTime: function(){
-
+    overlappingEndTime: function () {
       const booking = this.overlappingBooking;
-      
-      if( ! booking){
-        return null
+
+      if (!booking) {
+        return null;
       }
 
-      return !(booking.date && booking.end) ? null : `${booking.date} ${booking.end}:00`;
+      return !(booking.date && booking.end)
+        ? null
+        : `${booking.date} ${booking.end}:00`;
     },
-    bookingOverlaps: function(){
+    bookingOverlaps: function () {
       return this.overlappingBooking === null ? false : true;
     },
     e_time: function () {
@@ -824,7 +907,7 @@ export default {
       return this.$store.state.clubtz;
     },
     matchConfig: function () {
-      return this.selplayers.reduce((cur_val, player) => {
+      return this.playerDetails.reduce((cur_val, player) => {
         let val = 0;
 
         switch (player.repeater) {
@@ -865,10 +948,9 @@ export default {
     courts: function () {
       return this.$store.getters["courtstore/getCourts"];
     },
-    selCourtName: function() {
-
-      if( ! this.court ){
-        return 'N/A'
+    selCourtName: function () {
+      if (!this.court) {
+        return "N/A";
       }
 
       const court = this.$store.getters["courtstore/getCourtInfo"](this.court);
@@ -912,11 +994,10 @@ export default {
         return accumulator;
       }, []);
     },
-    bookingType: function(){
+    bookingType: function () {
       const p_num = this.playerDetails.length;
 
       return p_num > 2 ? "Doubles" : p_num > 1 ? "Singles" : "Individual";
-
     },
     computedDateFormatted() {
       return this.formatDate(this.date);
@@ -940,30 +1021,29 @@ export default {
     maxstarttime: function () {
       return utils.minToTime(utils.timeToMinutes(this.closetime) - 5);
     },
-    maxDuration: function() {
-      return utils.timeToMinutes(this.closetime) - utils.timeToMinutes(this.s_time);
-    }
+    maxDuration: function () {
+      return (
+        utils.timeToMinutes(this.closetime) - utils.timeToMinutes(this.s_time)
+      );
+    },
   },
   created: function () {
     this.getPlayers();
   },
   mounted: function () {
-
-    if( Array.isArray(this.req_players) ){
-      this.req_players.forEach((player,index) => {
-        if( typeof player === "number" ){
-          if( index < this.selplayers.length){
+    if (Array.isArray(this.req_players)) {
+      this.req_players.forEach((player, index) => {
+        if (typeof player === "number") {
+          if (index < this.selplayers.length) {
             this.selplayers[index].id = player;
           }
         }
-      })
+      });
     }
-
   },
   beforeDestroy() {},
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>
