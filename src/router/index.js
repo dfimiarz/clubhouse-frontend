@@ -1,204 +1,233 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Home from '@/components/Home'
-import NotFound from '@/components/NotFound'
-import LoginView from '@/components/Login'
-import store from '../store'
-const GuestCreator = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestCreator')
-const GuestManager = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestManager')
-const GuestActivation = () => import(/* webpackChunkName: "guest" */ '@/components/guests/GuestActivation')
-const ActiveGuestList = () => import(/* webpackChunkName: "guest" */ '@/components/guests/ActiveGuestList')
-const MatchCalendar = () => import(/* webpackChunkName: "calendar" */ '@/components/MatchCalendar')
-const MatchBooking = () => import(/* webpackChunkName: "booking" */ '@/components/MatchBooking')
-const BookingDetails = () => import(/* webpackChunkName: "details" */ '@/components/BookingDetails')
-const EventBooking = () => import(/* webpackChunkName: "manage" */ '@/components/EventBooking')
-const Settings = () => import(/* webpackChunkName: "settings" */ '@/components/Settings')
-const Reports = () => import(/* webpackChunkName: "reports" */ '@/components/Reports')
-// import Error from "@/components/Error";
-import LoadingScreen from "@/components/LoadingScreen";
+import Vue from "vue";
+import Router from "vue-router";
+import Home from "@/components/Home";
+import NotFound from "@/components/NotFound";
+import LoginView from "@/components/Login";
+import store from "../store";
 
-Vue.use(Router)
+import checkRouteAccess, { ACCESS_ERRORS } from "@/utils/RouteAccessChecker";
+
+const GuestCreator = () =>
+  import(/* webpackChunkName: "guest" */ "@/components/guests/GuestCreator");
+const GuestManager = () =>
+  import(/* webpackChunkName: "guest" */ "@/components/guests/GuestManager");
+const GuestActivation = () =>
+  import(/* webpackChunkName: "guest" */ "@/components/guests/GuestActivation");
+const ActiveGuestList = () =>
+  import(/* webpackChunkName: "guest" */ "@/components/guests/ActiveGuestList");
+const MatchCalendar = () =>
+  import(/* webpackChunkName: "calendar" */ "@/components/MatchCalendar");
+const MatchBooking = () =>
+  import(/* webpackChunkName: "booking" */ "@/components/MatchBooking");
+const BookingDetails = () =>
+  import(/* webpackChunkName: "details" */ "@/components/BookingDetails");
+const EventBooking = () =>
+  import(/* webpackChunkName: "manage" */ "@/components/EventBooking");
+const Settings = () =>
+  import(/* webpackChunkName: "settings" */ "@/components/Settings");
+const Reports = () =>
+  import(/* webpackChunkName: "reports" */ "@/components/Reports");
+
+import LoadingScreen from "@/components/LoadingScreen";
+import { Role } from "../constants/constants";
+
+Vue.use(Router);
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: Home
+    path: "/",
+    name: "home",
+    component: Home,
   },
   {
-    path: '/reports',
-    name: 'reports',
+    path: "/reports",
+    name: "ClubReports",
     component: Reports,
     meta: {
-      role: 'ADMIN'
-    }
-
+      authReq: true,
+      allowedRoles: [Role.MANAGER, Role.SUPERUSER],
+    },
   },
   {
-    path: '/guests',
+    path: "/guests",
     component: GuestManager,
     children: [
       {
-        path: '',
+        path: "",
         component: GuestCreator,
-        name: 'guestregistration',
+        name: "guestregistration",
       },
       {
-        path: 'activate',
+        path: "activate",
         component: GuestActivation,
-        name: 'guestactivation',
+        name: "guestactivation",
         meta: {
-          requiresAuth: true
-        }
+          authReq: true,
+          allowedRoles: [],
+        },
       },
       {
-        path: 'active',
+        path: "active",
         component: ActiveGuestList,
-        name: 'activeguests',
+        name: "activeguests",
         meta: {
-          requiresAuth: true
-        }
-      }
-
-      
-    ]
+          authReq: true,
+          allowedRoles: [],
+        },
+      },
+    ],
   },
   {
-    path: '/login',
-    name: 'login',
+    path: "/login",
+    name: "login",
     component: LoginView,
-    beforeEnter: (to,from,next) => {
-      if( store.getters["userstore/user"]){
-        next({ name: "home"});
+    beforeEnter: (to, from, next) => {
+      if (store.getters["userstore/user"]) {
+        next({ name: "home" });
       } else {
         next();
       }
-    }
+    },
   },
   {
-    path: '/calendar',
-    name: 'calendar',
+    path: "/calendar",
+    name: "calendar",
     component: MatchCalendar,
     meta: {
-      requiresAuth: true
-    }
+      authReq: true,
+      allowedRoles: [],
+    },
   },
   {
-    path: '/bookings/matches/new',
-    name: 'MatchBooking',
+    path: "/bookings/matches/new",
+    name: "MatchBooking",
     component: MatchBooking,
     meta: {
-      requiresAuth: true
+      authReq: true,
+      allowedRoles: [],
     },
-    props: route => {
+    props: (route) => {
+      const _req_players =
+        typeof route.query.pls === "string"
+          ? route.query.pls.split(",", 4).reduce((acc, val) => {
+              const parsedval = parseInt(val);
 
-      const _req_players = typeof route.query.pls === "string" ? route.query.pls.split(',',4).reduce((acc,val) => {
-        const parsedval = parseInt(val);
-      
-        if( ! isNaN(parsedval)){
-          acc.push(parsedval);
-        }
+              if (!isNaN(parsedval)) {
+                acc.push(parsedval);
+              }
 
-        return acc;
-      },[]) : null;     
+              return acc;
+            }, [])
+          : null;
 
-      return { 
+      return {
         req_players: _req_players,
-        req_bookingtype: route.query.bt || null
-      }
-      
-    }
+        req_bookingtype: route.query.bt || null,
+      };
+    },
   },
   {
-    path: '/manage/eventbooking',
-    name: 'EventBooking',
+    path: "/manage/eventbooking",
+    name: "EventBooking",
     component: EventBooking,
     meta: {
-      requiresAuth: true
-    }
+      authReq: true,
+      allowedRoles: [Role.MANAGER, Role.SUPERUSER],
+    },
   },
   {
-    path: '/bookings/:id',
-    name: 'BookingDetails',
+    path: "/bookings/:id",
+    name: "BookingDetails",
     component: BookingDetails,
     props: true,
     meta: {
-      requiresAuth: true
-    }
+      authReq: true,
+      allowedRoles: [],
+    },
   },
   {
-    path: '/settigns',
-    name: 'settings',
+    path: "/settigns",
+    name: "settings",
     component: Settings,
     props: true,
     meta: {
-      requiresAuth: true
-    }
+      authReq: true,
+      allowedRoles: [Role.MANAGER, Role.SUPERUSER],
+    },
   },
   {
-    path: '/error',
-    name: 'error',
+    path: "/error",
+    name: "error",
     component: LoadingScreen,
     props: true,
   },
   {
-    path: '*',
-    name: 'NotFound',
-    component: NotFound
-  }
-]
+    path: "*",
+    name: "NotFound",
+    component: NotFound,
+  },
+];
 
 let router = new Router({
   routes,
-  mode: 'history'
-})
+  mode: "history",
+});
 
 /**
- * 
+ *
  * @param {Route} to Route
  * @param {function} next Next function
- * 
+ *
  * Function checks if route navigated to requires authentication and redirects to login if needed.
  */
-function checkAuthRoutes(to,next) {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (store.getters['userstore/isAuthenticated']) {
-      next();
+function checkAuthRoutes(to, next) {
+  const { granted, error } = checkRouteAccess(to);
+
+  if (granted) {
+    next();
+  } else {
+    switch (error) {
+      case ACCESS_ERRORS.AUTH_REQ:
+        next("/login");
+        break;
+      case ACCESS_ERRORS.ROLE_REQ:
+        store.dispatch("notificationstore/addNotification", {
+          text: `Insufficient role to access "${to.name}"`,
+          type: "error",
+        });
+        next("/");
+        break;
+      default:
+        store.dispatch("notificationstore/addNotification", {
+          text: `Unknown routing error`,
+          type: "error",
+        });
+        next("/");
+        break;
     }
-    else {
-      next('/login');
-    }
-  }
-  else {
-      next();
   }
 }
 
 router.beforeEach((to, from, next) => {
-
   //If app is not active, run init action
-  if( ! store.getters['appActive']){
-
-      store.dispatch("initializeApplication")
+  if (!store.getters["appActive"]) {
+    store
+      .dispatch("initializeApplication")
       .then(() => {
-        checkAuthRoutes(to,next);
+        checkAuthRoutes(to, next);
       })
-      .catch((err) =>{
-        store.dispatch("setLoadingError",err.message)
+      .catch((err) => {
+        store.dispatch("setLoadingError", err.message);
         next(false);
       })
-      .finally(() => {
-        
-      })
-
+      .finally(() => {});
+  } else {
+    checkAuthRoutes(to, next);
   }
-  else {
-      checkAuthRoutes(to,next);
-  }
-})
+});
 
 router.onError((err) => {
-  console.log(err.message)
-})
+  console.log(err.message);
+});
 
-export default router
+export default router;
