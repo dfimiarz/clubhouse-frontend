@@ -35,21 +35,8 @@
             </v-tab>
           </v-tabs>
 
-          <router-view :loading.sync="loading" @show:message="showSnackBar" />
+          <router-view :loading.sync="loading" />
         </v-card>
-        <v-snackbar v-model="snackbar.open" bottom>
-          {{ snackbar.text }}
-          <template #action="{ attrs }">
-            <v-btn
-              :color="snackbar.color"
-              text
-              v-bind="attrs"
-              @click="snackbar.open = false"
-            >
-              Close
-            </v-btn>
-          </template>
-        </v-snackbar>
       </v-col>
     </v-row>
   </v-container>
@@ -64,20 +51,9 @@ export default {
       items: ["add guest", "active guests"],
       drawer: false,
       loading: false,
-      snackbar: {
-        text: null,
-        open: false,
-        color: null,
-      },
     };
   },
-  methods: {
-    showSnackBar(text, color) {
-      this.snackbar.open = true;
-      this.snackbar.text = text;
-      this.snackbar.color = color;
-    },
-  },
+  methods: {},
   computed: {},
 };
 </script>

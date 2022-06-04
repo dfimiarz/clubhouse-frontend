@@ -471,7 +471,10 @@ import {
   mdiTennis,
 } from "@mdi/js";
 
+import { notification } from "@/components/mixins/NotificationMixin";
+
 export default {
+  mixins: [notification],
   props: ["req_players", "req_bookingtype"],
   components: {
     DurationPicker,
@@ -553,7 +556,7 @@ export default {
           console.log(val);
         })
         .catch((err) => {
-          this.$emit("show:message", err);
+          this.showNotification(err, "error");
         })
         .finally(() => {
           this.$store.dispatch("setLoading", false);
@@ -671,11 +674,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$emit(
-            "show:message",
-            "Unable to verify court availibility",
-            "errors"
-          );
+          this.showNotification("Unable to verify court availibility", "error");
         })
         .finally(() => {
           this.loading = false;
@@ -737,7 +736,7 @@ export default {
 
       if (playerCheck.players.length == 0) {
         this.selplayers[0]["playerErrs"].push("Select a player");
-        this.$emit("show:message", "Please select a player", "errors");
+        this.showNotification("Please select a player", "warning");
         return;
       }
 

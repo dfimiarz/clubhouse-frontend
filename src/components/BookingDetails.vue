@@ -282,6 +282,7 @@ import valueeditor from "./session/ValueEditor";
 import processAxiosError from "../utils/AxiosErrorHandler";
 
 import { BOOKING_TYPE_MATCH } from "../constants/constants";
+import { notification } from "@/components/mixins/NotificationMixin";
 
 import {
   mdiChevronLeft,
@@ -297,6 +298,7 @@ import {
 } from "@mdi/js";
 
 export default {
+  mixins: [notification],
   components: {
     valueeditor: valueeditor,
   },
@@ -362,7 +364,7 @@ export default {
         })
         .catch((e) => {
           const err = processAxiosError(e);
-          this.$emit("show:message", err, "errors");
+          this.showNotification(err, "error");
         })
         .finally(() => {
           this.loading = false;
@@ -385,7 +387,7 @@ export default {
         })
         .catch((e) => {
           const err = processAxiosError(e);
-          this.$emit("show:message", err, "errors");
+          this.showNotification(err, "error");
         })
         .finally(() => {
           this.loading = false;

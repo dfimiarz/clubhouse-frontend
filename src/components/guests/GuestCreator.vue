@@ -161,7 +161,10 @@ import processAxiosError from "../../utils/AxiosErrorHandler";
 import KnickCaptcha from "../KnickCaptcha.vue";
 import { mdiAccountPlus } from "@mdi/js";
 
+import { notification } from "@/components/mixins/NotificationMixin";
+
 export default {
+  mixins: [notification],
   components: { KnickCaptcha },
   props: {
     loading: Boolean,
@@ -304,7 +307,7 @@ export default {
       dbservice
         .addGuest(guestdata)
         .then(() => {
-          this.$emit("show:message", "Guest added", "success");
+          this.showNotification("Guest added", "success");
           this.resetForm();
         })
         .catch((err) => {
@@ -313,7 +316,7 @@ export default {
           if (error.fielderrors) {
             this.handleFieldErrors(error.fielderrors);
           } else {
-            this.$emit("show:message", "Error: " + error, "error");
+            this.showNotification("Error: " + error, "error");
           }
         })
         .finally(() => {

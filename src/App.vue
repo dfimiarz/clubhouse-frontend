@@ -105,8 +105,8 @@ export default {
         case "success":
           this.sbcolor = "success";
           break;
-        case "warrning":
-          this.sbcolor = "warrning";
+        case "warning":
+          this.sbcolor = "warning";
           break;
         case "error":
           this.sbcolor = "error";
