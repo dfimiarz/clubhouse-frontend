@@ -68,7 +68,7 @@
 <script>
 import dbservice from "./../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
-import { notification } from "../NotificationMixin";
+import { notification } from "../mixins/NotificationMixin";
 
 export default {
   mixins: [notification],

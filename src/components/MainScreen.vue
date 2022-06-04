@@ -2,7 +2,11 @@
   <div class="d-flex fill-height">
     <v-navigation-drawer temporary fixed v-model="drawer" app>
       <v-list>
-        <v-list-item :to="{ name: 'home' }" exact>
+        <v-list-item
+          :to="{ name: 'home' }"
+          exact
+          :disabled="!canAccess('home')"
+        >
           <v-list-item-action>
             <v-icon>{{ homeIcon }}</v-icon>
           </v-list-item-action>
@@ -10,7 +14,11 @@
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{ name: 'calendar' }" exact>
+        <v-list-item
+          :to="{ name: 'calendar' }"
+          exact
+          :disabled="!canAccess('calendar')"
+        >
           <v-list-item-action>
             <v-icon>{{ calendarIcon }}</v-icon>
           </v-list-item-action>
@@ -18,7 +26,11 @@
             <v-list-item-title>Schedule</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{ name: 'MatchBooking' }" exact>
+        <v-list-item
+          :to="{ name: 'MatchBooking' }"
+          exact
+          :disabled="!canAccess('MatchBooking')"
+        >
           <v-list-item-action>
             <v-icon>{{ calendarPlusIcon }}</v-icon>
           </v-list-item-action>
@@ -26,7 +38,11 @@
             <v-list-item-title>Book a court</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{ name: 'guestregistration' }" exact>
+        <v-list-item
+          :to="{ name: 'guestregistration' }"
+          exact
+          :disabled="!canAccess('guestregistration')"
+        >
           <v-list-item-action>
             <v-icon>{{ accountMultipleIcon }}</v-icon>
           </v-list-item-action>
@@ -34,7 +50,11 @@
             <v-list-item-title>Guests</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{ name: 'settings' }" exact>
+        <v-list-item
+          :to="{ name: 'settings' }"
+          exact
+          :disabled="!canAccess('settings')"
+        >
           <v-list-item-action>
             <v-icon>{{ cogIcon }}</v-icon>
           </v-list-item-action>
@@ -50,7 +70,12 @@
             <v-list-item-title>Help</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{ name: 'login' }" exact v-if="!loggedin">
+        <v-list-item
+          :to="{ name: 'login' }"
+          exact
+          v-if="!loggedin"
+          :disabled="!canAccess('login')"
+        >
           <v-list-item-action>
             <v-icon>{{ loginIcon }}</v-icon>
           </v-list-item-action>
@@ -73,9 +98,25 @@
       <v-toolbar-title>Knickerbocker Field Club</v-toolbar-title>
       <div class="flex-grow-1" />
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn text :to="{ name: 'home' }" exact> Home </v-btn>
-        <v-btn text :to="{ name: 'calendar' }" exact> Schedule </v-btn>
-        <v-btn text :to="{ name: 'MatchBooking' }" exact> Book a Court </v-btn>
+        <v-btn text :to="{ name: 'home' }" exact :disabled="!canAccess('home')">
+          Home
+        </v-btn>
+        <v-btn
+          text
+          :to="{ name: 'calendar' }"
+          exact
+          :disabled="!canAccess('calendar')"
+        >
+          Schedule
+        </v-btn>
+        <v-btn
+          text
+          :to="{ name: 'MatchBooking' }"
+          exact
+          :disabled="!canAccess('MatchBooking')"
+        >
+          Book a Court
+        </v-btn>
         <v-btn text exact> Help </v-btn>
       </v-toolbar-items>
     </v-app-bar>
@@ -133,10 +174,11 @@ import {
   mdiAccountOff,
 } from "@mdi/js";
 
-import { notification } from "./NotificationMixin";
+import { AccessChecker } from "./mixins/AccessCheckerMixin";
+import { notification } from "./mixins/NotificationMixin";
 
 export default {
-  mixins: [notification],
+  mixins: [notification, AccessChecker],
   data() {
     return {
       homeIcon: mdiHome,

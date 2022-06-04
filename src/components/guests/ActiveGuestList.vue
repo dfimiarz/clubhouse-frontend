@@ -104,7 +104,7 @@ import {
   mdiAccount,
   mdiAlertCircle,
 } from "@mdi/js";
-import { notification } from "../NotificationMixin";
+import { notification } from "../mixins/NotificationMixin";
 
 export default {
   mixins: [notification],

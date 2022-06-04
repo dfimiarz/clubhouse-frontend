@@ -52,9 +52,10 @@
 </template>
 
 <script>
-import checkRouteAccess from "../utils/RouteAccessChecker";
+import { AccessChecker } from "./mixins/AccessCheckerMixin";
 
 export default {
+  mixins: [AccessChecker],
   name: "Home-Page",
   data: () => {
     return {
@@ -127,15 +128,7 @@ export default {
       ],
     };
   },
-  methods: {
-    canAccess: function (route_name) {
-      //Get route for a given name
-      const { route } = this.$router.resolve({ name: route_name });
-      const { granted } = checkRouteAccess(route);
-
-      return granted;
-    },
-  },
+  methods: {},
   computed: {
     tileTitleClass: function () {
       return this.$vuetify.breakpoint.mdAndDown

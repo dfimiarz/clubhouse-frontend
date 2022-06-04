@@ -45,7 +45,7 @@
 //import fbErrHandler from "@/utils/FirebaseErrorHandler";
 
 import { mdiEye, mdiEyeOff } from "@mdi/js";
-import { notification } from "./NotificationMixin";
+import { notification } from "./mixins/NotificationMixin";
 
 export default {
   mixins: [notification],

@@ -57,7 +57,7 @@
 
 <script>
 export default {
-  name: "GusetManager",
+  name: "GuestManager",
   data: function () {
     return {
       tab: null,
