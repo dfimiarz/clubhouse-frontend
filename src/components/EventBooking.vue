@@ -181,6 +181,7 @@
 import apihandler from "./../services/db";
 import utils from "./../services/utils";
 import processAxiosError from "../utils/AxiosErrorHandler";
+import { notification } from "@/components/mixins/NotificationMixin";
 
 import {
   mdiAccount,
@@ -193,6 +194,7 @@ import {
 const HOST_TYPE_ID = 4000;
 
 export default {
+  mixins: [notification],
   components: {},
   name: "EventBooking",
   data: function () {
@@ -207,11 +209,6 @@ export default {
       bookingtype: null,
       managers: [],
       bookingtypes: [],
-      snackbar: {
-        text: null,
-        open: false,
-        color: null,
-      },
       datedialog: false,
       stimedialog: false,
       etimedialog: false,
@@ -266,20 +263,18 @@ export default {
       this.loading = true;
       this.error = null;
 
-      let that = this;
-
       apihandler
         .newMatch(match)
-        .then(function () {
+        .then(() => {
           //console.log(response)
-          that.loading = false;
-          that.$router.push({ name: "calendar" });
+          this.loading = false;
+          this.$router.push({ name: "calendar" });
         })
-        .catch(function (e) {
-          that.$emit("show:message", processAxiosError(e));
+        .catch((e) => {
+          this.showNotification(processAxiosError(e), "error");
         })
         .finally(() => {
-          that.loading = false;
+          this.loading = false;
         });
     },
     submitBooking: function () {
@@ -321,7 +316,7 @@ export default {
             });
         })
         .catch((err) => {
-          this.$emit("show:message", processAxiosError(err));
+          this.showNotification(processAxiosError(err), "error");
         })
         .finally(() => {
           this.loading = false;
