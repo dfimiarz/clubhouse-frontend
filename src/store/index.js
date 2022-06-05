@@ -31,10 +31,11 @@ const store = new Vuex.Store({
     displaymodes: ["DESKTOP", "TV"],
     connected: null,
     connectionCheck: false,
+    //Tracks browser window actvity
+    browser_active: true,
     clubtz: "America/New_York",
     loading: false,
     loading_error: null,
-    error: null,
     message: {
       text: null,
       type: null,
@@ -95,9 +96,6 @@ const store = new Vuex.Store({
     SET_LOADING_ERROR(state, value) {
       state.loading_error = value;
     },
-    SET_ERROR(state, value) {
-      state.error = value;
-    },
     SET_CONNECTED(state, val) {
       state.connected = val;
     },
@@ -118,6 +116,9 @@ const store = new Vuex.Store({
     },
     SET_CONNECTION_CHECK(state, value) {
       state.connectionCheck = value;
+    },
+    SET_BROWSER_ACTIVE(state, val) {
+      state.browser_active = val;
     },
   },
   actions: {
@@ -144,9 +145,10 @@ const store = new Vuex.Store({
     },
     async checkConnection({ state, commit }) {
       const checking = state.connectionCheck;
+      const browseractive = state.browser_active;
 
       try {
-        if (!checking) {
+        if (!checking && browseractive) {
           commit("SET_CONNECTION_CHECK", true);
           await api.checkConnection();
           commit("SET_CONNECTED", true);
@@ -230,11 +232,14 @@ const store = new Vuex.Store({
     setLoadingError({ commit }, val) {
       commit("SET_LOADING_ERROR", val);
     },
+    setBrowserActive({ commit }) {
+      commit("SET_BROWSER_ACTIVE", true);
+    },
+    setBrowserInActive({ commit }) {
+      commit("SET_BROWSER_ACTIVE", false);
+    },
   },
   getters: {
-    error(state) {
-      return state.error;
-    },
     loading(state) {
       return state.loading;
     },

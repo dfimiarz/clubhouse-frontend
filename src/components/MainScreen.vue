@@ -205,14 +205,6 @@ export default {
         this.$store.dispatch("setLoading", val);
       },
     },
-    error: {
-      get: function () {
-        return this.$store.state.error;
-      },
-      set: function (val) {
-        this.$store.dispatch("setError", val);
-      },
-    },
     loggedin: function () {
       return !!this.$store.state.userstore.user;
     },
