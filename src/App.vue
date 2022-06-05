@@ -4,13 +4,8 @@
       <loading-screen v-if="!active" />
       <mainscreen v-else />
     </transition>
-    <v-overlay :value="overlay_visible">
-      <v-progress-circular indeterminate size="64" v-if="loading" />
-      <div class="d-flex flex-column text-h6 black" v-else-if="error">
-        <div class="text-center pa-2">
-          {{ error }}
-        </div>
-      </div>
+    <v-overlay :value="loading">
+      <v-progress-circular indeterminate size="64" />
     </v-overlay>
     <v-snackbar
       v-model="sbvis"
@@ -58,14 +53,6 @@ export default {
       },
       set: function (val) {
         this.$store.dispatch("setLoading", val);
-      },
-    },
-    error: {
-      get: function () {
-        return this.$store.state.error;
-      },
-      set: function (val) {
-        this.$store.dispatch("setError", val);
       },
     },
     connected: function () {
