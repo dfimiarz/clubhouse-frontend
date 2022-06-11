@@ -10,26 +10,33 @@
             class="py-1"
           >
             <v-col cols="auto">
-              <v-row align="center" no-gutters="">
-                <v-btn
-                  color="primary"
-                  small
-                  outlined
-                  @click="resetDate()"
-                  class="mr-2"
-                  >Today</v-btn
-                >
-
-                <v-btn icon @click="changeDay(-1)">
-                  <v-icon> {{ leftArrowIcon }} </v-icon>
-                </v-btn>
-                <span class="text-sm-body-1 text-md-h6 mx-1">{{
-                  this.getTimeString()
-                }}</span>
-                <v-btn icon @click="changeDay(1)">
-                  <v-icon> {{ rightArrowIcon }} </v-icon></v-btn
-                >
-              </v-row>
+              <v-menu
+                v-model="datemenu"
+                :close-on-content-click="false"
+                max-width="290"
+                v-if="!simplifiedDisplay"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    :value="dateISO"
+                    label="Selected date"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    :prepend-inner-icon="calendarIcon"
+                    :disabled="loading"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="dateISO"
+                  @change="datemenu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="auto">
+              <span class="hidden-sm-and-down text-md-h6 mx-1">
+                Time: {{ currTimeFormatted }}
+              </span>
             </v-col>
           </v-row>
         </v-col>
@@ -74,7 +81,10 @@
 
             <div
               class="time-grid-container"
-              v-bind:style="{ overflow: simplifiedDisplay ? 'hidden' : 'auto' }"
+              v-bind:style="{
+                overflow: simplifiedDisplay ? 'hidden' : 'auto',
+                height: `calc(100vh - ${gridHeightAdjust}px`,
+              }"
               ref="tcontainer"
             >
               <div
@@ -128,20 +138,19 @@
               ></timeindicator>
             </div>
           </div>
-          <v-btn
-            fixed=""
-            fab
-            bottom
-            right
-            color="primary"
-            :to="{ name: 'MatchBooking' }"
-            v-show="!simplifiedDisplay"
-          >
-            <v-icon> {{ plusIcon }}</v-icon>
-          </v-btn>
         </v-col>
       </v-row>
     </v-container>
+    <retry-snackbar
+      :color="retrySnackBarConfig.color"
+      :message="retrySnackBarConfig.message"
+      :show.sync="retrySnackBarConfig.visible"
+      :loading="loading"
+      :show-retry-button="!simplifiedDisplay"
+      @retry:action="loadDataAndSubscribe"
+      :counter="tickCounter"
+    >
+    </retry-snackbar>
   </div>
 </template>
 
@@ -151,7 +160,7 @@ import {
   BOOKING_TYPE_LESSON,
 } from "../constants/constants";
 
-import { mdiArrowLeftBold, mdiArrowRightBold, mdiPlus } from "@mdi/js";
+import { mdiCalendar, mdiArrowLeftBold, mdiArrowRightBold } from "@mdi/js";
 
 import MatchItem from "./calendar/MatchItem.vue";
 import TimeIndicator from "./TimeIndicator";
@@ -160,12 +169,18 @@ import processAxiosError from "../utils/AxiosErrorHandler";
 import Pusher from "pusher-js";
 import EventItem from "./calendar/EventItem.vue";
 import LessonItem from "./calendar/LessonItem.vue";
+import RetrySnackbar from "./RetrySnackBar.vue";
 
 var pusher = null;
 var channel = null;
 const channelname = "bookings";
-//Timer tick durations
-const TIMER_DUR = 10000;
+
+//Number of ticks to wait before retry
+const RETRY_TICK_COUNT = 10;
+//Timer tick in milliseconds
+const TIMER_INTERVAL_MS = 1000;
+
+let timerHandle = null;
 
 export default {
   components: {
@@ -174,13 +189,14 @@ export default {
     "event-item": EventItem,
     "lesson-item": LessonItem,
     timeindicator: TimeIndicator,
+    "retry-snackbar": RetrySnackbar,
   },
   name: "MatchCalendar",
   data: function () {
     return {
+      calendarIcon: mdiCalendar,
       leftArrowIcon: mdiArrowLeftBold,
       rightArrowIcon: mdiArrowRightBold,
-      plusIcon: mdiPlus,
       milTimeLabels: [
         "12",
         "1",
@@ -233,24 +249,51 @@ export default {
         "10 pm",
         "11 pm",
       ],
+      //stores the date for which show bookings
       date: null,
+      //stores the date when the variable date was set was last set
+      dateSet: null,
+      datemenu: false,
       courtSlots: null,
       maxDisplayableCourts: 5,
       firstCourt: 0,
       currtime: null,
-      timerHandle: null,
       bookings: [],
       timeIndicatorVisible: false, //Controls display of current time indicator
+      error: false,
+      retrySnackBarConfig: {
+        color: null,
+        visible: false,
+        message: null,
+      },
+      tickCounter: 0,
     };
   },
   methods: {
+    showRetrySnackBar(message, color = "info") {
+      this.retrySnackBarConfig.message = message;
+      this.retrySnackBarConfig.color = color;
+      this.retrySnackBarConfig.visible = true;
+    },
+    setUp() {
+      //console.log("Setting up");
+
+      //Start the timer
+      if (!timerHandle) {
+        timerHandle = setInterval(this.timerTickHandler, TIMER_INTERVAL_MS);
+      }
+      //Load bookings and subscribe if browser is active
+      this.loadDataAndSubscribe();
+    },
     cleanUp() {
       this.unsubsribe();
       this.bookings.splice(0);
+      this.tickCounter = 0;
 
       //clear the time if still active
-      if (this.timerHandle) {
-        clearInterval(this.timerHandle);
+      if (timerHandle) {
+        clearInterval(timerHandle);
+        timerHandle = null;
       }
     },
     getCalendarItemType(type_id) {
@@ -263,25 +306,30 @@ export default {
           return "event-item";
       }
     },
-    timerTickHanlder: function () {
+    timerTickHandler: function () {
       this.currtime = this.$dayjs().tz().valueOf();
+      //Increament the counter when not loading data.
+      if (!this.loading) {
+        this.tickCounter++;
+      }
 
-      //Check if date has changed while running timer
+      // Check if date has changed while running timer
       const curr_date = this.$dayjs().tz().startOf("day").valueOf();
-      const curr_cal_date = this.$dayjs(this.date)
-        .tz()
-        .startOf("day")
-        .valueOf();
 
-      //Reset date and timer when calendar date is not the same a current date
-      if (curr_date !== curr_cal_date) {
-        clearInterval(this.timerHandle);
-        this.timerHandle = null;
+      /*
+       * Reset the date variable when it was set on a different calendar date
+       * This will force the system change the date when page is left running
+       * for a long time.
+       */
+      if (this.dateSet !== curr_date) {
         this.resetDate();
       }
 
-      if (this.error) {
-        //console.log("Trying to reconnect")
+      // if (curr_date !== curr_cal_date) {
+      //   this.resetDate();
+      // }
+
+      if (this.error && this.tickCounter % RETRY_TICK_COUNT == 0) {
         this.loadDataAndSubscribe();
       }
     },
@@ -362,10 +410,6 @@ export default {
         ? this.$dayjs(this.date).tz().format("ddd, MMM Do")
         : "N/A";
     },
-    changeDay(day_diff) {
-      this.date = this.$dayjs(this.date).tz().add(day_diff, "day").format();
-      this.loadBookings(this.$dayjs(this.date).tz().format("YYYY-MM-DD"));
-    },
     resetDate() {
       this.date = this.$dayjs().tz().startOf("day").format();
       this.reloadBookings();
@@ -395,6 +439,11 @@ export default {
       });
     },
     loadBookings(date) {
+      //console.log("Loading bookings...");
+      if (this.loading) {
+        return;
+      }
+
       this.loading = true;
 
       this.loadAsync(date)
@@ -402,18 +451,10 @@ export default {
           this.bookings = data;
           this.error = false;
         })
-        .catch((err) => {
+        .catch((_err) => {
           this.bookings.splice(0);
-          this.error = processAxiosError(err);
-          // if( error === "Connection Error."){
-
-          //   if( this.simplifiedDisplay ){
-          //     this.error = true;
-          //   } else {
-          //     this.$emit("show:message", "Error: " + error, "error");
-          //   }
-
-          // }
+          this.error = true;
+          this.showRetrySnackBar("Unable to load bookings.", "error");
         })
         .finally(() => {
           this.loading = false;
@@ -424,10 +465,6 @@ export default {
         cluster: process.env.VUE_APP_PUSHER_CLUSTER,
       });
 
-      // pusher.connection.bind('state_change',(states) => {
-      //   console.log("Pusher: ",states.current)
-      // })
-
       channel = pusher.subscribe(channelname);
 
       channel.bind("booking_change", (data) => {
@@ -436,7 +473,7 @@ export default {
         const dateChanged = data.date;
         const selectedDate = this.$dayjs(this.date).tz().format("YYYY-MM-DD");
 
-        if (dateChanged === selectedDate && !this.loading) {
+        if (dateChanged === selectedDate) {
           this.reloadBookings();
         }
       });
@@ -449,12 +486,16 @@ export default {
       }
 
       if (pusher) {
-        // pusher.connection.unbind('state_change');
         pusher.disconnect();
         pusher = null;
       }
     },
     loadDataAndSubscribe() {
+      //console.log("Loading bookings with sub");
+      if (this.loading) {
+        return;
+      }
+
       this.loading = true;
 
       this.loadAsync(this.$dayjs(this.date).tz().format("YYYY-MM-DD"))
@@ -464,16 +505,9 @@ export default {
           this.error = false;
           this.subscribe();
         })
-        .catch((err) => {
-          this.error = processAxiosError(err);
-          // if( error === "Connection Error."){
-
-          //   if( this.simplifiedDisplay ){
-          //     this.error = true;
-          //   } else {
-          //     this.$emit("show:message", "Error: " + error, "error");
-          //   }
-          // }
+        .catch((_err) => {
+          this.error = true;
+          this.showRetrySnackBar("Unable to load bookings.", "error");
         })
         .finally(() => {
           this.loading = false;
@@ -486,8 +520,13 @@ export default {
     },
   },
   computed: {
-    authenticated: function () {
-      return this.$store.getters["userstore/isAuthenticated"];
+    dateISO: {
+      get: function () {
+        return this.$dayjs(this.date).tz().format("YYYY-MM-DD");
+      },
+      set: function (val) {
+        this.date = this.$dayjs(val).tz().format();
+      },
     },
     loading: {
       get: function () {
@@ -495,14 +534,6 @@ export default {
       },
       set: function (val) {
         this.$store.dispatch("setLoading", val);
-      },
-    },
-    error: {
-      get: function () {
-        return this.$store.state.error;
-      },
-      set: function (val) {
-        this.$store.dispatch("setError", val);
       },
     },
     simplifiedDisplay: function () {
@@ -559,11 +590,27 @@ export default {
       */
       return this.courts.slice(this.firstCourt, lastIndex);
     },
+    browser_active: function () {
+      return this.$store.state.browser_active;
+    },
+    currTimeFormatted: function () {
+      return this.$dayjs(this.currtime).tz().format("hh:mm:ss a");
+    },
+    gridHeightAdjust: function () {
+      //top+footer + time_section + court_sel_section + bottom_buffer
+      return (
+        this.$vuetify.application.top +
+        this.$vuetify.application.footer +
+        (this.simplifiedDisplay ? 42 : 78) +
+        42 +
+        8
+      );
+    },
   },
   created: function () {
     this.currtime = this.$dayjs().tz().valueOf();
     this.date = this.$dayjs().tz().startOf("day").format();
-    this.loadDataAndSubscribe();
+    this.setUp();
   },
   beforeDestroy: function () {
     this.cleanUp();
@@ -576,9 +623,19 @@ export default {
     });
   },
   watch: {
+    browser_active: function (newval) {
+      if (newval) {
+        this.setUp();
+      } else {
+        //Unsubscribe from pusher if browser is not active
+        this.cleanUp();
+      }
+    },
     error: function (val) {
       if (val) {
         this.unsubsribe();
+      } else {
+        this.retrySnackBarConfig.visible = false;
       }
     },
     maxCourtCount: function (val) {
@@ -592,24 +649,18 @@ export default {
       //Webworker https://www.youtube.com/watch?v=nwQN55oPAfc
 
       const curr_date = this.$dayjs().tz().startOf("day").valueOf();
+      this.dateSet = curr_date;
       const new_cal_date = this.$dayjs(val).tz().startOf("day").valueOf();
 
       if (curr_date === new_cal_date) {
         //Show time indicator bar when new_date = current_date
         this.timeIndicatorVisible = true;
-
-        //Set up timer to tick every TIMER_DUR seconds;s
-        this.timerHandle = setInterval(this.timerTickHanlder, TIMER_DUR);
       } else {
         //Hide time indicator bar when new_date is not current_date
         this.timeIndicatorVisible = false;
-
-        //Stop the timer
-        if (this.timerHandle) {
-          clearInterval(this.timerHandle);
-          this.timerHandle = null;
-        }
       }
+
+      this.loadBookings(this.dateISO);
 
       if (this.timeIndicatorVisible) {
         this.$nextTick(function () {
@@ -655,7 +706,7 @@ export default {
   grid-column: 1;
   grid-row: 2;
   overflow: auto;
-  height: calc(100vh - 212px);
+  /* height: calc(100vh - 212px); */
   scroll-behavior: smooth;
 }
 
