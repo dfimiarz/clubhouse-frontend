@@ -34,6 +34,27 @@ const store = new Vuex.Store({
     //Tracks browser window actvity
     browser_active: true,
     clubtz: "America/New_York",
+    /**
+     * [
+     *  {
+     *    id: Number,
+     *    name: String,
+     *    from: Number date in ms in local tz,
+     *    to: Number date is ms in local tz,
+     *    default_open_min: Number Time converted to seconds
+     *    default_close_min: Number Time converted to seconds
+     *    items: [
+     *            {
+     *              court: Number Court ID
+     *              dayofweek: Number Day of week with Sunday = 1, Saturday = 7 (MySQL spec)
+     *              open: Number Time converted to seconds
+     *              close: Number Time converted to seconds
+     *            },
+     *    ],
+     *  }
+     * ]
+     */
+    club_schedule: [],
     loading: false,
     loading_error: null,
     message: {
@@ -120,6 +141,9 @@ const store = new Vuex.Store({
     SET_BROWSER_ACTIVE(state, val) {
       state.browser_active = val;
     },
+    SET_SCHEDULE(state, schedules) {
+      state.club_schedule = schedules;
+    },
   },
   actions: {
     resetApplicationState({ dispatch }) {
@@ -159,11 +183,18 @@ const store = new Vuex.Store({
         commit("SET_CONNECTION_CHECK", false);
       }
     },
+    async loadClubConfig({ commit }) {
+      try {
+        const schedules = await api.getClubConfig();
+        commit("SET_SCHEDULE", schedules);
+      } catch (err) {
+        console.log(err);
+        throw new Error("Error loading club config");
+      }
+    },
     async loadAppResources({ dispatch, getters }) {
       //List of actions to run for authorized users
-      const authActions = [
-        /*'memberstore/loadEligiblePersons',*/ "courtstore/loadCourts",
-      ];
+      const authActions = ["courtstore/loadCourts", "loadClubConfig"];
 
       const selectedActions =
         getters["userstore/isAuthenticated"] === true ? authActions : [];
@@ -243,22 +274,6 @@ const store = new Vuex.Store({
     loading(state) {
       return state.loading;
     },
-    startHour(state) {
-      return Math.floor(state.startTimeMin / 60);
-    },
-    endHour(state) {
-      return Math.ceil(state.endTimeMin / 60);
-    },
-    openMin(state) {
-      var openmin = utils.timeToMinutes(state.opentime);
-      //If opentime is not set, use 0 (00:00)
-      return isNaN(openmin) ? 0 : openmin;
-    },
-    closeMin(state) {
-      var closemin = utils.timeToMinutes(state.closetime);
-      //If closetime is not set, use 1439 (23:59)
-      return isNaN(closemin) ? 1439 : closemin;
-    },
     calCellHeight1H(state) {
       return Object.prototype.hasOwnProperty.call(
         state.cellHeightsForMode,
@@ -293,6 +308,13 @@ const store = new Vuex.Store({
     },
     appActive(state, getters) {
       return getters["userstore/isInitialized"] && !!state.data_loaded;
+    },
+    getScheduleForDate(state) {
+      return (date_ms) => {
+        return state.club_schedule.find((schedule) => {
+          return schedule.from_ms <= date_ms && schedule.to_ms > date_ms;
+        });
+      };
     },
   },
 });

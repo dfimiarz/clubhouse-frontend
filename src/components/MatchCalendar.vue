@@ -86,6 +86,7 @@
                 height: `calc(100vh - ${gridHeightAdjust}px`,
               }"
               ref="tcontainer"
+              v-if="club_schedule"
             >
               <div
                 v-for="n in totalCellCount * 4"
@@ -116,17 +117,12 @@
                   }"
                 >
                   <transition-group name="fade" mode="out-in">
-                    <!-- <session
-                      v-for="match in getBookingsForCourt(court.id)"
-                      :key="match.id"
-                      :session="match"
-                    >
-                    </session> -->
                     <component
                       v-for="item in getBookingsForCourt(court.id)"
                       :key="item.id"
                       :booking="item"
                       :is="getCalendarItemType(item.type)"
+                      :calendarStart="startHour"
                     >
                     </component>
                   </transition-group>
@@ -135,7 +131,28 @@
               <timeindicator
                 :currtime="currtime"
                 v-if="timeIndicatorVisible"
+                :openMin="startMin"
+                :closeMin="endMin"
               ></timeindicator>
+            </div>
+            <div
+              v-else
+              v-bind:style="{
+                overflow: simplifiedDisplay ? 'hidden' : 'auto',
+                height: `calc(100vh - ${gridHeightAdjust}px`,
+              }"
+            >
+              <v-row
+                no-gutters
+                align="center"
+                justify="center"
+                class="fill-height"
+              >
+                <v-col cols="auto" class="text-center">
+                  <v-icon x-large>{{ alertCircleIcon }}</v-icon>
+                  <div class="text-caption">Schedule not found.</div>
+                </v-col>
+              </v-row>
             </div>
           </div>
         </v-col>
@@ -160,7 +177,12 @@ import {
   BOOKING_TYPE_LESSON,
 } from "../constants/constants";
 
-import { mdiCalendar, mdiArrowLeftBold, mdiArrowRightBold } from "@mdi/js";
+import {
+  mdiCalendar,
+  mdiArrowLeftBold,
+  mdiArrowRightBold,
+  mdiAlertCircle,
+} from "@mdi/js";
 
 import MatchItem from "./calendar/MatchItem.vue";
 import TimeIndicator from "./TimeIndicator";
@@ -197,6 +219,7 @@ export default {
       calendarIcon: mdiCalendar,
       leftArrowIcon: mdiArrowLeftBold,
       rightArrowIcon: mdiArrowRightBold,
+      alertCircleIcon: mdiAlertCircle,
       milTimeLabels: [
         "12",
         "1",
@@ -270,6 +293,11 @@ export default {
     };
   },
   methods: {
+    getBlockedTimes(court_id) {
+      return this.blockedTimes.filter(
+        (timeslot) => (timeslot.court_id = court_id)
+      );
+    },
     showRetrySnackBar(message, color = "info") {
       this.retrySnackBarConfig.message = message;
       this.retrySnackBarConfig.color = color;
@@ -542,12 +570,6 @@ export default {
     displaymode: function () {
       return this.$store.getters["getSetting"]("displaymode");
     },
-    startMin: function () {
-      return this.$store.getters["openMin"];
-    },
-    endMin: function () {
-      return this.$store.getters["closeMin"];
-    },
     startHour: function () {
       return Math.floor(this.startMin / 60);
     },
@@ -605,6 +627,86 @@ export default {
         42 +
         8
       );
+    },
+    club_schedule: function () {
+      return this.$store.getters["getScheduleForDate"](
+        this.$dayjs(this.date).tz().unix()
+      );
+    },
+    club_schedule_items: function () {
+      const dayNum = this.$dayjs(this.date).tz().day();
+      return !!this.club_schedule && !!this.club_schedule["items"]
+        ? this.club_schedule["items"].filter(
+            //Convert dayjs dayofweek to MySQL dayofweek
+            (item) => item.dayofweek === dayNum + 1
+          )
+        : [];
+    },
+    court_times: function () {
+      return this.courts.map((court) => {
+        const item = this.club_schedule_items.find((item) => {
+          return item.court === court.id;
+        });
+
+        const open_min =
+          !!item && Object.hasOwnProperty.call(item, "open_min")
+            ? item["open_min"]
+            : this.default_open;
+        const close_min =
+          !!item && Object.hasOwnProperty.call(item, "close_min")
+            ? item["close_min"]
+            : this.default_close;
+
+        return {
+          court: court.id,
+          open_min: open_min,
+          close_min: close_min,
+        };
+      });
+    },
+    startMin: function () {
+      return this.court_times.reduce(
+        (prev, curr) => (curr.open_min <= prev ? curr.open_min : prev),
+        this.default_close
+      );
+    },
+    endMin: function () {
+      return this.court_times.reduce(
+        (prev, curr) => (curr.close_min >= prev ? curr.close_min : prev),
+        this.default_open
+      );
+    },
+    default_open: function () {
+      return !!this.club_schedule &&
+        Object.hasOwnProperty.call(this.club_schedule, "default_open_min")
+        ? this.club_schedule.default_open_min
+        : 0;
+    },
+    default_close: function () {
+      return !!this.club_schedule &&
+        Object.hasOwnProperty.call(this.club_schedule, "default_close_min")
+        ? this.club_schedule.default_close_min
+        : 1440;
+    },
+    blockedTimes: function () {
+      return this.court_times.reduce((array, court_record) => {
+        if (this.startHour * 60 < court_record.open_min) {
+          array.push({
+            court_id: court_record.court,
+            start: this.startHour * 60,
+            end: court_record.open_min,
+          });
+        }
+        if (this.endHour * 60 > court_record.close_min) {
+          array.push({
+            court_id: court_record.court,
+            start: court_record.close_min,
+            end: this.endHour * 60,
+          });
+        }
+
+        return array;
+      }, []);
     },
   },
   created: function () {

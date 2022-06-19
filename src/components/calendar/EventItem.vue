@@ -4,6 +4,7 @@
     :start="booking.start"
     :end="booking.end"
     :id="booking.id"
+    :calendarStart="calendarStart"
     v-slot="{ height }"
     showDetails
   >
@@ -46,6 +47,10 @@ export default {
   props: {
     booking: {
       type: Object,
+      required: true,
+    },
+    calendarStart: {
+      type: Number,
       required: true,
     },
   },

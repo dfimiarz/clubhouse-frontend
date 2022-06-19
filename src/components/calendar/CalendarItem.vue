@@ -43,6 +43,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    calendarStart: {
+      type: Number,
+      required: true,
+    },
   },
   name: "CalendarItem",
   data: function () {
@@ -64,24 +68,11 @@ export default {
       return _height <= MIN_SESSION_HEIGHT ? MIN_SESSION_HEIGHT : _height;
     },
     vpos: function () {
-      return (this.cellHeight1H / 60) * (this.startMin - this.calStartMin);
+      return (this.cellHeight1H / 60) * (this.startMin - this.calendarStart);
     },
     cellHeight1H: function () {
       return this.$store.getters["calCellHeight1H"];
     },
-    openMin: function () {
-      return this.$store.getters["openMin"];
-    },
-    closeMin: function () {
-      return this.$store.getters["closeMin"];
-    },
-    calStartMin: function () {
-      return Math.floor(this.openMin / 60) * 60;
-    },
-    calEndMin: function () {
-      return Math.ceil(this.closeMin / 60) * 60;
-    },
-
     duration: function () {
       return this.endMin - this.startMin;
     },

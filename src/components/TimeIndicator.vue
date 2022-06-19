@@ -12,6 +12,14 @@ export default {
       required: true,
       type: Number,
     },
+    openMin: {
+      required: true,
+      type: Number,
+    },
+    closeMin: {
+      required: true,
+      type: Number,
+    },
   },
   name: "TimeIndicator",
   data: function () {
@@ -40,12 +48,12 @@ export default {
         ((adj_currmin - this.startMin) * this.cellHeight1H) / 60
       );
     },
-    openMin: function () {
-      return this.$store.getters["openMin"];
-    },
-    closeMin: function () {
-      return this.$store.getters["closeMin"];
-    },
+    // openMin: function () {
+    //   return this.$store.getters["openMin"];
+    // },
+    // closeMin: function () {
+    //   return this.$store.getters["closeMin"];
+    // },
     currmin: function () {
       return (
         this.$dayjs(this.currtime).tz().hour() * 60 +

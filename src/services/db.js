@@ -237,6 +237,14 @@ async function checkConnection() {
   return result.data;
 }
 
+async function getClubConfig() {
+  let url = new URL(process.env.VUE_APP_BACKEND + "/club_schedule");
+
+  const result = await axios.get(url);
+
+  return result.data;
+}
+
 export default {
   getBookings,
   newMatch: newMatch,
@@ -264,4 +272,5 @@ export default {
   getUserProfile,
   getActiveMembers,
   checkConnection,
+  getClubConfig,
 };
