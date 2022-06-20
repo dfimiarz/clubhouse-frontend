@@ -111,15 +111,7 @@ export default {
     connected: {
       handler: function (newval) {
         if (newval === true) {
-          if (!this.active) {
-            this.$store
-              .dispatch("initializeApplication")
-              .then(() => {})
-              .catch((err) => {
-                this.$store.dispatch("setLoadingError", err.message);
-              })
-              .finally(() => {});
-          }
+          this.$router.go();
         } else {
           this.$store.dispatch("resetApplicationState");
         }
