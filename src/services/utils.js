@@ -1,6 +1,6 @@
 /**
  *
- * @param { String } strval String representation of time in format hh:hh
+ * @param { String } strval String representation of time in format hh:mm
  * @returns { Number ) number of minutes since midnight (00:00) | null
  */
 function strTimeToMinutes(strval) {

@@ -290,12 +290,14 @@ export default {
         message: null,
       },
       tickCounter: 0,
+      default_open: 540,
+      default_close: 1020,
     };
   },
   methods: {
     getBlockedTimes(court_id) {
-      return this.blockedTimes.filter(
-        (timeslot) => (timeslot.court_id = court_id)
+      return this.inactiveTimeFrames.filter(
+        (timeFrame) => (timeFrame.court_id = court_id)
       );
     },
     showRetrySnackBar(message, color = "info") {
@@ -643,70 +645,96 @@ export default {
         : [];
     },
     court_times: function () {
-      return this.courts.map((court) => {
-        const item = this.club_schedule_items.find((item) => {
-          return item.court === court.id;
+      //Set up a map of courts
+      let courtsMap = new Map();
+
+      //Iterate through each schedule_item and extract open_min and close_min for each court
+      this.club_schedule_items.forEach((element) => {
+        courtsMap.set(element.court, {
+          open_min: element.open_min,
+          close_min: element.close_min,
         });
+      });
 
-        const open_min =
-          !!item && Object.hasOwnProperty.call(item, "open_min")
-            ? item["open_min"]
-            : this.default_open;
-        const close_min =
-          !!item && Object.hasOwnProperty.call(item, "close_min")
-            ? item["close_min"]
-            : this.default_close;
-
+      //Convert courtsMap to an array of objects
+      return Array.from(courtsMap, ([court, values]) => {
         return {
-          court: court.id,
-          open_min: open_min,
-          close_min: close_min,
+          court: court,
+          open_min: values.open_min,
+          close_min: values.close_min,
         };
       });
     },
     startMin: function () {
+      //If no court_times available, return default_open
+      if (this.court_times.length === 0) {
+        return this.default_open;
+      }
+
+      //else find the earliest time
       return this.court_times.reduce(
         (prev, curr) => (curr.open_min <= prev ? curr.open_min : prev),
         this.default_close
       );
     },
     endMin: function () {
+      //Same logic as in startMin
+      if (this.court_times.length === 0) {
+        return this.default_close;
+      }
+
       return this.court_times.reduce(
         (prev, curr) => (curr.close_min >= prev ? curr.close_min : prev),
         this.default_open
       );
     },
-    default_open: function () {
-      return !!this.club_schedule &&
-        Object.hasOwnProperty.call(this.club_schedule, "default_open_min")
-        ? this.club_schedule.default_open_min
-        : 0;
-    },
-    default_close: function () {
-      return !!this.club_schedule &&
-        Object.hasOwnProperty.call(this.club_schedule, "default_close_min")
-        ? this.club_schedule.default_close_min
-        : 1440;
-    },
-    blockedTimes: function () {
-      return this.court_times.reduce((array, court_record) => {
-        if (this.startHour * 60 < court_record.open_min) {
-          array.push({
-            court_id: court_record.court,
-            start: this.startHour * 60,
-            end: court_record.open_min,
-          });
-        }
-        if (this.endHour * 60 > court_record.close_min) {
-          array.push({
-            court_id: court_record.court,
-            start: court_record.close_min,
-            end: this.endHour * 60,
-          });
-        }
+    /**
+     * Calculate unavailable time windows in the schedule
+     */
+    inactiveTimeFrames: function () {
+      //Add inactive courts
+      let inactiveCourtSet = new Set(this.courts.map((court) => court.id));
 
-        return array;
-      }, []);
+      /* Loop through all court_times and find inactive blocks of time
+       * between (startHour,open_min) and (close_min,endHour)
+       */
+      let inactive_time_frames = this.court_times.reduce(
+        (array, court_record) => {
+          //Remove active court from the list of inactive courts
+          inactiveCourtSet.delete(court_record.court);
+
+          if (this.startHour * 60 < court_record.open_min) {
+            array.push({
+              court_id: court_record.court,
+              start: this.startHour * 60,
+              end: court_record.open_min,
+            });
+          }
+          if (this.endHour * 60 > court_record.close_min) {
+            array.push({
+              court_id: court_record.court,
+              start: court_record.close_min,
+              end: this.endHour * 60,
+            });
+          }
+
+          return array;
+        },
+        []
+      );
+
+      /* Loop through all inactive courts and add inactive time frames
+       * between startHour and endHour
+       */
+      inactiveCourtSet.forEach((val) => {
+        inactive_time_frames.push({
+          court: val,
+          start: this.startHour * 60,
+          end: this.endHour * 60,
+        });
+      });
+
+      return inactive_time_frames;
     },
   },
   created: function () {
