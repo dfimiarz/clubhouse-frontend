@@ -83,7 +83,7 @@
               class="time-grid-container"
               v-bind:style="{
                 overflow: simplifiedDisplay ? 'hidden' : 'auto',
-                height: `calc(100vh - ${gridHeightAdjust}px`,
+                'max-height': `calc(100vh - ${gridHeightAdjust}px`,
               }"
               ref="tcontainer"
               v-if="club_schedule"
@@ -635,6 +635,9 @@ export default {
         this.$dayjs(this.date).tz().unix()
       );
     },
+    /**
+     * Items should be sorted by court and start time
+     */
     club_schedule_items: function () {
       const dayNum = this.$dayjs(this.date).tz().day();
       return !!this.club_schedule && !!this.club_schedule["items"]
@@ -644,46 +647,25 @@ export default {
           )
         : [];
     },
-    court_times: function () {
-      //Set up a map of courts
-      let courtsMap = new Map();
-
-      //Iterate through each schedule_item and extract open_min and close_min for each court
-      this.club_schedule_items.forEach((element) => {
-        courtsMap.set(element.court, {
-          open_min: element.open_min,
-          close_min: element.close_min,
-        });
-      });
-
-      //Convert courtsMap to an array of objects
-      return Array.from(courtsMap, ([court, values]) => {
-        return {
-          court: court,
-          open_min: values.open_min,
-          close_min: values.close_min,
-        };
-      });
-    },
     startMin: function () {
       //If no court_times available, return default_open
-      if (this.court_times.length === 0) {
+      if (this.club_schedule_items.length === 0) {
         return this.default_open;
       }
 
       //else find the earliest time
-      return this.court_times.reduce(
+      return this.club_schedule_items.reduce(
         (prev, curr) => (curr.open_min <= prev ? curr.open_min : prev),
         this.default_close
       );
     },
     endMin: function () {
       //Same logic as in startMin
-      if (this.court_times.length === 0) {
+      if (this.club_schedule_items.length === 0) {
         return this.default_close;
       }
 
-      return this.court_times.reduce(
+      return this.club_schedule_items.reduce(
         (prev, curr) => (curr.close_min >= prev ? curr.close_min : prev),
         this.default_open
       );
@@ -692,41 +674,52 @@ export default {
      * Calculate unavailable time windows in the schedule
      */
     inactiveTimeFrames: function () {
-      //Add inactive courts
-      let inactiveCourtSet = new Set(this.courts.map((court) => court.id));
+      //Add all courts to inactiveCourts
+      let inactiveCourts = new Set(this.courts.map((court) => court.id));
 
-      /* Loop through all court_times and find inactive blocks of time
-       * between (startHour,open_min) and (close_min,endHour)
-       */
-      let inactive_time_frames = this.court_times.reduce(
-        (array, court_record) => {
-          //Remove active court from the list of inactive courts
-          inactiveCourtSet.delete(court_record.court);
+      //Initialize variables
+      let inactive_time_frames = [];
+      let last_close_min = null;
+      let last_court = null;
 
-          if (this.startHour * 60 < court_record.open_min) {
-            array.push({
-              court_id: court_record.court,
-              start: this.startHour * 60,
-              end: court_record.open_min,
-            });
-          }
-          if (this.endHour * 60 > court_record.close_min) {
-            array.push({
-              court_id: court_record.court,
-              start: court_record.close_min,
+      this.club_schedule_items.forEach((timeframe) => {
+        //Check if court is in the set of inactive courts
+        if (inactiveCourts.has(timeframe.court)) {
+          //If so remove court from inactive court set
+          inactiveCourts.delete(timeframe.court);
+        }
+
+        //Is last court different from current court
+        if (last_court !== timeframe.court) {
+          /*If last court not null and endHour > last_close_min,
+           *switching courts so add last inactive time frame for this court
+           */
+          if (last_court !== null && this.endHour * 60 > last_close_min) {
+            inactive_time_frames.push({
+              court_id: last_court,
+              start: last_close_min,
               end: this.endHour * 60,
             });
           }
+          last_close_min = this.startHour * 60;
+        }
 
-          return array;
-        },
-        []
-      );
+        if (timeframe.open_min > last_close_min) {
+          inactive_time_frames.push({
+            court_id: timeframe.court,
+            start: last_close_min,
+            end: timeframe.open_min,
+          });
+
+          last_close_min = timeframe.close_min;
+          last_court = timeframe.court;
+        }
+      });
 
       /* Loop through all inactive courts and add inactive time frames
        * between startHour and endHour
        */
-      inactiveCourtSet.forEach((val) => {
+      inactiveCourts.forEach((val) => {
         inactive_time_frames.push({
           court: val,
           start: this.startHour * 60,
