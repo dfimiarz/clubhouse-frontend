@@ -212,7 +212,7 @@ router.beforeEach((to, from, next) => {
   //If app is not active, run init action
   if (!store.getters["appActive"]) {
     store
-      .dispatch("initializeApplication")
+      .dispatch("initializeAppState")
       .then(() => {
         checkAuthRoutes(to, next);
       })

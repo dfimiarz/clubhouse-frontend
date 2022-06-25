@@ -5,7 +5,6 @@ import membermodule from "./modules/member";
 import bookingsmodule from "./modules/bookings";
 import courtmodule from "./modules/courts";
 import notificationmodule from "./modules/notifications";
-import utils from "./../services/utils";
 import api from "../services/db";
 
 Vue.use(Vuex);
@@ -29,31 +28,12 @@ const store = new Vuex.Store({
     },
     data_loaded: null,
     displaymodes: ["DESKTOP", "TV"],
-    connected: null,
+    connected: true,
     connectionCheck: false,
     //Tracks browser window actvity
     browser_active: true,
-    clubtz: "America/New_York",
-    /**
-     * [
-     *  {
-     *    id: Number,
-     *    name: String,
-     *    from: Number date in ms in local tz,
-     *    to: Number date is ms in local tz,
-     *    default_open_min: Number Time converted to seconds
-     *    default_close_min: Number Time converted to seconds
-     *    items: [
-     *            {
-     *              court: Number Court ID
-     *              dayofweek: Number Day of week with Sunday = 1, Saturday = 7 (MySQL spec)
-     *              open: Number Time converted to seconds
-     *              close: Number Time converted to seconds
-     *            },
-     *    ],
-     *  }
-     * ]
-     */
+    clubtz: process.env.VUE_APP_CLUB_TZ,
+    clubName: null,
     club_schedule: [],
     loading: false,
     loading_error: null,
@@ -66,6 +46,8 @@ const store = new Vuex.Store({
       DESKTOP: 120,
       TV: 200,
     },
+    default_cal_start_min: null,
+    default_cal_end_min: null,
     opentime: "00:00",
     closetime: "23:00",
     repeaterTypes: [
@@ -144,6 +126,11 @@ const store = new Vuex.Store({
     SET_SCHEDULE(state, schedules) {
       state.club_schedule = schedules;
     },
+    SET_CLUB_INFO(state, { name, default_cal_start_min, default_cal_end_min }) {
+      state.clubName = name;
+      state.default_cal_end_min = default_cal_end_min;
+      state.default_cal_start_min = default_cal_start_min;
+    },
   },
   actions: {
     resetApplicationState({ dispatch }) {
@@ -151,8 +138,9 @@ const store = new Vuex.Store({
       dispatch("setDataLoaded", null);
       dispatch("userstore/resetAuth");
     },
-    async initializeApplication({ dispatch, getters }) {
-      if (!getters["isAppActive"]) {
+    async initializeAppState({ dispatch, getters }) {
+      if (!getters["appActive"]) {
+        await dispatch("loadClubInfo");
         await dispatch("userstore/setupAuth");
         await dispatch("loadAppResources");
       }
@@ -183,29 +171,43 @@ const store = new Vuex.Store({
         commit("SET_CONNECTION_CHECK", false);
       }
     },
-    async loadClubConfig({ commit }) {
+    async loadClubSchedule({ commit }) {
       try {
-        const schedules = await api.getClubConfig();
+        const schedules = await api.getClubSchedule();
         commit("SET_SCHEDULE", schedules);
       } catch (err) {
-        console.log(err);
         throw new Error("Error loading club config");
       }
     },
+    async loadClubInfo({ commit }) {
+      try {
+        const clubInfo = await api.getClubInfo();
+        console.log(clubInfo);
+        commit("SET_CLUB_INFO", clubInfo);
+      } catch (err) {
+        throw new Error("Error loading club info");
+      }
+    },
     async loadAppResources({ dispatch, getters }) {
-      //List of actions to run for authorized users
-      const authActions = ["courtstore/loadCourts", "loadClubConfig"];
+      const baseActions = [];
 
-      const selectedActions =
-        getters["userstore/isAuthenticated"] === true ? authActions : [];
+      //List of actions to run for authorized users
+      const authActions = ["courtstore/loadCourts", "loadClubSchedule"];
+
+      const actions =
+        getters["userstore/isAuthenticated"] === true
+          ? baseActions.concat(authActions)
+          : baseActions;
+
+      console.log(actions);
 
       dispatch("clearAppResources");
 
       //Load app resources if needed
-      if (selectedActions.length !== 0) {
+      if (actions.length !== 0) {
         try {
           //setup and run promises
-          await Promise.all(selectedActions.map((name) => dispatch(name)));
+          await Promise.all(actions.map((name) => dispatch(name)));
 
           dispatch("setDataLoaded", true);
         } catch (err) {

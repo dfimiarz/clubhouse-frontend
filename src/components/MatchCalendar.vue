@@ -122,7 +122,7 @@
                       :key="item.id"
                       :booking="item"
                       :is="getCalendarItemType(item.type)"
-                      :calendarStart="startHour"
+                      :calendarStart="calStartHour"
                     >
                     </component>
                   </transition-group>
@@ -131,8 +131,8 @@
               <timeindicator
                 :currtime="currtime"
                 v-if="timeIndicatorVisible"
-                :openMin="startMin"
-                :closeMin="endMin"
+                :openMin="calStartMin"
+                :closeMin="calEndMin"
               ></timeindicator>
             </div>
             <div
@@ -187,7 +187,6 @@ import {
 import MatchItem from "./calendar/MatchItem.vue";
 import TimeIndicator from "./TimeIndicator";
 import dbservice from "../services/db";
-import processAxiosError from "../utils/AxiosErrorHandler";
 import Pusher from "pusher-js";
 import EventItem from "./calendar/EventItem.vue";
 import LessonItem from "./calendar/LessonItem.vue";
@@ -290,8 +289,6 @@ export default {
         message: null,
       },
       tickCounter: 0,
-      default_open: 540,
-      default_close: 1020,
     };
   },
   methods: {
@@ -369,7 +366,7 @@ export default {
      */
     scrollCalendar: function () {
       //Get total lenght of the day
-      var day_len = (this.endHour - this.startHour) * 60;
+      var day_len = (this.calEndHour - this.calStartHour) * 60;
 
       //Do nothing if day is not "long enough"
       if (day_len < 1) {
@@ -407,15 +404,15 @@ export default {
 
       //Make sure that curr_min fits betwen start and end
       var adj_curr_min =
-        curr_min <= this.startMin
-          ? this.startMin
-          : curr_min >= this.endMin
-          ? this.endMin
+        curr_min <= this.calStartMin
+          ? this.calStartMin
+          : curr_min >= this.calEndMin
+          ? this.calEndMin
           : curr_min;
 
-      //Calculate scroll distance. Scrolling from startHour NOT startMin
+      //Calculate scroll distance. Scrolling from calStartHour NOT calStartMin
       var initScrollDistance = Math.ceil(
-        ((adj_curr_min - this.startHour * 60) / day_len) *
+        ((adj_curr_min - this.calStartHour * 60) / day_len) *
           this.$refs.tcontainer.scrollHeight
       );
 
@@ -550,6 +547,15 @@ export default {
     },
   },
   computed: {
+    /**
+     * Default can day start and end use when there is no court schedules
+     */
+    default_cal_start_min: function () {
+      return this.$store.state.default_cal_start_min;
+    },
+    default_cal_end_min: function () {
+      return this.$store.state.default_cal_end_min;
+    },
     dateISO: {
       get: function () {
         return this.$dayjs(this.date).tz().format("YYYY-MM-DD");
@@ -572,20 +578,20 @@ export default {
     displaymode: function () {
       return this.$store.getters["getSetting"]("displaymode");
     },
-    startHour: function () {
-      return Math.floor(this.startMin / 60);
+    calStartHour: function () {
+      return Math.floor(this.calStartMin / 60);
     },
-    endHour: function () {
-      return Math.ceil(this.endMin / 60);
+    calEndHour: function () {
+      return Math.ceil(this.calEndMin / 60);
     },
     courts: function () {
       return this.$store.getters["courtstore/getCourts"];
     },
     hourLabels: function () {
-      return this.civTimeLabels.slice(this.startHour, this.endHour);
+      return this.civTimeLabels.slice(this.calStartHour, this.calEndHour);
     },
     totalCellCount: function () {
-      return this.endHour - this.startHour;
+      return this.calEndHour - this.calStartHour;
     },
     cellHeight1H: function () {
       return this.$store.getters["calCellHeight1H"];
@@ -647,27 +653,27 @@ export default {
           )
         : [];
     },
-    startMin: function () {
-      //If no court_times available, return default_open
+    calStartMin: function () {
+      //If no court_times available, return default_cal_start_min
       if (this.club_schedule_items.length === 0) {
-        return this.default_open;
+        return this.default_cal_start_min;
       }
 
       //else find the earliest time
       return this.club_schedule_items.reduce(
         (prev, curr) => (curr.open_min <= prev ? curr.open_min : prev),
-        this.default_close
+        this.default_cal_end_min
       );
     },
-    endMin: function () {
-      //Same logic as in startMin
+    calEndMin: function () {
+      //Same logic as in calStartMin
       if (this.club_schedule_items.length === 0) {
-        return this.default_close;
+        return this.default_cal_end_min;
       }
 
       return this.club_schedule_items.reduce(
         (prev, curr) => (curr.close_min >= prev ? curr.close_min : prev),
-        this.default_open
+        this.default_cal_start_min
       );
     },
     /**
@@ -689,19 +695,19 @@ export default {
           inactiveCourts.delete(timeframe.court);
         }
 
-        //Is last court different from current court
+        //Is last court different from current court?
         if (last_court !== timeframe.court) {
-          /*If last court not null and endHour > last_close_min,
+          /*If last court not null and calEndHour > last_close_min,
            *switching courts so add last inactive time frame for this court
            */
-          if (last_court !== null && this.endHour * 60 > last_close_min) {
+          if (last_court !== null && this.calEndHour * 60 > last_close_min) {
             inactive_time_frames.push({
               court_id: last_court,
               start: last_close_min,
-              end: this.endHour * 60,
+              end: this.calEndHour * 60,
             });
           }
-          last_close_min = this.startHour * 60;
+          last_close_min = this.calStartHour * 60;
         }
 
         if (timeframe.open_min > last_close_min) {
@@ -717,13 +723,13 @@ export default {
       });
 
       /* Loop through all inactive courts and add inactive time frames
-       * between startHour and endHour
+       * between calStartHour and calEndHour
        */
       inactiveCourts.forEach((val) => {
         inactive_time_frames.push({
           court: val,
-          start: this.startHour * 60,
-          end: this.endHour * 60,
+          start: this.calStartHour * 60,
+          end: this.calEndHour * 60,
         });
       });
 
