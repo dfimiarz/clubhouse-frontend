@@ -6,11 +6,7 @@
   >
     <div class="session_container fill-height d-flex flex-wrap">
       <slot :height="height">
-        <v-row
-          class="fill-height"
-          no-gutters
-          :style="{ 'background-color': bgColor }"
-        >
+        <v-row class="fill-height" no-gutters>
           <v-col cols="12"> Item </v-col>
         </v-row>
       </slot>

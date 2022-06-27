@@ -126,6 +126,13 @@
                     >
                     </component>
                   </transition-group>
+                  <inactive-time-frame
+                    v-for="(item, index) in getClosedTimes(court.id)"
+                    :key="index"
+                    :calendarStart="calStartHour"
+                    :start="item.start"
+                    :end="item.end"
+                  />
                 </div>
               </div>
               <timeindicator
@@ -191,6 +198,7 @@ import Pusher from "pusher-js";
 import EventItem from "./calendar/EventItem.vue";
 import LessonItem from "./calendar/LessonItem.vue";
 import RetrySnackbar from "./RetrySnackBar.vue";
+import InactiveTimeFrame from "./calendar/InactiveTimeFrame.vue";
 
 var pusher = null;
 var channel = null;
@@ -211,6 +219,7 @@ export default {
     "lesson-item": LessonItem,
     timeindicator: TimeIndicator,
     "retry-snackbar": RetrySnackbar,
+    "inactive-time-frame": InactiveTimeFrame,
   },
   name: "MatchCalendar",
   data: function () {
@@ -292,9 +301,9 @@ export default {
     };
   },
   methods: {
-    getBlockedTimes(court_id) {
-      return this.inactiveTimeFrames.filter(
-        (timeFrame) => (timeFrame.court_id = court_id)
+    getClosedTimes(court_id) {
+      return this.closed_time_frames.filter(
+        (timeFrame) => timeFrame.court_id == court_id
       );
     },
     showRetrySnackBar(message, color = "info") {
@@ -641,99 +650,42 @@ export default {
         this.$dayjs(this.date).tz().unix()
       );
     },
-    /**
-     * Items should be sorted by court and start time
-     */
-    club_schedule_items: function () {
+    closed_time_frames: function () {
       const dayNum = this.$dayjs(this.date).tz().day();
-      return !!this.club_schedule && !!this.club_schedule["items"]
-        ? this.club_schedule["items"].filter(
-            //Convert dayjs dayofweek to MySQL dayofweek
-            (item) => item.dayofweek === dayNum + 1
-          )
-        : [];
-    },
-    calStartMin: function () {
-      //If no court_times available, return default_cal_start_min
-      if (this.club_schedule_items.length === 0) {
-        return this.default_cal_start_min;
-      }
+      if (!!this.club_schedule && !!this.club_schedule["closed_time_frames"]) {
+        //Find closed time frames for a given day
+        const closedTimeFrames = this.club_schedule["closed_time_frames"].find(
+          (item) => item.dayofweek === dayNum + 1
+        );
 
-      //else find the earliest time
-      return this.club_schedule_items.reduce(
-        (prev, curr) => (curr.open_min <= prev ? curr.open_min : prev),
-        this.default_cal_end_min
-      );
+        return closedTimeFrames["time_frames"];
+      } else {
+        return [];
+      }
     },
     calEndMin: function () {
-      //Same logic as in calStartMin
-      if (this.club_schedule_items.length === 0) {
-        return this.default_cal_end_min;
+      const dayNum = this.$dayjs(this.date).tz().day();
+      if (!!this.club_schedule && !!this.club_schedule["calTimes"]) {
+        const item = this.club_schedule["calTimes"].find(
+          (item) => item.dayofweek === dayNum + 1
+        );
+
+        return item.calEndMin;
+      } else {
+        return null;
       }
-
-      return this.club_schedule_items.reduce(
-        (prev, curr) => (curr.close_min >= prev ? curr.close_min : prev),
-        this.default_cal_start_min
-      );
     },
-    /**
-     * Calculate unavailable time windows in the schedule
-     */
-    inactiveTimeFrames: function () {
-      //Add all courts to inactiveCourts
-      let inactiveCourts = new Set(this.courts.map((court) => court.id));
+    calStartMin: function () {
+      const dayNum = this.$dayjs(this.date).tz().day();
+      if (!!this.club_schedule && !!this.club_schedule["calTimes"]) {
+        const item = this.club_schedule["calTimes"].find(
+          (item) => item.dayofweek === dayNum + 1
+        );
 
-      //Initialize variables
-      let inactive_time_frames = [];
-      let last_close_min = null;
-      let last_court = null;
-
-      this.club_schedule_items.forEach((timeframe) => {
-        //Check if court is in the set of inactive courts
-        if (inactiveCourts.has(timeframe.court)) {
-          //If so remove court from inactive court set
-          inactiveCourts.delete(timeframe.court);
-        }
-
-        //Is last court different from current court?
-        if (last_court !== timeframe.court) {
-          /*If last court not null and calEndHour > last_close_min,
-           *switching courts so add last inactive time frame for this court
-           */
-          if (last_court !== null && this.calEndHour * 60 > last_close_min) {
-            inactive_time_frames.push({
-              court_id: last_court,
-              start: last_close_min,
-              end: this.calEndHour * 60,
-            });
-          }
-          last_close_min = this.calStartHour * 60;
-        }
-
-        if (timeframe.open_min > last_close_min) {
-          inactive_time_frames.push({
-            court_id: timeframe.court,
-            start: last_close_min,
-            end: timeframe.open_min,
-          });
-
-          last_close_min = timeframe.close_min;
-          last_court = timeframe.court;
-        }
-      });
-
-      /* Loop through all inactive courts and add inactive time frames
-       * between calStartHour and calEndHour
-       */
-      inactiveCourts.forEach((val) => {
-        inactive_time_frames.push({
-          court: val,
-          start: this.calStartHour * 60,
-          end: this.calEndHour * 60,
-        });
-      });
-
-      return inactive_time_frames;
+        return item.calStartMin;
+      } else {
+        return null;
+      }
     },
   },
   created: function () {
