@@ -666,6 +666,7 @@ export default {
     calEndMin: function () {
       const dayNum = this.$dayjs(this.date).tz().day();
       if (!!this.club_schedule && !!this.club_schedule["calTimes"]) {
+        //Find an item for a given day of week
         const item = this.club_schedule["calTimes"].find(
           (item) => item.dayofweek === dayNum + 1
         );
@@ -678,6 +679,7 @@ export default {
     calStartMin: function () {
       const dayNum = this.$dayjs(this.date).tz().day();
       if (!!this.club_schedule && !!this.club_schedule["calTimes"]) {
+        //Find an item for a given day of week
         const item = this.club_schedule["calTimes"].find(
           (item) => item.dayofweek === dayNum + 1
         );

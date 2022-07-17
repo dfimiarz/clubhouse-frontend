@@ -1,8 +1,7 @@
 <template>
   <calendar-item
-    :date="booking.date"
-    :start="booking.start"
-    :end="booking.end"
+    :start="booking.start_min"
+    :end="booking.end_min"
     :id="booking.id"
     :calendarStart="calendarStart"
     v-slot="{ height }"

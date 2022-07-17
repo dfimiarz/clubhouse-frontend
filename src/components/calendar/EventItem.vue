@@ -1,15 +1,20 @@
 <template>
   <calendar-item
-    :date="booking.date"
-    :start="booking.start"
-    :end="booking.end"
+    :start="booking.start_min"
+    :end="booking.end_min"
     :id="booking.id"
     :calendarStart="calendarStart"
     v-slot="{ height }"
     showDetails
   >
-    <v-row no-gutters class="fill-height lime lighten-4">
-      <v-col cols="12">
+    <v-row
+      no-gutters
+      :class="[
+        'fill-height',
+        booking.utility ? 'lime lighten-4' : 'lime lighten-4 no-utility-bg',
+      ]"
+    >
+      <v-col cols="auto">
         <div
           :class="[
             'mx-1',
@@ -63,4 +68,16 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped lang="scss">
+@import "~vuetify/src/styles/styles.sass";
+
+.no-utility-bg {
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 20px,
+    #{map-get($lime, "lighten-3")} 20px,
+    #{map-get($lime, "lighten-3")} 40px
+  );
+}
+</style>

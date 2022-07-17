@@ -62,7 +62,8 @@
                     </v-list-item-icon>
 
                     <v-list-item-content>
-                      <v-list-item-title v-html="sessioninfo.booking_type_desc">
+                      <v-list-item-title>
+                        {{ sessioninfo.booking_type_desc }}
                       </v-list-item-title>
                       <v-list-item-subtitle>Boooking Type</v-list-item-subtitle>
                     </v-list-item-content>

@@ -61,7 +61,7 @@ export default {
     return {
       cards: [
         {
-          title: "Daily Schedule",
+          title: "Club Schedule",
           text: "View full schedule",
           img: "players.jpg",
           img_small: "players_small.jpg",
@@ -72,7 +72,7 @@ export default {
           enabled: true,
         },
         {
-          title: "Book court",
+          title: "Booking",
           text: "Regular court booking",
           img: "tennisracquet.jpg",
           img_small: "tennisracquet_small.jpg",

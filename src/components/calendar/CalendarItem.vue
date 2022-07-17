@@ -1,34 +1,42 @@
 <template>
-  <div
-    class="sessioncell"
-    :style="{ top: +vpos + 'px', height: height + 'px' }"
-    @click="showBookingDetails"
+  <base-item
+    :start="start"
+    :end="end"
+    :calendarStart="calendarStart"
+    v-slot="{ height }"
   >
-    <div class="session_container fill-height d-flex flex-wrap">
-      <slot :height="height">
-        <v-row class="fill-height" no-gutters>
-          <v-col cols="12"> Item </v-col>
-        </v-row>
-      </slot>
-    </div>
-  </div>
+    <v-row
+      no-gutters
+      justify="center"
+      align="center"
+      class="fill-heigth session_container"
+      @click="showBookingDetails"
+    >
+      <v-col cols="12" class="fill-height">
+        <slot :height="height">
+          <v-row class="fill-height" no-gutters>
+            <v-col cols="12"> Calendar Item </v-col>
+          </v-row>
+        </slot>
+      </v-col>
+    </v-row>
+  </base-item>
 </template>
 
 <script>
 const MIN_SESSION_HEIGHT = 26;
 
+import BaseItem from "./BaseItem.vue";
+
 export default {
+  components: { BaseItem },
   props: {
-    date: {
-      type: String,
-      required: true,
-    },
     start: {
-      type: String,
+      type: Number,
       required: true,
     },
     end: {
-      type: String,
+      type: Number,
       required: true,
     },
     id: {
@@ -58,40 +66,11 @@ export default {
       }
     },
   },
-  computed: {
-    height: function () {
-      const _height = (this.cellHeight1H / 60) * this.duration;
-      return _height <= MIN_SESSION_HEIGHT ? MIN_SESSION_HEIGHT : _height;
-    },
-    vpos: function () {
-      return (this.cellHeight1H / 60) * (this.startMin - this.calendarStart);
-    },
-    cellHeight1H: function () {
-      return this.$store.getters["calCellHeight1H"];
-    },
-    duration: function () {
-      return this.endMin - this.startMin;
-    },
-    startMin: function () {
-      let s_dt = new Date(this.date.concat("T", this.start));
-      return s_dt.getHours() * 60 + s_dt.getMinutes();
-    },
-    endMin: function () {
-      let e_dt = new Date(this.date.concat("T", this.end));
-      return e_dt.getHours() * 60 + e_dt.getMinutes();
-    },
-  },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.sessioncell {
-  position: absolute;
-  width: 100%;
-  box-sizing: border-box;
-}
-
 .session_container {
   overflow: hidden;
   border-radius: 3px;

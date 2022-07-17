@@ -6,7 +6,7 @@
       align="center"
       class="fill-heigth empty-time-frame"
     >
-      <v-col cols="12" class="text-body-1 text-center">Closed</v-col>
+      <v-col cols="12" class="text-body-1 text-center">CLOSED</v-col>
     </v-row>
   </base-item>
 </template>
@@ -36,14 +36,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "~vuetify/src/styles/styles.sass";
 .empty-time-frame {
   background: repeating-linear-gradient(
     -45deg,
     transparent,
     transparent 20px,
-    gray 20px,
-    gray 40px
+    #{map-get($grey, "base")} 20px,
+    #{map-get($grey, "base")} 40px
   );
   border: 1px dotted white;
   border-radius: 5px;
