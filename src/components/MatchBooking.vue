@@ -127,7 +127,24 @@
                         </v-col>
                       </v-row>
                     </v-col>
-
+                    <v-col cols="12" md="6">
+                      <v-row no-gutters>
+                        <v-col>
+                          <v-select
+                            label="Court"
+                            :items="courts"
+                            item-value="id"
+                            item-text="name"
+                            required
+                            :rules="[rules.courtset]"
+                            v-model="court"
+                            :disabled="duration == 0"
+                            :loading="loading"
+                            :prepend-icon="icons.tennis"
+                          ></v-select>
+                        </v-col>
+                      </v-row>
+                    </v-col>
                     <v-col cols="12">
                       <v-row dense>
                         <v-col cols="12" md="6">
@@ -195,24 +212,6 @@
                               <b>{{ prefDuration }}</b> min!</span
                             >
                           </div>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-row no-gutters>
-                        <v-col>
-                          <v-select
-                            label="Court"
-                            :items="courts"
-                            item-value="id"
-                            item-text="name"
-                            required
-                            :rules="[rules.courtset]"
-                            v-model="court"
-                            :disabled="duration == 0"
-                            :loading="loading"
-                            :prepend-icon="icons.tennis"
-                          ></v-select>
                         </v-col>
                       </v-row>
                     </v-col>
