@@ -7,7 +7,7 @@
     v-slot="{ height }"
     show-details
   >
-    <v-row no-gutters class="fill-height purple lighten-4">
+    <v-row no-gutters class="fill-height brown darken-1 white--text">
       <v-col cols="12">
         <div
           :class="[

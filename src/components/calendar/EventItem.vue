@@ -11,7 +11,9 @@
       no-gutters
       :class="[
         'fill-height',
-        booking.utility ? 'lime lighten-4' : 'lime lighten-4 no-utility-bg',
+        booking.utility
+          ? 'blue-grey darken-1 white--text'
+          : 'blue-grey darken-1 white--text no-utility-bg',
       ]"
     >
       <v-col cols="auto">
@@ -76,8 +78,8 @@ export default {
     -45deg,
     transparent,
     transparent 20px,
-    #{map-get($lime, "lighten-3")} 20px,
-    #{map-get($lime, "lighten-3")} 40px
+    #{map-get($blue-grey, "darken-3")} 20px,
+    #{map-get($blue-grey, "darken-3")} 40px
   );
 }
 </style>
