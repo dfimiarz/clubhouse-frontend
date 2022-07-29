@@ -240,7 +240,7 @@ async function checkConnection() {
 async function getClubSchedule() {
   let url = new URL(process.env.VUE_APP_BACKEND + "/club_schedule");
 
-  const result = await axios.get(url);
+  const result = await instance.get(url);
 
   return result.data;
 }
