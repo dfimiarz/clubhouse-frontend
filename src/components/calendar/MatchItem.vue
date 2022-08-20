@@ -7,7 +7,7 @@
     showDetails
     v-slot="{ height }"
   >
-    <v-row no-gutters class="green darken-2 white--text">
+    <v-row no-gutters class="fill-height green darken-2 white--text">
       <v-col cols="12">
         <template v-if="height > item_text_container_height">
           <div
