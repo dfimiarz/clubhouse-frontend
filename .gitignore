@@ -26,3 +26,6 @@ functions/firebase-debug.log
 functions/firestore-debug.log
 run_*.bat
 firebase-debug.log
+
+/ssl/*.crt
+/ssl/*.key

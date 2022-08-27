@@ -25,8 +25,14 @@ const EventBooking = () =>
   import(/* webpackChunkName: "manage" */ "@/components/EventBooking");
 const Settings = () =>
   import(/* webpackChunkName: "settings" */ "@/components/Settings");
-const Reports = () =>
-  import(/* webpackChunkName: "reports" */ "@/components/Reports");
+const CourtReports = () =>
+  import(/* webpackChunkName: "reports" */ "@/components/reports/CourtReports");
+const PlayerReports = () =>
+  import(
+    /* webpackChunkName: "reports" */ "@/components/reports/PlayerReports"
+  );
+const AdminHome = () =>
+  import(/* webpackChunkName: "admin" */ "@/components/AdminHome");
 
 import LoadingScreen from "@/components/LoadingScreen";
 import { Role } from "../constants/constants";
@@ -40,9 +46,27 @@ const routes = [
     component: Home,
   },
   {
-    path: "/reports",
-    name: "ClubReports",
-    component: Reports,
+    path: "/admin",
+    name: "admin",
+    component: AdminHome,
+    meta: {
+      authReq: true,
+      allowedRoles: [Role.MANAGER, Role.SUPERUSER],
+    },
+  },
+  {
+    path: "/admin/reports/courts",
+    name: "CourtReports",
+    component: CourtReports,
+    meta: {
+      authReq: true,
+      allowedRoles: [Role.MANAGER, Role.SUPERUSER],
+    },
+  },
+  {
+    path: "/admin/reports/players",
+    name: "PlayerReports",
+    component: PlayerReports,
     meta: {
       authReq: true,
       allowedRoles: [Role.MANAGER, Role.SUPERUSER],
@@ -127,7 +151,7 @@ const routes = [
     },
   },
   {
-    path: "/manage/eventbooking",
+    path: "/admin/manage/eventbooking",
     name: "EventBooking",
     component: EventBooking,
     meta: {

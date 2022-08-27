@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
 
 // firebase init - add your own config here
 const firebaseConfig = {
@@ -15,6 +15,12 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 
 const auth = getAuth(firebaseApp);
+
+console.log(process.env.VUE_APP_AUTH_EMULATOR_URL);
+
+if (process.env.VUE_APP_AUTH_EMULATOR_URL) {
+  connectAuthEmulator(auth, process.env.VUE_APP_AUTH_EMULATOR_URL);
+}
 
 // export utils/refs
 export default auth;

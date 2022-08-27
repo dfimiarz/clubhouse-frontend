@@ -13,7 +13,7 @@
             <v-container class="fill-height" fluid>
               <v-row no-gutters class="fill-height">
                 <v-col cols="12" align-self="end">
-                  <span class="text-h5">Special Booking</span>
+                  <span class="text-h5">Club Event Booking</span>
                 </v-col>
               </v-row>
             </v-container>

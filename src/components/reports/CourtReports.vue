@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="fill-height" v-resize="onResize">
     <v-row justify="center" align="center" class="fill-height">
-      <v-col cols="12" md="10" lg="8">
+      <v-col cols="12" md="10">
         <v-container fluid>
           <v-row justify="start" align="center">
             <v-col cols="12" sm="6" lg="4">
@@ -12,7 +12,9 @@
                     <v-card-title class="text-body-1 text-sm-subtitle-1"
                       >Club Utilization</v-card-title
                     >
-                    <v-card-text class="text-h6 text-lg-h4 text-center">
+                    <v-card-text
+                      class="text-h6 text-md-h5 text-lg-h4 text-center"
+                    >
                       60%
                     </v-card-text>
                   </v-card>
@@ -189,7 +191,7 @@ import VChart, { THEME_KEY } from "vue-echarts";
 use([SVGRenderer, BarChart, TitleComponent, GridComponent]);
 
 export default {
-  name: "Reports-Page",
+  name: "CourtReports",
   components: { VChart },
   provide: {
     [THEME_KEY]: "dark",

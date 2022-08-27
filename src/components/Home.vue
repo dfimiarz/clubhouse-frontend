@@ -3,7 +3,7 @@
     <v-row justify="center" align="center" no-gutters="" class="fill-height">
       <v-col cols="12" md="10" lg="8">
         <v-container fluid>
-          <v-row justify="center" align="center" no-gutters="">
+          <v-row justify="start" align="start" no-gutters="">
             <v-col
               v-for="card in cards"
               :key="card.title"
@@ -35,7 +35,7 @@
                         <h3 class="text-h6 text-xl-h4">
                           {{ card.title }}
                         </h3>
-                        <div class="body-2">
+                        <div class="caption">
                           {{ card.text }}
                         </div>
                       </div>
@@ -84,35 +84,24 @@ export default {
         },
         {
           title: "Guests",
-          text: "Guest management",
+          text: "Club guests",
           img: "guests_btn_bg.jpg",
           img_small: "clubhouse_small.jpg",
           xs: 12,
           sm: 6,
-          md: 3,
+          md: 6,
           dest: "guestregistration",
           enabled: true,
         },
         {
-          title: "Manage",
-          text: "Club management",
+          title: "Administration",
+          text: "System Administration",
           img: "manager.jpg",
           img_small: "manager_small.jpg",
           xs: 12,
           sm: 6,
           md: 3,
-          dest: "EventBooking",
-          enabled: true,
-        },
-        {
-          title: "Reports",
-          text: "Club statistics",
-          img: "reports.jpg",
-          img_small: "reports_small.jpg",
-          xs: 12,
-          sm: 6,
-          md: 3,
-          dest: "ClubReports",
+          dest: "admin",
           enabled: true,
         },
         {
