@@ -182,7 +182,7 @@ const store = new Vuex.Store({
     async loadClubInfo({ commit }) {
       try {
         const clubInfo = await api.getClubInfo();
-        console.log(clubInfo);
+        //console.log(clubInfo);
         commit("SET_CLUB_INFO", clubInfo);
       } catch (err) {
         throw new Error("Error loading club info");
@@ -199,7 +199,7 @@ const store = new Vuex.Store({
           ? baseActions.concat(authActions)
           : baseActions;
 
-      console.log(actions);
+      //console.log(actions);
 
       dispatch("clearAppResources");
 

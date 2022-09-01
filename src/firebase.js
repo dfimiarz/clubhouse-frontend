@@ -16,7 +16,7 @@ const firebaseApp = initializeApp(firebaseConfig);
 
 const auth = getAuth(firebaseApp);
 
-console.log(process.env.VUE_APP_AUTH_EMULATOR_URL);
+//console.log(process.env.VUE_APP_AUTH_EMULATOR_URL);
 
 if (process.env.VUE_APP_AUTH_EMULATOR_URL) {
   connectAuthEmulator(auth, process.env.VUE_APP_AUTH_EMULATOR_URL);
