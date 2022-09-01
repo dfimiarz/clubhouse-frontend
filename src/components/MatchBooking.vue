@@ -65,7 +65,7 @@
       </v-card>
     </v-dialog>
     <v-row justify="center" align="center" class="fill-height" no-gutters>
-      <v-col cols="12" sm="8" md="6" lg="4" xl="3">
+      <v-col cols="12" sm="8" md="6" lg="4">
         <v-stepper v-model="step">
           <v-stepper-header>
             <v-stepper-step :complete="step > 1" step="1"
@@ -138,9 +138,9 @@
                             required
                             :rules="[rules.courtset]"
                             v-model="court"
-                            :disabled="duration == 0"
                             :loading="loading"
                             :prepend-icon="icons.tennis"
+                            @change="courtSelected"
                           ></v-select>
                         </v-col>
                       </v-row>
@@ -165,6 +165,7 @@
                                 required
                                 :rules="[rules.required]"
                                 :loading="loading"
+                                :disabled="!court"
                               ></v-text-field>
                             </template>
                             <v-time-picker
@@ -502,7 +503,6 @@ export default {
       step: 1,
       datedialog: false,
       stimedialog: false,
-      etimedialog: false,
       date: null,
       s_time: null,
       sel_duration: 0,
@@ -547,6 +547,9 @@ export default {
     };
   },
   methods: {
+    courtSelected: function () {
+      this.setMatchParams();
+    },
     getPlayers: function () {
       this.$store.dispatch("setLoading", true);
       this.$store
@@ -562,6 +565,7 @@ export default {
         });
     },
     formatTime: function (timestring) {
+      console.log(timestring);
       return !timestring ? "N/A" : this.$dayjs.tz(timestring).format("hh:mm A");
     },
     checkBookingOverlap: async function () {
@@ -589,6 +593,7 @@ export default {
         if (!this.validatePlayerInput()) {
           return;
         }
+
         this.setMatchParams();
       }
 
@@ -600,7 +605,17 @@ export default {
       this.step = newstep;
     },
     setMatchParams() {
+      /**
+       * Set to todays date
+       */
       this.date = this.$dayjs().tz().format("YYYY-MM-DD");
+
+      /**
+       * Do not set match parmeters if a court is not selected
+       */
+      if (!this.court) {
+        return;
+      }
 
       var time = this.$dayjs().tz().format("HH:mm");
       var current_minutes = utils.timeToMinutes(time);
@@ -613,15 +628,32 @@ export default {
 
       var final_start_minutes = hours * 60 + minutes_rounded + minutes_limit;
 
-      var open_minutes = utils.timeToMinutes(this.opentime);
-      var close_minutes = utils.timeToMinutes(this.closetime);
+      /**
+       * Find the next time frame that ends after final_start_minutes
+       */
+      const temp_time_frame = this.courtOpenTimeFrames.find(
+        (item) => item.close_min > final_start_minutes
+      );
+
+      /**
+       * Don't set values if there is no open time frame for current time
+       */
+      if (!temp_time_frame) {
+        return;
+      }
+
+      /**
+       * Set open and close minutes to values from the time frame
+       */
+      var open_minutes = temp_time_frame.open_min;
+      var close_minutes = temp_time_frame.close_min;
 
       if (final_start_minutes < open_minutes) {
-        //if start time is less than open, set it to open
-        this.s_time = this.opentime;
+        //If start time is less than open, set it to open
+        this.s_time = temp_time_frame.open_min;
       } else {
-        if (final_start_minutes <= close_minutes) {
-          //if stat time is between open and close, keep it
+        if (final_start_minutes < close_minutes) {
+          //If start time is between open and close, keep it
           this.s_time = utils.minToTime(final_start_minutes);
         }
       }
@@ -897,9 +929,9 @@ export default {
       return this.overlappingBooking === null ? false : true;
     },
     e_time: function () {
-      return utils.minToTime(
-        this.sel_duration + utils.timeToMinutes(this.s_time)
-      );
+      return !(this.sel_duration && this.s_time)
+        ? null
+        : utils.minToTime(this.sel_duration + utils.timeToMinutes(this.s_time));
     },
     clubtz: function () {
       return this.$store.state.clubtz;
@@ -998,7 +1030,7 @@ export default {
       return p_num > 2 ? "Doubles" : p_num > 1 ? "Singles" : "Individual";
     },
     computedDateFormatted() {
-      return this.formatDate(this.date);
+      return !this.date ? "N/A" : this.formatDate(this.date);
     },
     opentime() {
       return this.$store.state.opentime;
@@ -1023,6 +1055,35 @@ export default {
       return (
         utils.timeToMinutes(this.closetime) - utils.timeToMinutes(this.s_time)
       );
+    },
+    current_schedule: function () {
+      return this.$store.getters["getScheduleForDate"](
+        this.$dayjs(this.date).tz().unix()
+      );
+    },
+    open_time_frames: function () {
+      /**
+       * Return an empty array of time frame if current_schedule is not set
+       */
+      if (!this.current_schedule) {
+        return [];
+      }
+      /**
+       * Get open time frames for current date. dayjs returns values from 0 - 6
+       * so ajustment (+1) needs to be done to covert to day numbers returned from the db
+       */
+      const dayNum = this.$dayjs(this.date).tz().day();
+
+      return this.current_schedule["open_time_frames"].filter(
+        (item) => item.dayofweek === dayNum + 1
+      );
+    },
+    courtOpenTimeFrames: function () {
+      return !this.court
+        ? []
+        : this.open_time_frames
+            .filter((item) => item.court == this.court)
+            .sort((a, b) => a.open_min - b.open_min);
     },
   },
   created: function () {
