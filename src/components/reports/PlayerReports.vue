@@ -1,44 +1,31 @@
 <template>
   <v-container v-resize="onResize">
     <v-row justify="start" align="start">
-      <v-col cols="12">Player Reports </v-col>
-      <v-col cols="12" sm="6" lg="4">
-        <v-dialog
-          ref="dialog"
-          v-model="modal"
-          :return-value.sync="dates"
-          persistent
-          width="290px"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="dateRangeText"
-              label="Report date range"
-              :prepend-icon="calendarIcon"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              :append-outer-icon="arrowIcon"
-            ></v-text-field>
-          </template>
-          <v-date-picker v-model="dates" scrollable range>
-            <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="modal = false"> Cancel </v-btn>
-            <v-btn text color="primary" @click="$refs.dialog.save(dates)">
-              OK
-            </v-btn>
-          </v-date-picker>
-        </v-dialog>
+      <v-col cols="12" sm="6" lg="4" xl="3">
+        <date-range-selector
+          v-bind:dates.sync="dates"
+          :show.sync="dateseldialog"
+        ></date-range-selector>
       </v-col>
       <v-col cols="12">
-        <v-card height="300px" raised>
-          <v-chart :option="playersChartOptions" ref="playerchart"></v-chart>
+        <v-card raised>
+          <v-card-text>
+            <v-responsive height="300px">
+              <v-chart
+                :option="playersChartOptions"
+                ref="playerchart"
+              ></v-chart>
+            </v-responsive>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn text color="primary"> Export </v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
       <v-col cols="12" md="6">
         <v-card>
           <v-card-title>
-            Hosts and Guests
+            Guest Visitors
             <v-spacer></v-spacer>
             <v-text-field
               v-model="hostmembersearch"
@@ -53,9 +40,8 @@
               height="400"
               :headers="guest_players_headers"
               :items="guest_players_data"
-              item-key="session_id"
+              item-key="activataion_id"
               sort-by="guestname"
-              group-by="hostname"
               class="elevation-1"
               show-group-by
               hide-default-footer
@@ -66,9 +52,8 @@
             ></v-data-table>
           </v-card-text>
           <v-card-actions>
-            <v-btn text> Email Report </v-btn>
+            <v-btn text color="primary"> Export </v-btn>
             <v-spacer></v-spacer>
-            <v-btn text> Reload </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -89,8 +74,8 @@
             <v-data-table
               height="400"
               :headers="players_headers"
-              :items="players"
-              item-key="row_id"
+              :items="memberactivities"
+              item-key="participant_id"
               class="elevation-1"
               show-group-by
               hide-default-footer
@@ -103,9 +88,8 @@
             ></v-data-table>
           </v-card-text>
           <v-card-actions>
-            <v-btn text> Email Report </v-btn>
+            <v-btn text color="primary"> Export </v-btn>
             <v-spacer></v-spacer>
-            <v-btn text> Reload </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -114,8 +98,10 @@
 </template>
 
 <script>
+import apihandler from "./../../services/db";
+import DateRangeSelector from "./DateRangeSelector";
 import { use } from "echarts/core";
-import { SVGRenderer } from "echarts/renderers";
+import { CanvasRenderer } from "echarts/renderers";
 import { BarChart, LineChart } from "echarts/charts";
 import {
   TitleComponent,
@@ -125,10 +111,8 @@ import {
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
 
-import { mdiArrowRightThick, mdiCalendar } from "@mdi/js";
-
 use([
-  SVGRenderer,
+  CanvasRenderer,
   BarChart,
   TitleComponent,
   GridComponent,
@@ -139,15 +123,13 @@ use([
 
 export default {
   name: "PlayerReports",
-  components: { VChart },
+  components: { VChart, DateRangeSelector },
   provide: {
     [THEME_KEY]: "dark",
   },
   data: () => {
     return {
-      arrowIcon: mdiArrowRightThick,
-      calendarIcon: mdiCalendar,
-      modal: false,
+      dateseldialog: false,
       dates: [],
       hostmembersearch: "",
       matchsearch: "",
@@ -155,256 +137,86 @@ export default {
         {
           text: "Host",
           align: "start",
-          value: "hostname",
+          value: "host",
           width: 150,
         },
         {
           text: "Guest",
           align: "start",
-          value: "guestname",
+          value: "guest",
           width: 150,
         },
         {
           text: "Date Active",
           align: "start",
-          value: "dateplayed",
+          value: "active_date",
           width: 150,
         },
       ],
       guest_players_data: [
         {
-          session_id: 1,
-          hostid: 100,
-          hostname: "Laurent Mars",
-          guestname: "Daniel Fimiarz",
-          dateplayed: "2022-05-01",
-        },
-        {
-          session_id: 2,
-          hostid: 100,
-          hostname: "Laurent Mars",
-          guestname: "John Smith",
-          dateplayed: "2022-05-01",
-        },
-        {
-          session_id: 3,
-          hostid: 101,
-          hostname: "Myron Levine",
-          guestname: "John Smith",
-          dateplayed: "2022-05-03",
-        },
-        {
-          session_id: 4,
-          hostid: 100,
-          hostname: "Laurent Mars",
-          guestname: "Daniel Fimiarz",
-          dateplayed: "2022-06-01",
-        },
-        {
-          session_id: 5,
-          hostid: 100,
-          hostname: "Laurent Mars",
-          guestname: "Daniel Fimiarz",
-          dateplayed: "2022-07-01",
-        },
-        {
-          session_id: 6,
-          hostid: 102,
-          hostname: "Ray Habib",
-          guestname: "Elon Musk",
-          dateplayed: "2022-06-15",
-        },
-        {
-          session_id: 7,
-          hostid: 102,
-          hostname: "Ray Habib",
-          guestname: "Jack Dorsey",
-          dateplayed: "2022-06-15",
-        },
-        {
-          session_id: 8,
-          hostid: 102,
-          hostname: "Ray Habib",
-          guestname: "Bill Gates",
-          dateplayed: "2022-06-15",
-        },
-        {
-          session_id: 9,
-          hostid: 102,
-          hostname: "Ray Habib",
-          guestname: "Donald Trump",
-          dateplayed: "2022-06-15",
-        },
-        {
-          session_id: 10,
-          hostid: 102,
-          hostname: "Ray Habib",
-          guestname: "Donald Trump",
-          dateplayed: "2022-07-15",
-        },
-        {
-          session_id: 11,
-          hostid: 102,
-          hostname: "Ray Habib",
-          guestname: "Donald Trump",
-          dateplayed: "2022-08-15",
-        },
-        {
-          session_id: 12,
-          hostid: 102,
-          hostname: "Ray Habib",
-          guestname: "Donald Trump",
-          dateplayed: "2022-05-15",
+          // activation_id: 278,
+          // active_date: "2022-09-18",
+          // host: "Shelly Adasko",
+          // guest: "Daniel Fimiarz",
         },
       ],
       players_headers: [
         {
           text: "Match ID",
           align: "start",
-          value: "match_id",
+          value: "activity_id",
         },
         {
-          text: "name",
+          text: "Name",
           align: "start",
-          value: "name",
+          value: "player",
           width: 150,
         },
         {
-          text: "date",
+          text: "Member Type",
+          align: "start",
+          value: "person_type",
+          width: 150,
+        },
+        {
+          text: "Date",
           align: "start",
           value: "date",
           width: 150,
         },
         {
-          text: "time",
+          text: "Start",
           align: "start",
-          value: "time",
+          value: "start",
           groupable: false,
           sortable: false,
         },
         {
-          text: "duration",
+          text: "Duration",
           align: "start",
-          value: "duration",
+          value: "dur_min",
           groupable: false,
           sortable: false,
         },
         {
-          text: "type",
+          text: "Player type",
           align: "start",
-          value: "playertype",
+          value: "player_type",
           width: 150,
         },
       ],
-      players: [
-        {
-          row_id: "100_1",
-          match_id: 1,
-          name: "Laurent Mars",
-          date: "2022-06-01",
-          time: "13:00",
-          duration: 60,
-          playertype: "Non-Repeater",
-        },
-        {
-          row_id: "100_2",
-          match_id: 2,
-          name: "Laurent Mars",
-          date: "2022-06-01",
-          time: "15:00",
-          duration: 30,
-          playertype: "First-Repeater",
-        },
-        {
-          row_id: "100_3",
-          match_id: 3,
-          name: "Laurent Mars",
-          date: "2022-06-01",
-          time: "15:45",
-          duration: 30,
-          playertype: "Second-Repeater",
-        },
-        {
-          row_id: "101_1",
-          match_id: 1,
-          name: "Ray Habib",
-          date: "2022-06-01",
-          time: "13:00",
-          duration: 60,
-          playertype: "Non-Repeater",
-        },
-        {
-          row_id: "101_2",
-          match_id: 2,
-          name: "Ray Habib",
-          date: "2022-06-01",
-          time: "15:00",
-          duration: 30,
-          playertype: "First-Repeater",
-        },
-        {
-          row_id: "101_3",
-          match_id: 3,
-          name: "Ray Habib",
-          date: "2022-06-01",
-          time: "15:45",
-          duration: 30,
-          playertype: "Second-Repeater",
-        },
-        {
-          row_id: "101_4",
-          match_id: 4,
-          name: "Ray Habib",
-          date: "2022-06-02",
-          time: "13:00",
-          duration: 60,
-          playertype: "Non-Repeater",
-        },
-        {
-          row_id: "101_5",
-          match_id: 5,
-          name: "Ray Habib",
-          date: "2022-06-02",
-          time: "15:00",
-          duration: 30,
-          playertype: "First-Repeater",
-        },
-        {
-          row_id: "101_6",
-          match_id: 6,
-          name: "Ray Habib",
-          date: "2022-06-02",
-          time: "15:45",
-          duration: 30,
-          playertype: "Second-Repeater",
-        },
-        {
-          row_id: "102_4",
-          match_id: 4,
-          name: "Todd Snyder",
-          date: "2022-06-02",
-          time: "13:00",
-          duration: 60,
-          playertype: "Non-Repeater",
-        },
-        {
-          row_id: "102_5",
-          match_id: 5,
-          name: "Todd Snyder",
-          date: "2022-06-02",
-          time: "15:00",
-          duration: 30,
-          playertype: "First-Repeater",
-        },
-        {
-          row_id: "102_6",
-          match_id: 6,
-          name: "Todd Snyder",
-          date: "2022-06-02",
-          time: "15:45",
-          duration: 30,
-          playertype: "Second-Repeater",
-        },
+      memberactivities: [
+        // {
+        //   row_id: "100_1",
+        //   match_id: 1,
+        //   name: "Laurent Mars",
+        //   person_type: "Member",
+        //   date: "2022-06-01",
+        //   time: "13:00",
+        //   duration: 60,
+        //   playertype: "Non-Repeater",
+        // },
       ],
       playersChartOptions: {
         tooltip: {
@@ -426,22 +238,7 @@ export default {
               rotate: 30,
             },
             data: [
-              "08/12",
-              "08/13",
-              "08/14",
-              "08/15",
-              "08/16",
-              "08/17",
-              "08/18",
-              "08/19",
-              "08/20",
-              "08/21",
-              "08/22",
-              "08/23",
-              "08/24",
-              "08/25",
-              "08/26",
-              "08/27",
+              // "08/12",
             ],
           },
         ],
@@ -449,8 +246,6 @@ export default {
           {
             type: "value",
             name: "Min Played",
-            min: 0,
-            max: 200,
             position: "right",
             axisLabel: {
               formatter: "{value} min",
@@ -459,8 +254,6 @@ export default {
           {
             type: "value",
             name: "Player Count",
-            min: 0,
-            max: 25,
             position: "left",
             axisLabel: {
               formatter: "{value}",
@@ -469,53 +262,122 @@ export default {
         ],
         series: [
           {
-            data: [
-              50, 60, 100, 120, 30, 40, 120, 0, 50, 60, 100, 120, 30, 40, 120,
-              0,
-            ],
+            data: [], //[50,],
             type: "line",
             yAxisIndex: 0,
             name: "Minutes Played",
           },
           {
-            data: [3, 7, 7, 6, 5, 2, 5, 0, 3, 7, 7, 6, 5, 2, 5, 0],
+            data: [], //[3,],
             type: "bar",
             yAxisIndex: 1,
             name: "Player Count",
           },
         ],
-        renderer: "svg",
+        renderer: "canvas",
       },
     };
   },
   methods: {
     onResize: function () {
       this.$refs["playerchart"].resize();
-      // this.$refs["bar2"].resize();
-      // this.$refs["bar3"].resize();
+    },
+    loadData() {
+      this.$store.dispatch("setLoading", true);
+      Promise.all([
+        apihandler.runReport("playercounts", this.startdate, this.enddate),
+        apihandler.runReport("timeplayed", this.startdate, this.enddate),
+        apihandler.runReport("memberactivities", this.startdate, this.enddate),
+        apihandler.runReport("guestinfo", this.startdate, this.enddate),
+      ])
+        .then((responses) => {
+          this.playersChartOptions.xAxis[0].data = responses[0].data.result.map(
+            (d) => d.date
+          );
+          this.playersChartOptions.series[0].data =
+            responses[1].data.result.map((d) => d.value);
+          this.playersChartOptions.series[1].data =
+            responses[0].data.result.map((d) => d.value);
+          this.memberactivities = responses[2].data.result;
+          this.guest_players_data = responses[3].data.result;
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          this.$store.dispatch("setLoading", false);
+        });
     },
   },
   computed: {
-    dateRangeText() {
-      return !!this.dates ? this.dates.join(" ~ ") : null;
+    startdate() {
+      //if this.date is not an array, return null
+      if (!Array.isArray(this.dates)) {
+        return null;
+      }
+
+      //if this.dates has one element, return it
+      if (this.dates.length == 1) {
+        return this.dates[0];
+      }
+      //if this.dates has two elements, compare them and return the earliest
+      if (this.dates.length == 2) {
+        let d1 = new Date(this.dates[0] + "T00:00:00Z");
+        let d2 = new Date(this.dates[1] + "T00:00:00Z");
+        if (d1 < d2) {
+          return this.dates[0];
+        } else {
+          return this.dates[1];
+        }
+      }
+
+      //otherwise return null
+      return null;
+    },
+    enddate() {
+      //if this.date is not an array, return null
+      if (!Array.isArray(this.dates)) {
+        return null;
+      }
+
+      //if this.dates has one element, return it
+      if (this.dates.length == 1) {
+        return this.dates[0];
+      }
+      //if this.dates has two elements, compare them and return the earliest
+      if (this.dates.length == 2) {
+        let d1 = new Date(this.dates[0] + "T00:00:00Z");
+        let d2 = new Date(this.dates[1] + "T00:00:00Z");
+        if (d1 > d2) {
+          return this.dates[0];
+        } else {
+          return this.dates[1];
+        }
+      }
+
+      //otherwise return null
+      return null;
+    },
+  },
+  watch: {
+    dates: function () {
+      this.loadData();
     },
   },
   mounted() {
     /**
      * Load dates for past seven days
      */
-    this.dates.push(this.$dayjs().tz().subtract(7, "day").format("YYYY-MM-DD"));
+    this.dates.push(
+      this.$dayjs().tz().subtract(1, "month").format("YYYY-MM-DD")
+    );
     this.dates.push(this.$dayjs().tz().format("YYYY-MM-DD"));
+    this.$nextTick(() => {
+      this.loadData();
+    });
   },
-  destroyed() {
+  beforeDestroy() {
     this.$refs["playerchart"].dispose();
-    // this.$refs["bar2"].dispose();
-    // this.$refs["bar3"].dispose();
-  },
-  watch: {
-    dates: function (newval, oldval) {
-      console.log(newval, oldval);
-    },
   },
 };
 </script>

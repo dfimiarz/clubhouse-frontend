@@ -565,7 +565,6 @@ export default {
         });
     },
     formatTime: function (timestring) {
-      console.log(timestring);
       return !timestring ? "N/A" : this.$dayjs.tz(timestring).format("hh:mm A");
     },
     checkBookingOverlap: async function () {

@@ -253,6 +253,27 @@ async function getClubInfo() {
   return result.data;
 }
 
+async function runReport(name, from, to) {
+  let url = new URL(process.env.VUE_APP_BACKEND + `/reports/${name}`);
+
+  //If from is set but to is not, set to to from
+  if (from && !to) {
+    to = from;
+  } else if (!from && to) {
+    from = to;
+  }
+
+  //if from and to are set, add them to the url
+  if (from != null && to != null) {
+    url.searchParams.set("from", from);
+    url.searchParams.set("to", to);
+  }
+
+  const result = await instance.get(url);
+
+  return result;
+}
+
 export default {
   getBookings,
   newMatch: newMatch,
@@ -282,4 +303,5 @@ export default {
   checkConnection,
   getClubSchedule,
   getClubInfo,
+  runReport,
 };
