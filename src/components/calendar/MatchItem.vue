@@ -14,7 +14,7 @@
             class="text-body-1 text-lg-subtitle-1 px-1 d-flex align-content-center"
           >
             <div>MATCH</div>
-            <v-icon v-if="isBumpable" color="black">{{
+            <v-icon v-if="isBumpable" color="white">{{
               bBoxOutlineIcon
             }}</v-icon>
           </div>
@@ -27,13 +27,13 @@
               <span style="white-space: nowrap"
                 >{{ index + 1 }}.{{ formatName(player) }}</span
               >
-              <v-icon v-if="player.person_type === 2" small light>{{
+              <v-icon v-if="player.person_type === 2" small color="white">{{
                 gBoxOutlineIcon
               }}</v-icon>
-              <v-icon v-if="player.type === 2000" small light>{{
+              <v-icon v-if="player.type === 2000" small color="white">{{
                 circleHalfFullIcon
               }}</v-icon>
-              <v-icon v-if="player.type === 3000" small light>{{
+              <v-icon v-if="player.type === 3000" small color="white">{{
                 circleIcon
               }}</v-icon>
             </div>
@@ -42,7 +42,7 @@
         <template v-else>
           <div class="caption px-1 d-flex align-content-center flex-wrap">
             <div>MATCH</div>
-            <v-icon v-if="isBumpable" color="black" small>{{
+            <v-icon v-if="isBumpable" color="white" small>{{
               bBoxOutlineIcon
             }}</v-icon>
             <div class="mx-1">- {{ player_count }} player(s)</div>

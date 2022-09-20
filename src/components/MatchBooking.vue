@@ -106,7 +106,7 @@
                         </v-row>
                       </v-alert>
                     </v-col>
-                    <v-col cols="12" md="6">
+                    <v-col cols="12" md="8" xl="6">
                       <v-text-field
                         readonly
                         :value="playerDetails.length"
@@ -117,7 +117,7 @@
                     </v-col>
                     <v-col cols="12">
                       <v-row dense>
-                        <v-col cols="12" md="6">
+                        <v-col cols="12" md="8" xl="6">
                           <v-text-field
                             :value="computedDateFormatted"
                             label="Date"
@@ -127,7 +127,7 @@
                         </v-col>
                       </v-row>
                     </v-col>
-                    <v-col cols="12" md="6">
+                    <v-col cols="12" md="8" xl="6">
                       <v-row no-gutters>
                         <v-col>
                           <v-select
@@ -147,7 +147,7 @@
                     </v-col>
                     <v-col cols="12">
                       <v-row dense>
-                        <v-col cols="12" md="6">
+                        <v-col cols="12" md="8" xl="6">
                           <v-dialog
                             ref="stdialog"
                             v-model="stimedialog"
@@ -195,7 +195,7 @@
                     </v-col>
                     <v-col cols="12">
                       <v-row dense align="center" no-gutters>
-                        <v-col cols="12" md="6">
+                        <v-col cols="12" md="8" xl="6">
                           <duration-picker
                             v-model="sel_duration"
                             :start-time="s_time"
@@ -649,7 +649,7 @@ export default {
 
       if (final_start_minutes < open_minutes) {
         //If start time is less than open, set it to open
-        this.s_time = temp_time_frame.open_min;
+        this.s_time = util.minToTime(temp_time_frame.open_min);
       } else {
         if (final_start_minutes < close_minutes) {
           //If start time is between open and close, keep it
