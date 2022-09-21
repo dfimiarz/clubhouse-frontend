@@ -52,7 +52,9 @@
             ></v-data-table>
           </v-card-text>
           <v-card-actions>
-            <v-btn text color="primary"> Export </v-btn>
+            <v-btn text color="primary" @click="saveData('guest_players')">
+              Export
+            </v-btn>
             <v-spacer></v-spacer>
           </v-card-actions>
         </v-card>
@@ -88,7 +90,9 @@
             ></v-data-table>
           </v-card-text>
           <v-card-actions>
-            <v-btn text color="primary"> Export </v-btn>
+            <v-btn text color="primary" @click="saveData('member_activities')">
+              Export
+            </v-btn>
             <v-spacer></v-spacer>
           </v-card-actions>
         </v-card>
@@ -110,6 +114,9 @@ import {
   TooltipComponent,
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
+
+import papaparse from "papaparse";
+import { saveAs } from "file-saver";
 
 use([
   CanvasRenderer,
@@ -279,6 +286,39 @@ export default {
     };
   },
   methods: {
+    saveData: function (type) {
+      //A list of available save functions
+      const SAVE_FUNCTIONS = {
+        guest_players: {
+          filename: "guest_players",
+          data: this.guest_players_data,
+        },
+        member_activities: {
+          filename: "member_activities",
+          data: this.memberactivities,
+        },
+      };
+
+      //Check if type is set and it is a valid save function
+      if (
+        type &&
+        SAVE_FUNCTIONS.hasOwnProperty(type) &&
+        SAVE_FUNCTIONS[type].data.length > 0
+      ) {
+        //If so, use that save function
+        this.saveDataToCSV(
+          SAVE_FUNCTIONS[type].filename,
+          SAVE_FUNCTIONS[type].data
+        );
+      }
+    },
+    saveDataToCSV: function (filename, data) {
+      let csv = papaparse.unparse(data);
+      let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      saveAs(blob, `${filename}-${this.startdate}-${this.enddate}.csv`, {
+        autoBom: true,
+      });
+    },
     onResize: function () {
       this.$refs["playerchart"].resize();
     },
