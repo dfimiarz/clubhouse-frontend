@@ -30,6 +30,13 @@
                     no-gutters
                     class="fill-height"
                   >
+                    <v-col
+                      cols="12"
+                      class="text-center"
+                      v-if="!canAccess(card.dest)"
+                    >
+                      <v-icon x-large>{{ lockIcon }}</v-icon>
+                    </v-col>
                     <v-col cols="12">
                       <div class="tile-text-container">
                         <h3 class="text-h6 text-xl-h4">
@@ -53,12 +60,14 @@
 
 <script>
 import { AccessChecker } from "./mixins/AccessCheckerMixin";
+import { mdiLock } from "@mdi/js";
 
 export default {
   mixins: [AccessChecker],
   name: "Home-Page",
   data: () => {
     return {
+      lockIcon: mdiLock,
       cards: [
         {
           title: "Club Schedule",
@@ -73,7 +82,7 @@ export default {
         },
         {
           title: "Booking",
-          text: "Regular court booking",
+          text: "Member bookings",
           img: "tennisracquet.jpg",
           img_small: "tennisracquet_small.jpg",
           xs: 12,
@@ -89,12 +98,23 @@ export default {
           img_small: "clubhouse_small.jpg",
           xs: 12,
           sm: 6,
-          md: 6,
+          md: 3,
           dest: "guestregistration",
           enabled: true,
         },
         {
-          title: "Administration",
+          title: "Events",
+          text: "Event booking",
+          img: "specialevent.jpg",
+          img_small: "specialevent_small.jpg",
+          xs: 12,
+          sm: 6,
+          md: 3,
+          dest: "EventBooking",
+          enabled: true,
+        },
+        {
+          title: "Management",
           text: "System Administration",
           img: "manager.jpg",
           img_small: "manager_small.jpg",

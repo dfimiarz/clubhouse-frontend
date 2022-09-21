@@ -22,8 +22,7 @@
                 <v-card
                   :to="{ name: card.dest }"
                   raised
-                  v-bind="{ disabled: !card.enabled }"
-                  :disabled="!canAccess(card.dest)"
+                  :disabled="!card.enabled || !canAccess(card.dest)"
                 >
                   <v-img
                     :src="require(`@/assets/${card.img}`)"
@@ -101,17 +100,7 @@ export default {
               sm: 6,
               md: 4,
               dest: "PlayerReports",
-              enabled: true,
-            },
-            {
-              title: "Events",
-              img: "specialevent.jpg",
-              img_small: "specialevent_small.jpg",
-              xs: 12,
-              sm: 6,
-              md: 4,
-              dest: "EventBooking",
-              enabled: true,
+              enabled: false,
             },
             {
               title: "Settings",
