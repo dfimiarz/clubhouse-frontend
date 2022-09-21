@@ -18,7 +18,9 @@
             </v-responsive>
           </v-card-text>
           <v-card-actions>
-            <v-btn text color="primary"> Export </v-btn>
+            <v-btn text color="primary" @click="saveData('player_stats')">
+              Export
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -225,6 +227,7 @@ export default {
         //   playertype: "Non-Repeater",
         // },
       ],
+      playerStats: [],
       playersChartOptions: {
         tooltip: {
           trigger: "axis",
@@ -269,13 +272,13 @@ export default {
         ],
         series: [
           {
-            data: [], //[50,],
+            data: [],
             type: "line",
             yAxisIndex: 0,
             name: "Minutes Played",
           },
           {
-            data: [], //[3,],
+            data: [],
             type: "bar",
             yAxisIndex: 1,
             name: "Player Count",
@@ -286,9 +289,9 @@ export default {
     };
   },
   methods: {
-    saveData: function (type) {
+    saveData: function (op_type) {
       //A list of available save functions
-      const SAVE_FUNCTIONS = {
+      const SUPPORTED_OPS = {
         guest_players: {
           filename: "guest_players",
           data: this.guest_players_data,
@@ -297,18 +300,22 @@ export default {
           filename: "member_activities",
           data: this.memberactivities,
         },
+        player_stats: {
+          filename: "player_stats",
+          data: this.playerStats,
+        },
       };
 
       //Check if type is set and it is a valid save function
       if (
-        type &&
-        SAVE_FUNCTIONS.hasOwnProperty(type) &&
-        SAVE_FUNCTIONS[type].data.length > 0
+        op_type &&
+        SUPPORTED_OPS.hasOwnProperty(op_type) &&
+        SUPPORTED_OPS[op_type].data.length > 0
       ) {
         //If so, use that save function
         this.saveDataToCSV(
-          SAVE_FUNCTIONS[type].filename,
-          SAVE_FUNCTIONS[type].data
+          SUPPORTED_OPS[op_type].filename,
+          SUPPORTED_OPS[op_type].data
         );
       }
     },
@@ -325,8 +332,7 @@ export default {
     loadData() {
       this.$store.dispatch("setLoading", true);
       Promise.all([
-        apihandler.runReport("playercounts", this.startdate, this.enddate),
-        apihandler.runReport("timeplayed", this.startdate, this.enddate),
+        apihandler.runReport("playerstats", this.startdate, this.enddate),
         apihandler.runReport("memberactivities", this.startdate, this.enddate),
         apihandler.runReport("guestinfo", this.startdate, this.enddate),
       ])
@@ -335,11 +341,14 @@ export default {
             (d) => d.date
           );
           this.playersChartOptions.series[0].data =
-            responses[1].data.result.map((d) => d.value);
+            responses[0].data.result.map((d) => d.time_played);
           this.playersChartOptions.series[1].data =
-            responses[0].data.result.map((d) => d.value);
-          this.memberactivities = responses[2].data.result;
-          this.guest_players_data = responses[3].data.result;
+            responses[0].data.result.map((d) => d.player_count);
+
+          this.playerStats = responses[0].data.result;
+
+          this.memberactivities = responses[1].data.result;
+          this.guest_players_data = responses[2].data.result;
         })
         .catch((error) => {
           console.log(error);
