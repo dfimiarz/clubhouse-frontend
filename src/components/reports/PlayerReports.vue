@@ -51,6 +51,7 @@
               mobile-breakpoint="0"
               fixed-header
               :search="hostmembersearch"
+              dense
             ></v-data-table>
           </v-card-text>
           <v-card-actions>
@@ -186,13 +187,17 @@ export default {
           text: "Member Type",
           align: "start",
           value: "person_type",
-          width: 150,
         },
         {
           text: "Date",
           align: "start",
           value: "date",
           width: 150,
+        },
+        {
+          text: "Court",
+          align: "start",
+          value: "court",
         },
         {
           text: "Start",
@@ -337,14 +342,6 @@ export default {
         apihandler.runReport("guestinfo", this.startdate, this.enddate),
       ])
         .then((responses) => {
-          this.playersChartOptions.xAxis[0].data = responses[0].data.result.map(
-            (d) => d.date
-          );
-          this.playersChartOptions.series[0].data =
-            responses[0].data.result.map((d) => d.time_played);
-          this.playersChartOptions.series[1].data =
-            responses[0].data.result.map((d) => d.player_count);
-
           this.playerStats = responses[0].data.result;
 
           this.memberactivities = responses[1].data.result;
@@ -411,6 +408,20 @@ export default {
   watch: {
     dates: function () {
       this.loadData();
+    },
+    playerStats: function (newval) {
+      //return if newval is not array
+      if (!Array.isArray(newval)) {
+        return;
+      }
+
+      this.playersChartOptions.xAxis[0].data = newval.map((d) => d.date);
+      this.playersChartOptions.series[0].data = newval.map(
+        (d) => d.time_played
+      );
+      this.playersChartOptions.series[1].data = newval.map(
+        (d) => d.player_count
+      );
     },
   },
   mounted() {
