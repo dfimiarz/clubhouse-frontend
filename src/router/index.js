@@ -31,6 +31,11 @@ const PlayerReports = () =>
   import(
     /* webpackChunkName: "reports" */ "@/components/reports/PlayerReports"
   );
+const OccupancyMatrix = () =>
+  import(
+    /* webpackChunkName: "reports" */ "@/components/reports/OccupancyMatrix"
+  );
+
 const AdminHome = () =>
   import(/* webpackChunkName: "admin" */ "@/components/AdminHome");
 
@@ -67,6 +72,15 @@ const routes = [
     path: "/admin/reports/players",
     name: "PlayerReports",
     component: PlayerReports,
+    meta: {
+      authReq: true,
+      allowedRoles: [Role.MANAGER, Role.SUPERUSER],
+    },
+  },
+  {
+    path: "/admin/reports/occupancy",
+    name: "OccupancyMatrix",
+    component: OccupancyMatrix,
     meta: {
       authReq: true,
       allowedRoles: [Role.MANAGER, Role.SUPERUSER],

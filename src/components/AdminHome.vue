@@ -87,6 +87,16 @@ export default {
               dest: "CourtReports",
               enabled: true,
             },
+            {
+              title: "Occupancy",
+              img: "tennisracquet.jpg",
+              img_small: "tennisracquet_small.jpg",
+              xs: 12,
+              sm: 6,
+              md: 4,
+              dest: "OccupancyMatrix",
+              enabled: true,
+            },
           ],
         },
         {
