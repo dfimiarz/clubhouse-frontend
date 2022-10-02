@@ -1,50 +1,102 @@
 <template>
   <v-container v-resize="onResize">
     <v-row justify="start" align="start" dense>
-      <v-col cols="8" sm="6" lg="4" xl="3">
-        <date-range-selector
-          v-bind:dates.sync="dates"
-          :show.sync="dateseldialog"
-        ></date-range-selector>
+      <v-col cols="12" ref="settings_row">
+        <v-row align="center" justify="space-between" no-gutters>
+          <v-col cols="10" sm="6" lg="3">
+            <date-range-selector
+              v-bind:dates.sync="dates"
+              :show.sync="dateseldialog"
+            ></date-range-selector>
+          </v-col>
+          <v-col cols="2" class="text-right">
+            <v-dialog v-model="optionsDialog" width="400" persistent>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind:icon="$vuetify.breakpoint.mobile"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>{{ cogIcon }}</v-icon>
+                  <span v-if="!$vuetify.breakpoint.mobile">Settings</span>
+                </v-btn>
+              </template>
+
+              <v-card>
+                <v-card-title> Options </v-card-title>
+
+                <v-card-text>
+                  <v-row>
+                    <v-col cols="12" sm="6">
+                      <v-select
+                        v-model="timeStepFactorIndex"
+                        :items="timeStepFactors"
+                        label="Time resolution"
+                        hide-details
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-select
+                        v-model="selectedTypes"
+                        :items="activityTypes"
+                        label="Activity types"
+                        hide-details
+                        multiple
+                        chips
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" text @click="optionsDialog = false">
+                    Close
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="12" ref="options_row">
+        <v-chip-group>
+          <v-chip small label>
+            Time resolution: {{ selTimeResolution }}
+          </v-chip>
+          <v-chip
+            v-for="(type, index) in selectedActivityTypes"
+            small
+            label
+            :key="index"
+          >
+            {{ type }} Activity
+          </v-chip>
+        </v-chip-group>
       </v-col>
       <v-col cols="12">
-        <!-- <v-card
-          raised
-          :min-height="
-            'calc(100vh - ' +
-            ($vuetify.application.top + $vuetify.application.footer) +
-            'px)'
-          "
-        >
-          <v-card-text> -->
         <v-responsive
-          :height="
-            'calc(100vh - ' +
-            ($vuetify.application.top + $vuetify.application.footer + 78 + 24) +
-            'px)'
-          "
+          :height="'calc(100vh - ' + gridContainerHeight + 'px)'"
           class="overflow-auto"
         >
           <div
-            style="
-              min-height: 500px;
-              min-width: 600px;
-              width: 100%;
-              height: 100%;
-            "
+            :style="{
+              'min-height': chartContainerHeight + 'px',
+              'min-width': '600px',
+              width: '100%',
+              height: '100%',
+            }"
           >
             <v-chart
+              autoresize
               :option="option"
               ref="matrix"
               :init-options="initoptions"
             ></v-chart>
           </div>
         </v-responsive>
-        <!-- </v-card-text>
-          <v-card-actions>
-            <v-btn text color="primary"> Export </v-btn>
-          </v-card-actions>
-        </v-card> -->
       </v-col>
     </v-row>
   </v-container>
@@ -54,8 +106,8 @@
 import apihandler from "../../services/db";
 import DateRangeSelector from "./DateRangeSelector";
 import { use } from "echarts/core";
-import { CanvasRenderer } from "echarts/renderers";
-//import { HeatmapChart } from "echarts/charts";
+import { SVGRenderer } from "echarts/renderers";
+
 import {
   TitleComponent,
   GridComponent,
@@ -68,8 +120,10 @@ import VChart, { THEME_KEY } from "vue-echarts";
 import papaparse from "papaparse";
 import { saveAs } from "file-saver";
 
+import { mdiCog } from "@mdi/js";
+
 use([
-  CanvasRenderer,
+  SVGRenderer,
   TitleComponent,
   GridComponent,
   LegendComponent,
@@ -77,34 +131,108 @@ use([
   VisualMapComponent,
 ]);
 
-const hours = [
-  "12a",
-  "1a",
-  "2a",
-  "3a",
-  "4a",
-  "5a",
-  "6a",
-  "7a",
-  "8a",
-  "9a",
-  "10a",
-  "11a",
-  "12p",
-  "1p",
-  "2p",
-  "3p",
-  "4p",
-  "5p",
-  "6p",
-  "7p",
-  "8p",
-  "9p",
-  "10p",
-  "11p",
-];
-
 const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+
+const step_factors = [1, 2, 4, 8];
+
+const hours = [
+  "12:00 AM",
+  "12:15 AM",
+  "12:30 AM",
+  "12:45 AM",
+  "1:00 AM",
+  "1:15 AM",
+  "1:30 AM",
+  "1:45 AM",
+  "2:00 AM",
+  "2:15 AM",
+  "2:30 AM",
+  "2:45 AM",
+  "3:00 AM",
+  "3:15 AM",
+  "3:30 AM",
+  "3:45 AM",
+  "4:00 AM",
+  "4:15 AM",
+  "4:30 AM",
+  "4:45 AM",
+  "5:00 AM",
+  "5:15 AM",
+  "5:30 AM",
+  "5:45 AM",
+  "6:00 AM",
+  "6:15 AM",
+  "6:30 AM",
+  "6:45 AM",
+  "7:00 AM",
+  "7:15 AM",
+  "7:30 AM",
+  "7:45 AM",
+  "8:00 AM",
+  "8:15 AM",
+  "8:30 AM",
+  "8:45 AM",
+  "9:00 AM",
+  "9:15 AM",
+  "9:30 AM",
+  "9:45 AM",
+  "10:00 AM",
+  "10:15 AM",
+  "10:30 AM",
+  "10:45 AM",
+  "11:00 AM",
+  "11:15 AM",
+  "11:30 AM",
+  "11:45 AM",
+  "12:00 PM",
+  "12:15 PM",
+  "12:30 PM",
+  "12:45 PM",
+  "1:00 PM",
+  "1:15 PM",
+  "1:30 PM",
+  "1:45 PM",
+  "2:00 PM",
+  "2:15 PM",
+  "2:30 PM",
+  "2:45 PM",
+  "3:00 PM",
+  "3:15 PM",
+  "3:30 PM",
+  "3:45 PM",
+  "4:00 PM",
+  "4:15 PM",
+  "4:30 PM",
+  "4:45 PM",
+  "5:00 PM",
+  "5:15 PM",
+  "5:30 PM",
+  "5:45 PM",
+  "6:00 PM",
+  "6:15 PM",
+  "6:30 PM",
+  "6:45 PM",
+  "7:00 PM",
+  "7:15 PM",
+  "7:30 PM",
+  "7:45 PM",
+  "8:00 PM",
+  "8:15 PM",
+  "8:30 PM",
+  "8:45 PM",
+  "9:00 PM",
+  "9:15 PM",
+  "9:30 PM",
+  "9:45 PM",
+  "10:00 PM",
+  "10:15 PM",
+  "10:30 PM",
+  "10:45 PM",
+  "11:00 PM",
+  "11:15 PM",
+  "11:30 PM",
+  "11:45 PM",
+];
 
 export default {
   name: "OccupancyMatrix",
@@ -114,7 +242,51 @@ export default {
   },
   data: () => {
     return {
+      activities: [
+        {
+          id: 1,
+          type_id: 1,
+          start_min: 0,
+          end_min: 60,
+          group_id: 1,
+          day_of_week: 1,
+        },
+        {
+          id: 2,
+          type_id: 1,
+          start_min: 60,
+          end_min: 120,
+          group_id: 1,
+          day_of_week: 1,
+        },
+        {
+          id: 3,
+          type_id: 1,
+          start_min: 120,
+          end_min: 180,
+          group_id: 1,
+          day_of_week: 1,
+        },
+      ],
+      gridContainerHeight: 0,
+      cogIcon: mdiCog,
       dateseldialog: false,
+      optionsDialog: false,
+      starthour: 6,
+      endhour: 20,
+      timeStepFactorIndex: 1,
+      timeStepFactors: [
+        { text: "15 min", value: 0 },
+        { text: "30 min", value: 1 },
+        { text: "1 hour", value: 2 },
+        { text: "2 hours", value: 3 },
+      ],
+      selectedTypes: [1, 2],
+      activityTypes: [
+        { text: "Member", value: 1 },
+        { text: "Club", value: 2 },
+        { text: "Support", value: 3 },
+      ],
       dates: [],
       initoptions: {
         renderer: "canvas",
@@ -141,7 +313,7 @@ export default {
         },
         yAxis: {
           type: "category",
-          data: hours,
+          data: [],
           splitArea: {
             show: true,
           },
@@ -156,9 +328,17 @@ export default {
         // },
         series: [
           {
-            name: "Punch Card",
+            name: "Occupancy",
             type: "heatmap",
-            data: [],
+            data: [
+              [0, 0, 34, 34],
+              [0, 1, 56],
+              [0, 2, 56],
+              [0, 3, 56],
+              [0, 4, 56],
+              [0, 5, 56],
+              [0, 6, 56],
+            ],
             // label: {
             //   show: true,
             // },
@@ -174,6 +354,14 @@ export default {
     };
   },
   methods: {
+    setGridContainerHeight() {
+      this.gridContainerHeight =
+        this.$refs.options_row.clientHeight +
+        this.$refs.settings_row.clientHeight +
+        this.$vuetify.application.top +
+        this.$vuetify.application.footer +
+        24;
+    },
     saveData: function (op_type) {
       //A list of available save functions
       const SUPPORTED_OPS = {
@@ -212,7 +400,10 @@ export default {
       });
     },
     onResize: function () {
-      this.$refs["matrix"].resize();
+      this.$nextTick(() => {
+        this.setGridContainerHeight();
+        this.$refs["matrix"].resize();
+      });
     },
     loadData() {
       //this.$store.dispatch("setLoading", true);
@@ -235,6 +426,38 @@ export default {
     },
   },
   computed: {
+    selTimeResolution() {
+      return this.timeStepFactors[this.timeStepFactorIndex]
+        ? this.timeStepFactors[this.timeStepFactorIndex].text
+        : "N/A";
+    },
+    selectedActivityTypes() {
+      if (this.selectedTypes.length > 0) {
+        return this.activityTypes
+          .filter((x) => this.selectedTypes.includes(x.value))
+          .map((x) => x.text);
+      } else {
+        return ["All"];
+      }
+    },
+    chartContainerHeight() {
+      const array_len = this.filtered_time_array.length;
+
+      return array_len * 30;
+    },
+    /**
+     * Returns the time array based on the start and end hour
+     * @returns {Array<string>} Array of time strings
+     */
+    time_array() {
+      return hours.slice(this.starthour * 4, this.endhour * 4);
+    },
+    filtered_time_array: function () {
+      //Pick every nth element from the timearray
+      return this.time_array.filter(
+        (item, index) => index % step_factors[this.timeStepFactorIndex] === 0
+      );
+    },
     startdate() {
       //if this.date is not an array, return null
       if (!Array.isArray(this.dates)) {
@@ -288,6 +511,13 @@ export default {
     dates: function () {
       this.loadData();
     },
+    timeStepFactorIndex: function () {
+      this.$refs["matrix"].setOption({
+        yAxis: {
+          data: this.filtered_time_array.slice(0).reverse(),
+        },
+      });
+    },
     // playerStats: function (newval) {
     //   //return if newval is not array
     //   if (!Array.isArray(newval)) {
@@ -311,11 +541,24 @@ export default {
       this.$dayjs().tz().subtract(1, "month").format("YYYY-MM-DD")
     );
     this.dates.push(this.$dayjs().tz().format("YYYY-MM-DD"));
+
+    /**
+     * Load data
+     */
     this.$nextTick(() => {
+      //Compute the height of the chart container
+      this.setGridContainerHeight();
+
+      this.$refs["matrix"].setOption({
+        yAxis: {
+          data: this.filtered_time_array.slice(0).reverse(),
+        },
+      });
       this.loadData();
     });
   },
   beforeDestroy() {
+    //console.log("destroyed");
     this.$refs["matrix"].dispose();
   },
 };
