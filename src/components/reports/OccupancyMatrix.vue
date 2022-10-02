@@ -106,7 +106,8 @@
 import apihandler from "../../services/db";
 import DateRangeSelector from "./DateRangeSelector";
 import { use } from "echarts/core";
-import { SVGRenderer } from "echarts/renderers";
+import { CanvasRenderer } from "echarts/renderers";
+import { HeatmapChart } from "echarts/charts";
 
 import {
   TitleComponent,
@@ -123,12 +124,13 @@ import { saveAs } from "file-saver";
 import { mdiCog } from "@mdi/js";
 
 use([
-  SVGRenderer,
+  CanvasRenderer,
   TitleComponent,
   GridComponent,
   LegendComponent,
   TooltipComponent,
   VisualMapComponent,
+  HeatmapChart,
 ]);
 
 const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -318,30 +320,28 @@ export default {
             show: true,
           },
         },
-        // visualMap: {
-        //   min: 0,
-        //   max: 10,
-        //   calculable: true,
-        //   orient: "horizontal",
-        //   left: "center",
-        //   top: "15%",
-        // },
+        visualMap: {
+          calculable: true,
+          orient: "horizontal",
+          left: "center",
+          top: "15%",
+        },
         series: [
           {
             name: "Occupancy",
             type: "heatmap",
             data: [
-              [0, 0, 34, 34],
-              [0, 1, 56],
-              [0, 2, 56],
-              [0, 3, 56],
+              [0, 0, 34],
+              [0, 1, 30],
+              [0, 2, 5],
+              [0, 3, 15],
               [0, 4, 56],
-              [0, 5, 56],
-              [0, 6, 56],
+              [0, 5, 24],
+              [0, 6, 10],
             ],
-            // label: {
-            //   show: true,
-            // },
+            label: {
+              show: true,
+            },
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
