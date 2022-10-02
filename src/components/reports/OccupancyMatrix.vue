@@ -248,6 +248,7 @@ export default {
         {
           id: 1,
           type_id: 1,
+          date: "2022-01-01",
           start_min: 0,
           end_min: 60,
           group_id: 1,
@@ -256,6 +257,7 @@ export default {
         {
           id: 2,
           type_id: 1,
+          date: "2022-02-01",
           start_min: 60,
           end_min: 120,
           group_id: 1,
@@ -264,9 +266,28 @@ export default {
         {
           id: 3,
           type_id: 1,
+          date: "2022-03-01",
           start_min: 120,
           end_min: 180,
           group_id: 1,
+          day_of_week: 1,
+        },
+        {
+          id: 4,
+          type_id: 1,
+          date: "2022-04-01",
+          start_min: 120,
+          end_min: 180,
+          group_id: 2,
+          day_of_week: 1,
+        },
+        {
+          id: 5,
+          type_id: 1,
+          date: "2022-05-01",
+          start_min: 120,
+          end_min: 180,
+          group_id: 3,
           day_of_week: 1,
         },
       ],
@@ -283,7 +304,9 @@ export default {
         { text: "1 hour", value: 2 },
         { text: "2 hours", value: 3 },
       ],
+      //Activity Types that are displayed in the matrix
       selectedTypes: [1, 2],
+      //All available activity types
       activityTypes: [
         { text: "Member", value: 1 },
         { text: "Club", value: 2 },
@@ -302,7 +325,7 @@ export default {
           position: "top",
         },
         grid: {
-          top: "20",
+          top: "100",
           bottom: "20",
         },
         xAxis: {
@@ -324,7 +347,7 @@ export default {
           calculable: true,
           orient: "horizontal",
           left: "center",
-          top: "15%",
+          top: "10",
         },
         series: [
           {
@@ -426,6 +449,11 @@ export default {
     },
   },
   computed: {
+    filteredActivities() {
+      return this.activities.filter((activity) => {
+        return this.selectedTypes.includes(activity.group_id);
+      });
+    },
     selTimeResolution() {
       return this.timeStepFactors[this.timeStepFactorIndex]
         ? this.timeStepFactors[this.timeStepFactorIndex].text
@@ -512,10 +540,33 @@ export default {
       this.loadData();
     },
     timeStepFactorIndex: function () {
+      //Create new array with size len(time_array)*7, filled with random values
+      const data_array = Array.from(
+        { length: this.filtered_time_array.length * 7 },
+        () => Math.floor(Math.random() * 100)
+      );
+
+      //create heatmap_array with the same size as the data_array
+      let heatmap_array = [];
+
+      for (let i = 0; i < 7; i++) {
+        for (let j = 0; j < this.filtered_time_array.length; j++) {
+          heatmap_array.push([i, j, data_array[i * 7 + j]]);
+        }
+      }
+
+      console.log(data_array);
+
       this.$refs["matrix"].setOption({
         yAxis: {
           data: this.filtered_time_array.slice(0).reverse(),
         },
+        series: [
+          {
+            name: "Occupancy",
+            data: heatmap_array,
+          },
+        ],
       });
     },
     // playerStats: function (newval) {
