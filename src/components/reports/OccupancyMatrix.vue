@@ -98,6 +98,21 @@
           </div>
         </v-responsive>
       </v-col>
+      <v-col cols="12" ref="actions_row" class="text-right">
+        <v-menu offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn v-bind="attrs" v-on="on"> Export </v-btn>
+          </template>
+          <v-list>
+            <v-list-item @click="saveAsCsv">
+              <v-list-item-title>CSV</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="saveAsImage">
+              <v-list-item-title>Image</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -236,7 +251,28 @@ const hours = [
   "11:45 PM",
 ];
 
+/**
+ * @param {int} end_min - end minute
+ * @param {int} timeframe_len_min - length of the time frame in minutes
+ *
+ * @returns {int} - number of time frame cell associated with the end minute
+ */
+const computeLastCell = function (end_min, timeframe_len_min) {
+  if (timeframe_len_min == 0) {
+    return 0;
+  }
+  //If end min falls on a timeframe boundary, we need to subtract one timeframe
+  const adj_end_min =
+    !!end_min && end_min % timeframe_len_min === 0
+      ? end_min - timeframe_len_min
+      : end_min;
+  return Math.floor(adj_end_min / timeframe_len_min);
+};
+
+import { notification } from "@/components/mixins/NotificationMixin";
+
 export default {
+  mixins: [notification],
   name: "OccupancyMatrix",
   components: { VChart, DateRangeSelector },
   provide: {
@@ -244,53 +280,7 @@ export default {
   },
   data: () => {
     return {
-      activities: [
-        {
-          id: 1,
-          type_id: 1,
-          date: "2022-01-01",
-          start_min: 0,
-          end_min: 60,
-          group_id: 1,
-          day_of_week: 1,
-        },
-        {
-          id: 2,
-          type_id: 1,
-          date: "2022-02-01",
-          start_min: 60,
-          end_min: 120,
-          group_id: 1,
-          day_of_week: 1,
-        },
-        {
-          id: 3,
-          type_id: 1,
-          date: "2022-03-01",
-          start_min: 120,
-          end_min: 180,
-          group_id: 1,
-          day_of_week: 1,
-        },
-        {
-          id: 4,
-          type_id: 1,
-          date: "2022-04-01",
-          start_min: 120,
-          end_min: 180,
-          group_id: 2,
-          day_of_week: 1,
-        },
-        {
-          id: 5,
-          type_id: 1,
-          date: "2022-05-01",
-          start_min: 120,
-          end_min: 180,
-          group_id: 3,
-          day_of_week: 1,
-        },
-      ],
+      activities: [],
       gridContainerHeight: 0,
       cogIcon: mdiCog,
       dateseldialog: false,
@@ -317,10 +307,13 @@ export default {
         renderer: "canvas",
       },
       option: {
-        // title: {
-        //   text: "Occupancy Matrix",
-        //   left: "left",
-        // },
+        title: {
+          id: "matrix_title",
+          top: 20,
+          left: "left",
+          text: "Occupancy Matrix",
+          subtext: "Dates:",
+        },
         tooltip: {
           position: "top",
         },
@@ -353,15 +346,7 @@ export default {
           {
             name: "Occupancy",
             type: "heatmap",
-            data: [
-              [0, 0, 34],
-              [0, 1, 30],
-              [0, 2, 5],
-              [0, 3, 15],
-              [0, 4, 56],
-              [0, 5, 24],
-              [0, 6, 10],
-            ],
+            data: [],
             label: {
               show: true,
             },
@@ -377,50 +362,101 @@ export default {
     };
   },
   methods: {
+    saveAsCsv() {
+      const fields = ["", ...days];
+      const data = [];
+
+      //Number of rows
+      const num_rows = this.filtered_time_array.length;
+
+      //Number of timeframes
+      const column_count = days.length;
+      //Array of numbers between 0 and row_count
+      const column_indices = Array.from(Array(column_count).keys());
+
+      //Loop through each row
+      this.filtered_time_array.forEach((time, index) => {
+        //Get row data from occupanyData array.
+        const row_data = column_indices.map((column_index) => {
+          return this.occupancyData[
+            //Reverse column indices to get data in correct order
+            column_index * num_rows + (num_rows - 1 - index)
+          ];
+        });
+        //Add each row to data array
+        data.push([time, ...row_data]);
+      });
+
+      this.saveDataToCSV("Occupany_Matrix", { fields: fields, data: data });
+    },
+    saveAsImage() {
+      const imagedata = this.$refs["matrix"].getDataURL({
+        pixelRatio: 1,
+        type: "jpg",
+      });
+
+      saveAs(
+        imagedata,
+        `occupancy-matrix-${this.formattedStartDate}-${this.formattedEndDate}.jpg`
+      );
+    },
+    updateHeatMapData() {
+      let heatmap_array = [];
+      for (let i = 0; i < 7; i++) {
+        for (let j = 0; j < this.filtered_time_array.length; j++) {
+          const index = i * this.filtered_time_array.length + j;
+          heatmap_array.push([
+            i,
+            j,
+            !this.occupancyData[index] ? "-" : this.occupancyData[index],
+          ]);
+        }
+      }
+
+      this.$refs["matrix"].setOption({
+        title: {
+          id: "matrix_title",
+          subtext: `Dates: ${this.formattedStartDate} to ${this.formattedEndDate}`,
+        },
+        yAxis: {
+          data: this.filtered_time_array.slice(0).reverse(),
+        },
+        series: [
+          {
+            name: "Occupancy",
+            data: heatmap_array,
+          },
+        ],
+      });
+    },
+    loadDefaultDates() {
+      /**
+       * Load dates for past seven days
+       */
+      this.dates.push(
+        this.$dayjs().tz().subtract(1, "month").format("YYYY-MM-DD")
+      );
+      this.dates.push(this.$dayjs().tz().format("YYYY-MM-DD"));
+    },
     setGridContainerHeight() {
       this.gridContainerHeight =
         this.$refs.options_row.clientHeight +
         this.$refs.settings_row.clientHeight +
+        this.$refs.actions_row.clientHeight +
         this.$vuetify.application.top +
         this.$vuetify.application.footer +
         24;
     },
-    saveData: function (op_type) {
-      //A list of available save functions
-      const SUPPORTED_OPS = {
-        guest_players: {
-          filename: "guest_players",
-          data: this.guest_players_data,
-        },
-        member_activities: {
-          filename: "member_activities",
-          data: this.memberactivities,
-        },
-        player_stats: {
-          filename: "player_stats",
-          data: this.playerStats,
-        },
-      };
-
-      //Check if type is set and it is a valid save function
-      if (
-        op_type &&
-        SUPPORTED_OPS.hasOwnProperty(op_type) &&
-        SUPPORTED_OPS[op_type].data.length > 0
-      ) {
-        //If so, use that save function
-        this.saveDataToCSV(
-          SUPPORTED_OPS[op_type].filename,
-          SUPPORTED_OPS[op_type].data
-        );
-      }
-    },
     saveDataToCSV: function (filename, data) {
       let csv = papaparse.unparse(data);
       let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      saveAs(blob, `${filename}-${this.startdate}-${this.enddate}.csv`, {
-        autoBom: true,
-      });
+      saveAs(
+        blob,
+        `${filename}-${this.formattedStartDate}-${this.formattedEndDate}.csv`,
+        {
+          autoBom: true,
+        }
+      );
     },
     onResize: function () {
       this.$nextTick(() => {
@@ -428,30 +464,27 @@ export default {
         this.$refs["matrix"].resize();
       });
     },
-    loadData() {
-      //this.$store.dispatch("setLoading", true);
-      // Promise.all([
-      //   apihandler.runReport("playerstats", this.startdate, this.enddate),
-      //   apihandler.runReport("memberactivities", this.startdate, this.enddate),
-      //   apihandler.runReport("guestinfo", this.startdate, this.enddate),
-      // ])
-      //   .then((responses) => {
-      //     this.playerStats = responses[0].data.result;
-      //     this.memberactivities = responses[1].data.result;
-      //     this.guest_players_data = responses[2].data.result;
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   })
-      //   .finally(() => {
-      //     this.$store.dispatch("setLoading", false);
-      //   });
+    loadActivities() {
+      this.$store.dispatch("setLoading", true);
+
+      apihandler
+        .getActivitiesForDates(this.startdate, this.enddate)
+        .then((data) => {
+          this.activities = data;
+          this.updateHeatMapData();
+        })
+        .catch((error) => {
+          this.showNotification(error.message, "error");
+        })
+        .finally(() => {
+          this.$store.dispatch("setLoading", false);
+        });
     },
   },
   computed: {
     filteredActivities() {
       return this.activities.filter((activity) => {
-        return this.selectedTypes.includes(activity.group_id);
+        return this.selectedTypes.includes(activity.group_type_id);
       });
     },
     selTimeResolution() {
@@ -534,65 +567,71 @@ export default {
       //otherwise return null
       return null;
     },
+    formattedStartDate() {
+      return this.$dayjs(this.startdate).tz().format("MM-DD-YY");
+    },
+    formattedEndDate() {
+      return this.$dayjs(this.enddate).tz().format("MM-DD-YY");
+    },
+    occupancyData() {
+      const timeframe_len_min = step_factors[this.timeStepFactorIndex] * 15;
+      if (timeframe_len_min == 0) {
+        return [];
+      }
+
+      const occupancy_counts = Array.from(
+        { length: 7 * this.filtered_time_array.length },
+        () => 0
+      );
+
+      //Compute the first calendar cell that is visible
+      const cal_start_cell = Math.floor(
+        (this.starthour * 60) / timeframe_len_min
+      );
+
+      //Comptue the last calendar cell that is visible
+      const cal_end_min = this.endhour * 60;
+      const cal_end_cell = computeLastCell(cal_end_min, timeframe_len_min);
+
+      this.filteredActivities.forEach((element) => {
+        const activity_start_cell = Math.floor(
+          element.start_min / timeframe_len_min
+        );
+
+        const activity_end_cell = computeLastCell(
+          element.end_min,
+          timeframe_len_min
+        );
+
+        for (let i = activity_start_cell; i <= activity_end_cell; i++) {
+          if (i >= cal_start_cell && i <= cal_end_cell) {
+            //local index. Flip each column of the array to get the correct order
+            const l_index =
+              (element.day_of_week - 1) * this.filtered_time_array.length +
+              (this.filtered_time_array.length - 1 - (i - cal_start_cell));
+            occupancy_counts[l_index] += 1;
+          }
+        }
+      });
+
+      return occupancy_counts;
+    },
   },
   watch: {
     dates: function () {
-      this.loadData();
+      this.loadActivities();
     },
     timeStepFactorIndex: function () {
-      //Create new array with size len(time_array)*7, filled with random values
-      const data_array = Array.from(
-        { length: this.filtered_time_array.length * 7 },
-        () => Math.floor(Math.random() * 100)
-      );
-
-      //create heatmap_array with the same size as the data_array
-      let heatmap_array = [];
-
-      for (let i = 0; i < 7; i++) {
-        for (let j = 0; j < this.filtered_time_array.length; j++) {
-          heatmap_array.push([i, j, data_array[i * 7 + j]]);
-        }
-      }
-
-      console.log(data_array);
-
-      this.$refs["matrix"].setOption({
-        yAxis: {
-          data: this.filtered_time_array.slice(0).reverse(),
-        },
-        series: [
-          {
-            name: "Occupancy",
-            data: heatmap_array,
-          },
-        ],
+      this.updateHeatMapData();
+      this.$nextTick(() => {
+        this.$refs["matrix"].resize();
       });
     },
-    // playerStats: function (newval) {
-    //   //return if newval is not array
-    //   if (!Array.isArray(newval)) {
-    //     return;
-    //   }
-
-    //   this.playersChartOptions.xAxis[0].data = newval.map((d) => d.date);
-    //   this.playersChartOptions.series[0].data = newval.map(
-    //     (d) => d.time_played
-    //   );
-    //   this.playersChartOptions.series[1].data = newval.map(
-    //     (d) => d.player_count
-    //   );
-    // },
+    selectedTypes: function () {
+      this.updateHeatMapData();
+    },
   },
   mounted() {
-    /**
-     * Load dates for past seven days
-     */
-    this.dates.push(
-      this.$dayjs().tz().subtract(1, "month").format("YYYY-MM-DD")
-    );
-    this.dates.push(this.$dayjs().tz().format("YYYY-MM-DD"));
-
     /**
      * Load data
      */
@@ -605,8 +644,10 @@ export default {
           data: this.filtered_time_array.slice(0).reverse(),
         },
       });
-      this.loadData();
     });
+  },
+  created() {
+    this.loadDefaultDates();
   },
   beforeDestroy() {
     //console.log("destroyed");
