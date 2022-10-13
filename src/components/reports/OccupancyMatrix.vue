@@ -78,16 +78,12 @@
       </v-col>
       <v-col cols="12">
         <v-responsive
-          :height="'calc(100vh - ' + gridContainerHeight + 'px)'"
+          :height="'calc(100vh - ' + nonGridElementsHeight + 'px)'"
           class="overflow-auto"
         >
           <div
-            :style="{
-              'min-height': chartContainerHeight + 'px',
-              'min-width': '600px',
-              width: '100%',
-              height: '100%',
-            }"
+            ref="grid_container"
+            :style="{ height: '100%', 'min-width': '600px', width: '100%' }"
           >
             <v-chart
               autoresize
@@ -281,7 +277,7 @@ export default {
   data: () => {
     return {
       activities: [],
-      gridContainerHeight: 0,
+      nonGridElementsHeight: 0,
       cogIcon: mdiCog,
       dateseldialog: false,
       optionsDialog: false,
@@ -362,6 +358,14 @@ export default {
     };
   },
   methods: {
+    resizeGrid() {
+      const container_height = this.$refs["grid_container"].clientHeight;
+
+      const newheight = this.filtered_time_array.length * 20 + 120;
+      this.$refs["matrix"].resize({
+        height: container_height > newheight ? container_height : newheight,
+      });
+    },
     saveAsCsv() {
       const fields = ["", ...days];
       const data = [];
@@ -438,8 +442,8 @@ export default {
       );
       this.dates.push(this.$dayjs().tz().format("YYYY-MM-DD"));
     },
-    setGridContainerHeight() {
-      this.gridContainerHeight =
+    setNonGridElementsHeight() {
+      this.nonGridElementsHeight =
         this.$refs.options_row.clientHeight +
         this.$refs.settings_row.clientHeight +
         this.$refs.actions_row.clientHeight +
@@ -460,8 +464,7 @@ export default {
     },
     onResize: function () {
       this.$nextTick(() => {
-        this.setGridContainerHeight();
-        this.$refs["matrix"].resize();
+        this.setNonGridElementsHeight();
       });
     },
     loadActivities() {
@@ -500,11 +503,6 @@ export default {
       } else {
         return ["All"];
       }
-    },
-    chartContainerHeight() {
-      const array_len = this.filtered_time_array.length;
-
-      return array_len * 30;
     },
     /**
      * Returns the time array based on the start and end hour
@@ -624,7 +622,7 @@ export default {
     timeStepFactorIndex: function () {
       this.updateHeatMapData();
       this.$nextTick(() => {
-        this.$refs["matrix"].resize();
+        this.resizeGrid();
       });
     },
     selectedTypes: function () {
@@ -637,13 +635,14 @@ export default {
      */
     this.$nextTick(() => {
       //Compute the height of the chart container
-      this.setGridContainerHeight();
+      this.setNonGridElementsHeight();
 
       this.$refs["matrix"].setOption({
         yAxis: {
           data: this.filtered_time_array.slice(0).reverse(),
         },
       });
+      this.resizeGrid();
     });
   },
   created() {
