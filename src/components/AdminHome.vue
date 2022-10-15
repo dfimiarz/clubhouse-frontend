@@ -100,7 +100,7 @@ export default {
           ],
         },
         {
-          name: "Managment",
+          name: "Management",
           cards: [
             {
               title: "Members",
