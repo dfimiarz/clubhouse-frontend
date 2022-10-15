@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="fill-height">
     <v-row justify="center">
-      <v-col cols="12" sm="10" md="6" lg="3" class="fill-height">
+      <v-col cols="12" sm="10" md="6" lg="4" xl="3" class="fill-height">
         <v-row
           v-if="loading"
           class="fill-height"
