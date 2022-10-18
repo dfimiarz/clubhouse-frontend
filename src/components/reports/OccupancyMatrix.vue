@@ -63,16 +63,15 @@
       </v-col>
       <v-col cols="12" ref="options_row">
         <v-chip-group>
-          <v-chip small label>
-            Time resolution: {{ selTimeResolution }}
-          </v-chip>
           <v-chip
-            v-for="(type, index) in selectedActivityTypes"
+            v-for="(type, index) in activityTypes"
             small
-            label
             :key="index"
+            :color="isChipSelected(type.value) ? 'primary' : 'secondary'"
+            @click="toggleChip(type.value)"
+            rounded
           >
-            {{ type }} Activity
+            {{ type.text }} Activity
           </v-chip>
         </v-chip-group>
       </v-col>
@@ -358,6 +357,16 @@ export default {
     };
   },
   methods: {
+    isChipSelected(type) {
+      return this.selectedTypes.includes(type);
+    },
+    toggleChip(type) {
+      if (this.isChipSelected(type)) {
+        this.selectedTypes = this.selectedTypes.filter((t) => t !== type);
+      } else {
+        this.selectedTypes.push(type);
+      }
+    },
     resizeGrid() {
       const container_height = this.$refs["grid_container"].clientHeight;
 
@@ -494,15 +503,6 @@ export default {
       return this.timeStepFactors[this.timeStepFactorIndex]
         ? this.timeStepFactors[this.timeStepFactorIndex].text
         : "N/A";
-    },
-    selectedActivityTypes() {
-      if (this.selectedTypes.length > 0) {
-        return this.activityTypes
-          .filter((x) => this.selectedTypes.includes(x.value))
-          .map((x) => x.text);
-      } else {
-        return ["All"];
-      }
     },
     /**
      * Returns the time array based on the start and end hour
