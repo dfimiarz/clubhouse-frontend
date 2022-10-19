@@ -89,8 +89,8 @@ export default {
             },
             {
               title: "Occupancy",
-              img: "tennisracquet.jpg",
-              img_small: "tennisracquet_small.jpg",
+              img: "occupancy.jpg",
+              img_small: "occupancy_small.jpg",
               xs: 12,
               sm: 6,
               md: 4,
