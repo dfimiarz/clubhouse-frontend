@@ -332,6 +332,7 @@ export default {
           },
         },
         visualMap: {
+          min: 0,
           calculable: true,
           orient: "horizontal",
           left: "center",
