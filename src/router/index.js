@@ -265,7 +265,10 @@ router.beforeEach((to, from, next) => {
 });
 
 router.onError((err) => {
-  console.log(err.message);
+  store.dispatch("notificationstore/addNotification", {
+    text: `Routing error: ${err.message}`,
+    type: "error",
+  });
 });
 
 export default router;

@@ -120,6 +120,7 @@ import VChart, { THEME_KEY } from "vue-echarts";
 
 import papaparse from "papaparse";
 import { saveAs } from "file-saver";
+import { notification } from "@/components/mixins/NotificationMixin";
 
 use([
   CanvasRenderer,
@@ -132,6 +133,7 @@ use([
 ]);
 
 export default {
+  mixins: [notification],
   name: "PlayerReports",
   components: { VChart, DateRangeSelector },
   provide: {
@@ -348,7 +350,10 @@ export default {
           this.guest_players_data = responses[2].data.result;
         })
         .catch((error) => {
-          console.log(error);
+          this.showNotification(
+            error.message || "Unable to load data",
+            "error"
+          );
         })
         .finally(() => {
           this.$store.dispatch("setLoading", false);
