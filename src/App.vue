@@ -84,8 +84,6 @@ export default {
       }
     },
     showMessage: function (text, type) {
-      console.log("showing message", text, type);
-
       this.sbmsg = text;
 
       switch (type) {
