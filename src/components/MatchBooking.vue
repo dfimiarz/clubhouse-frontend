@@ -554,9 +554,6 @@ export default {
       this.$store.dispatch("setLoading", true);
       this.$store
         .dispatch("memberstore/loadEligiblePersons")
-        .then((val) => {
-          console.log(val);
-        })
         .catch((err) => {
           this.showNotification(err, "error");
         })
