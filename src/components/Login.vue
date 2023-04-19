@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="fill-height">
     <v-row justify="center" align-sm="end">
-      <v-col cols="12" sm="6" md="4" xl="2">
+      <v-col cols="12" sm="6" md="3" xl="2">
         <v-card rounded="" raised>
           <v-card-subtitle>Log in</v-card-subtitle>
           <v-card-text>
