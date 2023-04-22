@@ -56,7 +56,7 @@ const routes = [
     component: AdminHome,
     meta: {
       authReq: true,
-      allowedRoles: [Role.MANAGER, Role.SUPERUSER],
+      allowedRoles: [Role.MANAGER, Role.ADMIN],
     },
   },
   {
@@ -65,7 +65,7 @@ const routes = [
     component: CourtReports,
     meta: {
       authReq: true,
-      allowedRoles: [Role.MANAGER, Role.SUPERUSER],
+      allowedRoles: [Role.MANAGER, Role.ADMIN],
     },
   },
   {
@@ -74,7 +74,7 @@ const routes = [
     component: PlayerReports,
     meta: {
       authReq: true,
-      allowedRoles: [Role.MANAGER, Role.SUPERUSER],
+      allowedRoles: [Role.MANAGER, Role.ADMIN],
     },
   },
   {
@@ -83,7 +83,7 @@ const routes = [
     component: OccupancyMatrix,
     meta: {
       authReq: true,
-      allowedRoles: [Role.MANAGER, Role.SUPERUSER],
+      allowedRoles: [Role.MANAGER, Role.ADMIN],
     },
   },
   {
@@ -170,7 +170,7 @@ const routes = [
     component: EventBooking,
     meta: {
       authReq: true,
-      allowedRoles: [Role.MANAGER, Role.SUPERUSER, Role.PRO],
+      allowedRoles: [Role.MANAGER, Role.ADMIN, Role.PRO],
     },
   },
   {
