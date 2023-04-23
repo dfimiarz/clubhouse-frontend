@@ -11,7 +11,7 @@
                   <span class="font-weight-bold info--text">single</span>
                   registration is required. Once in the system, a guest can be
                   activated for a particular day through the
-                  <span class="font-weight-bold">"ACTIVATE"</span> tab.
+                  <span class="font-weight-bold">"HOST"</span> tab.
                 </div>
                 <v-form ref="form" v-model="valid" lazy-validation>
                   <v-row no-gutters class="pt-4">

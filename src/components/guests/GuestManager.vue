@@ -28,10 +28,10 @@
               Register
             </v-tab>
             <v-tab :to="{ name: 'guestactivation' }" :disabled="loading" exact>
-              Activate
+              Host
             </v-tab>
             <v-tab :to="{ name: 'activeguests' }" :disabled="loading" exact>
-              List
+              View
             </v-tab>
           </v-tabs>
 
