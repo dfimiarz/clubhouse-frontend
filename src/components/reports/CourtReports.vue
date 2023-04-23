@@ -174,6 +174,56 @@
                 </v-col>
               </v-row>
             </v-col>
+            <v-col cols="12" sm="6" lg="4">
+              <v-card :to="{ name: 'OccupancyMatrix' }" raised>
+                <v-img
+                  :src="require(`@/assets/occupancy.jpg`)"
+                  :lazy-src="require(`@/assets/occupancy_small.jpg`)"
+                  min-height="100"
+                  max-height="325"
+                  aspect-ratio="1.5"
+                  :transition="false"
+                >
+                  <v-row
+                    justify="center"
+                    align="end"
+                    no-gutters
+                    class="fill-height"
+                  >
+                    <v-col cols="12">
+                      <div class="tile-text-container subtitle-1 pa-1">
+                        Sessions/Time Frame Analysis
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-img>
+              </v-card>
+            </v-col>
+            <v-col cols="12" sm="6" lg="4">
+              <v-card :to="{ name: 'OccupancyMatrix' }" raised>
+                <v-img
+                  :src="require(`@/assets/occupancy.jpg`)"
+                  :lazy-src="require(`@/assets/occupancy_small.jpg`)"
+                  min-height="100"
+                  max-height="325"
+                  aspect-ratio="1.5"
+                  :transition="false"
+                >
+                  <v-row
+                    justify="center"
+                    align="end"
+                    no-gutters
+                    class="fill-height"
+                  >
+                    <v-col cols="12">
+                      <div class="tile-text-container subtitle-1 pa-1">
+                        Court Occupancy/Time Frame
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-img>
+              </v-card>
+            </v-col>
           </v-row>
         </v-container>
       </v-col>
@@ -280,5 +330,13 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped>
+.tile-text-container {
+  background-color: rgba(76, 76, 76, 0.8);
+  padding: 5px;
+}
+
+/* .tile-title  {
+  text-shadow: 3px 3px #000000;  
+} */
+</style>
