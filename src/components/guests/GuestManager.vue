@@ -25,14 +25,14 @@
               :disabled="loading"
               exact
             >
-              Register
+              Pre-Register
             </v-tab>
             <v-tab :to="{ name: 'guestactivation' }" :disabled="loading" exact>
-              Host
+              Activte Guest Pass
             </v-tab>
-            <v-tab :to="{ name: 'activeguests' }" :disabled="loading" exact>
-              View
-            </v-tab>
+            <!-- <v-tab :to="{ name: 'activeguests' }" :disabled="loading" exact>
+              Show Guests
+            </v-tab> -->
           </v-tabs>
 
           <router-view :loading.sync="loading" />

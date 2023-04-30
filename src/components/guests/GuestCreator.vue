@@ -7,11 +7,22 @@
             <v-row no-gutters>
               <v-col cols="12">
                 <div class="text-caption py-2">
-                  Please use this form to register a guest visitor. Only
-                  <span class="font-weight-bold info--text">single</span>
-                  registration is required. Once in the system, a guest can be
-                  activated for a particular day through the
-                  <span class="font-weight-bold">"HOST"</span> tab.
+                  <div class="pt-1">
+                    Please use this form to pre-register a guest visitor. Only
+                    <span class="font-weight-bold warning--text">SINGLE</span>
+                    pre-registration is required per guest.
+                  </div>
+                  <div class="pt-1">
+                    Once pre-registered, a
+                    <span class="font-weight-bold warning--text">
+                      GUEST PASS
+                    </span>
+                    can be activated for a particular day through the
+                    <span class="font-weight-bold warning--text"
+                      >ACTIVATE GUEST PASS</span
+                    >
+                    tab.
+                  </div>
                 </div>
                 <v-form ref="form" v-model="valid" lazy-validation>
                   <v-row no-gutters class="pt-4">

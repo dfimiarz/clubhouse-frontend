@@ -285,7 +285,7 @@
                           <v-autocomplete
                             v-model="selplayers[index].id"
                             :label="getPlayerLabel(index)"
-                            :items="eligiblepersons"
+                            :items="formattedPersons"
                             item-text="name"
                             item-value="id"
                             :error-messages="selplayers[index].playerErrs"
@@ -544,22 +544,29 @@ export default {
         type: null,
         players: null,
       },
+      activePersons: [],
     };
   },
   methods: {
     courtSelected: function () {
       this.setMatchParams();
     },
-    getPlayers: function () {
+    getActivePersons: function () {
       this.$store.dispatch("setLoading", true);
-      this.$store
-        .dispatch("memberstore/loadEligiblePersons")
+      apihandler
+        .getActivePersons()
+        .then((result) => {
+          this.activePersons = result.data;
+        })
         .catch((err) => {
           this.showNotification(err, "error");
         })
         .finally(() => {
           this.$store.dispatch("setLoading", false);
         });
+    },
+    findActivePersonByID: function (id) {
+      return this.activePersons.find((p) => p.id == id);
     },
     formatTime: function (timestring) {
       return !timestring ? "N/A" : this.$dayjs.tz(timestring).format("hh:mm A");
@@ -715,9 +722,7 @@ export default {
           //Player is set
           if (player.id !== null) {
             //Check if a id is for a valid person
-            const person = this.$store.getters[
-              "memberstore/getEligiblePersonById"
-            ](player.id);
+            const person = this.findActivePersonByID(player.id);
 
             if (!person) {
               //Person not found, show error
@@ -982,8 +987,12 @@ export default {
       const court = this.$store.getters["courtstore/getCourtInfo"](this.court);
       return court.name;
     },
-    eligiblepersons: function () {
-      return this.$store.getters["memberstore/getEligiblePersons"];
+    formattedPersons: function () {
+      return this.activePersons.map((person) => {
+        const appendix = person.type_id === 2 ? " [G]" : "";
+        const nameformatted = `${person.firstname} ${person.lastname}${appendix}`;
+        return { ...person, name: nameformatted };
+      });
     },
     repeaterTypes: function () {
       return this.$store.getters["repeaterTypes"];
@@ -1000,9 +1009,8 @@ export default {
     },
     playerDetails: function () {
       return this.selplayers.reduce((accumulator, player) => {
-        const person = this.$store.getters["memberstore/getEligiblePersonById"](
-          player.id
-        );
+        const person = this.findActivePersonByID(player.id);
+
         const repeaterDetails = this.$store.getters["getRepeaterType"](
           player.repeater
         );
@@ -1083,7 +1091,8 @@ export default {
     },
   },
   created: function () {
-    this.getPlayers();
+    //this.getPlayers();
+    this.getActivePersons();
   },
   mounted: function () {
     if (Array.isArray(this.req_players)) {

@@ -125,6 +125,10 @@ async function getEligiblePersons() {
   return instance.get(process.env.VUE_APP_BACKEND + "/persons/eligible");
 }
 
+async function getActivePersons() {
+  return instance.get(process.env.VUE_APP_BACKEND + "/persons/active");
+}
+
 async function getInactiveGuests() {
   return instance.get(process.env.VUE_APP_BACKEND + "/persons/guests/inactive");
 }
@@ -308,6 +312,7 @@ export default {
   getGuests,
   addGuest,
   getEligiblePersons,
+  getActivePersons,
   getInactiveGuests,
   activateGuests,
   getCurrentGuestActivations,
