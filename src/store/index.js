@@ -1,7 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import usermodule from "./modules/user";
-import membermodule from "./modules/member";
 import bookingsmodule from "./modules/bookings";
 import courtmodule from "./modules/courts";
 import notificationmodule from "./modules/notifications";
@@ -14,7 +13,6 @@ let connCheckIntHandle = null;
 const store = new Vuex.Store({
   modules: {
     userstore: usermodule,
-    memberstore: membermodule,
     bookingsstore: bookingsmodule,
     courtstore: courtmodule,
     notificationstore: notificationmodule,
@@ -219,7 +217,6 @@ const store = new Vuex.Store({
       }
     },
     clearAppResources({ dispatch }) {
-      dispatch("memberstore/clearEligiblePersons");
       dispatch("courtstore/clearCourts");
     },
     loadPersistantSettings({ commit, state }) {
