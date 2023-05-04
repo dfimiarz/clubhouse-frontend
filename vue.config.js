@@ -6,4 +6,9 @@ module.exports = defineConfig({
   configureWebpack: {
     //plugins: [ new BundleAnalyzerPlugin() ]
   },
+  devServer: {
+    allowedHosts: ["localhost", "clubhouse.test", "www.clubhouse.test"],
+    host: "www.clubhouse.test",
+    port: 8080,
+  },
 });
