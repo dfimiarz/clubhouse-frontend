@@ -38,7 +38,6 @@
                         label="First Name"
                         :error-messages="errors.firstname"
                         :rules="nameRules"
-                        :disabled="!formenabled"
                       />
                     </v-col>
                   </v-row>
@@ -49,7 +48,6 @@
                         label="Last Name"
                         :error-messages="errors.lastname"
                         :rules="nameRules"
-                        :disabled="!formenabled"
                       />
                     </v-col>
                   </v-row>
@@ -60,7 +58,6 @@
                         label="E-mail"
                         :error-messages="errors.email"
                         :rules="emailRules"
-                        :disabled="!formenabled"
                       />
                     </v-col>
                   </v-row>
@@ -70,7 +67,6 @@
                         v-model="guest.phone"
                         :error-messages="errors.phone"
                         :rules="phoneRules"
-                        :disabled="!formenabled"
                         clearable
                       >
                         <template #label>
@@ -81,20 +77,25 @@
                   </v-row>
                   <v-row dense v-if="!authenticated">
                     <v-col cols="12" md="8">
-                      <knick-captcha
-                        :imgdata="imgdata"
-                        :error="errors.requestid"
-                        @reload:captcha="getCaptcha"
-                      />
+                      <vue-hcaptcha
+                        :sitekey="hcaptcha.sitekey"
+                        ref="hcaptcha"
+                        theme="dark"
+                        :size="hCaptchaSize"
+                        @verify="onVerify"
+                        @expired="onExpire"
+                        @challenge-expired="onExpire"
+                        @error="onError"
+                        @reset="onCaptchaReset"
+                        :key="hCaptchaSize"
+                      ></vue-hcaptcha>
                     </v-col>
-                    <v-col cols="12" md="8">
-                      <v-text-field
-                        v-model="captcha"
-                        :rules="captchaRules"
-                        label="Captcha Text"
-                        :error-messages="errors.captcha"
-                        :disabled="!formenabled"
-                      />
+                    <v-col
+                      cols="12"
+                      class="text-caption error--text"
+                      v-if="errors.hcaptcha"
+                    >
+                      {{ errors.hcaptcha }}
                     </v-col>
                   </v-row>
                   <v-row no-gutters class="pt-4">
@@ -106,34 +107,14 @@
                   <v-row no-gutters>
                     <v-col cols="12">
                       <v-checkbox
-                        v-model="vaccinated"
-                        :rules="checkBoxRules"
-                        :disabled="!formenabled"
-                        :error-messages="errors.vaccinated"
-                      >
-                        <template #label>
-                          <div class="caption">
-                            I affirm that I have seen proof of vaccination of my
-                            guest and take full responsibility for this
-                            verification.
-                          </div>
-                        </template>
-                        >
-                      </v-checkbox>
-                    </v-col>
-                  </v-row>
-                  <v-row no-gutters>
-                    <v-col cols="12">
-                      <v-checkbox
                         v-model="agreement"
                         :rules="checkBoxRules"
-                        :disabled="!formenabled"
                         :error-messages="errors.agreement"
                       >
                         <template #label>
                           <div class="caption">
-                            I have read, understood, and agreement to all club
-                            rules pertaining to guests visitors
+                            I have read, understood, and agree to all club rules
+                            pertaining to guests visitors
                           </div>
                         </template>
                         >
@@ -148,13 +129,7 @@
         <v-card-actions>
           <v-btn text @click="resetForm"> Reset </v-btn>
           <v-spacer />
-          <v-btn
-            large
-            color="primary"
-            :disabled="!formenabled"
-            :loading="loading"
-            @click="addGuest"
-          >
+          <v-btn large color="primary" :loading="loading" @click="addGuest">
             <v-icon left>
               {{ addAccountIcon }}
             </v-icon>
@@ -169,27 +144,33 @@
 <script>
 import dbservice from "../../services/db";
 import processAxiosError from "../../utils/AxiosErrorHandler";
-import KnickCaptcha from "../KnickCaptcha.vue";
+// import KnickCaptcha from "../KnickCaptcha.vue";
 import { mdiAccountPlus } from "@mdi/js";
 
 import { notification } from "@/components/mixins/NotificationMixin";
 
+import VueHcaptcha from "@hcaptcha/vue-hcaptcha";
+
 export default {
   mixins: [notification],
-  components: { KnickCaptcha },
+  components: { VueHcaptcha },
   props: {
     loading: Boolean,
   },
   name: "RegisterMember",
-  created: function () {
-    this.getCaptcha();
-  },
   data: function () {
     return {
+      //sitekey: "88536a36-951c-4582-8d61-d34f884c0f4a",
+      hcaptcha: {
+        sitekey: "7d3e5b48-1281-4596-9324-f0109952acaf",
+        verified: false,
+        expired: false,
+        token: null,
+        eKey: null,
+      },
       addAccountIcon: mdiAccountPlus,
       imgdata: null,
-      captcha: null,
-      requestid: null,
+      //requestid: null,
       initialized: false,
       valid: true,
       errors: {
@@ -198,10 +179,8 @@ export default {
         email: null,
         age: null,
         phone: null,
-        captcha: null,
-        requestid: null,
         agreement: null,
-        vaccinated: null,
+        hcaptcha: null,
       },
       guest: {
         firstname: null,
@@ -210,7 +189,6 @@ export default {
         phone: null,
       },
       agreement: false,
-      vaccinated: false,
       captchaRules: [(v) => !!v || "Field is required"],
       nameRules: [
         (v) => !!v || "Field is required",
@@ -244,42 +222,56 @@ export default {
     authenticated: function () {
       return this.$store.getters["userstore/isAuthenticated"];
     },
+    hCaptchaSize: function () {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+        case "sm":
+          return "compact";
+        default:
+          return "normal";
+      }
+    },
+  },
+  watch: {
+    hCaptchaSize: function (val) {
+      this.onCaptchaReset();
+    },
   },
   methods: {
-    getCaptcha() {
-      //Don't load captcha when authenticated
-      if (this.authenticated) {
-        return;
-      }
-
-      this.setLoading(true);
-      this.errors.requestid = null;
-      this.requestid = null;
-      this.imgdata = null;
-
-      dbservice
-        .getCaptcha()
-        .then((data) => {
-          this.imgdata = data.svg;
-          this.requestid = data.reqid;
-        })
-        .catch((err) => {
-          const error = processAxiosError(err);
-
-          if (Object.prototype.hasOwnProperty.call(error, "captchaerr")) {
-            this.handleCaptchaError(error.captchaerr);
-          } else {
-            this.errors.requestid = error;
-          }
-        })
-        .finally(() => {
-          this.setLoading(false);
-        });
+    onExpire() {
+      this.hcaptcha.verified = false;
+      this.hcaptcha.token = null;
+      this.hcaptcha.eKey = null;
+      this.hcaptcha.expired = true;
+      this.errors.hcaptcha = "hCaptcha challange expired";
+    },
+    onChallengeExpire() {
+      this.hcaptcha.verified = false;
+      this.hcaptcha.token = null;
+      this.hcaptcha.eKey = null;
+      this.errors.hcaptcha = "hCaptcha challange expired";
+    },
+    onError(err) {
+      this.hcaptcha.token = null;
+      this.hcaptcha.eKey = null;
+      this.errors.hcaptcha = err;
+    },
+    onVerify(token, ekey) {
+      this.hcaptcha.verified = true;
+      this.hcaptcha.token = token;
+      this.hcaptcha.eKey = ekey;
+      this.errors.hcaptcha = null;
+    },
+    onCaptchaReset() {
+      this.hcaptcha.verified = false;
+      this.hcaptcha.token = null;
+      this.hcaptcha.eKey = null;
+      this.errors.hcaptcha = null;
     },
     resetForm() {
       this.clearErrors();
       this.$refs.form.reset();
-      this.getCaptcha();
+      this.$refs.hcaptcha.reset();
     },
     clearErrors() {
       Object.keys(this.errors).forEach((elem) => {
@@ -301,6 +293,11 @@ export default {
     addGuest: function () {
       this.clearErrors();
 
+      if (!this.hcaptcha.verified) {
+        this.errors.hcaptcha = "Please complete hCaptcha";
+        return;
+      }
+
       if (!this.$refs.form.validate()) {
         return;
       }
@@ -309,10 +306,8 @@ export default {
 
       const guestdata = {
         ...this.guest,
-        captcha: this.captcha,
-        requestid: this.requestid,
+        hcaptcha: this.hcaptcha.token,
         agreement: this.agreement,
-        vaccinated: this.vaccinated,
       };
 
       dbservice
@@ -320,6 +315,7 @@ export default {
         .then(() => {
           this.showNotification("Guest added", "success");
           this.resetForm();
+          return true;
         })
         .catch((err) => {
           const error = processAxiosError(err);
