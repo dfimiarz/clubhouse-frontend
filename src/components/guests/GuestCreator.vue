@@ -76,7 +76,7 @@
                     </v-col>
                   </v-row>
                   <v-row dense v-if="!authenticated">
-                    <v-col cols="12" md="8">
+                    <v-col cols="12" lg="8">
                       <vue-hcaptcha
                         :sitekey="hcaptcha.sitekey"
                         ref="hcaptcha"
