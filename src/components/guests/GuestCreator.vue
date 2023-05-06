@@ -90,15 +90,19 @@
                         :key="hCaptchaSize"
                       ></vue-hcaptcha>
                     </v-col>
-                    <v-col
-                      cols="12"
-                      class="text-caption error--text"
-                      v-if="errors.hcaptcha"
-                    >
-                      {{ errors.hcaptcha }}
+                    <v-col cols="12" class="py-0">
+                      <div style="min-height: 14px">
+                        <div
+                          style="line-height: 12px"
+                          class="text-caption error--text"
+                          v-if="errors.hcaptcha"
+                        >
+                          {{ errors.hcaptcha }}
+                        </div>
+                      </div>
                     </v-col>
                   </v-row>
-                  <v-row no-gutters class="pt-4">
+                  <v-row dense>
                     <v-col cols="12" class="subtitle-2">
                       Terms and Conditions
                     </v-col>
