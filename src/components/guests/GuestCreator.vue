@@ -172,9 +172,6 @@ export default {
         eKey: null,
       },
       addAccountIcon: mdiAccountPlus,
-      imgdata: null,
-      //requestid: null,
-      initialized: false,
       valid: true,
       errors: {
         firstname: null,
