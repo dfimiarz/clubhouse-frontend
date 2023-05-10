@@ -164,9 +164,8 @@ export default {
   name: "RegisterMember",
   data: function () {
     return {
-      //sitekey: "88536a36-951c-4582-8d61-d34f884c0f4a",
       hcaptcha: {
-        sitekey: "7d3e5b48-1281-4596-9324-f0109952acaf",
+        sitekey: process.env.VUE_APP_HCAPTCHA_SITEKEY,
         verified: false,
         expired: false,
         token: null,
@@ -193,7 +192,6 @@ export default {
         phone: null,
       },
       agreement: false,
-      captchaRules: [(v) => !!v || "Field is required"],
       nameRules: [
         (v) => !!v || "Field is required",
         (v) => (v && v.length >= 2) || "Content must be more than 3 characters",
