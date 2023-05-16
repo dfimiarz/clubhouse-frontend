@@ -653,7 +653,7 @@ export default {
 
       if (final_start_minutes < open_minutes) {
         //If start time is less than open, set it to open
-        this.s_time = util.minToTime(temp_time_frame.open_min);
+        this.s_time = utils.minToTime(temp_time_frame.open_min);
       } else {
         if (final_start_minutes < close_minutes) {
           //If start time is between open and close, keep it
