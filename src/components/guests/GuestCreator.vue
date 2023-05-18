@@ -329,6 +329,8 @@ export default {
         .catch((err) => {
           const error = processAxiosError(err);
 
+          this.$refs.hcaptcha.reset();
+
           if (error.fielderrors) {
             this.handleFieldErrors(error.fielderrors);
           } else {
