@@ -277,6 +277,21 @@ export default {
         this.errors[elem] = null;
       });
     },
+    isFormValid() {
+      //Create errors array
+      let formValid = true;
+
+      if (!this.hcaptcha.verified) {
+        this.errors.hcaptcha = "Please complete hCaptcha";
+        formValid = false;
+      }
+
+      if (!this.$refs.form.validate()) {
+        formValid = false;
+      }
+
+      return formValid;
+    },
     handleFieldErrors(errors) {
       //Loop through each error and add it to array of error for specific field
       if (Array.isArray(errors)) {
@@ -292,13 +307,8 @@ export default {
     addGuest: function () {
       this.clearErrors();
 
-      if (!this.hcaptcha.verified) {
-        this.errors.hcaptcha = "Please complete hCaptcha";
-        return;
-      }
-
-      if (!this.$refs.form.validate()) {
-        return;
+      if (!this.isFormValid()) {
+        return false;
       }
 
       this.setLoading(true);
@@ -340,12 +350,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.errcontainer {
-  margin: 10px 0px 10px 0px;
-  border: 1px solid;
-  color: red;
-  font-weight: bold;
-  box-sizing: border-box;
-}
-</style>
+<style scoped></style>
