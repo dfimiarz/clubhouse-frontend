@@ -215,9 +215,6 @@ export default {
     };
   },
   computed: {
-    formenabled: function () {
-      return this.authenticated || this.requestid;
-    },
     authenticated: function () {
       return this.$store.getters["userstore/isAuthenticated"];
     },
@@ -281,7 +278,7 @@ export default {
       //Create errors array
       let formValid = true;
 
-      if (!this.hcaptcha.verified) {
+      if (!(this.hcaptcha.verified || this.authenticated)) {
         this.errors.hcaptcha = "Please complete hCaptcha";
         formValid = false;
       }
@@ -329,7 +326,10 @@ export default {
         .catch((err) => {
           const error = processAxiosError(err);
 
-          this.$refs.hcaptcha.reset();
+          //Reset captcha if it exists
+          if (this.$refs.hcaptcha) {
+            this.$refs.hcaptcha.reset();
+          }
 
           if (error.fielderrors) {
             this.handleFieldErrors(error.fielderrors);
