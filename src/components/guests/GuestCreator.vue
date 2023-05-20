@@ -71,7 +71,7 @@
                   <v-row no-gutters v-show="!passActivation">
                     <v-col cols="12">
                       <div class="text-caption pt-2 warning--text">
-                        A guest pass activation required for bookings.
+                        A guest pass activation required for booking.
                       </div>
                     </v-col>
                   </v-row>
@@ -89,7 +89,7 @@
                     <v-col cols="12" lg="8">
                       <v-text-field
                         v-model="guest.hostemail"
-                        label="Host's E-mail"
+                        label="Host E-mail"
                         :error-messages="errors.hostemail"
                         :rules="passActivation ? emailRules : []"
                         hint="The host must be a member of the club"
@@ -176,6 +176,20 @@
         </v-card-actions>
       </v-col>
     </v-row>
+    <v-dialog v-model="confirmationdDialog" width="auto">
+      <v-card>
+        <v-card-title class="text-h6">
+          Skip guest pass activation?
+        </v-card-title>
+        <v-card-actions>
+          <v-btn @click="closeConfirmationDialog"> Go Back </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn text color="warning" @click="closeConfirmationDialog">
+            Proceed
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -207,6 +221,7 @@ export default {
       },
       passtypes: [{ text: "Day Pass", value: 1 }],
       passActivation: true,
+      confirmationdDialog: false,
       addAccountIcon: mdiAccountPlus,
       valid: true,
       errors: {
@@ -284,6 +299,9 @@ export default {
     }
   },
   methods: {
+    closeConfirmationDialog() {
+      this.confirmationdDialog = false;
+    },
     onExpire() {
       this.hcaptcha.verified = false;
       this.hcaptcha.token = null;
@@ -317,7 +335,10 @@ export default {
     resetForm() {
       this.clearErrors();
       this.$refs.form.reset();
-      this.$refs.hcaptcha.reset();
+
+      if (this.$refs.hcaptcha) {
+        this.$refs.hcaptcha.reset();
+      }
     },
     clearErrors() {
       Object.keys(this.errors).forEach((elem) => {
@@ -356,6 +377,11 @@ export default {
 
       if (!this.isFormValid()) {
         return false;
+      }
+
+      if (!this.passActivation) {
+        this.confirmationdDialog = true;
+        return;
       }
 
       this.setLoading(true);
