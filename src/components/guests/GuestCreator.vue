@@ -184,7 +184,7 @@
         <v-card-actions>
           <v-btn @click="closeConfirmationDialog"> Go Back </v-btn>
           <v-spacer></v-spacer>
-          <v-btn text color="warning" @click="closeConfirmationDialog">
+          <v-btn text color="warning" @click="completeRegistration">
             Proceed
           </v-btn>
         </v-card-actions>
@@ -382,6 +382,14 @@ export default {
       if (!this.passActivation) {
         this.confirmationdDialog = true;
         return;
+      }
+
+      this.completeRegistration();
+    },
+    completeRegistration() {
+      //Close confirmation dialog if shown
+      if (this.confirmationdDialog) {
+        this.confirmationdDialog = false;
       }
 
       this.setLoading(true);
