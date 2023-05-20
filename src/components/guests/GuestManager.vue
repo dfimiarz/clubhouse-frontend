@@ -25,10 +25,10 @@
               :disabled="loading"
               exact
             >
-              Pre-Register
+              New Guest
             </v-tab>
             <v-tab :to="{ name: 'guestactivation' }" :disabled="loading" exact>
-              Activte Guest Pass
+              Returning Guest
             </v-tab>
             <!-- <v-tab :to="{ name: 'activeguests' }" :disabled="loading" exact>
               Show Guests

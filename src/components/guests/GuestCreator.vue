@@ -8,20 +8,9 @@
               <v-col cols="12">
                 <div class="text-caption py-2">
                   <div class="pt-1">
-                    Please use this form to pre-register a guest visitor. Only
+                    Please use this form to register a new guest visitor. Only
                     <span class="font-weight-bold warning--text">SINGLE</span>
-                    pre-registration is required per guest.
-                  </div>
-                  <div class="pt-1">
-                    Once pre-registered, a
-                    <span class="font-weight-bold warning--text">
-                      GUEST PASS
-                    </span>
-                    can be activated for a particular day through the
-                    <span class="font-weight-bold warning--text"
-                      >ACTIVATE GUEST PASS</span
-                    >
-                    tab.
+                    guest registration is required per guest.
                   </div>
                 </div>
                 <v-form ref="form" v-model="valid" lazy-validation>
@@ -75,6 +64,67 @@
                       </v-text-field>
                     </v-col>
                   </v-row>
+                  <v-row no-gutters class="pt-4">
+                    <v-col cols="12" class="subtitle-2"> Guest Pass </v-col>
+                  </v-row>
+                  <v-divider />
+                  <v-row no-gutters>
+                    <v-col cols="12">
+                      <v-checkbox
+                        v-model="passActivation"
+                        label="Activate Guest Pass"
+                        hide-details
+                      >
+                      </v-checkbox>
+                    </v-col>
+                  </v-row>
+                  <v-row no-gutters>
+                    <v-col cols="12" lg="8">
+                      <v-text-field
+                        v-model="guest.hostemail"
+                        label="Host's E-mail"
+                        :error-messages="errors.hostemail"
+                        :rules="passActivation ? emailRules : []"
+                        hint="The host must be a member of the club"
+                        :disabled="!passActivation"
+                      />
+                    </v-col>
+                  </v-row>
+                  <v-row no-gutters>
+                    <v-col cols="12" lg="8">
+                      <v-select
+                        v-model="guest.passtype"
+                        :items="passtypes"
+                        label="Pass Type"
+                        :error-messages="errors.passtype"
+                        :rules="passActivation ? passTypeRules : []"
+                        :disabled="!passActivation"
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+                  <v-row dense>
+                    <v-col cols="12" class="subtitle-2">
+                      Terms and Conditions
+                    </v-col>
+                  </v-row>
+                  <v-divider />
+                  <v-row no-gutters>
+                    <v-col cols="12">
+                      <v-checkbox
+                        v-model="agreement"
+                        :rules="checkBoxRules"
+                        :error-messages="errors.agreement"
+                      >
+                        <template #label>
+                          <div class="caption">
+                            I have read, understood, and agree to all club rules
+                            pertaining to guests visitors
+                          </div>
+                        </template>
+                        >
+                      </v-checkbox>
+                    </v-col>
+                  </v-row>
                   <v-row dense v-if="!authenticated">
                     <v-col cols="12" lg="8">
                       <vue-hcaptcha
@@ -100,29 +150,6 @@
                           {{ errors.hcaptcha }}
                         </div>
                       </div>
-                    </v-col>
-                  </v-row>
-                  <v-row dense>
-                    <v-col cols="12" class="subtitle-2">
-                      Terms and Conditions
-                    </v-col>
-                  </v-row>
-                  <v-divider />
-                  <v-row no-gutters>
-                    <v-col cols="12">
-                      <v-checkbox
-                        v-model="agreement"
-                        :rules="checkBoxRules"
-                        :error-messages="errors.agreement"
-                      >
-                        <template #label>
-                          <div class="caption">
-                            I have read, understood, and agree to all club rules
-                            pertaining to guests visitors
-                          </div>
-                        </template>
-                        >
-                      </v-checkbox>
                     </v-col>
                   </v-row>
                 </v-form>
@@ -171,6 +198,8 @@ export default {
         token: null,
         eKey: null,
       },
+      passtypes: [{ text: "Day Pass", value: 1 }],
+      passActivation: true,
       addAccountIcon: mdiAccountPlus,
       valid: true,
       errors: {
@@ -181,12 +210,16 @@ export default {
         phone: null,
         agreement: null,
         hcaptcha: null,
+        hostemail: null,
+        passtype: null,
       },
       guest: {
         firstname: null,
         lastname: null,
         email: null,
         phone: null,
+        hostemail: null,
+        passtype: null,
       },
       agreement: false,
       nameRules: [
@@ -212,6 +245,7 @@ export default {
           "Content must be at most 24 characters",
       ],
       checkBoxRules: [(v) => !!v || "Agreement required"],
+      passTypeRules: [(v) => !!v || "Please select a pass type"],
     };
   },
   computed: {
@@ -232,6 +266,15 @@ export default {
     hCaptchaSize: function (val) {
       this.onCaptchaReset();
     },
+  },
+  mounted() {
+    //Check if passtypes is not empty
+    if (this.passtypes.length > 0) {
+      //Check if first passtype has the value property
+      if (this.passtypes[0].value) {
+        this.guest.passtype = this.passtypes[0].value;
+      }
+    }
   },
   methods: {
     onExpire() {
