@@ -68,6 +68,13 @@
                     <v-col cols="12" class="subtitle-2"> Guest Pass </v-col>
                   </v-row>
                   <v-divider />
+                  <v-row no-gutters v-show="!passActivation">
+                    <v-col cols="12">
+                      <div class="text-caption pt-2 warning--text">
+                        A guest pass activation required for bookings.
+                      </div>
+                    </v-col>
+                  </v-row>
                   <v-row no-gutters>
                     <v-col cols="12">
                       <v-checkbox
