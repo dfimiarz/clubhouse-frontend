@@ -64,51 +64,6 @@
                       </v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row no-gutters class="pt-4">
-                    <v-col cols="12" class="subtitle-2"> Guest Pass </v-col>
-                  </v-row>
-                  <v-divider />
-                  <v-row no-gutters v-show="!passActivation">
-                    <v-col cols="12">
-                      <div class="text-caption pt-2 warning--text">
-                        A guest pass activation required for booking.
-                      </div>
-                    </v-col>
-                  </v-row>
-                  <v-row no-gutters>
-                    <v-col cols="12">
-                      <v-checkbox
-                        v-model="passActivation"
-                        label="Activate Guest Pass"
-                        hide-details
-                      >
-                      </v-checkbox>
-                    </v-col>
-                  </v-row>
-                  <v-row no-gutters>
-                    <v-col cols="12" lg="8">
-                      <v-text-field
-                        v-model="guest.hostemail"
-                        label="Host E-mail"
-                        :error-messages="errors.hostemail"
-                        :rules="passActivation ? emailRules : []"
-                        hint="The host must be a member of the club"
-                        :disabled="!passActivation"
-                      />
-                    </v-col>
-                  </v-row>
-                  <v-row no-gutters>
-                    <v-col cols="12" lg="8">
-                      <v-select
-                        v-model="guest.passtype"
-                        :items="passtypes"
-                        label="Pass Type"
-                        :error-messages="errors.passtype"
-                        :rules="passActivation ? passTypeRules : []"
-                        :disabled="!passActivation"
-                      ></v-select>
-                    </v-col>
-                  </v-row>
                   <v-row dense>
                     <v-col cols="12" class="subtitle-2">
                       Terms and Conditions
@@ -176,20 +131,6 @@
         </v-card-actions>
       </v-col>
     </v-row>
-    <v-dialog v-model="confirmationdDialog" width="auto">
-      <v-card>
-        <v-card-title class="text-h6">
-          Skip guest pass activation?
-        </v-card-title>
-        <v-card-actions>
-          <v-btn @click="closeConfirmationDialog"> Go Back </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn text color="warning" @click="completeRegistration">
-            Proceed
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
@@ -219,9 +160,6 @@ export default {
         token: null,
         eKey: null,
       },
-      passtypes: [{ text: "Day Pass", value: 1 }],
-      passActivation: true,
-      confirmationdDialog: false,
       addAccountIcon: mdiAccountPlus,
       valid: true,
       errors: {
@@ -232,16 +170,12 @@ export default {
         phone: null,
         agreement: null,
         hcaptcha: null,
-        hostemail: null,
-        passtype: null,
       },
       guest: {
         firstname: null,
         lastname: null,
         email: null,
         phone: null,
-        hostemail: null,
-        passtype: null,
       },
       agreement: false,
       nameRules: [
@@ -267,7 +201,6 @@ export default {
           "Content must be at most 24 characters",
       ],
       checkBoxRules: [(v) => !!v || "Agreement required"],
-      passTypeRules: [(v) => !!v || "Please select a pass type"],
     };
   },
   computed: {
@@ -289,19 +222,7 @@ export default {
       this.onCaptchaReset();
     },
   },
-  mounted() {
-    //Check if passtypes is not empty
-    if (this.passtypes.length > 0) {
-      //Check if first passtype has the value property
-      if (this.passtypes[0].value) {
-        this.guest.passtype = this.passtypes[0].value;
-      }
-    }
-  },
   methods: {
-    closeConfirmationDialog() {
-      this.confirmationdDialog = false;
-    },
     onExpire() {
       this.hcaptcha.verified = false;
       this.hcaptcha.token = null;
@@ -379,19 +300,9 @@ export default {
         return false;
       }
 
-      if (!this.passActivation) {
-        this.confirmationdDialog = true;
-        return;
-      }
-
       this.completeRegistration();
     },
     completeRegistration() {
-      //Close confirmation dialog if shown
-      if (this.confirmationdDialog) {
-        this.confirmationdDialog = false;
-      }
-
       this.setLoading(true);
 
       const guestdata = {
@@ -427,9 +338,6 @@ export default {
     },
     setLoading(val) {
       this.$emit("update:loading", val);
-    },
-    showRules: function () {
-      alert("Will show rules");
     },
   },
 };
