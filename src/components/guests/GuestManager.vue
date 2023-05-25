@@ -27,9 +27,9 @@
             >
               New Guest
             </v-tab>
-            <v-tab :to="{ name: 'guestactivation' }" :disabled="loading" exact>
+            <!-- <v-tab :to="{ name: 'guestactivation' }" :disabled="loading" exact>
               Returning Guest
-            </v-tab>
+            </v-tab> -->
             <!-- <v-tab :to="{ name: 'activeguests' }" :disabled="loading" exact>
               Show Guests
             </v-tab> -->
