@@ -988,8 +988,11 @@ export default {
       return court.name;
     },
     formattedPersons: function () {
+      const GUEST_ROLE_TYPE_ID = 100;
+
       return this.activePersons.map((person) => {
-        const appendix = person.type_id === 2 ? " [G]" : "";
+        const appendix =
+          person.role_type_id === GUEST_ROLE_TYPE_ID ? " [G]" : "";
         const nameformatted = `${person.firstname} ${person.lastname}${appendix}`;
         return { ...person, name: nameformatted };
       });
