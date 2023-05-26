@@ -473,6 +473,8 @@ import {
 
 import { notification } from "@/components/mixins/NotificationMixin";
 
+const GUEST_ROLE_TYPE_ID = 100;
+
 export default {
   mixins: [notification],
   props: ["req_players", "req_bookingtype"],
@@ -988,14 +990,23 @@ export default {
       return court.name;
     },
     formattedPersons: function () {
-      const GUEST_ROLE_TYPE_ID = 100;
-
       return this.activePersons.map((person) => {
         const appendix =
           person.role_type_id === GUEST_ROLE_TYPE_ID ? " [G]" : "";
         const nameformatted = `${person.firstname} ${person.lastname}${appendix}`;
         return { ...person, name: nameformatted };
       });
+    },
+    selectedGuets: function () {
+      return this.selplayers.reduce((accumulator, player) => {
+        const person = this.findActivePersonByID(player.id);
+
+        if (person && person.role_type_id === GUEST_ROLE_TYPE_ID) {
+          accumulator.push(player.id);
+        }
+
+        return accumulator;
+      }, []);
     },
     repeaterTypes: function () {
       return this.$store.getters["repeaterTypes"];
