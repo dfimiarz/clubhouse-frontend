@@ -60,10 +60,15 @@
           </v-btn>
           <v-spacer></v-spacer>
 
-          <v-btn @click="showOverlapInfo = false"> Close </v-btn>
+          <v-btn @click="goToBookingStep(2)"> Close </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <pass-activator
+      v-model="showPassActivation"
+      :persons="activePersons"
+      :guest-id="activatedGuestId"
+    ></pass-activator>
     <v-row justify="center" align="center" class="fill-height" no-gutters>
       <v-col cols="12" sm="8" md="6" lg="4">
         <v-stepper v-model="step">
@@ -99,9 +104,9 @@
                             Overlapping booking found
                           </v-col>
                           <v-col class="shrink">
-                            <v-btn small @click="showOverlapInfo = true"
-                              >Details</v-btn
-                            >
+                            <v-btn small @click="showOverlapInfo = true">
+                              Details
+                            </v-btn>
                           </v-col>
                         </v-row>
                       </v-alert>
@@ -281,15 +286,40 @@
                       :key="index"
                     >
                       <v-row dense>
+                        <v-col cols="12" class="subtitle-2">
+                          {{ getPlayerLabel(index) }}
+                        </v-col>
+                      </v-row>
+                      <v-divider></v-divider>
+                      <v-row dense>
                         <v-col cols="12" md="6">
-                          <v-autocomplete
-                            v-model="selplayers[index].id"
-                            :label="getPlayerLabel(index)"
-                            :items="formattedPersons"
-                            item-text="name"
-                            item-value="id"
-                            :error-messages="selplayers[index].playerErrs"
-                          ></v-autocomplete>
+                          <v-row no-gutters>
+                            <v-col cols="12">
+                              <v-autocomplete
+                                v-model="selplayers[index].id"
+                                label="Player"
+                                :items="formattedPersons"
+                                item-text="name"
+                                item-value="id"
+                                :error-messages="selplayers[index].playerErrs"
+                                @change="checkGuestPass(index)"
+                              >
+                              </v-autocomplete>
+                            </v-col>
+                            <v-col cols="12" v-show="selplayers[index].reqPass">
+                              <v-chip
+                                label
+                                outlined
+                                color="primary"
+                                @click="activatePass(index)"
+                              >
+                                <v-icon left>
+                                  {{ icons.ticketAccount }}
+                                </v-icon>
+                                Activate Pass
+                              </v-chip>
+                            </v-col>
+                          </v-row>
                         </v-col>
                         <v-col cols="12" md="6">
                           <v-select
@@ -458,6 +488,7 @@ import apihandler from "./../services/db";
 import utils from "./../services/utils";
 import DurationPicker from "./booking/DurationPicker.vue";
 import processAxiosError from "./../utils/AxiosErrorHandler";
+import PassActivator from "./booking/PassActivator.vue";
 
 import { BOOKING_TYPE_MATCH } from "../constants/constants";
 import {
@@ -469,6 +500,7 @@ import {
   mdiClock,
   mdiClockStart,
   mdiTennis,
+  mdiTicketAccount,
 } from "@mdi/js";
 
 import { notification } from "@/components/mixins/NotificationMixin";
@@ -480,6 +512,7 @@ export default {
   props: ["req_players", "req_bookingtype"],
   components: {
     DurationPicker,
+    PassActivator,
   },
   name: "MatchBooking",
   data: function () {
@@ -493,13 +526,38 @@ export default {
         calendar: mdiCalendar,
         clockStart: mdiClockStart,
         alert: mdiAlert,
+        ticketAccount: mdiTicketAccount,
       },
       court: null,
       selplayers: [
-        { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
-        { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
-        { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
-        { id: null, repeater: null, playerErrs: [], repeaterErrs: [] },
+        {
+          id: null,
+          repeater: null,
+          playerErrs: [],
+          repeaterErrs: [],
+          reqPass: false,
+        },
+        {
+          id: null,
+          repeater: null,
+          playerErrs: [],
+          repeaterErrs: [],
+          reqPass: false,
+        },
+        {
+          id: null,
+          repeater: null,
+          playerErrs: [],
+          repeaterErrs: [],
+          reqPass: false,
+        },
+        {
+          id: null,
+          repeater: null,
+          playerErrs: [],
+          repeaterErrs: [],
+          reqPass: false,
+        },
       ],
       playerErrors: null,
       step: 1,
@@ -537,6 +595,7 @@ export default {
       loading: false,
       overlappingBooking: null,
       showOverlapInfo: false,
+      showPassActivation: false,
       error: null,
       errors: {
         note: null,
@@ -547,9 +606,25 @@ export default {
         players: null,
       },
       activePersons: [],
+      activatedGuestId: null,
     };
   },
   methods: {
+    checkGuestPass(index) {
+      const player = this.selplayers[index];
+      const person = this.findActivePersonByID(player.id);
+      const pass = person.pass;
+
+      if (person.role_type_id == GUEST_ROLE_TYPE_ID && !pass) {
+        this.selplayers[index].reqPass = true;
+      } else {
+        this.selplayers[index].reqPass = false;
+      }
+    },
+    activatePass(index) {
+      this.activatedGuestId = this.selplayers[index].id;
+      this.showPassActivation = true;
+    },
     courtSelected: function () {
       this.setMatchParams();
     },

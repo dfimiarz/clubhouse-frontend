@@ -18,3 +18,10 @@ export const Role = {
   AUTHENTICATED: 100,
   NOROLE: 0,
 };
+
+export const ROLE_TYPES = {
+  GUEST_TYPE: 100,
+  RESTRICTED_MEMBER_TYPE: 200,
+  MEMBER_TYPE: 300,
+  MANAGER_TYPE: 400,
+};
