@@ -278,19 +278,6 @@
               <v-container fluid>
                 <v-form ref="playerform">
                   <v-row>
-                    <!-- <v-col cols="12">
-                      <v-chip
-                        label
-                        outlined
-                        color="primary"
-                        @click="activatePass(index)"
-                      >
-                        <v-icon left>
-                          {{ icons.ticketAccount }}
-                        </v-icon>
-                        Activate Pass
-                      </v-chip>
-                    </v-col> -->
                     <v-col cols="12">
                       <v-alert type="error" dense v-if="playerErrors">{{
                         this.playerErrors
@@ -301,60 +288,65 @@
                       v-for="(player, index) in selplayers"
                       :key="index"
                     >
-                      <!-- <v-row dense>
-                        <v-col cols="12" class="subtitle-2">
-                          {{ getPlayerLabel(index) }}
-                        </v-col>
-                        <v-col>
-                          <v-divider></v-divider>
-                        </v-col>
-                      </v-row> -->
-                      <v-row dense>
-                        <v-col cols="12" sm="6">
-                          <v-row no-gutters>
-                            <v-col cols="12">
-                              <v-autocomplete
-                                v-model="selplayers[index].id"
-                                :label="getPlayerLabel(index)"
-                                :items="formattedPersons"
-                                item-text="name"
-                                item-value="id"
-                                :error-messages="selplayers[index].playerErrs"
-                                @change="checkGuestPass(index)"
-                              >
-                              </v-autocomplete>
-                            </v-col>
-                          </v-row>
-                        </v-col>
-                        <v-col cols="12" sm="6">
-                          <v-select
-                            v-model="selplayers[index].repeater"
-                            :items="repeaterTypes"
-                            label="Player type:"
-                            item-text="label"
-                            item-value="id"
-                            :error-messages="selplayers[index].repeaterErrs"
-                          ></v-select>
-                        </v-col>
-                      </v-row>
-                      <v-row dense>
-                        <v-col cols="12">
-                          <v-chip
-                            label
-                            small
-                            outlined
-                            :disabled="!selplayers[index].reqPass"
-                            :color="
-                              selplayers[index].reqPass ? 'warning' : 'grey'
-                            "
-                          >
-                            <v-icon left small>
-                              {{ icons.alert }}
-                            </v-icon>
-                            Pass Required
-                          </v-chip>
-                        </v-col>
-                      </v-row>
+                      <v-sheet
+                        elevation="1"
+                        outlined
+                        rounded
+                        color="secondary"
+                        class="pa-2"
+                      >
+                        <v-row dense>
+                          <v-col cols="12" class="subtitle-2">
+                            {{ getPlayerLabel(index) }}
+                          </v-col>
+                          <!-- <v-col>
+                            <v-divider></v-divider>
+                          </v-col> -->
+                        </v-row>
+                        <v-row dense>
+                          <v-col cols="12" sm="6">
+                            <v-autocomplete
+                              v-model="selplayers[index].id"
+                              label="Name"
+                              :items="formattedPersons"
+                              item-text="name"
+                              item-value="id"
+                              :error-messages="selplayers[index].playerErrs"
+                              @change="checkGuestPass(index)"
+                            >
+                            </v-autocomplete>
+                          </v-col>
+                          <v-col cols="12" sm="6">
+                            <v-select
+                              v-model="selplayers[index].repeater"
+                              :items="repeaterTypes"
+                              label="Type"
+                              item-text="label"
+                              item-value="id"
+                              :error-messages="selplayers[index].repeaterErrs"
+                            ></v-select>
+                          </v-col>
+                        </v-row>
+                        <v-row no-gutters>
+                          <v-col cols="12">
+                            <v-chip
+                              label
+                              outlined
+                              small
+                              :disabled="!selplayers[index].reqPass"
+                              :color="
+                                selplayers[index].reqPass ? 'primary' : 'grey'
+                              "
+                              @click="activatePass(index)"
+                            >
+                              <v-icon left small>
+                                {{ icons.ticketAccount }}
+                              </v-icon>
+                              Activate Pass
+                            </v-chip>
+                          </v-col>
+                        </v-row>
+                      </v-sheet>
                     </v-col>
                   </v-row>
                 </v-form>
