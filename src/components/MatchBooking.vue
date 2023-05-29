@@ -255,7 +255,7 @@
                     </v-col>
                   </v-row>
                 </v-form>
-                <v-row dense>
+                <div class="d-flex align-center pt-2">
                   <v-btn
                     text
                     class="ma-1"
@@ -264,10 +264,13 @@
                     >Go back</v-btn
                   >
                   <v-spacer></v-spacer>
-                  <v-btn @click="validateSessionInput" :disabled="loading"
+                  <v-btn
+                    @click="validateSessionInput"
+                    :disabled="loading"
+                    color="primary"
                     >Continue</v-btn
                   >
-                </v-row>
+                </div>
               </v-container>
             </v-stepper-content>
 
@@ -275,6 +278,19 @@
               <v-container fluid>
                 <v-form ref="playerform">
                   <v-row>
+                    <!-- <v-col cols="12">
+                      <v-chip
+                        label
+                        outlined
+                        color="primary"
+                        @click="activatePass(index)"
+                      >
+                        <v-icon left>
+                          {{ icons.ticketAccount }}
+                        </v-icon>
+                        Activate Pass
+                      </v-chip>
+                    </v-col> -->
                     <v-col cols="12">
                       <v-alert type="error" dense v-if="playerErrors">{{
                         this.playerErrors
@@ -285,19 +301,21 @@
                       v-for="(player, index) in selplayers"
                       :key="index"
                     >
-                      <v-row dense>
+                      <!-- <v-row dense>
                         <v-col cols="12" class="subtitle-2">
                           {{ getPlayerLabel(index) }}
                         </v-col>
-                      </v-row>
-                      <v-divider></v-divider>
+                        <v-col>
+                          <v-divider></v-divider>
+                        </v-col>
+                      </v-row> -->
                       <v-row dense>
-                        <v-col cols="12" md="6">
+                        <v-col cols="12" sm="6">
                           <v-row no-gutters>
                             <v-col cols="12">
                               <v-autocomplete
                                 v-model="selplayers[index].id"
-                                label="Player"
+                                :label="getPlayerLabel(index)"
                                 :items="formattedPersons"
                                 item-text="name"
                                 item-value="id"
@@ -306,22 +324,9 @@
                               >
                               </v-autocomplete>
                             </v-col>
-                            <v-col cols="12" v-show="selplayers[index].reqPass">
-                              <v-chip
-                                label
-                                outlined
-                                color="primary"
-                                @click="activatePass(index)"
-                              >
-                                <v-icon left>
-                                  {{ icons.ticketAccount }}
-                                </v-icon>
-                                Activate Pass
-                              </v-chip>
-                            </v-col>
                           </v-row>
                         </v-col>
-                        <v-col cols="12" md="6">
+                        <v-col cols="12" sm="6">
                           <v-select
                             v-model="selplayers[index].repeater"
                             :items="repeaterTypes"
@@ -332,20 +337,39 @@
                           ></v-select>
                         </v-col>
                       </v-row>
+                      <v-row dense>
+                        <v-col cols="12">
+                          <v-chip
+                            label
+                            small
+                            outlined
+                            :disabled="!selplayers[index].reqPass"
+                            :color="
+                              selplayers[index].reqPass ? 'warning' : 'grey'
+                            "
+                          >
+                            <v-icon left small>
+                              {{ icons.alert }}
+                            </v-icon>
+                            Pass Required
+                          </v-chip>
+                        </v-col>
+                      </v-row>
                     </v-col>
                   </v-row>
                 </v-form>
-                <v-row dense>
-                  <v-btn text class="ma-1" @click="clearPlayers">Clear</v-btn>
-                  <div class="flex-grow-1"></div>
+                <div class="d-flex align-center pt-2">
+                  <v-btn text @click="clearPlayers">Clear</v-btn>
+                  <v-spacer></v-spacer>
                   <v-btn
                     @click="goToBookingStep(2)"
                     class="ma-1"
                     :disabled="loading"
+                    color="primary"
                   >
                     Continue
                   </v-btn>
-                </v-row>
+                </div>
               </v-container>
             </v-stepper-content>
 
@@ -460,7 +484,7 @@
                     </div>
                   </v-col>
                 </v-row>
-                <v-row>
+                <div class="d-flex align-center pt-2">
                   <v-btn text class="ma-1" @click="changeBookingParams"
                     >Go back</v-btn
                   >
@@ -473,7 +497,7 @@
                     @click="submitMatch()"
                     >Book</v-btn
                   >
-                </v-row>
+                </div>
               </v-container>
             </v-stepper-content>
           </v-stepper-items>
@@ -751,6 +775,7 @@ export default {
     clearPlayers() {
       this.selplayers.forEach((player) => {
         player.id = player.repeater = null;
+        player.reqPass = false;
       });
 
       this.clearPlayerErrors();
