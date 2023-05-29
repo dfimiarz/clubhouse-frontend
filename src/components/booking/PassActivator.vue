@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     close() {
-      this.selectedHostId = null;
+      //this.selectedHostId = null;
       this.show = false;
     },
   },
