@@ -967,12 +967,6 @@ export default {
     },
   },
   computed: {
-    passRequired: function () {
-      //Return false if passRequired is set on any player
-      return this.selplayers.reduce((accumulator, player) => {
-        return accumulator || player.passRequired;
-      }, false);
-    },
     bookingOverlap: function () {
       if (
         !(
@@ -1107,29 +1101,6 @@ export default {
         const nameformatted = `${person.firstname} ${person.lastname}${appendix}`;
         return { ...person, name: nameformatted };
       });
-    },
-    selectedGuets: function () {
-      return this.selplayers.reduce((accumulator, player) => {
-        const person = this.findActivePersonByID(player.id);
-
-        if (person && person.role_type_id === GUEST_ROLE_TYPE_ID) {
-          accumulator.push(player.id);
-        }
-
-        return accumulator;
-      }, []);
-    },
-    hosts() {
-      return this.activePersons
-        .filter(
-          (person) =>
-            person.role_type_id === ROLE_TYPES.MEMBER_TYPE ||
-            person.role_type_id === ROLE_TYPES.MANAGER_TYPE
-        )
-        .map((person) => ({
-          id: person.id,
-          name: person.firstname + " " + person.lastname,
-        }));
     },
     repeaterTypes: function () {
       return this.$store.getters["repeaterTypes"];
