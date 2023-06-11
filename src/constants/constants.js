@@ -8,6 +8,8 @@ export const BOOKING_TYPE_MENTORING = 8001;
 export const BOOKING_TYPE_JUNIOR_PROGRAM = 8002;
 export const BOOKING_TYPE_LADDER = 8003;
 
+export const BOOKING_ERROR_MESSAGE = "Please correct booking errors";
+
 export const Role = {
   ADMIN: 4000,
   MANAGER: 3000,

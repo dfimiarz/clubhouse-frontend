@@ -501,8 +501,8 @@ import DurationPicker from "./booking/DurationPicker.vue";
 import processAxiosError from "./../utils/AxiosErrorHandler";
 import PassActivator from "./booking/PassActivator.vue";
 
-import { BOOKING_TYPE_MATCH } from "../constants/constants";
-import { ROLE_TYPES } from "@/constants/constants.js";
+import { BOOKING_TYPE_MATCH, ROLE_TYPES } from "../constants/constants";
+import { BOOKING_ERROR_MESSAGE } from "../constants/constants";
 import {
   mdiAccountMultiple,
   mdiAlert,
@@ -890,7 +890,7 @@ export default {
 
           this.selplayers[index][field].push(msg);
         }, this);
-        this.showNotification("Please correct errors.", "warning");
+        this.showNotification(BOOKING_ERROR_MESSAGE, "warning");
         return false;
       } else {
         return true;
