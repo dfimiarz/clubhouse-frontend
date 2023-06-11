@@ -252,6 +252,8 @@
                         label="Note"
                         :rules="[rules.notelimit, rules.explainRuleChange]"
                         clearable
+                        rows="4"
+                        auto-grow
                       ></v-textarea>
                     </v-col>
                   </v-row>
@@ -296,16 +298,11 @@
                         color="secondary"
                         class="pa-2"
                       >
-                        <v-row no-gutters>
-                          <v-col cols="12" class="subtitle-2">
-                            {{ getPlayerLabel(index) }}
-                          </v-col>
-                        </v-row>
                         <v-row dense>
                           <v-col cols="12" sm="6">
                             <v-autocomplete
                               v-model="selplayers[index].id"
-                              label="Name"
+                              :label="getPlayerLabel(index)"
                               :items="formattedPersons"
                               item-text="name"
                               item-value="id"
