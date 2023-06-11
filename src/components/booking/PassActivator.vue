@@ -13,6 +13,13 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12">
+              <v-text-field
+                label="Pass Type"
+                value="One Day Pass"
+                editable="false"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
               <v-autocomplete
                 label="Host"
                 v-model="selectedHostId"
@@ -22,11 +29,8 @@
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                label="Pass Type"
-                value="One Day Pass"
-                editable="false"
-              ></v-text-field>
+              <v-checkbox dense label="Remember Host" v-model="rememberHost">
+              </v-checkbox>
             </v-col>
           </v-row>
         </v-container>
@@ -35,7 +39,7 @@
       <v-card-actions>
         <v-btn @click="close" text> Close </v-btn>
         <v-spacer></v-spacer>
-        <v-btn> Activate </v-btn>
+        <v-btn @click="activatePass"> Activate </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -62,6 +66,7 @@ export default {
   },
   data: () => ({
     selectedHostId: null,
+    rememberHost: true,
   }),
   computed: {
     show: {
@@ -95,8 +100,20 @@ export default {
   },
   methods: {
     close() {
-      //this.selectedHostId = null;
+      if (!this.rememberHost) {
+        this.selectedHostId = null;
+      }
+
       this.show = false;
+    },
+    activatePass() {
+      this.$emit("passactivated", {
+        guestId: this.guestId,
+        pass: {
+          hostId: this.selectedHostId,
+          passTypeId: 1,
+        },
+      });
     },
   },
 };

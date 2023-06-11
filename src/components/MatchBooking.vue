@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="fill-height">
+  <v-container fluid class="pa-0">
     <v-dialog v-model="showOverlapInfo" max-width="290">
       <v-card>
         <v-card-title class="text-h6"> Overlap Details </v-card-title>
@@ -68,18 +68,19 @@
       v-model="showPassActivation"
       :persons="activePersons"
       :guest-id="activatedGuestId"
+      @passactivated="onPassActivated"
     ></pass-activator>
-    <v-row justify="center" align="center" class="fill-height" no-gutters>
+    <v-row justify="center" align="center" no-gutters>
       <v-col cols="12" sm="8" md="6" lg="4">
         <v-stepper v-model="step">
-          <v-stepper-header>
+          <v-stepper-header style="overflow-x: scroll; flex-wrap: nowrap">
             <v-stepper-step :complete="step > 1" step="1"
               >Players</v-stepper-step
             >
 
             <v-divider></v-divider>
 
-            <v-stepper-step :complete="step > 2" step="2"
+            <v-stepper-step :complete="step > 1" step="2"
               >Court and time</v-stepper-step
             >
 
@@ -291,17 +292,14 @@
                       <v-sheet
                         elevation="1"
                         outlined
-                        rounded
+                        rounded="lg"
                         color="secondary"
                         class="pa-2"
                       >
-                        <v-row dense>
+                        <v-row no-gutters>
                           <v-col cols="12" class="subtitle-2">
                             {{ getPlayerLabel(index) }}
                           </v-col>
-                          <!-- <v-col>
-                            <v-divider></v-divider>
-                          </v-col> -->
                         </v-row>
                         <v-row dense>
                           <v-col cols="12" sm="6">
@@ -312,7 +310,7 @@
                               item-text="name"
                               item-value="id"
                               :error-messages="selplayers[index].playerErrs"
-                              @change="checkGuestPass(index)"
+                              @change="checkPassRequired(index)"
                             >
                             </v-autocomplete>
                           </v-col>
@@ -320,30 +318,27 @@
                             <v-select
                               v-model="selplayers[index].repeater"
                               :items="repeaterTypes"
-                              label="Type"
+                              label="Player Type"
                               item-text="label"
                               item-value="id"
                               :error-messages="selplayers[index].repeaterErrs"
                             ></v-select>
                           </v-col>
                         </v-row>
-                        <v-row no-gutters>
-                          <v-col cols="12">
-                            <v-chip
-                              label
-                              outlined
+                        <v-row dense>
+                          <v-col cols="12" class="text-right">
+                            <v-btn
+                              :disabled="!selplayers[index].passRequired"
+                              color="warning"
                               small
-                              :disabled="!selplayers[index].reqPass"
-                              :color="
-                                selplayers[index].reqPass ? 'primary' : 'grey'
-                              "
+                              outlined
                               @click="activatePass(index)"
                             >
-                              <v-icon left small>
+                              <v-icon small left>
                                 {{ icons.ticketAccount }}
                               </v-icon>
                               Activate Pass
-                            </v-chip>
+                            </v-btn>
                           </v-col>
                         </v-row>
                       </v-sheet>
@@ -507,6 +502,7 @@ import processAxiosError from "./../utils/AxiosErrorHandler";
 import PassActivator from "./booking/PassActivator.vue";
 
 import { BOOKING_TYPE_MATCH } from "../constants/constants";
+import { ROLE_TYPES } from "@/constants/constants.js";
 import {
   mdiAccountMultiple,
   mdiAlert,
@@ -551,28 +547,28 @@ export default {
           repeater: null,
           playerErrs: [],
           repeaterErrs: [],
-          reqPass: false,
+          passRequired: false,
         },
         {
           id: null,
           repeater: null,
           playerErrs: [],
           repeaterErrs: [],
-          reqPass: false,
+          passRequired: false,
         },
         {
           id: null,
           repeater: null,
           playerErrs: [],
           repeaterErrs: [],
-          reqPass: false,
+          passRequired: false,
         },
         {
           id: null,
           repeater: null,
           playerErrs: [],
           repeaterErrs: [],
-          reqPass: false,
+          passRequired: false,
         },
       ],
       playerErrors: null,
@@ -623,18 +619,26 @@ export default {
       },
       activePersons: [],
       activatedGuestId: null,
+      passTypes: [
+        { id: 1, label: "Day Pass" },
+        { id: 2, label: "Week Pass" },
+      ],
     };
   },
   methods: {
-    checkGuestPass(index) {
+    onPassActivated(data) {
+      console.log(data);
+    },
+    checkPassRequired(index) {
       const player = this.selplayers[index];
       const person = this.findActivePersonByID(player.id);
       const pass = person.pass;
 
       if (person.role_type_id == GUEST_ROLE_TYPE_ID && !pass) {
-        this.selplayers[index].reqPass = true;
+        // Set passRequired to true if guest and no pass
+        this.selplayers[index].passRequired = true;
       } else {
-        this.selplayers[index].reqPass = false;
+        this.selplayers[index].passRequired = false;
       }
     },
     activatePass(index) {
@@ -767,7 +771,7 @@ export default {
     clearPlayers() {
       this.selplayers.forEach((player) => {
         player.id = player.repeater = null;
-        player.reqPass = false;
+        player.passRequired = false;
       });
 
       this.clearPlayerErrors();
@@ -834,6 +838,15 @@ export default {
                     message: "Duplicate player",
                   })
                 : accumulator["players"].push(player.id);
+
+              //Check if person requires a pass
+              if (player.passRequired) {
+                accumulator["errors"].push({
+                  index: index,
+                  field: "player",
+                  message: "Pass required",
+                });
+              }
             }
 
             //Check if repeater set
@@ -860,10 +873,13 @@ export default {
         { players: [], errors: [] }
       );
 
+      //Add an error if no players are selected
       if (playerCheck.players.length == 0) {
-        this.selplayers[0]["playerErrs"].push("Select a player");
-        this.showNotification("Please select a player", "warning");
-        return;
+        playerCheck.errors.push({
+          index: 0,
+          field: "player",
+          message: "Select a player",
+        });
       }
 
       if (playerCheck.errors.length != 0) {
@@ -874,7 +890,7 @@ export default {
 
           this.selplayers[index][field].push(msg);
         }, this);
-
+        this.showNotification("Please correct errors.", "warning");
         return false;
       } else {
         return true;
@@ -954,6 +970,12 @@ export default {
     },
   },
   computed: {
+    passRequired: function () {
+      //Return false if passRequired is set on any player
+      return this.selplayers.reduce((accumulator, player) => {
+        return accumulator || player.passRequired;
+      }, false);
+    },
     bookingOverlap: function () {
       if (
         !(
@@ -1099,6 +1121,18 @@ export default {
 
         return accumulator;
       }, []);
+    },
+    hosts() {
+      return this.activePersons
+        .filter(
+          (person) =>
+            person.role_type_id === ROLE_TYPES.MEMBER_TYPE ||
+            person.role_type_id === ROLE_TYPES.MANAGER_TYPE
+        )
+        .map((person) => ({
+          id: person.id,
+          name: person.firstname + " " + person.lastname,
+        }));
     },
     repeaterTypes: function () {
       return this.$store.getters["repeaterTypes"];
