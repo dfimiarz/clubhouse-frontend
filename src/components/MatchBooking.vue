@@ -258,7 +258,7 @@
                     </v-col>
                   </v-row>
                 </v-form>
-                <div class="d-flex align-center pt-2">
+                <div class="d-flex align-center pt-8">
                   <v-btn
                     text
                     class="ma-1"
@@ -271,8 +271,9 @@
                     @click="validateSessionInput"
                     :disabled="loading"
                     color="primary"
-                    >Continue</v-btn
                   >
+                    Continue
+                  </v-btn>
                 </div>
               </v-container>
             </v-stepper-content>
@@ -342,7 +343,7 @@
                     </v-col>
                   </v-row>
                 </v-form>
-                <div class="d-flex align-center pt-2">
+                <div class="d-flex align-center pt-8">
                   <v-btn text @click="clearPlayers">Clear</v-btn>
                   <v-spacer></v-spacer>
                   <v-btn
@@ -468,7 +469,7 @@
                     </div>
                   </v-col>
                 </v-row>
-                <div class="d-flex align-center pt-2">
+                <div class="d-flex align-center pt-8">
                   <v-btn text class="ma-1" @click="changeBookingParams"
                     >Go back</v-btn
                   >
@@ -841,7 +842,7 @@ export default {
                 accumulator["errors"].push({
                   index: index,
                   field: "player",
-                  message: "Pass required",
+                  message: "Guest Pass required",
                 });
               }
             }
