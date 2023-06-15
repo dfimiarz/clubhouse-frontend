@@ -2,12 +2,12 @@
   <v-container fluid class="pa-0">
     <v-dialog v-model="showOverlapInfo" max-width="290">
       <v-card>
-        <v-card-title class="text-h6"> Overlap Details </v-card-title>
+        <v-card-title class="text-h6">Overlap Details</v-card-title>
         <v-card-text>
           <v-list>
             <v-list-item two-line>
               <v-list-item-icon>
-                <v-icon> {{ icons.tennis }} </v-icon>
+                <v-icon>{{ icons.tennis }}</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>{{ selCourtName }}</v-list-item-title>
@@ -16,33 +16,32 @@
             </v-list-item>
             <v-list-item two-line>
               <v-list-item-icon>
-                <v-icon> {{ icons.clock }} </v-icon>
+                <v-icon>{{ icons.clock }}</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title
-                  >{{ formatTime(newStartTime) }} -
-                  {{ formatTime(newEndTime) }}</v-list-item-title
-                >
+                <v-list-item-title>
+                  {{ formatTime(newStartTime) }} - {{ formatTime(newEndTime) }}
+                </v-list-item-title>
                 <v-list-item-subtitle>Requested time</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
             <v-divider inset></v-divider>
             <v-list-item two-line>
               <v-list-item-icon>
-                <v-icon> {{ icons.clock }} </v-icon>
+                <v-icon>{{ icons.clock }}</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title
-                  >{{ formatTime(overlappingStartTime) }} -
-                  {{ formatTime(overlappingEndTime) }}</v-list-item-title
-                >
+                <v-list-item-title>
+                  {{ formatTime(overlappingStartTime) }} -
+                  {{ formatTime(overlappingEndTime) }}
+                </v-list-item-title>
                 <v-list-item-subtitle>Overlapping booking</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
             <v-divider inset></v-divider>
             <v-list-item two-line color="error" input-value="true">
               <v-list-item-icon>
-                <v-icon> {{ icons.alertCircle }} </v-icon>
+                <v-icon>{{ icons.alertCircle }}</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>{{ bookingOverlap }}</v-list-item-title>
@@ -60,7 +59,7 @@
           </v-btn>
           <v-spacer></v-spacer>
 
-          <v-btn @click="goToBookingStep(2)"> Close </v-btn>
+          <v-btn @click="goToBookingStep(2)">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -74,15 +73,15 @@
       <v-col cols="12" sm="8" md="6" lg="4">
         <v-stepper v-model="step">
           <v-stepper-header style="overflow-x: scroll; flex-wrap: nowrap">
-            <v-stepper-step :complete="step > 1" step="1"
-              >Players</v-stepper-step
-            >
+            <v-stepper-step :complete="step > 1" step="1">
+              Players
+            </v-stepper-step>
 
             <v-divider></v-divider>
 
-            <v-stepper-step :complete="step > 1" step="2"
-              >Court and time</v-stepper-step
-            >
+            <v-stepper-step :complete="step > 1" step="2">
+              Court and time
+            </v-stepper-step>
 
             <v-divider></v-divider>
 
@@ -101,9 +100,7 @@
                         transition="scale-transition"
                       >
                         <v-row align="center">
-                          <v-col class="grow">
-                            Overlapping booking found
-                          </v-col>
+                          <v-col class="grow">Overlapping booking found</v-col>
                           <v-col class="shrink">
                             <v-btn small @click="showOverlapInfo = true">
                               Details
@@ -118,8 +115,7 @@
                         :value="playerDetails.length"
                         label="Player Count"
                         :prepend-icon="icons.accountMultiple"
-                      >
-                      </v-text-field>
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12">
                       <v-row dense>
@@ -137,13 +133,13 @@
                       <v-row no-gutters>
                         <v-col>
                           <v-select
+                            v-model="court"
                             label="Court"
                             :items="courts"
                             item-value="id"
                             item-text="name"
                             required
                             :rules="[rules.courtset]"
-                            v-model="court"
                             :loading="loading"
                             :prepend-icon="icons.tennis"
                             @change="courtSelected"
@@ -161,17 +157,17 @@
                             persistent
                             width="290px"
                           >
-                            <template v-slot:activator="{ on }">
+                            <template #activator="{ on }">
                               <v-text-field
                                 v-model="s_time"
                                 label="Start time"
                                 :prepend-icon="icons.clockStart"
                                 readonly
-                                v-on="on"
                                 required
                                 :rules="[rules.required]"
                                 :loading="loading"
                                 :disabled="!court"
+                                v-on="on"
                               ></v-text-field>
                             </template>
                             <v-time-picker
@@ -186,14 +182,16 @@
                                 text
                                 color="primary"
                                 @click="stimedialog = false"
-                                >Cancel</v-btn
                               >
+                                Cancel
+                              </v-btn>
                               <v-btn
                                 text
                                 color="primary"
                                 @click="$refs.stdialog.save(s_time)"
-                                >OK</v-btn
                               >
+                                OK
+                              </v-btn>
                             </v-time-picker>
                           </v-dialog>
                         </v-col>
@@ -210,45 +208,48 @@
                             :loading="loading"
                           ></duration-picker>
                           <div
-                            class="warning--text"
                             v-show="duration > prefDuration"
+                            class="warning--text"
                           >
-                            <v-icon color="warning"> {{ icons.alert }} </v-icon>
-                            <span class="pl-2 text-body-2"
-                              >Club rules: Max duration
-                              <b>{{ prefDuration }}</b> min!</span
-                            >
+                            <v-icon color="warning">{{ icons.alert }}</v-icon>
+                            <span class="pl-2 text-body-2">
+                              Club rules: Max duration
+                              <b>{{ prefDuration }}</b>
+                              min!
+                            </span>
                           </div>
                         </v-col>
                       </v-row>
                     </v-col>
-                    <v-col cols="12" v-show="reqBumpable">
+                    <v-col v-show="reqBumpable" cols="12">
                       <v-row no-gutters>
                         <v-col cols="12" md="6">
                           <v-switch
+                            v-model="bumpable"
                             dense
                             flat
-                            v-model="bumpable"
                             label="Bumpable"
                           ></v-switch>
                         </v-col>
                         <v-col cols="12">
                           <div
-                            class="warning--text"
                             v-show="reqBumpable !== bumpable"
+                            class="warning--text"
                           >
-                            <v-icon color="warning"> {{ icons.alert }} </v-icon>
-                            <span class="pl-2 text-body-2"
-                              >Club Rules: Bumpable <b>ENABLED</b>!</span
-                            >
+                            <v-icon color="warning">{{ icons.alert }}</v-icon>
+                            <span class="pl-2 text-body-2">
+                              Club Rules: Bumpable
+                              <b>ENABLED</b>
+                              !
+                            </span>
                           </div>
                         </v-col>
                       </v-row>
                     </v-col>
                     <v-col cols="12">
                       <v-textarea
-                        counter
                         v-model="note"
+                        counter
                         label="Note"
                         :rules="[rules.notelimit, rules.explainRuleChange]"
                         clearable
@@ -262,15 +263,16 @@
                   <v-btn
                     text
                     class="ma-1"
-                    @click="goToBookingStep(1)"
                     :disabled="loading"
-                    >Go back</v-btn
+                    @click="goToBookingStep(1)"
                   >
+                    Go back
+                  </v-btn>
                   <v-spacer></v-spacer>
                   <v-btn
-                    @click="validateSessionInput"
                     :disabled="loading"
                     color="primary"
+                    @click="validateSessionInput"
                   >
                     Continue
                   </v-btn>
@@ -283,14 +285,14 @@
                 <v-form ref="playerform">
                   <v-row>
                     <v-col cols="12">
-                      <v-alert type="error" dense v-if="playerErrors">{{
-                        this.playerErrors
-                      }}</v-alert>
+                      <v-alert v-if="playerErrors" type="error" dense>
+                        {{ playerErrors }}
+                      </v-alert>
                     </v-col>
                     <v-col
-                      cols="12"
                       v-for="(player, index) in selplayers"
                       :key="index"
+                      cols="12"
                     >
                       <v-sheet
                         elevation="1"
@@ -309,8 +311,7 @@
                               item-value="id"
                               :error-messages="selplayers[index].playerErrs"
                               @change="checkPassRequired(index)"
-                            >
-                            </v-autocomplete>
+                            ></v-autocomplete>
                           </v-col>
                           <v-col cols="12" sm="6">
                             <v-select
@@ -347,10 +348,10 @@
                   <v-btn text @click="clearPlayers">Clear</v-btn>
                   <v-spacer></v-spacer>
                   <v-btn
-                    @click="goToBookingStep(2)"
                     class="ma-1"
                     :disabled="loading"
                     color="primary"
+                    @click="goToBookingStep(2)"
                   >
                     Continue
                   </v-btn>
@@ -361,7 +362,7 @@
             <v-stepper-content step="3">
               <v-container fluid>
                 <v-row>
-                  <v-col cols="12" v-if="error">
+                  <v-col v-if="error" cols="12">
                     <v-alert type="error">{{ error }}</v-alert>
                   </v-col>
                 </v-row>
@@ -375,8 +376,8 @@
                     <div class="text-caption">Booking type:</div>
                     <div class="text-h6">{{ bookingType }}</div>
                     <div
-                      class="text-caption red--text"
                       v-if="errors.date"
+                      class="text-caption red--text"
                       v-text="errors.type"
                     ></div>
                   </v-col>
@@ -384,8 +385,8 @@
                     <div class="text-caption">Court:</div>
                     <div class="text-h6">{{ selCourtName }}</div>
                     <div
-                      class="text-caption red--text"
                       v-if="errors.date"
+                      class="text-caption red--text"
                       v-text="errors.court"
                     ></div>
                   </v-col>
@@ -400,8 +401,8 @@
                     <div class="text-caption">Date:</div>
                     <div class="text-h6">{{ date }}</div>
                     <div
-                      class="text-caption red--text"
                       v-if="errors.date"
+                      class="text-caption red--text"
                       v-text="errors.date"
                     ></div>
                   </v-col>
@@ -409,8 +410,8 @@
                     <div class="text-caption">Time:</div>
                     <div class="text-h6">{{ s_time }} - {{ e_time }}</div>
                     <div
+                      v-if="!!errors.start || !!errors.end"
                       class="text-caption red--text"
-                      v-if="!!this.errors.start || !!this.errors.end"
                     >
                       Start or End Time Error
                     </div>
@@ -429,16 +430,16 @@
                   <v-col cols="12" class="my-2">
                     <div class="text-subtitle">Players:</div>
                     <div
-                      class="text-caption red--text"
                       v-if="errors.players"
+                      class="text-caption red--text"
                       v-text="errors.players"
                     ></div>
                   </v-col>
                   <v-col
-                    cols="12"
-                    md="6"
                     v-for="(player, index) in playerDetails"
                     :key="index"
+                    cols="12"
+                    md="6"
                   >
                     <div class="text-h6">
                       {{ player.firstname }} {{ player.lastname }}
@@ -457,7 +458,7 @@
                   <v-col cols="12">
                     <div class="text-caption">Bumpable</div>
                     <div class="text-h6">{{ bumpable ? "Yes" : "No" }}</div>
-                    <div class="text-caption" v-if="errors.bumpable">
+                    <div v-if="errors.bumpable" class="text-caption">
                       {{ errors.bumpable }}
                     </div>
                   </v-col>
@@ -470,9 +471,9 @@
                   </v-col>
                 </v-row>
                 <div class="d-flex align-center pt-8">
-                  <v-btn text class="ma-1" @click="changeBookingParams"
-                    >Go back</v-btn
-                  >
+                  <v-btn text class="ma-1" @click="changeBookingParams">
+                    Go back
+                  </v-btn>
                   <v-spacer></v-spacer>
                   <v-btn
                     :loading="loading"
@@ -480,8 +481,9 @@
                     color="primary"
                     x-large
                     @click="submitMatch()"
-                    >Book</v-btn
                   >
+                    Book
+                  </v-btn>
                 </div>
               </v-container>
             </v-stepper-content>
@@ -515,16 +517,19 @@ import {
 
 import { notification } from "@/components/mixins/NotificationMixin";
 
-const GUEST_ROLE_TYPE_ID = 100;
-
 export default {
-  mixins: [notification],
-  props: ["req_players", "req_bookingtype"],
+  name: "MatchBooking",
   components: {
     DurationPicker,
     PassActivator,
   },
-  name: "MatchBooking",
+  mixins: [notification],
+  props: {
+    reqPlayers: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data: function () {
     return {
       icons: {
@@ -623,6 +628,259 @@ export default {
       ],
     };
   },
+  computed: {
+    bookingOverlap: function () {
+      if (
+        !(
+          this.newStartTime &&
+          this.newEndTime &&
+          this.overlappingStartTime &&
+          this.overlappingEndTime
+        )
+      ) {
+        return "N/A";
+      } else {
+        const Rs = this.$dayjs.tz(this.newStartTime).valueOf();
+        const Re = this.$dayjs.tz(this.newEndTime).valueOf();
+        const Os = this.$dayjs.tz(this.overlappingStartTime).valueOf();
+        const Oe = this.$dayjs.tz(this.overlappingEndTime).valueOf();
+
+        const overlap =
+          Os < Rs
+            ? Oe > Re
+              ? { start: Rs, end: Re }
+              : { start: Rs, end: Oe }
+            : Oe > Re
+            ? { start: Os, end: Re }
+            : { start: Os, end: Oe };
+
+        //console.log("Overlap",overlap);
+
+        return `${this.$dayjs(overlap.start)
+          .tz()
+          .format("hh:mm A")} - ${this.$dayjs(overlap.end)
+          .tz()
+          .format("hh:mm A")}`;
+      }
+    },
+    newStartTime: function () {
+      return !(this.date && this.s_time)
+        ? null
+        : `${this.date} ${this.s_time}:00`;
+    },
+    newEndTime: function () {
+      return !(this.date && this.e_time)
+        ? null
+        : `${this.date} ${this.e_time}:00`;
+    },
+    overlappingStartTime: function () {
+      const booking = this.overlappingBooking;
+
+      if (!booking) {
+        return null;
+      }
+
+      return !(booking.date && booking.start)
+        ? null
+        : `${booking.date} ${booking.start}:00`;
+    },
+    overlappingEndTime: function () {
+      const booking = this.overlappingBooking;
+
+      if (!booking) {
+        return null;
+      }
+
+      return !(booking.date && booking.end)
+        ? null
+        : `${booking.date} ${booking.end}:00`;
+    },
+    bookingOverlaps: function () {
+      return this.overlappingBooking === null ? false : true;
+    },
+    e_time: function () {
+      return !(this.sel_duration && this.s_time)
+        ? null
+        : utils.minToTime(this.sel_duration + utils.timeToMinutes(this.s_time));
+    },
+    clubtz: function () {
+      return this.$store.state.clubtz;
+    },
+    matchConfig: function () {
+      return this.playerDetails.reduce((cur_val, player) => {
+        let val = 0;
+
+        switch (player.repeater) {
+          case 1000:
+            val = 100;
+            break;
+          case 2000:
+            val = 10;
+            break;
+          case 3000:
+            val = 1;
+            break;
+          default:
+            val = 0;
+            break;
+        }
+
+        return val + cur_val;
+      }, 0);
+    },
+    bookingRules: function () {
+      let rule = this.$store.getters["getBookingRule"](this.matchConfig);
+      return rule !== undefined ? rule : {};
+    },
+    prefDuration: function () {
+      return Object.prototype.hasOwnProperty.call(
+        this.bookingRules,
+        "maxduration"
+      )
+        ? this.bookingRules.maxduration / 60000
+        : null;
+    },
+    reqBumpable: function () {
+      return Object.prototype.hasOwnProperty.call(this.bookingRules, "bumpable")
+        ? this.bookingRules.bumpable
+        : null;
+    },
+    courts: function () {
+      return this.$store.getters["courtstore/getCourts"];
+    },
+    selCourtName: function () {
+      if (!this.court) {
+        return "N/A";
+      }
+
+      const court = this.$store.getters["courtstore/getCourtInfo"](this.court);
+      return court.name;
+    },
+    formattedPersons: function () {
+      return this.activePersons.map((person) => {
+        const appendix =
+          person.role_type_id === ROLE_TYPES.GUEST_TYPE ? " [G]" : "";
+        const nameformatted = `${person.firstname} ${person.lastname}${appendix}`;
+        return { ...person, name: nameformatted };
+      });
+    },
+    repeaterTypes: function () {
+      return this.$store.getters["repeaterTypes"];
+    },
+    startHours: function () {
+      return Array(12)
+        .fill()
+        .map((_, idx) => 1 + idx);
+    },
+    startMinutes: function () {
+      return Array(4)
+        .fill()
+        .map((_, idx) => 0 + idx * 15);
+    },
+    playerDetails: function () {
+      return this.selplayers.reduce((accumulator, player) => {
+        const person = this.findActivePersonByID(player.id);
+
+        const repeaterDetails = this.$store.getters["getRepeaterType"](
+          player.repeater
+        );
+
+        if (person && repeaterDetails) {
+          accumulator.push({
+            id: player.id,
+            firstname: person.firstname,
+            lastname: person.lastname,
+            repeater: player.repeater,
+            repeater_lbl: repeaterDetails.label,
+          });
+        }
+
+        return accumulator;
+      }, []);
+    },
+    bookingType: function () {
+      const p_num = this.playerDetails.length;
+
+      return p_num > 2 ? "Doubles" : p_num > 1 ? "Singles" : "Individual";
+    },
+    computedDateFormatted() {
+      return !this.date ? "N/A" : this.formatDate(this.date);
+    },
+    opentime() {
+      return this.$store.state.opentime;
+    },
+    closetime() {
+      return this.$store.state.closetime;
+    },
+    startmin: function () {
+      return utils.timeToMinutes(this.s_time);
+    },
+    endmin: function () {
+      return utils.timeToMinutes(this.e_time);
+    },
+    duration: function () {
+      let dur = this.endmin - this.startmin;
+      return dur >= 0 ? dur : 0;
+    },
+    maxstarttime: function () {
+      return utils.minToTime(utils.timeToMinutes(this.closetime) - 5);
+    },
+    maxDuration: function () {
+      return (
+        utils.timeToMinutes(this.closetime) - utils.timeToMinutes(this.s_time)
+      );
+    },
+    current_schedule: function () {
+      return this.$store.getters["getScheduleForDate"](
+        this.$dayjs(this.date).tz().unix()
+      );
+    },
+    open_time_frames: function () {
+      /**
+       * Return an empty array of time frame if current_schedule is not set
+       */
+      if (!this.current_schedule) {
+        return [];
+      }
+      /**
+       * Get open time frames for current date. dayjs returns values from 0 - 6
+       * so ajustment (+1) needs to be done to covert to day numbers returned from the db
+       */
+      const dayNum = this.$dayjs(this.date).tz().day();
+
+      return this.current_schedule["open_time_frames"].filter(
+        (item) => item.dayofweek === dayNum + 1
+      );
+    },
+    courtOpenTimeFrames: function () {
+      return !this.court
+        ? []
+        : this.open_time_frames
+            .filter((item) => item.court == this.court)
+            .sort((a, b) => a.open_min - b.open_min);
+    },
+  },
+  watch: {
+    reqBumpable: function (newval) {
+      this.bumpable = newval;
+    },
+  },
+  created: function () {
+    //this.getPlayers();
+    this.getActivePersons();
+  },
+  mounted: function () {
+    if (Array.isArray(this.reqPlayers)) {
+      this.reqPlayers.forEach((player, index) => {
+        if (typeof player === "number") {
+          if (index < this.selplayers.length) {
+            this.selplayers[index].id = player;
+          }
+        }
+      });
+    }
+  },
+  beforeDestroy() {},
   methods: {
     onPassActivated(data) {
       console.log(data);
@@ -632,7 +890,7 @@ export default {
       const person = this.findActivePersonByID(player.id);
       const pass = person.pass;
 
-      if (person.role_type_id == GUEST_ROLE_TYPE_ID && !pass) {
+      if (person.role_type_id == ROLE_TYPES.GUEST_TYPE && !pass) {
         // Set passRequired to true if guest and no pass
         this.selplayers[index].passRequired = true;
       } else {
@@ -962,259 +1220,6 @@ export default {
       }
     },
   },
-  watch: {
-    reqBumpable: function (newval) {
-      this.bumpable = newval;
-    },
-  },
-  computed: {
-    bookingOverlap: function () {
-      if (
-        !(
-          this.newStartTime &&
-          this.newEndTime &&
-          this.overlappingStartTime &&
-          this.overlappingEndTime
-        )
-      ) {
-        return "N/A";
-      } else {
-        const Rs = this.$dayjs.tz(this.newStartTime).valueOf();
-        const Re = this.$dayjs.tz(this.newEndTime).valueOf();
-        const Os = this.$dayjs.tz(this.overlappingStartTime).valueOf();
-        const Oe = this.$dayjs.tz(this.overlappingEndTime).valueOf();
-
-        const overlap =
-          Os < Rs
-            ? Oe > Re
-              ? { start: Rs, end: Re }
-              : { start: Rs, end: Oe }
-            : Oe > Re
-            ? { start: Os, end: Re }
-            : { start: Os, end: Oe };
-
-        //console.log("Overlap",overlap);
-
-        return `${this.$dayjs(overlap.start)
-          .tz()
-          .format("hh:mm A")} - ${this.$dayjs(overlap.end)
-          .tz()
-          .format("hh:mm A")}`;
-      }
-    },
-    newStartTime: function () {
-      return !(this.date && this.s_time)
-        ? null
-        : `${this.date} ${this.s_time}:00`;
-    },
-    newEndTime: function () {
-      return !(this.date && this.e_time)
-        ? null
-        : `${this.date} ${this.e_time}:00`;
-    },
-    overlappingStartTime: function () {
-      const booking = this.overlappingBooking;
-
-      if (!booking) {
-        return null;
-      }
-
-      return !(booking.date && booking.start)
-        ? null
-        : `${booking.date} ${booking.start}:00`;
-    },
-    overlappingEndTime: function () {
-      const booking = this.overlappingBooking;
-
-      if (!booking) {
-        return null;
-      }
-
-      return !(booking.date && booking.end)
-        ? null
-        : `${booking.date} ${booking.end}:00`;
-    },
-    bookingOverlaps: function () {
-      return this.overlappingBooking === null ? false : true;
-    },
-    e_time: function () {
-      return !(this.sel_duration && this.s_time)
-        ? null
-        : utils.minToTime(this.sel_duration + utils.timeToMinutes(this.s_time));
-    },
-    clubtz: function () {
-      return this.$store.state.clubtz;
-    },
-    matchConfig: function () {
-      return this.playerDetails.reduce((cur_val, player) => {
-        let val = 0;
-
-        switch (player.repeater) {
-          case 1000:
-            val = 100;
-            break;
-          case 2000:
-            val = 10;
-            break;
-          case 3000:
-            val = 1;
-            break;
-          default:
-            val = 0;
-            break;
-        }
-
-        return val + cur_val;
-      }, 0);
-    },
-    bookingRules: function () {
-      let rule = this.$store.getters["getBookingRule"](this.matchConfig);
-      return rule !== undefined ? rule : {};
-    },
-    prefDuration: function () {
-      return Object.prototype.hasOwnProperty.call(
-        this.bookingRules,
-        "maxduration"
-      )
-        ? this.bookingRules.maxduration / 60000
-        : null;
-    },
-    reqBumpable: function () {
-      return Object.prototype.hasOwnProperty.call(this.bookingRules, "bumpable")
-        ? this.bookingRules.bumpable
-        : null;
-    },
-    courts: function () {
-      return this.$store.getters["courtstore/getCourts"];
-    },
-    selCourtName: function () {
-      if (!this.court) {
-        return "N/A";
-      }
-
-      const court = this.$store.getters["courtstore/getCourtInfo"](this.court);
-      return court.name;
-    },
-    formattedPersons: function () {
-      return this.activePersons.map((person) => {
-        const appendix =
-          person.role_type_id === GUEST_ROLE_TYPE_ID ? " [G]" : "";
-        const nameformatted = `${person.firstname} ${person.lastname}${appendix}`;
-        return { ...person, name: nameformatted };
-      });
-    },
-    repeaterTypes: function () {
-      return this.$store.getters["repeaterTypes"];
-    },
-    startHours: function () {
-      return Array(12)
-        .fill()
-        .map((_, idx) => 1 + idx);
-    },
-    startMinutes: function () {
-      return Array(4)
-        .fill()
-        .map((_, idx) => 0 + idx * 15);
-    },
-    playerDetails: function () {
-      return this.selplayers.reduce((accumulator, player) => {
-        const person = this.findActivePersonByID(player.id);
-
-        const repeaterDetails = this.$store.getters["getRepeaterType"](
-          player.repeater
-        );
-
-        if (person && repeaterDetails) {
-          accumulator.push({
-            id: player.id,
-            firstname: person.firstname,
-            lastname: person.lastname,
-            repeater: player.repeater,
-            repeater_lbl: repeaterDetails.label,
-          });
-        }
-
-        return accumulator;
-      }, []);
-    },
-    bookingType: function () {
-      const p_num = this.playerDetails.length;
-
-      return p_num > 2 ? "Doubles" : p_num > 1 ? "Singles" : "Individual";
-    },
-    computedDateFormatted() {
-      return !this.date ? "N/A" : this.formatDate(this.date);
-    },
-    opentime() {
-      return this.$store.state.opentime;
-    },
-    closetime() {
-      return this.$store.state.closetime;
-    },
-    startmin: function () {
-      return utils.timeToMinutes(this.s_time);
-    },
-    endmin: function () {
-      return utils.timeToMinutes(this.e_time);
-    },
-    duration: function () {
-      let dur = this.endmin - this.startmin;
-      return dur >= 0 ? dur : 0;
-    },
-    maxstarttime: function () {
-      return utils.minToTime(utils.timeToMinutes(this.closetime) - 5);
-    },
-    maxDuration: function () {
-      return (
-        utils.timeToMinutes(this.closetime) - utils.timeToMinutes(this.s_time)
-      );
-    },
-    current_schedule: function () {
-      return this.$store.getters["getScheduleForDate"](
-        this.$dayjs(this.date).tz().unix()
-      );
-    },
-    open_time_frames: function () {
-      /**
-       * Return an empty array of time frame if current_schedule is not set
-       */
-      if (!this.current_schedule) {
-        return [];
-      }
-      /**
-       * Get open time frames for current date. dayjs returns values from 0 - 6
-       * so ajustment (+1) needs to be done to covert to day numbers returned from the db
-       */
-      const dayNum = this.$dayjs(this.date).tz().day();
-
-      return this.current_schedule["open_time_frames"].filter(
-        (item) => item.dayofweek === dayNum + 1
-      );
-    },
-    courtOpenTimeFrames: function () {
-      return !this.court
-        ? []
-        : this.open_time_frames
-            .filter((item) => item.court == this.court)
-            .sort((a, b) => a.open_min - b.open_min);
-    },
-  },
-  created: function () {
-    //this.getPlayers();
-    this.getActivePersons();
-  },
-  mounted: function () {
-    if (Array.isArray(this.req_players)) {
-      this.req_players.forEach((player, index) => {
-        if (typeof player === "number") {
-          if (index < this.selplayers.length) {
-            this.selplayers[index].id = player;
-          }
-        }
-      });
-    }
-  },
-  beforeDestroy() {},
 };
 </script>
 

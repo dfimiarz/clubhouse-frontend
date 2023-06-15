@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container v-bind:fluid="$vuetify.breakpoint.lgAndDown" class="py-0">
+    <v-container :fluid="$vuetify.breakpoint.lgAndDown" class="py-0">
       <v-row align="start" no-gutters="" justify="center">
         <v-col cols="12">
           <v-row
@@ -11,20 +11,20 @@
           >
             <v-col cols="auto">
               <v-menu
+                v-if="!simplifiedDisplay"
                 v-model="datemenu"
                 :close-on-content-click="false"
                 max-width="290"
-                v-if="!simplifiedDisplay"
               >
-                <template v-slot:activator="{ on, attrs }">
+                <template #activator="{ on, attrs }">
                   <v-text-field
                     :value="dateISO"
                     label="Selected date"
                     readonly
                     v-bind="attrs"
-                    v-on="on"
                     :prepend-inner-icon="calendarIcon"
                     :disabled="loading"
+                    v-on="on"
                   ></v-text-field>
                 </template>
                 <v-date-picker
@@ -41,76 +41,79 @@
           </v-row>
         </v-col>
         <v-col cols="12">
-          <div class="main-schedule-container" ref="scheduleContainer">
+          <div ref="scheduleContainer" class="main-schedule-container">
             <div
               class="court-grid-container"
-              v-bind:style="{
+              :style="{
                 'grid-template-columns':
-                  '40px repeat(' + this.displayableCourts.length + ',1fr)',
+                  '40px repeat(' + displayableCourts.length + ',1fr)',
               }"
             >
               <div
-                class="pa-1 court-grid-item"
                 v-for="(court, index) in displayableCourts"
                 :key="court.id"
-                v-bind:style="{ 'grid-column': index + 2, 'grid-row': 1 }"
+                class="pa-1 court-grid-item"
+                :style="{ 'grid-column': index + 2, 'grid-row': 1 }"
               >
                 <v-btn
                   v-if="index == 0"
                   :disabled="firstCourt == 0"
                   small=""
-                  @click="changeDisplayedCourts(-1)"
                   style="grid-row: 1; grid-column: 1 / span 1"
-                  ><v-icon> {{ leftArrowIcon }} </v-icon>
+                  @click="changeDisplayedCourts(-1)"
+                >
+                  <v-icon>{{ leftArrowIcon }}</v-icon>
                 </v-btn>
                 <span
                   class="headline"
                   style="grid-row: 1; grid-column: 2 / span 1"
-                  >{{ court.name }}</span
                 >
+                  {{ court.name }}
+                </span>
                 <v-btn
                   v-if="index == displayableCourts.length - 1"
                   :disabled="firstCourt + index == courts.length - 1"
                   small=""
-                  @click="changeDisplayedCourts(1)"
                   style="grid-row: 1; grid-column: 3 / span 1"
-                  ><v-icon> {{ rightArrowIcon }} </v-icon>
+                  @click="changeDisplayedCourts(1)"
+                >
+                  <v-icon>{{ rightArrowIcon }}</v-icon>
                 </v-btn>
               </div>
             </div>
 
             <div
+              v-if="club_schedule"
+              ref="tcontainer"
               class="time-grid-container"
-              v-bind:style="{
+              :style="{
                 overflow: simplifiedDisplay ? 'hidden' : 'auto',
                 'max-height': `calc(100vh - ${gridHeightAdjust}px`,
               }"
-              ref="tcontainer"
-              v-if="club_schedule"
             >
               <div
                 v-for="n in totalCellCount * 4"
                 :key="n"
                 :class="(n - 1) % 4 == 0 ? 'hourly-cell' : 'cell'"
-                v-bind:style="{ height: cellHeight1H / 4 + 'px' }"
+                :style="{ height: cellHeight1H / 4 + 'px' }"
               >
-                <span v-if="(n - 1) % 4 == 0">{{
-                  getCellLabel(parseInt((n - 1) / 4))
-                }}</span>
+                <span v-if="(n - 1) % 4 == 0">
+                  {{ getCellLabel(parseInt((n - 1) / 4)) }}
+                </span>
               </div>
 
               <div
                 class="session-grid-container"
-                v-bind:style="{
+                :style="{
                   'grid-template-columns':
-                    '40px repeat(' + this.displayableCourts.length + ',1fr)',
+                    '40px repeat(' + displayableCourts.length + ',1fr)',
                 }"
               >
                 <div
                   v-for="(court, index) in displayableCourts"
                   :key="court.id"
                   class="court-sessions-container"
-                  v-bind:style="{
+                  :style="{
                     'grid-column': index + 2,
                     'grid-row': 1,
                     height: totalCellCount * cellHeight1H + 'px',
@@ -118,33 +121,32 @@
                 >
                   <transition-group name="fade" mode="out-in">
                     <component
+                      :is="getCalendarItemType(item.type)"
                       v-for="item in getBookingsForCourt(court.id)"
                       :key="item.id"
                       :booking="item"
-                      :is="getCalendarItemType(item.type)"
-                      :calendarStart="calStartHour"
-                    >
-                    </component>
+                      :calendar-start="calStartHour"
+                    ></component>
                   </transition-group>
                   <inactive-time-frame
-                    v-for="(item, index) in getClosedTimes(court.id)"
-                    :key="index"
-                    :calendarStart="calStartHour"
+                    v-for="(item, indx) in getClosedTimes(court.id)"
+                    :key="indx"
+                    :calendar-start="calStartHour"
                     :start="item.start"
                     :end="item.end"
                   />
                 </div>
               </div>
               <timeindicator
-                :currtime="currtime"
                 v-if="timeIndicatorVisible"
-                :openMin="calStartMin"
-                :closeMin="calEndMin"
+                :currtime="currtime"
+                :open-min="calStartMin"
+                :close-min="calEndMin"
               ></timeindicator>
             </div>
             <div
               v-else
-              v-bind:style="{
+              :style="{
                 overflow: simplifiedDisplay ? 'hidden' : 'auto',
                 height: `calc(100vh - ${gridHeightAdjust}px`,
               }"
@@ -171,10 +173,9 @@
       :show.sync="retrySnackBarConfig.visible"
       :loading="loading"
       :show-retry-button="!simplifiedDisplay"
-      @retry:action="loadDataAndSubscribe"
       :counter="tickCounter"
-    >
-    </retry-snackbar>
+      @retry:action="loadDataAndSubscribe"
+    ></retry-snackbar>
   </div>
 </template>
 
@@ -212,6 +213,7 @@ const TIMER_INTERVAL_MS = 1000;
 let timerHandle = null;
 
 export default {
+  name: "MatchCalendar",
   components: {
     //session: Session,
     "match-item": MatchItem,
@@ -221,7 +223,6 @@ export default {
     "retry-snackbar": RetrySnackbar,
     "inactive-time-frame": InactiveTimeFrame,
   },
-  name: "MatchCalendar",
   data: function () {
     return {
       calendarIcon: mdiCalendar,
@@ -299,6 +300,203 @@ export default {
       },
       tickCounter: 0,
     };
+  },
+  computed: {
+    /**
+     * Default can day start and end use when there is no court schedules
+     */
+    default_cal_start_min: function () {
+      return this.$store.state.default_cal_start_min;
+    },
+    default_cal_end_min: function () {
+      return this.$store.state.default_cal_end_min;
+    },
+    dateISO: {
+      get: function () {
+        return this.$dayjs(this.date).tz().format("YYYY-MM-DD");
+      },
+      set: function (val) {
+        this.date = this.$dayjs(val).tz().format();
+      },
+    },
+    loading: {
+      get: function () {
+        return this.$store.state.loading;
+      },
+      set: function (val) {
+        this.$store.dispatch("setLoading", val);
+      },
+    },
+    simplifiedDisplay: function () {
+      return this.displaymode === "TV";
+    },
+    displaymode: function () {
+      return this.$store.getters["getSetting"]("displaymode");
+    },
+    calStartHour: function () {
+      return Math.floor(this.calStartMin / 60);
+    },
+    calEndHour: function () {
+      return Math.ceil(this.calEndMin / 60);
+    },
+    courts: function () {
+      return this.$store.getters["courtstore/getCourts"];
+    },
+    hourLabels: function () {
+      return this.civTimeLabels.slice(this.calStartHour, this.calEndHour);
+    },
+    totalCellCount: function () {
+      return this.calEndHour - this.calStartHour;
+    },
+    cellHeight1H: function () {
+      return this.$store.getters["calCellHeight1H"];
+    },
+    maxCourtCount: function () {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+          return 1;
+        case "sm":
+          return 2;
+        case "md":
+          return 3;
+        case "lg":
+          return 5;
+        case "xl":
+          return 5;
+        default:
+          return 5;
+      }
+    },
+    displayableCourts: function () {
+      const lastIndex = this.firstCourt + this.maxCourtCount;
+      /* 
+        From docs
+        If end [here lastIndex] is greater than the length of the sequence, slice extracts through to the end of the sequence (arr.length).
+      */
+      return this.courts.slice(this.firstCourt, lastIndex);
+    },
+    browser_active: function () {
+      return this.$store.state.browser_active;
+    },
+    currTimeFormatted: function () {
+      return this.$dayjs(this.currtime).tz().format("hh:mm:ss a");
+    },
+    gridHeightAdjust: function () {
+      //top+footer + time_section + court_sel_section + bottom_buffer
+      return (
+        this.$vuetify.application.top +
+        this.$vuetify.application.footer +
+        (this.simplifiedDisplay ? 42 : 78) +
+        42 +
+        8
+      );
+    },
+    club_schedule: function () {
+      return this.$store.getters["getScheduleForDate"](
+        this.$dayjs(this.date).tz().unix()
+      );
+    },
+    closed_time_frames: function () {
+      const dayNum = this.$dayjs(this.date).tz().day();
+      if (!!this.club_schedule && !!this.club_schedule["closed_time_frames"]) {
+        //Find closed time frames for a given day
+        const closedTimeFrames = this.club_schedule["closed_time_frames"].find(
+          (item) => item.dayofweek === dayNum + 1
+        );
+
+        return closedTimeFrames["time_frames"];
+      } else {
+        return [];
+      }
+    },
+    calEndMin: function () {
+      const dayNum = this.$dayjs(this.date).tz().day();
+      if (!!this.club_schedule && !!this.club_schedule["calTimes"]) {
+        //Find an item for a given day of week
+        const item = this.club_schedule["calTimes"].find(
+          (item) => item.dayofweek === dayNum + 1
+        );
+
+        return item.calEndMin;
+      } else {
+        return null;
+      }
+    },
+    calStartMin: function () {
+      const dayNum = this.$dayjs(this.date).tz().day();
+      if (!!this.club_schedule && !!this.club_schedule["calTimes"]) {
+        //Find an item for a given day of week
+        const item = this.club_schedule["calTimes"].find(
+          (item) => item.dayofweek === dayNum + 1
+        );
+
+        return item.calStartMin;
+      } else {
+        return null;
+      }
+    },
+  },
+  watch: {
+    browser_active: function (newval) {
+      if (newval) {
+        this.setUp();
+      } else {
+        //Unsubscribe from pusher if browser is not active
+        this.cleanUp();
+      }
+    },
+    error: function (val) {
+      if (val) {
+        this.unsubsribe();
+      } else {
+        this.retrySnackBarConfig.visible = false;
+      }
+    },
+    maxCourtCount: function (val) {
+      let newFirstCourt = this.firstCourt - val + 1;
+
+      if (newFirstCourt < 0) newFirstCourt = 0;
+
+      this.firstCourt = newFirstCourt;
+    },
+    date: function (val) {
+      //Webworker https://www.youtube.com/watch?v=nwQN55oPAfc
+
+      const curr_date = this.$dayjs().tz().startOf("day").valueOf();
+      this.dateSet = curr_date;
+      const new_cal_date = this.$dayjs(val).tz().startOf("day").valueOf();
+
+      if (curr_date === new_cal_date) {
+        //Show time indicator bar when new_date = current_date
+        this.timeIndicatorVisible = true;
+      } else {
+        //Hide time indicator bar when new_date is not current_date
+        this.timeIndicatorVisible = false;
+      }
+
+      this.loadBookings(this.dateISO);
+
+      if (this.timeIndicatorVisible) {
+        this.$nextTick(function () {
+          this.scrollCalendar();
+        });
+      }
+    },
+  },
+  created: function () {
+    this.currtime = this.$dayjs().tz().valueOf();
+    this.date = this.$dayjs().tz().startOf("day").format();
+    this.setUp();
+  },
+  beforeDestroy: function () {
+    this.cleanUp();
+  },
+  updated: function () {
+    this.$nextTick(function () {
+      if (this.simplifiedDisplay) {
+        this.scrollCalendar();
+      }
+    });
   },
   methods: {
     getClosedTimes(court_id) {
@@ -487,7 +685,7 @@ export default {
           this.bookings = data;
           this.error = false;
         })
-        .catch((_err) => {
+        .catch(() => {
           this.bookings.splice(0);
           this.error = true;
           this.showRetrySnackBar("Unable to load bookings.", "error");
@@ -541,7 +739,7 @@ export default {
           this.error = false;
           this.subscribe();
         })
-        .catch((_err) => {
+        .catch(() => {
           this.error = true;
           this.showRetrySnackBar("Unable to load bookings.", "error");
         })
@@ -553,203 +751,6 @@ export default {
     async loadAsync(date) {
       const res = await dbservice.getBookings(date);
       return res.data;
-    },
-  },
-  computed: {
-    /**
-     * Default can day start and end use when there is no court schedules
-     */
-    default_cal_start_min: function () {
-      return this.$store.state.default_cal_start_min;
-    },
-    default_cal_end_min: function () {
-      return this.$store.state.default_cal_end_min;
-    },
-    dateISO: {
-      get: function () {
-        return this.$dayjs(this.date).tz().format("YYYY-MM-DD");
-      },
-      set: function (val) {
-        this.date = this.$dayjs(val).tz().format();
-      },
-    },
-    loading: {
-      get: function () {
-        return this.$store.state.loading;
-      },
-      set: function (val) {
-        this.$store.dispatch("setLoading", val);
-      },
-    },
-    simplifiedDisplay: function () {
-      return this.displaymode === "TV";
-    },
-    displaymode: function () {
-      return this.$store.getters["getSetting"]("displaymode");
-    },
-    calStartHour: function () {
-      return Math.floor(this.calStartMin / 60);
-    },
-    calEndHour: function () {
-      return Math.ceil(this.calEndMin / 60);
-    },
-    courts: function () {
-      return this.$store.getters["courtstore/getCourts"];
-    },
-    hourLabels: function () {
-      return this.civTimeLabels.slice(this.calStartHour, this.calEndHour);
-    },
-    totalCellCount: function () {
-      return this.calEndHour - this.calStartHour;
-    },
-    cellHeight1H: function () {
-      return this.$store.getters["calCellHeight1H"];
-    },
-    maxCourtCount: function () {
-      switch (this.$vuetify.breakpoint.name) {
-        case "xs":
-          return 1;
-        case "sm":
-          return 2;
-        case "md":
-          return 3;
-        case "lg":
-          return 5;
-        case "xl":
-          return 5;
-        default:
-          return 5;
-      }
-    },
-    displayableCourts: function () {
-      const lastIndex = this.firstCourt + this.maxCourtCount;
-      /* 
-        From docs
-        If end [here lastIndex] is greater than the length of the sequence, slice extracts through to the end of the sequence (arr.length).
-      */
-      return this.courts.slice(this.firstCourt, lastIndex);
-    },
-    browser_active: function () {
-      return this.$store.state.browser_active;
-    },
-    currTimeFormatted: function () {
-      return this.$dayjs(this.currtime).tz().format("hh:mm:ss a");
-    },
-    gridHeightAdjust: function () {
-      //top+footer + time_section + court_sel_section + bottom_buffer
-      return (
-        this.$vuetify.application.top +
-        this.$vuetify.application.footer +
-        (this.simplifiedDisplay ? 42 : 78) +
-        42 +
-        8
-      );
-    },
-    club_schedule: function () {
-      return this.$store.getters["getScheduleForDate"](
-        this.$dayjs(this.date).tz().unix()
-      );
-    },
-    closed_time_frames: function () {
-      const dayNum = this.$dayjs(this.date).tz().day();
-      if (!!this.club_schedule && !!this.club_schedule["closed_time_frames"]) {
-        //Find closed time frames for a given day
-        const closedTimeFrames = this.club_schedule["closed_time_frames"].find(
-          (item) => item.dayofweek === dayNum + 1
-        );
-
-        return closedTimeFrames["time_frames"];
-      } else {
-        return [];
-      }
-    },
-    calEndMin: function () {
-      const dayNum = this.$dayjs(this.date).tz().day();
-      if (!!this.club_schedule && !!this.club_schedule["calTimes"]) {
-        //Find an item for a given day of week
-        const item = this.club_schedule["calTimes"].find(
-          (item) => item.dayofweek === dayNum + 1
-        );
-
-        return item.calEndMin;
-      } else {
-        return null;
-      }
-    },
-    calStartMin: function () {
-      const dayNum = this.$dayjs(this.date).tz().day();
-      if (!!this.club_schedule && !!this.club_schedule["calTimes"]) {
-        //Find an item for a given day of week
-        const item = this.club_schedule["calTimes"].find(
-          (item) => item.dayofweek === dayNum + 1
-        );
-
-        return item.calStartMin;
-      } else {
-        return null;
-      }
-    },
-  },
-  created: function () {
-    this.currtime = this.$dayjs().tz().valueOf();
-    this.date = this.$dayjs().tz().startOf("day").format();
-    this.setUp();
-  },
-  beforeDestroy: function () {
-    this.cleanUp();
-  },
-  updated: function () {
-    this.$nextTick(function () {
-      if (this.simplifiedDisplay) {
-        this.scrollCalendar();
-      }
-    });
-  },
-  watch: {
-    browser_active: function (newval) {
-      if (newval) {
-        this.setUp();
-      } else {
-        //Unsubscribe from pusher if browser is not active
-        this.cleanUp();
-      }
-    },
-    error: function (val) {
-      if (val) {
-        this.unsubsribe();
-      } else {
-        this.retrySnackBarConfig.visible = false;
-      }
-    },
-    maxCourtCount: function (val) {
-      let newFirstCourt = this.firstCourt - val + 1;
-
-      if (newFirstCourt < 0) newFirstCourt = 0;
-
-      this.firstCourt = newFirstCourt;
-    },
-    date: function (val) {
-      //Webworker https://www.youtube.com/watch?v=nwQN55oPAfc
-
-      const curr_date = this.$dayjs().tz().startOf("day").valueOf();
-      this.dateSet = curr_date;
-      const new_cal_date = this.$dayjs(val).tz().startOf("day").valueOf();
-
-      if (curr_date === new_cal_date) {
-        //Show time indicator bar when new_date = current_date
-        this.timeIndicatorVisible = true;
-      } else {
-        //Hide time indicator bar when new_date is not current_date
-        this.timeIndicatorVisible = false;
-      }
-
-      this.loadBookings(this.dateISO);
-
-      if (this.timeIndicatorVisible) {
-        this.$nextTick(function () {
-          this.scrollCalendar();
-        });
-      }
     },
   },
 };

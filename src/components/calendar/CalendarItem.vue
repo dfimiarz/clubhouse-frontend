@@ -1,9 +1,9 @@
 <template>
   <base-item
+    v-slot="{ height }"
     :start="start"
     :end="end"
-    :calendarStart="calendarStart"
-    v-slot="{ height }"
+    :calendar-start="calendarStart"
   >
     <v-row
       no-gutters
@@ -15,7 +15,7 @@
       <v-col cols="12" class="fill-height">
         <slot :height="height">
           <v-row class="fill-height" no-gutters>
-            <v-col cols="12"> Calendar Item </v-col>
+            <v-col cols="12">Calendar Item</v-col>
           </v-row>
         </slot>
       </v-col>
@@ -24,11 +24,10 @@
 </template>
 
 <script>
-const MIN_SESSION_HEIGHT = 26;
-
 import BaseItem from "./BaseItem.vue";
 
 export default {
+  name: "CalendarItem",
   components: { BaseItem },
   props: {
     start: {
@@ -42,6 +41,7 @@ export default {
     id: {
       type: Number,
       required: false,
+      default: null,
     },
     showDetails: {
       type: Boolean,
@@ -52,7 +52,6 @@ export default {
       required: true,
     },
   },
-  name: "CalendarItem",
   data: function () {
     return {};
   },

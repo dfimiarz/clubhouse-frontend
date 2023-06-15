@@ -59,7 +59,10 @@
                         clearable
                       >
                         <template #label>
-                          <div>Phone <small>(optional)</small></div>
+                          <div>
+                            Phone
+                            <small>(optional)</small>
+                          </div>
                         </template>
                       </v-text-field>
                     </v-col>
@@ -87,11 +90,12 @@
                       </v-checkbox>
                     </v-col>
                   </v-row>
-                  <v-row dense v-if="!authenticated">
+                  <v-row v-if="!authenticated" dense>
                     <v-col cols="12" lg="8">
                       <vue-hcaptcha
-                        :sitekey="hcaptcha.sitekey"
                         ref="hcaptcha"
+                        :key="hCaptchaSize"
+                        :sitekey="hcaptcha.sitekey"
                         theme="dark"
                         :size="hCaptchaSize"
                         @verify="onVerify"
@@ -99,15 +103,14 @@
                         @challenge-expired="onExpire"
                         @error="onError"
                         @reset="onCaptchaReset"
-                        :key="hCaptchaSize"
                       ></vue-hcaptcha>
                     </v-col>
                     <v-col cols="12" class="py-0">
                       <div style="min-height: 14px">
                         <div
+                          v-if="errors.hcaptcha"
                           style="line-height: 12px"
                           class="text-caption error--text"
-                          v-if="errors.hcaptcha"
                         >
                           {{ errors.hcaptcha }}
                         </div>
@@ -120,7 +123,7 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-btn text @click="resetForm"> Reset </v-btn>
+          <v-btn text @click="resetForm">Reset</v-btn>
           <v-spacer />
           <v-btn large color="primary" :loading="loading" @click="addGuest">
             <v-icon left>
@@ -145,12 +148,12 @@ import { notification } from "@/components/mixins/NotificationMixin";
 import VueHcaptcha from "@hcaptcha/vue-hcaptcha";
 
 export default {
-  mixins: [notification],
+  name: "RegisterMember",
   components: { VueHcaptcha },
+  mixins: [notification],
   props: {
     loading: Boolean,
   },
-  name: "RegisterMember",
   data: function () {
     return {
       hcaptcha: {
@@ -218,7 +221,7 @@ export default {
     },
   },
   watch: {
-    hCaptchaSize: function (val) {
+    hCaptchaSize: function () {
       this.onCaptchaReset();
     },
   },

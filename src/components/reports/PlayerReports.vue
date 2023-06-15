@@ -3,7 +3,7 @@
     <v-row justify="start" align="start">
       <v-col cols="12" sm="6" lg="4" xl="3">
         <date-range-selector
-          v-bind:dates.sync="dates"
+          :dates.sync="dates"
           :show.sync="dateseldialog"
         ></date-range-selector>
       </v-col>
@@ -12,8 +12,8 @@
           <v-card-text>
             <v-responsive height="300px">
               <v-chart
-                :option="playersChartOptions"
                 ref="playerchart"
+                :option="playersChartOptions"
               ></v-chart>
             </v-responsive>
           </v-card-text>
@@ -133,9 +133,9 @@ use([
 ]);
 
 export default {
-  mixins: [notification],
   name: "PlayerReports",
   components: { VChart, DateRangeSelector },
+  mixins: [notification],
   provide: {
     [THEME_KEY]: "dark",
   },
@@ -295,71 +295,6 @@ export default {
       },
     };
   },
-  methods: {
-    saveData: function (op_type) {
-      //A list of available save functions
-      const SUPPORTED_OPS = {
-        guest_players: {
-          filename: "guest_players",
-          data: this.guest_players_data,
-        },
-        member_activities: {
-          filename: "member_activities",
-          data: this.memberactivities,
-        },
-        player_stats: {
-          filename: "player_stats",
-          data: this.playerStats,
-        },
-      };
-
-      //Check if type is set and it is a valid save function
-      if (
-        op_type &&
-        SUPPORTED_OPS.hasOwnProperty(op_type) &&
-        SUPPORTED_OPS[op_type].data.length > 0
-      ) {
-        //If so, use that save function
-        this.saveDataToCSV(
-          SUPPORTED_OPS[op_type].filename,
-          SUPPORTED_OPS[op_type].data
-        );
-      }
-    },
-    saveDataToCSV: function (filename, data) {
-      let csv = papaparse.unparse(data);
-      let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      saveAs(blob, `${filename}-${this.startdate}-${this.enddate}.csv`, {
-        autoBom: true,
-      });
-    },
-    onResize: function () {
-      this.$refs["playerchart"].resize();
-    },
-    loadData() {
-      this.$store.dispatch("setLoading", true);
-      Promise.all([
-        apihandler.runReport("playerstats", this.startdate, this.enddate),
-        apihandler.runReport("memberactivities", this.startdate, this.enddate),
-        apihandler.runReport("guestinfo", this.startdate, this.enddate),
-      ])
-        .then((responses) => {
-          this.playerStats = responses[0].data.result;
-
-          this.memberactivities = responses[1].data.result;
-          this.guest_players_data = responses[2].data.result;
-        })
-        .catch((error) => {
-          this.showNotification(
-            error.message || "Unable to load data",
-            "error"
-          );
-        })
-        .finally(() => {
-          this.$store.dispatch("setLoading", false);
-        });
-    },
-  },
   computed: {
     startdate() {
       //if this.date is not an array, return null
@@ -443,6 +378,71 @@ export default {
   },
   beforeDestroy() {
     this.$refs["playerchart"].dispose();
+  },
+  methods: {
+    saveData: function (op_type) {
+      //A list of available save functions
+      const SUPPORTED_OPS = {
+        guest_players: {
+          filename: "guest_players",
+          data: this.guest_players_data,
+        },
+        member_activities: {
+          filename: "member_activities",
+          data: this.memberactivities,
+        },
+        player_stats: {
+          filename: "player_stats",
+          data: this.playerStats,
+        },
+      };
+
+      //Check if type is set and it is a valid save function
+      if (
+        op_type &&
+        Object.prototype.hasOwnProperty.call(SUPPORTED_OPS, op_type) &&
+        SUPPORTED_OPS[op_type].data.length > 0
+      ) {
+        //If so, use that save function
+        this.saveDataToCSV(
+          SUPPORTED_OPS[op_type].filename,
+          SUPPORTED_OPS[op_type].data
+        );
+      }
+    },
+    saveDataToCSV: function (filename, data) {
+      let csv = papaparse.unparse(data);
+      let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      saveAs(blob, `${filename}-${this.startdate}-${this.enddate}.csv`, {
+        autoBom: true,
+      });
+    },
+    onResize: function () {
+      this.$refs["playerchart"].resize();
+    },
+    loadData() {
+      this.$store.dispatch("setLoading", true);
+      Promise.all([
+        apihandler.runReport("playerstats", this.startdate, this.enddate),
+        apihandler.runReport("memberactivities", this.startdate, this.enddate),
+        apihandler.runReport("guestinfo", this.startdate, this.enddate),
+      ])
+        .then((responses) => {
+          this.playerStats = responses[0].data.result;
+
+          this.memberactivities = responses[1].data.result;
+          this.guest_players_data = responses[2].data.result;
+        })
+        .catch((error) => {
+          this.showNotification(
+            error.message || "Unable to load data",
+            "error"
+          );
+        })
+        .finally(() => {
+          this.$store.dispatch("setLoading", false);
+        });
+    },
   },
 };
 </script>

@@ -6,7 +6,7 @@
     persistent
     width="290px"
   >
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <v-text-field
         :value="dateRangeText"
         label="Report date range"
@@ -18,8 +18,8 @@
     </template>
     <v-date-picker v-model="loc_dates" scrollable range>
       <v-spacer></v-spacer>
-      <v-btn text color="primary" @click="showdialog = false"> Cancel </v-btn>
-      <v-btn text color="primary" @click="saveAndClose"> OK </v-btn>
+      <v-btn text color="primary" @click="showdialog = false">Cancel</v-btn>
+      <v-btn text color="primary" @click="saveAndClose">OK</v-btn>
     </v-date-picker>
   </v-dialog>
 </template>
@@ -34,24 +34,13 @@ export default {
     },
     dates: {
       type: Array,
+      default: () => [],
     },
   },
   data: () => ({
     loc_dates: [],
     calendarIcon: mdiCalendar,
   }),
-  methods: {
-    loadDates: function () {
-      this.loc_dates = this.dates;
-    },
-    clearDates: function () {
-      this.loc_dates = [];
-    },
-    saveAndClose() {
-      this.$emit("update:dates", this.loc_dates);
-      this.showdialog = false;
-    },
-  },
   computed: {
     showdialog: {
       get: function () {
@@ -62,7 +51,7 @@ export default {
       },
     },
     dateRangeText() {
-      return !!this.dates ? this.dates.join(" ~ ") : null;
+      return this.dates ? this.dates.join(" ~ ") : null;
     },
   },
   watch: {
@@ -72,6 +61,18 @@ export default {
       } else {
         this.clearDates();
       }
+    },
+  },
+  methods: {
+    loadDates: function () {
+      this.loc_dates = this.dates;
+    },
+    clearDates: function () {
+      this.loc_dates = [];
+    },
+    saveAndClose() {
+      this.$emit("update:dates", this.loc_dates);
+      this.showdialog = false;
     },
   },
 };
