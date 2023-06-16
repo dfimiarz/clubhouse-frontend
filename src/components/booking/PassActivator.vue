@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="show" max-width="290" persistent>
     <v-card>
-      <v-card-title class="text-h6"> Guest Pass Activation </v-card-title>
+      <v-card-title class="text-h6">Guest Pass Activation</v-card-title>
       <v-card-text>
         <v-container fluid>
           <v-row no-gutters>
@@ -21,25 +21,28 @@
             </v-col>
             <v-col cols="12">
               <v-autocomplete
-                label="Host"
                 v-model="selectedHostId"
+                label="Host"
                 :items="hosts"
                 item-text="name"
                 item-value="id"
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
-              <v-checkbox dense label="Remember Host" v-model="rememberHost">
-              </v-checkbox>
+              <v-checkbox
+                v-model="rememberHost"
+                dense
+                label="Remember Host"
+              ></v-checkbox>
             </v-col>
           </v-row>
         </v-container>
       </v-card-text>
 
       <v-card-actions>
-        <v-btn @click="close" text> Close </v-btn>
+        <v-btn text @click="close">Close</v-btn>
         <v-spacer></v-spacer>
-        <v-btn @click="activatePass"> Activate </v-btn>
+        <v-btn @click="activatePass">Activate</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -49,7 +52,7 @@
 import { ROLE_TYPES } from "@/constants/constants.js";
 
 export default {
-  name: "pass-activator",
+  name: "PassActivator",
   props: {
     value: {
       type: Boolean,
