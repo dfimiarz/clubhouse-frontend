@@ -132,13 +132,11 @@ export default {
           pass_type: 1000,
         })
         .then((res) => {
-          console.log(res);
-          // this.$emit("passactivated", {
-          // guestId: this.guestId,
-          // pass: {
-          //   hostId: this.selectedHostId,
-          //   passTypeId: 1,
-          // },
+          this.$emit("passactivated", {
+            guestId: this.guestId,
+            pass: res.data,
+          });
+          this.close();
         })
         .catch((err) => {
           const error = processAxiosError(err);
