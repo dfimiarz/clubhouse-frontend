@@ -1,6 +1,10 @@
 import axios from "axios";
 import auth from "../firebase";
 
+/**
+ * @typedef {import("@/types/guest_passes").PassInfo} PassInfo;
+ */
+
 const instance = axios.create({
   baseURL: process.env.VUE_APP_BACKEND,
 });
@@ -299,6 +303,19 @@ async function getActivitiesForDates(from, to) {
   return result.data;
 }
 
+/**
+ *
+ * @param {PassInfo} passInfo
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+async function createGuestPass(passInfo) {
+  return instance.post(process.env.VUE_APP_BACKEND + "/guest_passes", {
+    host: passInfo.host,
+    guest: passInfo.guest,
+    pass_type: passInfo.pass_type,
+  });
+}
+
 export default {
   getBookings,
   newMatch: newMatch,
@@ -331,4 +348,5 @@ export default {
   getClubInfo,
   runReport,
   getActivitiesForDates,
+  createGuestPass,
 };
