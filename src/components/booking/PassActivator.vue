@@ -49,10 +49,17 @@
 </template>
 
 <script>
-import { ROLE_TYPES } from "@/constants/constants.js";
+import apiHandler from "@/services/db";
+import processAxiosError from "@/utils/AxiosErrorHandler";
+import { notification } from "@/components/mixins/NotificationMixin";
+
+/**
+ * @typedef {import('@/types/guest_passes').PassInfo } PassInfo
+ */
 
 export default {
   name: "PassActivator",
+  mixins: [notification],
   props: {
     value: {
       type: Boolean,
@@ -82,11 +89,7 @@ export default {
     },
     hosts() {
       return this.persons
-        .filter(
-          (person) =>
-            person.role_type_id === ROLE_TYPES.MEMBER_TYPE ||
-            person.role_type_id === ROLE_TYPES.MANAGER_TYPE
-        )
+        .filter((person) => person.can_host === 1)
         .map((person) => ({
           id: person.id,
           name: person.firstname + " " + person.lastname,
@@ -109,14 +112,42 @@ export default {
 
       this.show = false;
     },
+    handleFieldErrors(errors) {
+      //Loop through each error and add it to array of error for specific field
+      if (Array.isArray(errors)) {
+        errors.forEach((element) => {
+          if (
+            Object.prototype.hasOwnProperty.call(this.errors, element.param)
+          ) {
+            this.errors[element.param] = element.msg;
+          }
+        });
+      }
+    },
     activatePass() {
-      this.$emit("passactivated", {
-        guestId: this.guestId,
-        pass: {
-          hostId: this.selectedHostId,
-          passTypeId: 1,
-        },
-      });
+      apiHandler
+        .createGuestPass({
+          host: this.selectedHostId,
+          guest: this.guestId,
+          pass_type: 1000,
+        })
+        .then((res) => {
+          console.log(res);
+          // this.$emit("passactivated", {
+          // guestId: this.guestId,
+          // pass: {
+          //   hostId: this.selectedHostId,
+          //   passTypeId: 1,
+          // },
+        })
+        .catch((err) => {
+          const error = processAxiosError(err);
+          if (error.fielderrors) {
+            this.handleFieldErrors(error.fielderrors);
+          } else {
+            this.showNotification("Error: " + error, "error");
+          }
+        });
     },
   },
 };
