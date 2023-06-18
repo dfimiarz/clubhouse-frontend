@@ -621,7 +621,10 @@ export default {
         players: null,
       },
       activePersons: [],
+      //Values used in pass activation
       activatedGuestId: null,
+      activatedGuestIndex: null,
+      //Guest pass types
       passTypes: [
         { id: 1, label: "Day Pass" },
         { id: 2, label: "Week Pass" },
@@ -883,7 +886,18 @@ export default {
   beforeDestroy() {},
   methods: {
     onPassActivated(data) {
-      console.log(data);
+      const { pass, guestId } = data;
+
+      //Find index of the guest in activePersons
+      const gindex = this.activePersons.findIndex(
+        (person) => person.id === guestId
+      );
+      if (gindex !== -1) {
+        this.activePersons[gindex].pass = pass;
+        this.checkPassRequired(this.activatedGuestIndex);
+      }
+
+      this.showNotification("Pass activated successfully", "success");
     },
     checkPassRequired(index) {
       const player = this.selplayers[index];
@@ -899,6 +913,7 @@ export default {
     },
     activatePass(index) {
       this.activatedGuestId = this.selplayers[index].id;
+      this.activatedGuestIndex = index;
       this.showPassActivation = true;
     },
     courtSelected: function () {
