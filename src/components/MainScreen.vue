@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex fill-height">
-    <v-navigation-drawer temporary fixed v-model="drawer" app>
+    <v-navigation-drawer v-model="drawer" temporary fixed app>
       <v-list>
         <v-list-item
           :to="{ name: 'home' }"
@@ -71,9 +71,9 @@
           </v-list-item-content>
         </v-list-item>
         <v-list-item
+          v-if="!loggedin"
           :to="{ name: 'login' }"
           exact
-          v-if="!loggedin"
           :disabled="!canAccess('login')"
         >
           <v-list-item-action>
@@ -95,7 +95,7 @@
     </v-navigation-drawer>
     <v-app-bar app elevate-on-scroll>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title>Knickerbocker Field Club</v-toolbar-title>
+      <v-toolbar-title>{{ clubname }}</v-toolbar-title>
       <div class="flex-grow-1" />
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn text :to="{ name: 'home' }" exact :disabled="!canAccess('home')">
@@ -117,7 +117,7 @@
         >
           Book a Court
         </v-btn>
-        <v-btn text exact> Help </v-btn>
+        <v-btn text exact>Help</v-btn>
       </v-toolbar-items>
     </v-app-bar>
     <v-main>
@@ -136,21 +136,21 @@
               <v-icon v-else>
                 {{ networkOffOutlineIcon }}
               </v-icon>
-              <v-btn icon v-if="user">
+              <v-btn v-if="user" icon>
                 <v-icon>
                   {{ accountIcon }}
                 </v-icon>
               </v-btn>
-              <v-btn icon v-else :to="{ name: 'login' }">
+              <v-btn v-else icon :to="{ name: 'login' }">
                 <v-icon>
                   {{ accountOffIcon }}
                 </v-icon>
               </v-btn>
-              <span class="text-caption hidden-xs-only" v-if="user">
+              <span v-if="user" class="text-caption hidden-xs-only">
                 {{ user }}
               </span>
             </div>
-            <span> &copy; {{ new Date().getFullYear() }} </span>
+            <span>&copy; {{ new Date().getFullYear() }}</span>
           </div>
         </v-col>
       </v-row>
@@ -217,8 +217,14 @@ export default {
     user: function () {
       return this.$store.state.userstore.user;
     },
+    clubname: function () {
+      return this.$store.state.clubName;
+    },
   },
-
+  created() {
+    //Set default time zone for the club
+    this.$dayjs.tz.setDefault(this.$store.state.clubtz);
+  },
   methods: {
     logout: function () {
       this.$store

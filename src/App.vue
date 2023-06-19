@@ -10,14 +10,14 @@
     <v-snackbar
       v-model="sbvis"
       elevation="24"
-      :app="this.active"
+      :app="active"
       outlined
       :color="sbcolor"
     >
       {{ sbmsg }}
 
       <template #action="{ attrs }">
-        <v-btn text v-bind="attrs" @click="sbvis = false"> Close </v-btn>
+        <v-btn text v-bind="attrs" @click="sbvis = false">Close</v-btn>
       </template>
     </v-snackbar>
   </v-app>
@@ -77,34 +77,6 @@ export default {
       return this.$store.state.notificationstore.notification;
     },
   },
-  methods: {
-    navigateToHome: function () {
-      if (this.$route.name !== "home") {
-        this.$router.push({ name: "home" });
-      }
-    },
-    showMessage: function (text, type) {
-      this.sbmsg = text;
-
-      switch (type) {
-        case "success":
-          this.sbcolor = "success";
-          break;
-        case "warning":
-          this.sbcolor = "warning";
-          break;
-        case "error":
-          this.sbcolor = "error";
-          break;
-
-        default:
-          this.sbcolor = null;
-          break;
-      }
-
-      this.sbvis = true;
-    },
-  },
   watch: {
     connected: {
       handler: function (newval) {
@@ -159,11 +131,36 @@ export default {
   created: function () {
     //laod settings saved in local storage
     this.$store.dispatch("loadPersistantSettings");
-
-    //Set default time zone for the club
-    this.$dayjs.tz.setDefault(this.$store.state.clubtz);
   },
   beforeDestroy: function () {},
+  methods: {
+    navigateToHome: function () {
+      if (this.$route.name !== "home") {
+        this.$router.push({ name: "home" });
+      }
+    },
+    showMessage: function (text, type) {
+      this.sbmsg = text;
+
+      switch (type) {
+        case "success":
+          this.sbcolor = "success";
+          break;
+        case "warning":
+          this.sbcolor = "warning";
+          break;
+        case "error":
+          this.sbcolor = "error";
+          break;
+
+        default:
+          this.sbcolor = null;
+          break;
+      }
+
+      this.sbvis = true;
+    },
+  },
 };
 </script>
 

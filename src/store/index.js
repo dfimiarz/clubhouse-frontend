@@ -124,10 +124,14 @@ const store = new Vuex.Store({
     SET_SCHEDULE(state, schedules) {
       state.club_schedule = schedules;
     },
-    SET_CLUB_INFO(state, { name, default_cal_start_min, default_cal_end_min }) {
+    SET_CLUB_INFO(
+      state,
+      { name, default_cal_start_min, default_cal_end_min, time_zone }
+    ) {
       state.clubName = name;
       state.default_cal_end_min = default_cal_end_min;
       state.default_cal_start_min = default_cal_start_min;
+      state.clubtz = time_zone;
     },
   },
   actions: {
