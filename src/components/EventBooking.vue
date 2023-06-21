@@ -18,8 +18,8 @@
               </v-row>
             </v-container>
             <v-progress-linear
-              indeterminate
               v-show="loading"
+              indeterminate
               absolute
               bottom
             ></v-progress-linear>
@@ -49,13 +49,13 @@
                 </v-col>
                 <v-col cols="12" md="8">
                   <v-select
+                    v-model="court"
                     label="Court"
                     :items="courts"
                     item-value="id"
                     item-text="name"
                     required
                     :rules="[rules.required]"
-                    v-model="court"
                     no-data-text="No courts found"
                     :prepend-icon="formSelectIcon"
                   ></v-select>
@@ -69,15 +69,15 @@
                     persistent
                     width="290px"
                   >
-                    <template v-slot:activator="{ on, attrs }">
+                    <template #activator="{ on, attrs }">
                       <v-text-field
                         v-model="formattedDate"
                         label="Booking date"
                         :prepend-icon="clockStartIcon"
                         readonly
                         v-bind="attrs"
-                        v-on="on"
                         :rules="[rules.required]"
+                        v-on="on"
                       ></v-text-field>
                     </template>
                     <v-date-picker v-model="date" scrollable>
@@ -95,14 +95,14 @@
                     persistent
                     width="290px"
                   >
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <v-text-field
                         v-model="s_time"
                         label="Start time"
                         :prepend-icon="clockStartIcon"
-                        v-on="on"
                         required
                         :rules="[rules.required]"
+                        v-on="on"
                       ></v-text-field>
                     </template>
                     <v-time-picker
@@ -114,9 +114,9 @@
                     >
                       <v-spacer></v-spacer>
                       <v-btn text @click="stimedialog = false">Cancel</v-btn>
-                      <v-btn text @click="$refs.stdialog.save(s_time)"
-                        >OK</v-btn
-                      >
+                      <v-btn text @click="$refs.stdialog.save(s_time)">
+                        OK
+                      </v-btn>
                     </v-time-picker>
                   </v-dialog>
                 </v-col>
@@ -128,14 +128,14 @@
                     persistent
                     width="290px"
                   >
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <v-text-field
                         v-model="e_time"
                         label="End time"
                         :prepend-icon="clockEndIcon"
-                        v-on="on"
                         required
                         :rules="[rules.required, rules.endAfterStart]"
+                        v-on="on"
                       ></v-text-field>
                     </template>
                     <v-time-picker
@@ -147,9 +147,9 @@
                     >
                       <v-spacer></v-spacer>
                       <v-btn text @click="etimedialog = false">Cancel</v-btn>
-                      <v-btn text @click="$refs.etdialog.save(e_time)"
-                        >OK</v-btn
-                      >
+                      <v-btn text @click="$refs.etdialog.save(e_time)">
+                        OK
+                      </v-btn>
                     </v-time-picker>
                   </v-dialog>
                 </v-col>
@@ -169,7 +169,7 @@
           <v-card-actions>
             <v-btn @click="$refs.eventbookingform.reset()">Reset</v-btn>
             <v-spacer></v-spacer>
-            <v-btn large @click="submitBooking" :loading="loading">Book</v-btn>
+            <v-btn large :loading="loading" @click="submitBooking">Book</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -194,9 +194,9 @@ import {
 const HOST_TYPE_ID = 4000;
 
 export default {
-  mixins: [notification],
-  components: {},
   name: "EventBooking",
+  components: {},
+  mixins: [notification],
   data: function () {
     return {
       accountIcon: mdiAccount,
@@ -240,6 +240,58 @@ export default {
       loading: false,
       error: null,
     };
+  },
+  computed: {
+    clubtz: function () {
+      return this.$store.state.clubtz;
+    },
+    courts: function () {
+      return this.$store.getters["courtstore/getCourts"];
+    },
+    startHours: function () {
+      return Array(12)
+        .fill()
+        .map((_, idx) => 1 + idx);
+    },
+    startMinutes: function () {
+      return Array(4)
+        .fill()
+        .map((_, idx) => 0 + idx * 15);
+    },
+    formattedDate: {
+      get() {
+        return this.formatDate(this.date);
+      },
+      set(val) {
+        this.date = val;
+      },
+    },
+    opentime() {
+      return this.$store.state.opentime;
+    },
+    closetime() {
+      return this.$store.state.closetime;
+    },
+    startmin: function () {
+      return utils.timeToMinutes(this.s_time);
+    },
+    endmin: function () {
+      return utils.timeToMinutes(this.e_time);
+    },
+    duration: function () {
+      let dur = this.endmin - this.startmin;
+      return dur >= 0 ? dur : 0;
+    },
+    maxstarttime: function () {
+      return utils.minToTime(utils.timeToMinutes(this.closetime) - 5);
+    },
+  },
+  mounted: function () {},
+  beforeDestroy() {},
+  created: function () {
+    this.date = this.$dayjs().tz().format("YYYY-MM-DD");
+
+    this.loadData();
   },
   methods: {
     allowedminutes: (m) => m % 5 === 0,
@@ -323,58 +375,6 @@ export default {
         });
     },
   },
-  computed: {
-    clubtz: function () {
-      return this.$store.state.clubtz;
-    },
-    courts: function () {
-      return this.$store.getters["courtstore/getCourts"];
-    },
-    startHours: function () {
-      return Array(12)
-        .fill()
-        .map((_, idx) => 1 + idx);
-    },
-    startMinutes: function () {
-      return Array(4)
-        .fill()
-        .map((_, idx) => 0 + idx * 15);
-    },
-    formattedDate: {
-      get() {
-        return this.formatDate(this.date);
-      },
-      set(val) {
-        this.date = val;
-      },
-    },
-    opentime() {
-      return this.$store.state.opentime;
-    },
-    closetime() {
-      return this.$store.state.closetime;
-    },
-    startmin: function () {
-      return utils.timeToMinutes(this.s_time);
-    },
-    endmin: function () {
-      return utils.timeToMinutes(this.e_time);
-    },
-    duration: function () {
-      let dur = this.endmin - this.startmin;
-      return dur >= 0 ? dur : 0;
-    },
-    maxstarttime: function () {
-      return utils.minToTime(utils.timeToMinutes(this.closetime) - 5);
-    },
-  },
-  created: function () {
-    this.date = this.$dayjs().tz().format("YYYY-MM-DD");
-
-    this.loadData();
-  },
-  mounted: function () {},
-  beforeDestroy() {},
 };
 </script>
 
