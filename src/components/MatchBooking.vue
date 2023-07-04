@@ -284,11 +284,6 @@
               <v-container fluid>
                 <v-form ref="playerform">
                   <v-row>
-                    <v-col cols="12">
-                      <v-alert v-if="playerErrors" type="error" dense>
-                        {{ playerErrors }}
-                      </v-alert>
-                    </v-col>
                     <v-col
                       v-for="(player, index) in selplayers"
                       :key="index"
@@ -328,7 +323,7 @@
                           <v-col cols="12" class="text-right">
                             <v-btn
                               :disabled="!selplayers[index].passRequired"
-                              color="warning"
+                              color="primary"
                               small
                               outlined
                               @click="activatePass(index)"
@@ -336,7 +331,7 @@
                               <v-icon small left>
                                 {{ icons.ticketAccount }}
                               </v-icon>
-                              Activate Pass
+                              Buy A Pass
                             </v-btn>
                           </v-col>
                         </v-row>
@@ -499,7 +494,7 @@ import apihandler from "./../services/db";
 import utils from "./../services/utils";
 import DurationPicker from "./booking/DurationPicker.vue";
 import processAxiosError from "./../utils/AxiosErrorHandler";
-import PassActivator from "./booking/PassActivator.vue";
+import PassActivator from "./PassActivator/PassActivator.vue";
 
 import { BOOKING_TYPE_MATCH, ROLE_TYPES } from "../constants/constants";
 import { BOOKING_ERROR_MESSAGE } from "../constants/constants";
@@ -513,6 +508,8 @@ import {
   mdiClockStart,
   mdiTennis,
   mdiTicketAccount,
+  mdiCartArrowRight,
+  mdiCartCheck,
 } from "@mdi/js";
 
 import { notification } from "@/components/mixins/NotificationMixin";
@@ -542,6 +539,8 @@ export default {
         clockStart: mdiClockStart,
         alert: mdiAlert,
         ticketAccount: mdiTicketAccount,
+        checkOutIcon: mdiCartArrowRight,
+        cartCheck: mdiCartCheck,
       },
       court: null,
       selplayers: [
@@ -574,7 +573,7 @@ export default {
           passRequired: false,
         },
       ],
-      playerErrors: null,
+      // playerErrors: null,
       step: 1,
       datedialog: false,
       stimedialog: false,
@@ -885,6 +884,9 @@ export default {
   },
   beforeDestroy() {},
   methods: {
+    hasPassInCart(guestId) {
+      return this.$store.getters["passcart/hasPassInCart"](guestId);
+    },
     onPassActivated(data) {
       const { pass, guestId } = data;
 
@@ -1052,7 +1054,7 @@ export default {
         playerslot.playerErrs.splice(0);
         playerslot.repeaterErrs.splice(0);
       });
-      this.playerErrors = null;
+      // this.playerErrors = null;
     },
     validateSessionInput() {
       if (!this.$refs.sessionform.validate()) {
@@ -1115,7 +1117,7 @@ export default {
                 accumulator["errors"].push({
                   index: index,
                   field: "player",
-                  message: "Guest Pass required",
+                  message: "Guest pass required",
                 });
               }
             }

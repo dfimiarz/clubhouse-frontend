@@ -316,6 +316,10 @@ async function createGuestPass(passInfo) {
   });
 }
 
+async function getGuestPassTypes() {
+  return instance.get(process.env.VUE_APP_BACKEND + "/guest-pass-types");
+}
+
 export default {
   getBookings,
   newMatch: newMatch,
@@ -349,4 +353,5 @@ export default {
   runReport,
   getActivitiesForDates,
   createGuestPass,
+  getGuestPassTypes,
 };
