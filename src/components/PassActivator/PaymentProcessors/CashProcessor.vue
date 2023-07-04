@@ -6,7 +6,7 @@
           v-model="hostEmail"
           label="Host's Email"
           :rules="emailRules"
-          hint="Please verify host's email address"
+          hint="Verify the host's email address"
           persistent-hint
         ></v-text-field>
       </v-col>
