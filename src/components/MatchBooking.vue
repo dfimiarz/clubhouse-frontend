@@ -899,6 +899,9 @@ export default {
         this.checkPassRequired(this.activatedGuestIndex);
       }
 
+      //Check form again for errors
+      this.validatePlayerInput();
+
       this.showNotification("Pass activated successfully", "success");
     },
     checkPassRequired(index) {
