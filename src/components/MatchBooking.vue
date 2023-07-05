@@ -620,9 +620,8 @@ export default {
         players: null,
       },
       activePersons: [],
-      //Values used in pass activation
+      //A value used in pass activation
       activatedGuestId: null,
-      activatedGuestIndex: null,
       //Guest pass types
       passTypes: [
         { id: 1, label: "Day Pass" },
@@ -884,9 +883,6 @@ export default {
   },
   beforeDestroy() {},
   methods: {
-    hasPassInCart(guestId) {
-      return this.$store.getters["passcart/hasPassInCart"](guestId);
-    },
     onPassActivated(data) {
       const { pass, guestId } = data;
 
@@ -896,10 +892,16 @@ export default {
       );
       if (gindex !== -1) {
         this.activePersons[gindex].pass = pass;
-        this.checkPassRequired(this.activatedGuestIndex);
+
+        //Find the guest player and set passRequired to false
+        //Loop is needed in case the same guest is selected multiple times
+        this.selplayers.forEach((player, index) => {
+          if (player.id === guestId) {
+            this.selplayers[index].passRequired = false;
+          }
+        });
       }
 
-      //Check form again for errors
       this.validatePlayerInput();
 
       this.showNotification("Pass activated successfully", "success");
@@ -918,7 +920,6 @@ export default {
     },
     activatePass(index) {
       this.activatedGuestId = this.selplayers[index].id;
-      this.activatedGuestIndex = index;
       this.showPassActivation = true;
     },
     courtSelected: function () {
