@@ -1092,75 +1092,74 @@ export default {
     validatePlayerInput() {
       this.clearPlayerErrors();
 
-      let playerCheck = this.selplayers.reduce(
-        (accumulator, player, index) => {
-          //Player is set
-          if (player.id !== null) {
-            //Check if a id is for a valid person
-            const person = this.findActivePersonByID(player.id);
+      const players = new Set();
 
-            if (!person) {
-              //Person not found, show error
-              accumulator["errors"].push({
-                index: index,
-                field: "player",
-                message: "Invalid player",
-              });
-            } else {
-              //Check for duplicate, show error if found
-              accumulator["players"].indexOf(player.id) != -1
-                ? accumulator["errors"].push({
-                    index: index,
-                    field: "player",
-                    message: "Duplicate player",
-                  })
-                : accumulator["players"].push(player.id);
+      let playerErrors = this.selplayers.reduce((errors, player, index) => {
+        //Player is set
+        if (player.id !== null) {
+          //Check if a id is for a valid person
+          const person = this.findActivePersonByID(player.id);
 
-              //Check if person requires a pass
-              if (player.passRequired) {
-                accumulator["errors"].push({
+          if (!person) {
+            //Person not found, show error
+            errors.push({
+              index: index,
+              field: "player",
+              message: "Invalid player",
+            });
+          } else {
+            //Check for duplicate, show error if found
+            players.has(player.id)
+              ? errors.push({
                   index: index,
                   field: "player",
-                  message: "Guest pass required",
-                });
-              }
-            }
+                  message: "Duplicate player",
+                })
+              : players.add(player.id);
 
-            //Check if repeater set
-            if (player.repeater === null)
-              accumulator["errors"].push({
-                index: index,
-                field: "repeater",
-                message: "Type empty",
-              });
-          } else {
-            //Player is not set
-            if (player.repeater !== null) {
-              //Player type is set, show error
-              accumulator["errors"].push({
+            //Check if person requires a pass
+            if (player.passRequired) {
+              errors.push({
                 index: index,
                 field: "player",
-                message: "Player empty",
+                message: "Guest pass required",
               });
             }
           }
 
-          return accumulator;
-        },
-        { players: [], errors: [] }
-      );
+          //Check if repeater set
+          if (player.repeater === null)
+            errors.push({
+              index: index,
+              field: "repeater",
+              message: "Type empty",
+            });
+        } else {
+          //Player is not set
+          if (player.repeater !== null) {
+            //Player type is set, show error
+            errors.push({
+              index: index,
+              field: "player",
+              message: "Player empty",
+            });
+          }
+        }
+
+        return errors;
+      }, []);
 
       //Add an error if no players are selected
-      if (playerCheck.players.length == 0) {
-        playerCheck.errors.push({
+      if (players.size == 0) {
+        playerErrors.push({
           index: 0,
           field: "player",
           message: "Select a player",
         });
       }
 
-      if (playerCheck.errors.length != 0) {
-        playerCheck.errors.forEach((error) => {
+      if (playerErrors.length != 0) {
+        playerErrors.forEach((error) => {
           let index = error.index;
           let field = error.field + "Errs";
           let msg = error.message;
