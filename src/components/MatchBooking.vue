@@ -573,7 +573,6 @@ export default {
           passRequired: false,
         },
       ],
-      // playerErrors: null,
       step: 1,
       datedialog: false,
       stimedialog: false,
@@ -902,7 +901,7 @@ export default {
         });
       }
 
-      this.validatePlayerInput();
+      this.validatePlayers(true);
 
       this.showNotification("Pass activated successfully", "success");
     },
@@ -967,7 +966,7 @@ export default {
     },
     goToBookingStep(newstep) {
       if (this.step == 1 && newstep == 2) {
-        if (!this.validatePlayerInput()) {
+        if (!this.validatePlayers()) {
           return;
         }
 
@@ -1058,7 +1057,6 @@ export default {
         playerslot.playerErrs.splice(0);
         playerslot.repeaterErrs.splice(0);
       });
-      // this.playerErrors = null;
     },
     validateSessionInput() {
       if (!this.$refs.sessionform.validate()) {
@@ -1089,7 +1087,7 @@ export default {
           this.loading = false;
         });
     },
-    validatePlayerInput() {
+    validatePlayers() {
       this.clearPlayerErrors();
 
       const players = new Set();
@@ -1125,15 +1123,16 @@ export default {
                 message: "Guest pass required",
               });
             }
-          }
 
-          //Check if repeater set
-          if (player.repeater === null)
-            errors.push({
-              index: index,
-              field: "repeater",
-              message: "Type empty",
-            });
+            //Check if repeater set
+            if (player.repeater === null) {
+              errors.push({
+                index: index,
+                field: "repeater",
+                message: "Type empty",
+              });
+            }
+          }
         } else {
           //Player is not set
           if (player.repeater !== null) {
@@ -1145,7 +1144,6 @@ export default {
             });
           }
         }
-
         return errors;
       }, []);
 
@@ -1157,6 +1155,8 @@ export default {
           message: "Select a player",
         });
       }
+
+      console.log(playerErrors);
 
       if (playerErrors.length != 0) {
         playerErrors.forEach((error) => {
