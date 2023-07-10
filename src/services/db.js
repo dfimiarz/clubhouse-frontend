@@ -320,6 +320,10 @@ async function getGuestPassTypes() {
   return instance.get(process.env.VUE_APP_BACKEND + "/guest-pass-types");
 }
 
+async function getPaymentTypes() {
+  return instance.get(process.env.VUE_APP_BACKEND + "/payment-types");
+}
+
 export default {
   getBookings,
   newMatch: newMatch,
@@ -354,4 +358,5 @@ export default {
   getActivitiesForDates,
   createGuestPass,
   getGuestPassTypes,
+  getPaymentTypes,
 };

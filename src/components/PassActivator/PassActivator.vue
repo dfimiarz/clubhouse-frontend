@@ -70,20 +70,33 @@
                       label="Payment Method"
                       :items="paymentTypes"
                       item-text="name"
-                      item-value="processor"
+                      item-value="id"
                       :rules="notEmpty"
                       return-object
                     ></v-select>
                   </v-col>
                   <v-col cols="12">
                     <component
-                      :is="
-                        selectedProcessor ? selectedProcessor.processor : null
-                      "
+                      :is="processor"
                       :base-price="passPrice"
-                      :fee="transactionFees"
+                      :fee="fee"
+                      :fee-type="feeType"
+                      :config="processorConfig"
                       @update:paymentinfo="setPaymentInfo"
                     ></component>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-checkbox
+                      v-model="confirmed"
+                      :rules="checkBoxRules"
+                      dense
+                    >
+                      <template #label>
+                        <div class="caption">
+                          Host and guest information is correct.
+                        </div>
+                      </template>
+                    </v-checkbox>
                   </v-col>
                 </v-row>
               </v-col>
@@ -118,8 +131,8 @@ import dbservice from "@/services/db";
 export default {
   name: "PassActivator",
   components: {
-    CashProcessor: () => import("./PaymentProcessors/CashProcessor.vue"),
-    ZelleProcessor: () => import("./PaymentProcessors/ZelleProcessor.vue"),
+    DirectTransferProcessor: () =>
+      import("./PaymentProcessors/DirectTransferProcessor.vue"),
   },
   mixins: [notification],
   props: {
@@ -142,24 +155,36 @@ export default {
     passes: [],
     selectedPass: null,
     paymentInfo: null,
-    paymentTypes: [
-      { id: 1, name: "Cash", processor: "CashProcessor", fee: 0.0 },
-      { id: 2, name: "Zelle", processor: "ZelleProcessor", fee: 0.0 },
-    ],
+    paymentTypes: [],
     selectedProcessor: null,
     notEmpty: [(v) => !!v || "Required"],
     initlized: false,
+    checkBoxRules: [(v) => !!v || "Confirmation required"],
+    confirmed: false,
   }),
   computed: {
-    transactionFees() {
+    processor() {
+      return this.selectedProcessor
+        ? `${this.selectedProcessor.processor}Processor`
+        : null;
+    },
+    fee() {
       return this.selectedProcessor ? this.selectedProcessor.fee : 0;
     },
     passPrice() {
-      return this.selectedPass ? this.selectedPass.cost / 100 : 0;
+      return this.selectedPass ? this.selectedPass.cost : 0;
+    },
+    feeType() {
+      return this.selectedProcessor ? this.selectedProcessor.fee_type : "FA";
+    },
+    processorConfig() {
+      return this.selectedProcessor
+        ? this.selectedProcessor.processor_config
+        : null;
     },
     formattedPrice() {
       //Add a $ to price
-      return "$ " + this.passPrice.toFixed(2);
+      return "$" + (this.passPrice / 100).toFixed(2);
     },
     isSmallScreen: function () {
       switch (this.$vuetify.breakpoint.name) {
@@ -200,6 +225,7 @@ export default {
         this.selectedHostId = null;
         this.selectedPass = null;
         this.selectedProcessor = null;
+        this.confirmed = false;
 
         this.$refs.passForm.resetValidation();
       } else {
@@ -210,13 +236,16 @@ export default {
 
         this.init()
           .then((data) => {
-            this.passes = data;
+            console.log(data);
+            this.passes = data.passes;
+            this.paymentTypes = data.paymentTypes;
 
             this.setupForm();
 
             this.initlized = true;
           })
           .catch((err) => {
+            console.log(err);
             const error = processAxiosError(err);
             this.showNotification("Error initializing: " + error, "error");
           });
@@ -233,9 +262,12 @@ export default {
       }
     },
     async init() {
-      const response = await dbservice.getGuestPassTypes();
+      const response = await Promise.all([
+        dbservice.getGuestPassTypes(),
+        dbservice.getPaymentTypes(),
+      ]);
 
-      return response.data;
+      return { passes: response[0].data, paymentTypes: response[1].data };
     },
     setPaymentInfo(info) {
       console.log(info);

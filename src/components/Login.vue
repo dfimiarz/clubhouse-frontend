@@ -5,35 +5,35 @@
         <v-card rounded="" raised>
           <v-card-subtitle>Log in</v-card-subtitle>
           <v-card-text>
-            <v-form v-model="formvalid" ref="form">
+            <v-form ref="form" v-model="formvalid">
               <v-row no-gutters>
                 <v-col cols="12">
                   <v-img :src="require(`@/assets/clublogo.png`)" />
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
-                    label="E-mail"
                     v-model="email"
+                    label="E-mail"
                     :rules="[rules.required, rules.isEmail]"
                   />
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
-                    label="Password"
                     v-model="password"
+                    label="Password"
                     :append-icon="showpassword ? eyeIcon : eyeOffIcon"
                     :type="showpassword ? 'text' : 'password'"
                     :rules="[rules.required, rules.min]"
-                    @click:append="showpassword = !showpassword"
                     counter=""
                     hint="Minimum 8 characters"
+                    @click:append="showpassword = !showpassword"
                   />
                 </v-col>
               </v-row>
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn large block @click="login"> Login </v-btn>
+            <v-btn large block @click="login">Login</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -48,8 +48,8 @@ import { mdiEye, mdiEyeOff } from "@mdi/js";
 import { notification } from "./mixins/NotificationMixin";
 
 export default {
+  name: "LoginPage",
   mixins: [notification],
-  name: "Login-Page",
   data: function () {
     return {
       eyeIcon: mdiEye,
