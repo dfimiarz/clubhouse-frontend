@@ -4,6 +4,11 @@ const { defineConfig } = require("@vue/cli-service");
 module.exports = defineConfig({
   transpileDependencies: true,
   configureWebpack: {
-    //plugins: [ new BundleAnalyzerPlugin() ]
+    devtool: "source-map",
+  },
+  devServer: {
+    host: "www.clubhouse.test",
+    port: 8081,
+    allowedHosts: [".clubhouse.test"],
   },
 });
