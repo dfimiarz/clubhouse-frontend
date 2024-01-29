@@ -9,6 +9,6 @@ module.exports = defineConfig({
   devServer: {
     allowedHosts: ["localhost", "clubhouse.test", "www.clubhouse.test"],
     host: "www.clubhouse.test",
-    port: 8080,
+    port: 8081,
   },
 });
