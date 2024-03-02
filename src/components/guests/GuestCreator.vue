@@ -157,7 +157,7 @@ export default {
   data: function () {
     return {
       hcaptcha: {
-        sitekey: process.env.VUE_APP_HCAPTCHA_SITEKEY,
+        sitekey: process.env.VUE_APP_HCAPTCHA_SITE_KEY,
         verified: false,
         expired: false,
         token: null,
