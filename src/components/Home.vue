@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="fill-height">
     <v-row justify="center" align="center" no-gutters="" class="fill-height">
-      <v-col cols="12" md="10" lg="8">
+      <v-col cols="12" md="10" lg="8" xl="6">
         <v-container fluid>
           <v-row justify="start" align="start" no-gutters="">
             <v-col
@@ -31,9 +31,9 @@
                     class="fill-height"
                   >
                     <v-col
+                      v-if="!canAccess(card.dest)"
                       cols="12"
                       class="text-center"
-                      v-if="!canAccess(card.dest)"
                     >
                       <v-icon x-large>{{ lockIcon }}</v-icon>
                     </v-col>
@@ -63,8 +63,8 @@ import { AccessChecker } from "./mixins/AccessCheckerMixin";
 import { mdiLock } from "@mdi/js";
 
 export default {
+  name: "HomePage",
   mixins: [AccessChecker],
-  name: "Home-Page",
   data: () => {
     return {
       lockIcon: mdiLock,
@@ -137,7 +137,6 @@ export default {
       ],
     };
   },
-  methods: {},
   computed: {
     tileTitleClass: function () {
       return this.$vuetify.breakpoint.mdAndDown
@@ -145,6 +144,7 @@ export default {
         : { "display-1": true };
     },
   },
+  methods: {},
 };
 </script>
 
