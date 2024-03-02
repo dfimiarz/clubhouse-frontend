@@ -27,7 +27,7 @@
               <span style="white-space: nowrap">
                 {{ index + 1 }}.{{ formatName(player) }}
               </span>
-              <v-icon v-if="player.role_type === 100" small color="white">
+              <v-icon v-if="player.person_role_type_id === 100" small color="white">
                 {{ gBoxOutlineIcon }}
               </v-icon>
               <v-icon v-if="player.type === 2000" small color="white">
