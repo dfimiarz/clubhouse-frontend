@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-0">
+  <v-container fluid>
     <v-dialog v-model="showOverlapInfo" max-width="290">
       <v-card>
         <v-card-title class="text-h6">Overlap Details</v-card-title>
@@ -70,7 +70,7 @@
       @passactivated="onPassActivated"
     ></pass-activator>
     <v-row justify="center" align="center" no-gutters>
-      <v-col cols="12" sm="8" md="6" lg="4">
+      <v-col cols="12" sm="8" lg="6" xl="4">
         <v-stepper v-model="step">
           <v-stepper-header style="overflow-x: scroll; flex-wrap: nowrap">
             <v-stepper-step :complete="step > 1" step="1">
@@ -280,7 +280,7 @@
               </v-container>
             </v-stepper-content>
 
-            <v-stepper-content step="1">
+            <v-stepper-content step="1" class="px-1">
               <v-container fluid>
                 <v-form ref="playerform">
                   <v-row>
