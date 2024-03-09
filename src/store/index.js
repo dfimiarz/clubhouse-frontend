@@ -150,7 +150,7 @@ const store = new Vuex.Store({
     async setUpConnectionWatcher({ dispatch }) {
       connCheckIntHandle = setInterval(() => {
         dispatch("checkConnection");
-      }, 5000);
+      }, 30000);
     },
     stopConnectionWatcher() {
       if (connCheckIntHandle) {
