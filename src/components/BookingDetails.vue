@@ -94,7 +94,7 @@
                     </v-list-item-content>
 
                     <v-list-item-action>
-                      <v-btn icon v-if="canMove">
+                      <v-btn v-if="canMove" icon>
                         <v-icon @click="openEditor('timeeditor')">{{
                           pencilIcon
                         }}</v-icon>
@@ -128,7 +128,7 @@
                     </v-list-item-content>
 
                     <v-list-item-action>
-                      <v-btn icon v-if="canMove">
+                      <v-btn v-if="canMove" icon>
                         <v-icon @click="openEditor('courteditor')">{{
                           pencilIcon
                         }}</v-icon>
@@ -187,7 +187,7 @@
                     </v-list-item-content>
 
                     <v-list-item-action>
-                      <v-btn icon v-if="canChangeNote">
+                      <v-btn v-if="canChangeNote" icon>
                         <v-icon @click="openEditor('noteeditor')">{{
                           pencilIcon
                         }}</v-icon>
@@ -198,32 +198,32 @@
               </v-card-text>
               <v-card-actions class="mx-2">
                 <v-btn
+                  v-show="canRemove"
                   color="warning"
                   text
-                  @click="canceldialog = true"
                   outlined
-                  v-show="canRemove"
+                  @click="canceldialog = true"
                   >Remove Session</v-btn
                 >
                 <div class="flex-grow-1"></div>
-                <v-btn large @click="enddialog = true" v-show="canEnd"
+                <v-btn v-show="canEnd" large @click="enddialog = true"
                   >End session</v-btn
                 >
                 <v-btn
+                  v-if="canRebook"
                   large
                   outlined
                   color="primary"
-                  @click="bookagain"
                   text
                   :loading="loading"
-                  v-if="canRebook"
+                  @click="bookagain"
                   >Rebook</v-btn
                 >
               </v-card-actions>
             </v-card>
           </v-col>
           <valueeditor
-            v-bind:visible.sync="showeditor"
+            :visible.sync="showeditor"
             :session="sessioninfo"
             :type="editortype"
           ></valueeditor>
@@ -249,8 +249,8 @@
             <v-btn
               color="warning"
               text
-              @click="removeSession"
               :loading="loading"
+              @click="removeSession"
               >Yes, REMOVE</v-btn
             >
           </v-card-actions>
@@ -267,7 +267,7 @@
 
             <div class="flex-grow-1"></div>
 
-            <v-btn color="warning" text @click="endSession" :loading="loading"
+            <v-btn color="warning" text :loading="loading" @click="endSession"
               >End now</v-btn
             >
           </v-card-actions>
@@ -299,12 +299,13 @@ import {
 } from "@mdi/js";
 
 export default {
-  mixins: [notification],
+  name: "BookingDetails",
   components: {
     valueeditor: valueeditor,
   },
+  filters: {},
+  mixins: [notification],
   props: ["id"],
-  name: "BookingDetails",
   data: function () {
     return {
       chevronLeftIcon: mdiChevronLeft,
@@ -329,6 +330,81 @@ export default {
       bookingPermissions: new Set(),
     };
   },
+  computed: {
+    clubtz: function () {
+      return this.$store.state.clubtz;
+    },
+    starttime: function () {
+      return this.$dayjs
+        .tz(this.sessioninfo.date.concat(" ", this.sessioninfo.start))
+        .format();
+    },
+    endtime: function () {
+      return this.$dayjs
+        .tz(this.sessioninfo.date.concat(" ", this.sessioninfo.end))
+        .format();
+    },
+    canEnd: function () {
+      return Object.prototype.hasOwnProperty.call(
+        this.sessioninfo,
+        "permissions"
+      )
+        ? Array.isArray(this.sessioninfo.permissions)
+          ? this.sessioninfo.permissions.includes("end")
+          : false
+        : false;
+    },
+    canRemove: function () {
+      return Object.prototype.hasOwnProperty.call(
+        this.sessioninfo,
+        "permissions"
+      )
+        ? Array.isArray(this.sessioninfo.permissions)
+          ? this.sessioninfo.permissions.includes("cancel")
+          : false
+        : false;
+    },
+    canMove: function () {
+      return Object.prototype.hasOwnProperty.call(
+        this.sessioninfo,
+        "permissions"
+      )
+        ? Array.isArray(this.sessioninfo.permissions)
+          ? this.sessioninfo.permissions.includes("move")
+          : false
+        : false;
+    },
+    canChangeNote: function () {
+      return Object.prototype.hasOwnProperty.call(
+        this.sessioninfo,
+        "permissions"
+      )
+        ? Array.isArray(this.sessioninfo.permissions)
+          ? this.sessioninfo.permissions.includes("change_note")
+          : false
+        : false;
+    },
+    canRebook: function () {
+      return (
+        this.sessioninfo.utc_req_time > this.sessioninfo.utc_end &&
+        this.sessioninfo.type === BOOKING_TYPE_MATCH
+      );
+    },
+    playerIds: function () {
+      return Object.prototype.hasOwnProperty.call(this.sessioninfo, "players")
+        ? this.sessioninfo.players.map((p) => p.person_id)
+        : [];
+    },
+  },
+  watch: {
+    //needed to get new data when route changes
+    $route: "fetchData",
+  },
+  created() {
+    //fetch data here
+    this.fetchData();
+  },
+  destroyed() {},
   methods: {
     formatTime(timestring) {
       if (!timestring) return "N/A";
@@ -416,82 +492,6 @@ export default {
         });
     },
   },
-  filters: {},
-  computed: {
-    clubtz: function () {
-      return this.$store.state.clubtz;
-    },
-    starttime: function () {
-      return this.$dayjs
-        .tz(this.sessioninfo.date.concat(" ", this.sessioninfo.start))
-        .format();
-    },
-    endtime: function () {
-      return this.$dayjs
-        .tz(this.sessioninfo.date.concat(" ", this.sessioninfo.end))
-        .format();
-    },
-    canEnd: function () {
-      return Object.prototype.hasOwnProperty.call(
-        this.sessioninfo,
-        "permissions"
-      )
-        ? Array.isArray(this.sessioninfo.permissions)
-          ? this.sessioninfo.permissions.includes("end")
-          : false
-        : false;
-    },
-    canRemove: function () {
-      return Object.prototype.hasOwnProperty.call(
-        this.sessioninfo,
-        "permissions"
-      )
-        ? Array.isArray(this.sessioninfo.permissions)
-          ? this.sessioninfo.permissions.includes("cancel")
-          : false
-        : false;
-    },
-    canMove: function () {
-      return Object.prototype.hasOwnProperty.call(
-        this.sessioninfo,
-        "permissions"
-      )
-        ? Array.isArray(this.sessioninfo.permissions)
-          ? this.sessioninfo.permissions.includes("move")
-          : false
-        : false;
-    },
-    canChangeNote: function () {
-      return Object.prototype.hasOwnProperty.call(
-        this.sessioninfo,
-        "permissions"
-      )
-        ? Array.isArray(this.sessioninfo.permissions)
-          ? this.sessioninfo.permissions.includes("change_note")
-          : false
-        : false;
-    },
-    canRebook: function () {
-      return (
-        this.sessioninfo.utc_req_time > this.sessioninfo.utc_end &&
-        this.sessioninfo.type === BOOKING_TYPE_MATCH
-      );
-    },
-    playerIds: function () {
-      return Object.prototype.hasOwnProperty.call(this.sessioninfo, "players")
-        ? this.sessioninfo.players.map((p) => p.person_id)
-        : [];
-    },
-  },
-  watch: {
-    //needed to get new data when route changes
-    $route: "fetchData",
-  },
-  created() {
-    //fetch data here
-    this.fetchData();
-  },
-  destroyed() {},
 };
 </script>
 
