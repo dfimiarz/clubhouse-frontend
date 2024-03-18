@@ -70,7 +70,7 @@
       @passactivated="onPassActivated"
     ></pass-activator>
     <v-row justify="center" align="center" no-gutters>
-      <v-col cols="12" sm="8" lg="6" xl="4">
+      <v-col cols="12" sm="10" lg="8" xl="5">
         <v-stepper v-model="step">
           <v-stepper-header style="overflow-x: scroll; flex-wrap: nowrap">
             <v-stepper-step :complete="step > 1" step="1">
@@ -288,6 +288,7 @@
                       v-for="(player, index) in selplayers"
                       :key="index"
                       cols="12"
+                      md="7"
                     >
                       <v-sheet
                         elevation="1"
