@@ -204,7 +204,7 @@ export default {
     },
     hosts() {
       return this.persons
-        .filter((person) => person.can_host === 1)
+        .filter((person) => person.guest_host === 1)
         .map((person) => ({
           id: person.id,
           name: person.firstname + " " + person.lastname,
