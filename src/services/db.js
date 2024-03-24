@@ -164,12 +164,13 @@ async function getBookingTypes() {
 }
 
 /**
- * Get club managers
+ * Get event hosts
+ * 
+ * @returns {Promise<AxiosResponse<any>>}
  */
-async function getManagers() {
-  return instance.get(
-    process.env.VUE_APP_BACKEND + "/persons/members/managers"
-  );
+
+async function getEventHosts() {
+  return instance.get(process.env.VUE_APP_BACKEND + "/persons/eventhosts");
 }
 
 /**
@@ -341,7 +342,6 @@ export default {
   getInactiveGuests,
   activateGuests,
   getCurrentGuestActivations,
-  getManagers,
   getBookingTypes,
   checkGeoAuth,
   getRecaptchaScore,
@@ -359,4 +359,5 @@ export default {
   createGuestPass,
   getGuestPassTypes,
   getPaymentTypes,
+  getEventHosts,
 };

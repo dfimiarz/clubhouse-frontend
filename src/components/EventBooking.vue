@@ -349,7 +349,7 @@ export default {
     loadData: function () {
       this.loading = true;
 
-      Promise.all([apihandler.getManagers(), apihandler.getBookingTypes()])
+      Promise.all([apihandler.getEventHosts(), apihandler.getBookingTypes()])
         .then((results) => {
           this.managers = results[0].data.map((manager) => {
             return {
