@@ -2,19 +2,13 @@
   <v-container v-resize="onResize">
     <v-row justify="start" align="start">
       <v-col cols="12" sm="6" lg="4" xl="3">
-        <date-range-selector
-          :dates.sync="dates"
-          :show.sync="dateseldialog"
-        ></date-range-selector>
+        <date-range-selector :dates.sync="dates" :show.sync="dateseldialog"></date-range-selector>
       </v-col>
       <v-col cols="12">
         <v-card raised>
           <v-card-text>
             <v-responsive height="300px">
-              <v-chart
-                ref="playerchart"
-                :option="playersChartOptions"
-              ></v-chart>
+              <v-chart ref="playerchart" :option="playersChartOptions"></v-chart>
             </v-responsive>
           </v-card-text>
           <v-card-actions>
@@ -27,32 +21,26 @@
       <v-col cols="12" md="6">
         <v-card>
           <v-card-title>
-            Guest Visitors
+            Guest Passes
             <v-spacer></v-spacer>
-            <v-text-field
-              v-model="hostmembersearch"
-              append-icon="mdi-magnify"
-              label="Search"
-              single-line
-              hide-details
-            ></v-text-field>
+            <v-text-field v-model="hostmembersearch" append-icon="mdi-magnify" label="Search" single-line
+              hide-details></v-text-field>
           </v-card-title>
           <v-card-text>
-            <v-data-table
-              height="400"
-              :headers="guest_players_headers"
-              :items="guest_players_data"
-              item-key="activataion_id"
-              sort-by="guestname"
-              class="elevation-1"
-              show-group-by
-              hide-default-footer
-              disable-pagination
-              mobile-breakpoint="0"
-              fixed-header
-              :search="hostmembersearch"
-              dense
-            ></v-data-table>
+            <v-data-table height="400" :headers="guest_passes_headers" :items="guest_passes_data" item-key="pass_id"
+              sort-by="guestname" class="elevation-1" show-group-by hide-default-footer disable-pagination
+              mobile-breakpoint="0" fixed-header dense>
+              <template #[`item.actions`]>
+                <v-icon small>
+                  mdi-pencil
+                </v-icon>
+              </template>
+              <template v-slot:no-data>
+                <v-btn color="primary">
+                  Reset
+                </v-btn>
+              </template>
+            </v-data-table>
           </v-card-text>
           <v-card-actions>
             <v-btn text color="primary" @click="saveData('guest_players')">
@@ -67,30 +55,13 @@
           <v-card-title>
             Player Activity
             <v-spacer></v-spacer>
-            <v-text-field
-              v-model="matchsearch"
-              append-icon="mdi-magnify"
-              label="Search"
-              single-line
-              hide-details
-            ></v-text-field>
+            <v-text-field v-model="matchsearch" append-icon="mdi-magnify" label="Search" single-line
+              hide-details></v-text-field>
           </v-card-title>
           <v-card-text>
-            <v-data-table
-              height="400"
-              :headers="players_headers"
-              :items="memberactivities"
-              item-key="participant_id"
-              class="elevation-1"
-              show-group-by
-              hide-default-footer
-              disable-pagination
-              mobile-breakpoint="0"
-              fixed-header
-              sort-by="match_id"
-              :search="matchsearch"
-              dense
-            ></v-data-table>
+            <v-data-table height="400" :headers="players_headers" :items="memberactivities" item-key="participant_id"
+              class="elevation-1" show-group-by hide-default-footer disable-pagination mobile-breakpoint="0"
+              fixed-header sort-by="match_id" :search="matchsearch" dense></v-data-table>
           </v-card-text>
           <v-card-actions>
             <v-btn text color="primary" @click="saveData('member_activities')">
@@ -105,6 +76,11 @@
 </template>
 
 <script>
+
+/**
+ * @typedef {import("@/types/guest_passes").GuestPass } GuestPass;
+ */
+
 import apihandler from "./../../services/db";
 import DateRangeSelector from "./DateRangeSelector";
 import { use } from "echarts/core";
@@ -145,7 +121,20 @@ export default {
       dates: [],
       hostmembersearch: "",
       matchsearch: "",
-      guest_players_headers: [
+      guest_passes_headers: [
+        {
+          text: "Purchased",
+          align: "start",
+          value: "created",
+          width: 200,
+          groupable: false,
+        },
+        {
+          text: "Pass Type",
+          align: "start",
+          value: "pass_type_label",
+          width: 150,
+        },
         {
           text: "Host",
           align: "start",
@@ -158,20 +147,29 @@ export default {
           value: "guest",
           width: 150,
         },
+        
         {
-          text: "Date Active",
+          text: "Valid From",
           align: "start",
-          value: "active_date",
-          width: 150,
+          value: "valid_from",
+          width: 200,
+          sortable: false,
+          groupable: false,
         },
-      ],
-      guest_players_data: [
         {
-          // activation_id: 278,
-          // active_date: "2022-09-18",
-          // host: "Shelly Adasko",
-          // guest: "Daniel Fimiarz",
+          text: "Valid To",
+          align: "start",
+          value: "valid_to",
+          width: 200,
+          sortable: false,
+          groupable: false,
         },
+        { text: 'Actions', value: 'actions', sortable: false },
+      ],
+      /**
+       * @type {GuestPass[]}
+       */
+      guest_passes_data: [
       ],
       players_headers: [
         {
@@ -385,7 +383,7 @@ export default {
       const SUPPORTED_OPS = {
         guest_players: {
           filename: "guest_players",
-          data: this.guest_players_data,
+          data: this.guest_passes_data,
         },
         member_activities: {
           filename: "member_activities",
@@ -423,15 +421,15 @@ export default {
     loadData() {
       this.$store.dispatch("setLoading", true);
       Promise.all([
-        apihandler.runReport("playerstats", this.startdate, this.enddate),
-        apihandler.runReport("memberactivities", this.startdate, this.enddate),
-        apihandler.runReport("guestinfo", this.startdate, this.enddate),
+        // apihandler.runReport("playerstats", this.startdate, this.enddate),
+        // apihandler.runReport("memberactivities", this.startdate, this.enddate),
+        apihandler.runReport("guestpasses", this.startdate, this.enddate),
       ])
         .then((responses) => {
-          this.playerStats = responses[0].data.result;
+          // this.playerStats = responses[0].data.result;
 
-          this.memberactivities = responses[1].data.result;
-          this.guest_players_data = responses[2].data.result;
+          // this.memberactivities = responses[1].data.result;
+          this.guest_passes_data = responses[0].data.result;
         })
         .catch((error) => {
           this.showNotification(
