@@ -159,7 +159,7 @@ const routes = [
           : null;
 
       return {
-        req_players: _req_players,
+        players: _req_players,
         req_bookingtype: route.query.bt || null,
       };
     },

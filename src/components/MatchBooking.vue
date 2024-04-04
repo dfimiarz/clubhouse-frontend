@@ -523,7 +523,7 @@ export default {
   },
   mixins: [notification],
   props: {
-    reqPlayers: {
+    players: {
       type: Array,
       default: () => [],
     },
@@ -871,8 +871,8 @@ export default {
     this.getActivePersons();
   },
   mounted: function () {
-    if (Array.isArray(this.reqPlayers)) {
-      this.reqPlayers.forEach((player, index) => {
+    if (Array.isArray(this.players)) {
+      this.players.forEach((player, index) => {
         if (typeof player === "number") {
           if (index < this.selplayers.length) {
             this.selplayers[index].id = player;
