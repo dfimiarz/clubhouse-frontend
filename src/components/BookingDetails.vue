@@ -94,11 +94,13 @@
                     </v-list-item-content>
 
                     <v-list-item-action>
+                      <!--
                       <v-btn v-if="canMove" icon>
                         <v-icon @click="openEditor('timeeditor')">{{
                           pencilIcon
                         }}</v-icon>
                       </v-btn>
+                      -->
                     </v-list-item-action>
                   </v-list-item>
 
