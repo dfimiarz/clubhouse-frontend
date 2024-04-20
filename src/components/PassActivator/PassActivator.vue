@@ -10,19 +10,19 @@
       <v-card-text>
         <v-form ref="passForm" autocomplete="off" lazy-validation>
           <v-container fluid>
-            <v-row dense>
-              <v-col cols="6">
+            <v-row>
+              <v-col cols="12" md="6">
                 <v-row no-gutters>
                   <v-col cols="12" class="text-subtitle-1 py-1">1. Pass</v-col>
 
-                  <v-col cols="10">
+                  <v-col cols="12">
                     <v-text-field
                       v-model="formattedGuest"
                       label="Guest"
                       readonly
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="10">
+                  <v-col cols="12">
                     <v-autocomplete
                       v-model="selectedHostId"
                       label="Host"
@@ -32,7 +32,7 @@
                       :rules="notEmpty"
                     ></v-autocomplete>
                   </v-col>
-                  <v-col cols="10">
+                  <v-col cols="12">
                     <v-select
                       v-model="selectedPass"
                       label="Pass Type"
@@ -43,23 +43,24 @@
                       :rules="notEmpty"
                     ></v-select>
                   </v-col>
-                  <v-col cols="10">
+                  <v-col cols="12">
                     <div>
-                      <div class="text-caption">Pass Details</div>
-                      <div class="text-subtitle-1">
-                        Price: {{ formattedPrice }}
+                      <!-- <div class="text-caption">Pass Details</div> -->
+                      <div class="text-body-1">
+                        - Cost: {{ formattedPrice }}
                       </div>
-                      <span class="text-caption">
-                        Valid:
-                        {{ selectedPass ? selectedPass.valid : 0 }} day(s),
-                        Season Limit:
+                      <div class="text-body-1">
+                        - Valid: {{ selectedPass ? selectedPass.valid : 0 }} day(s),
+                      </div>
+                      <div class="text-body-1">
+                        - Season Limit:
                         {{ selectedPass ? selectedPass.limit : 0 }}
-                      </span>
+                      </div>
                     </div>
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col cols="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters>
                   <v-col cols="12" class="text-subtitle-1 py-1">
                     2. Payment
