@@ -170,7 +170,7 @@ const routes = [
     component: EventBooking,
     meta: {
       authReq: true,
-      allowedRoles: [Role.MANAGER, Role.ADMIN, Role.PRO],
+      allowedRoles: [],
     },
   },
   {
