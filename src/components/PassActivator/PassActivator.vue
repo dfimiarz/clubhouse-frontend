@@ -1,97 +1,63 @@
 <template>
-  <v-dialog
-    v-model="show"
-    width="auto"
-    :max-width="isSmallScreen ? 290 : 580"
-    persistent
-  >
+  <v-dialog v-model="show" width="auto" :max-width="isSmallScreen ? 290 : 580" persistent>
     <v-card>
       <v-card-title class="text-h6">Guest Pass Purchase</v-card-title>
       <v-card-text>
         <v-form ref="passForm" autocomplete="off" lazy-validation>
           <v-container fluid>
             <v-row>
-              <v-col cols="12" md="6">
+              <v-col cols="12" sm="6">
                 <v-row no-gutters>
                   <v-col cols="12" class="text-subtitle-1 py-1">1. Pass</v-col>
 
                   <v-col cols="12">
-                    <v-text-field
-                      v-model="formattedGuest"
-                      label="Guest"
-                      readonly
-                    ></v-text-field>
+                    <v-text-field v-model="formattedGuest" label="Guest" readonly></v-text-field>
                   </v-col>
                   <v-col cols="12">
-                    <v-autocomplete
-                      v-model="selectedHostId"
-                      label="Host"
-                      :items="hosts"
-                      item-text="name"
-                      item-value="id"
-                      :rules="notEmpty"
-                    ></v-autocomplete>
+                    <v-autocomplete v-model="selectedHostId" label="Host" :items="hosts" item-text="name"
+                      item-value="id" :rules="notEmpty"></v-autocomplete>
                   </v-col>
                   <v-col cols="12">
-                    <v-select
-                      v-model="selectedPass"
-                      label="Pass Type"
-                      :items="passes"
-                      item-text="label"
-                      item-value="id"
-                      return-object
-                      :rules="notEmpty"
-                    ></v-select>
+                    <v-select v-model="selectedPass" label="Pass Type" :items="passes" item-text="label" item-value="id"
+                      return-object :rules="notEmpty"></v-select>
                   </v-col>
                   <v-col cols="12">
                     <div>
-                      <!-- <div class="text-caption">Pass Details</div> -->
+                      <div class="text-caption">Pass Terms</div>
+
                       <div class="text-body-1">
-                        - Cost: {{ formattedPrice }}
+                        Cost: <span class="accent--text">{{ formattedPrice }}</span>
                       </div>
                       <div class="text-body-1">
-                        - Valid: {{ selectedPass ? selectedPass.valid : 0 }} day(s),
+                        Valid: <span class="accent--text">{{ selectedPass ? selectedPass.valid : 0 }} day(s)</span>
                       </div>
                       <div class="text-body-1">
-                        - Season Limit:
-                        {{ selectedPass ? selectedPass.limit : 0 }}
+                        Limit:
+                        <span class="accent--text">{{ selectedPass ? selectedPass.limit : 0 }} per season</span>
+                      </div>
+
+                      <div class="text-body-2">
+                        Description: Standard 1-day guest pass.
                       </div>
                     </div>
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="12" sm="6">
                 <v-row no-gutters>
                   <v-col cols="12" class="text-subtitle-1 py-1">
                     2. Payment
                   </v-col>
                   <v-col cols="12">
-                    <v-select
-                      v-model="selectedProcessor"
-                      label="Payment Method"
-                      :items="paymentTypes"
-                      item-text="name"
-                      item-value="id"
-                      :rules="notEmpty"
-                      return-object
-                    ></v-select>
+                    <v-select v-model="selectedProcessor" label="Payment Method" :items="paymentTypes" item-text="name"
+                      item-value="id" :rules="notEmpty" return-object></v-select>
                   </v-col>
                   <v-col cols="12">
-                    <component
-                      :is="processor"
-                      :base-price="passPrice"
-                      :fee="fee"
-                      :fee-type="feeType"
-                      :config="processorConfig"
-                      @update:paymentinfo="setPaymentInfo"
-                    ></component>
+                    <component :is="processor" :base-price="passPrice" :fee="fee" :fee-type="feeType"
+                      :config="processorConfig" @update:paymentinfo="setPaymentInfo"></component>
                   </v-col>
                   <v-col cols="12">
-                    <v-checkbox
-                      v-model="confirmed"
-                      :rules="checkBoxRules"
-                      dense
-                    >
+                    <v-checkbox v-model="confirmed" :rules="checkBoxRules" dense>
                       <template #label>
                         <div class="caption">
                           Host and guest information is correct.
