@@ -1,4 +1,4 @@
-FROM node:19 as build-stage
+FROM node:21-apline as build-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
