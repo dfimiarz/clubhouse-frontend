@@ -25,19 +25,15 @@
                     <div>
                       <div class="text-caption">Pass Terms</div>
 
-                      <div class="text-body-1">
-                        Cost: <span class="accent--text">{{ formattedPrice }}</span>
+                      <div class="text-subtitle-1">
+                        Cost: {{ formattedPrice }}
                       </div>
-                      <div class="text-body-1">
-                        Valid: <span class="accent--text">{{ selectedPass ? selectedPass.valid : 0 }} day(s)</span>
-                      </div>
-                      <div class="text-body-1">
-                        Limit:
-                        <span class="accent--text">{{ selectedPass ? selectedPass.limit : 0 }} per season</span>
-                      </div>
-
                       <div class="text-body-2">
-                        Description: Standard 1-day guest pass.
+                        Valid: {{ selectedPass ? selectedPass.valid : 0 }} day(s).
+                        Limit: {{ selectedPass ? selectedPass.limit : 0 }} per season.
+                      </div>
+                      <div class="text-body-2">
+                        Description: One day pass. Expires at midnight of the day of purchase.
                       </div>
                     </div>
                   </v-col>
