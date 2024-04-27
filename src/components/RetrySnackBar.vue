@@ -15,12 +15,12 @@
     </div>
     <span v-else>Error</span>
 
-    <template #action="{ attrs }" v-if="showRetryButton">
+    <template v-if="showRetryButton" #action="{ attrs }">
       <v-btn
         text
         v-bind="attrs"
-        @click="$emit('retry:action')"
         :disabled="loading"
+        @click="$emit('retry:action')"
       >
         Retry
       </v-btn>
@@ -55,7 +55,6 @@ export default {
   data: function () {
     return {};
   },
-  methods: {},
   computed: {
     visible: {
       get() {
@@ -69,5 +68,6 @@ export default {
       return this.$store.state.loading;
     },
   },
+  methods: {},
 };
 </script>

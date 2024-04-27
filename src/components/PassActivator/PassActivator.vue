@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="show" width="auto" :max-width="isSmallScreen ? 290 : 580" persistent>
+  <v-dialog
+    v-model="show"
+    width="auto"
+    :max-width="isSmallScreen ? 290 : 580"
+    persistent
+  >
     <v-card>
       <v-card-title class="text-h6">Guest Pass Purchase</v-card-title>
       <v-card-text>
@@ -11,15 +16,32 @@
                   <v-col cols="12" class="text-subtitle-1 py-1">1. Pass</v-col>
 
                   <v-col cols="12">
-                    <v-text-field v-model="formattedGuest" label="Guest" readonly></v-text-field>
+                    <v-text-field
+                      v-model="formattedGuest"
+                      label="Guest"
+                      readonly
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="12">
-                    <v-autocomplete v-model="selectedHostId" label="Host" :items="hosts" item-text="name"
-                      item-value="id" :rules="notEmpty"></v-autocomplete>
+                    <v-autocomplete
+                      v-model="selectedHostId"
+                      label="Host"
+                      :items="hosts"
+                      item-text="name"
+                      item-value="id"
+                      :rules="notEmpty"
+                    ></v-autocomplete>
                   </v-col>
                   <v-col cols="12">
-                    <v-select v-model="selectedPass" label="Pass Type" :items="passes" item-text="label" item-value="id"
-                      return-object :rules="notEmpty"></v-select>
+                    <v-select
+                      v-model="selectedPass"
+                      label="Pass Type"
+                      :items="passes"
+                      item-text="label"
+                      item-value="id"
+                      return-object
+                      :rules="notEmpty"
+                    ></v-select>
                   </v-col>
                   <v-col cols="12">
                     <div>
@@ -29,11 +51,14 @@
                         Cost: {{ formattedPrice }}
                       </div>
                       <div class="text-body-2">
-                        Valid: {{ selectedPass ? selectedPass.valid : 0 }} day(s).
-                        Limit: {{ selectedPass ? selectedPass.limit : 0 }} per season.
+                        Valid:
+                        {{ selectedPass ? selectedPass.valid : 0 }} day(s).
+                        Limit: {{ selectedPass ? selectedPass.limit : 0 }} per
+                        season.
                       </div>
                       <div class="text-body-2">
-                        Description: One day pass. Expires at midnight of the day of purchase.
+                        Description: One day pass. Expires at midnight of the
+                        day of purchase.
                       </div>
                     </div>
                   </v-col>
@@ -45,15 +70,32 @@
                     2. Payment
                   </v-col>
                   <v-col cols="12">
-                    <v-select v-model="selectedProcessor" label="Payment Method" :items="paymentTypes" item-text="name"
-                      item-value="id" :rules="notEmpty" return-object></v-select>
+                    <v-select
+                      v-model="selectedProcessor"
+                      label="Payment Method"
+                      :items="paymentTypes"
+                      item-text="name"
+                      item-value="id"
+                      :rules="notEmpty"
+                      return-object
+                    ></v-select>
                   </v-col>
                   <v-col cols="12">
-                    <component :is="processor" :base-price="passPrice" :fee="fee" :fee-type="feeType"
-                      :config="processorConfig" @update:paymentinfo="setPaymentInfo"></component>
+                    <component
+                      :is="processor"
+                      :base-price="passPrice"
+                      :fee="fee"
+                      :fee-type="feeType"
+                      :config="processorConfig"
+                      @update:paymentinfo="setPaymentInfo"
+                    ></component>
                   </v-col>
                   <v-col cols="12">
-                    <v-checkbox v-model="confirmed" :rules="checkBoxRules" dense>
+                    <v-checkbox
+                      v-model="confirmed"
+                      :rules="checkBoxRules"
+                      dense
+                    >
                       <template #label>
                         <div class="caption">
                           Host and guest information is correct.

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="fill-height" v-resize="onResize">
+  <v-container v-resize="onResize" fluid class="fill-height">
     <v-row justify="center" align="center" class="fill-height">
       <v-col cols="12" md="10">
         <v-container fluid>
@@ -59,7 +59,7 @@
                     multiple
                   ></v-select> -->
                   <v-card height="300px" class="pa-2" raised rounded="">
-                    <v-chart :option="utilizationOption" ref="bar1"></v-chart>
+                    <v-chart ref="bar1" :option="utilizationOption"></v-chart>
                   </v-card>
                 </v-col>
               </v-row>
@@ -114,7 +114,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-card height="300px" class="pa-2" raised rounded="">
-                    <v-chart :option="timePlayedOption" ref="bar2"></v-chart>
+                    <v-chart ref="bar2" :option="timePlayedOption"></v-chart>
                   </v-card>
                 </v-col>
               </v-row>
@@ -169,7 +169,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-card height="300px" class="pa-2" raised rounded="">
-                    <v-chart :option="waitTimeOption" ref="bar3"></v-chart>
+                    <v-chart ref="bar3" :option="waitTimeOption"></v-chart>
                   </v-card>
                 </v-col>
               </v-row>
@@ -314,18 +314,18 @@ export default {
       },
     };
   },
+  computed: {},
+  destroyed() {
+    this.$refs["bar1"].dispose();
+    this.$refs["bar2"].dispose();
+    this.$refs["bar3"].dispose();
+  },
   methods: {
     onResize: function () {
       this.$refs["bar1"].resize();
       this.$refs["bar2"].resize();
       this.$refs["bar3"].resize();
     },
-  },
-  computed: {},
-  destroyed() {
-    this.$refs["bar1"].dispose();
-    this.$refs["bar2"].dispose();
-    this.$refs["bar3"].dispose();
   },
 };
 </script>

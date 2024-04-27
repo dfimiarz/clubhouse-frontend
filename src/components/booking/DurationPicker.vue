@@ -6,24 +6,24 @@
     :return-value.sync="duration"
     width="290px"
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <v-text-field
         v-model="duration"
         label="Duration"
         :prepend-icon="timerIcon"
         readonly
-        v-on="on"
         required
         :rules="[rules.required, rules.minduration, rules.lessThanMax]"
         :disabled="!isStartSet"
         :loading="loading"
         suffix="min"
+        v-on="on"
       >
       </v-text-field>
     </template>
 
     <vnumberpad v-model="duration" :cold="cold">
-      <template v-slot:actions>
+      <template #actions>
         <v-spacer></v-spacer>
         <v-btn text color="primary" @click="durDialog = false">Cancel</v-btn>
         <v-btn text color="primary" @click="$refs.durdialog_ref.save(duration)"
@@ -40,7 +40,10 @@ import vnumberpad from "./vuetify-numberpad";
 import { mdiTimer } from "@mdi/js";
 
 export default {
-  name: "duration-picker",
+  name: "DurationPicker",
+  components: {
+    vnumberpad,
+  },
   props: {
     value: {
       type: Number,
@@ -60,9 +63,6 @@ export default {
       default: false,
     },
   },
-  components: {
-    vnumberpad,
-  },
   data() {
     return {
       timerIcon: mdiTimer,
@@ -77,11 +77,6 @@ export default {
       },
       cold: true,
     };
-  },
-  methods: {
-    computeBestDuration: function () {
-      return;
-    },
   },
   computed: {
     duration: {
@@ -102,6 +97,11 @@ export default {
       if (newval === true) {
         this.cold = true;
       }
+    },
+  },
+  methods: {
+    computeBestDuration: function () {
+      return;
     },
   },
 };

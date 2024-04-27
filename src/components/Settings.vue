@@ -5,13 +5,13 @@
         <v-card>
           <v-card-title>System Settings</v-card-title>
           <v-card-text>
-            <v-form v-model="formvalid" ref="form">
+            <v-form ref="form" v-model="formvalid">
               <v-row no-gutters>
                 <v-col cols="12" lg="8">
                   <v-select
+                    v-model="settings.displayMode"
                     label="Schedule Display Mode"
                     :items="displaymodes"
-                    v-model="settings.displayMode"
                   >
                   </v-select>
                 </v-col>
@@ -22,7 +22,7 @@
           <v-card-actions>
             <v-btn large @click="resetSettings">Reset</v-btn>
             <v-spacer></v-spacer>
-            <v-btn large @click="saveSettings" :disabled="!settingsChanged"
+            <v-btn large :disabled="!settingsChanged" @click="saveSettings"
               >Save</v-btn
             >
           </v-card-actions>
@@ -34,7 +34,7 @@
 
 <script>
 export default {
-  name: "Settings-Page",
+  name: "SettingsPage",
   data: function () {
     return {
       formvalid: true,
@@ -42,14 +42,6 @@ export default {
         displayMode: null,
       },
     };
-  },
-  methods: {
-    saveSettings() {
-      this.displayMode = this.settings.displayMode;
-    },
-    resetSettings() {
-      this.settings.displayMode = this.displayMode;
-    },
   },
   computed: {
     displayMode: {
@@ -69,6 +61,14 @@ export default {
   },
   created() {
     this.settings.displayMode = this.displayMode;
+  },
+  methods: {
+    saveSettings() {
+      this.displayMode = this.settings.displayMode;
+    },
+    resetSettings() {
+      this.settings.displayMode = this.displayMode;
+    },
   },
 };
 </script>

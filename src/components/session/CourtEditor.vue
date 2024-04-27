@@ -17,13 +17,13 @@
       <v-row class="my-2" no-gutters>
         <v-col cols="12">
           <v-select
+            v-model="court"
             label="Court"
             :items="courts"
             item-value="id"
             item-text="name"
             required=""
             :rules="[rules.required]"
-            v-model="court"
           >
           </v-select>
         </v-col>
@@ -31,7 +31,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="primary" text @click="changeCourt" :loading="loading">
+      <v-btn color="primary" text :loading="loading" @click="changeCourt">
         Save
       </v-btn>
     </v-card-actions>
@@ -46,8 +46,8 @@ import processAxiosError from "../../utils/AxiosErrorHandler";
 import { mdiClose } from "@mdi/js";
 
 export default {
-  props: ["session"],
   mixins: [editor],
+  props: ["session"],
   data() {
     return {
       closeIcon: mdiClose,
@@ -56,6 +56,24 @@ export default {
         required: (value) => !!value || "Required",
       },
     };
+  },
+  computed: {
+    canChangeCourt: function () {
+      return Object.prototype.hasOwnProperty.call(
+        this.sessioninfo,
+        "permissions"
+      )
+        ? Array.isArray(this.session.permissions)
+          ? this.session.permissions.includes("CHANGE_COURT")
+          : false
+        : false;
+    },
+    courts: function () {
+      return this.$store.getters["courtstore/getCourts"];
+    },
+  },
+  mounted: function () {
+    this.court = this.session.court;
   },
   methods: {
     changeCourt: function () {
@@ -80,24 +98,6 @@ export default {
           this.loading = false;
         });
     },
-  },
-  computed: {
-    canChangeCourt: function () {
-      return Object.prototype.hasOwnProperty.call(
-        this.sessioninfo,
-        "permissions"
-      )
-        ? Array.isArray(this.session.permissions)
-          ? this.session.permissions.includes("CHANGE_COURT")
-          : false
-        : false;
-    },
-    courts: function () {
-      return this.$store.getters["courtstore/getCourts"];
-    },
-  },
-  mounted: function () {
-    this.court = this.session.court;
   },
 };
 </script>

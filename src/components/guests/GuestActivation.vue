@@ -28,10 +28,10 @@
                   <v-divider />
                 </v-col>
                 <v-col
-                  cols="12"
-                  md="8"
                   v-for="(guest, index) in selectedGuests"
                   :key="index"
+                  cols="12"
+                  md="8"
                 >
                   <v-autocomplete
                     v-model="guest.id"
@@ -49,13 +49,13 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-btn text @click="resetForm" :disabled="loading"> Clear </v-btn>
+          <v-btn text :disabled="loading" @click="resetForm"> Clear </v-btn>
           <v-spacer />
           <v-btn
             large
             color="primary"
-            @click="activateAndReload"
             :disabled="loading || error"
+            @click="activateAndReload"
           >
             Activate
           </v-btn>
@@ -71,11 +71,15 @@ import processAxiosError from "../../utils/AxiosErrorHandler";
 import { notification } from "../mixins/NotificationMixin";
 
 export default {
+  name: "GuestActivation",
   mixins: [notification],
+  beforeRouteLeave(to, from, next) {
+    this.setLoading(false);
+    next();
+  },
   props: {
     loading: Boolean,
   },
-  name: "GuestActivation",
   data: function () {
     return {
       selectedGuests: [
@@ -96,9 +100,35 @@ export default {
       inactiveguest: [],
     };
   },
-  beforeRouteLeave(to, from, next) {
-    this.setLoading(false);
-    next();
+  computed: {
+    selGuestList: function () {
+      return this.selectedGuets.reduce((acc, curr) => {
+        if (curr.id) {
+          acc.push(curr.id);
+        }
+        return acc;
+      }, []);
+    },
+  },
+  created: function () {
+    //Load both active members and inactive guests
+
+    this.getMembersAndInactiveGuest()
+      .then((results) => {
+        this.error = false;
+
+        this.activeMembers = results[0].data.map((member) => ({
+          name: `${member.firstname} ${member.lastname}`,
+          id: member.id,
+        }));
+
+        this.inactiveguests = results[1].data;
+      })
+      .catch((error) => {
+        this.error = true;
+        this.showNotification(`${error.message}`, "error");
+      })
+      .finally(() => {});
   },
   methods: {
     reset() {
@@ -233,36 +263,6 @@ export default {
     setLoading(val) {
       this.$emit("update:loading", val);
     },
-  },
-  computed: {
-    selGuestList: function () {
-      return this.selectedGuets.reduce((acc, curr) => {
-        if (curr.id) {
-          acc.push(curr.id);
-        }
-        return acc;
-      }, []);
-    },
-  },
-  created: function () {
-    //Load both active members and inactive guests
-
-    this.getMembersAndInactiveGuest()
-      .then((results) => {
-        this.error = false;
-
-        this.activeMembers = results[0].data.map((member) => ({
-          name: `${member.firstname} ${member.lastname}`,
-          id: member.id,
-        }));
-
-        this.inactiveguests = results[1].data;
-      })
-      .catch((error) => {
-        this.error = true;
-        this.showNotification(`${error.message}`, "error");
-      })
-      .finally(() => {});
   },
 };
 </script>

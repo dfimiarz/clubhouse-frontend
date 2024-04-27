@@ -12,7 +12,7 @@
             </v-row>
           </v-sheet>
           <template v-else>
-            <v-sheet :height="containerHeight" v-if="errMessage">
+            <v-sheet v-if="errMessage" :height="containerHeight">
               <v-row justify="center" align="center" class="fill-height">
                 <v-col class="text-center">
                   <div class="text-body-1">
@@ -54,8 +54,8 @@
                   <v-list-item-action>
                     <v-btn
                       icon
-                      @click="deactivateGuest(index)"
                       :disabled="item.has_played"
+                      @click="deactivateGuest(index)"
                     >
                       <v-icon>
                         {{ accountMinusIcon }}
@@ -66,7 +66,7 @@
                 <v-divider :key="index" />
               </template>
             </v-list>
-            <v-sheet :height="containerHeight" v-else>
+            <v-sheet v-else :height="containerHeight">
               <v-row justify="center" align="center" class="fill-height">
                 <v-col class="text-center">
                   <div class="text-body-1">No Active Guests</div>
@@ -107,11 +107,15 @@ import {
 import { notification } from "../mixins/NotificationMixin";
 
 export default {
+  name: "GuestActivation",
   mixins: [notification],
+  beforeRouteLeave(to, from, next) {
+    this.setLoading(false);
+    next();
+  },
   props: {
     loading: Boolean,
   },
-  name: "GuestActivation",
   data: function () {
     return {
       accountIcon: mdiAccount,
@@ -125,9 +129,35 @@ export default {
       errMessage: undefined,
     };
   },
-  beforeRouteLeave(to, from, next) {
-    this.setLoading(false);
-    next();
+  computed: {
+    clubtz: function () {
+      return this.$store.state.clubtz;
+    },
+    hasGuests: function () {
+      return (
+        Array.isArray(this.guest_activations) &&
+        this.guest_activations.length != 0
+      );
+    },
+    sorted_activations: function () {
+      //Sort activations by guest lastname
+      return this.guest_activations.slice().sort((a, b) => {
+        var nameA = a.guest_lastname.toUpperCase(); // ignore upper and lowercase
+        var nameB = b.guest_lastname.toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        // names must be equal
+        return 0;
+      });
+    },
+  },
+  created: function () {
+    this.getCurrentActivations();
   },
   methods: {
     setLoading(val) {
@@ -188,36 +218,6 @@ export default {
           this.setLoading(false);
         });
     },
-  },
-  computed: {
-    clubtz: function () {
-      return this.$store.state.clubtz;
-    },
-    hasGuests: function () {
-      return (
-        Array.isArray(this.guest_activations) &&
-        this.guest_activations.length != 0
-      );
-    },
-    sorted_activations: function () {
-      //Sort activations by guest lastname
-      return this.guest_activations.slice().sort((a, b) => {
-        var nameA = a.guest_lastname.toUpperCase(); // ignore upper and lowercase
-        var nameB = b.guest_lastname.toUpperCase(); // ignore upper and lowercase
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-
-        // names must be equal
-        return 0;
-      });
-    },
-  },
-  created: function () {
-    this.getCurrentActivations();
   },
 };
 </script>

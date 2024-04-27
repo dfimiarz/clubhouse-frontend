@@ -13,6 +13,7 @@
 const MIN_SESSION_HEIGHT = 26;
 
 export default {
+  name: "BaseItem",
   props: {
     start: {
       type: Number,
@@ -27,7 +28,6 @@ export default {
       required: true,
     },
   },
-  name: "base-item",
   data: function () {
     return {};
   },

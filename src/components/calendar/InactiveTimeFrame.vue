@@ -1,5 +1,5 @@
 <template>
-  <base-item :start="start" :end="end" :calendarStart="calendarStart">
+  <base-item :start="start" :end="end" :calendar-start="calendarStart">
     <v-row
       no-gutters
       justify="center"
@@ -16,9 +16,6 @@ import BaseItem from "./BaseItem.vue";
 
 export default {
   components: { BaseItem },
-  data: function () {
-    return {};
-  },
   props: {
     start: {
       type: Number,
@@ -32,6 +29,9 @@ export default {
       type: Number,
       required: true,
     },
+  },
+  data: function () {
+    return {};
   },
 };
 </script>

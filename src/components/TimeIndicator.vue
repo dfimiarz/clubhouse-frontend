@@ -7,6 +7,7 @@
 
 <script>
 export default {
+  name: "TimeIndicator",
   props: {
     currtime: {
       required: true,
@@ -21,13 +22,11 @@ export default {
       type: Number,
     },
   },
-  name: "TimeIndicator",
   data: function () {
     return {
       thickness: 2,
     };
   },
-  methods: {},
   computed: {
     cellHeight1H: function () {
       return this.$store.getters["calCellHeight1H"];
@@ -68,6 +67,7 @@ export default {
     },
   },
   created: function () {},
+  methods: {},
 };
 </script>
 

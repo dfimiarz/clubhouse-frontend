@@ -23,15 +23,15 @@
             persistent
             width="290px"
           >
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-text-field
                 v-model="s_time"
                 label="Start time"
                 :prepend-icon="clockStartIcon"
                 readonly
-                v-on="on"
                 required=""
                 :disabled="!canMove"
+                v-on="on"
               ></v-text-field>
             </template>
             <v-time-picker
@@ -60,15 +60,15 @@
             persistent
             width="290px"
           >
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-text-field
                 v-model="e_time"
                 label="End time"
                 :prepend-icon="clockEndIcon"
                 readonly
-                v-on="on"
                 required=""
                 :disabled="!canMove"
+                v-on="on"
               ></v-text-field>
             </template>
             <v-time-picker
@@ -109,8 +109,8 @@ import processAxiosError from "../../utils/AxiosErrorHandler";
 import { mdiClose, mdiClockStart, mdiClockEnd } from "@mdi/js";
 
 export default {
-  props: ["session"],
   mixins: [editor],
+  props: ["session"],
   data() {
     return {
       closeIcon: mdiClose,
@@ -121,6 +121,29 @@ export default {
       etimedialog: false,
       e_time: null,
     };
+  },
+  computed: {
+    opentime() {
+      return this.$store.state.opentime;
+    },
+    closetime() {
+      return this.$store.state.closetime;
+    },
+    canMove: function () {
+      return Object.prototype.hasOwnProperty.call(this.session, "permissions")
+        ? Array.isArray(this.session.permissions)
+          ? this.session.permissions.includes("move")
+          : false
+        : false;
+    },
+  },
+  mounted: function () {
+    this.s_time = this.$dayjs(this.session.date.concat("T", this.session.start))
+      .tz()
+      .format("HH:mm");
+    this.e_time = this.$dayjs(this.session.date.concat("T", this.session.end))
+      .tz()
+      .format("HH:mm");
   },
   methods: {
     allowedminutes: (m) => m % 5 === 0,
@@ -148,29 +171,6 @@ export default {
           this.loading = false;
         });
     },
-  },
-  computed: {
-    opentime() {
-      return this.$store.state.opentime;
-    },
-    closetime() {
-      return this.$store.state.closetime;
-    },
-    canMove: function () {
-      return Object.prototype.hasOwnProperty.call(this.session, "permissions")
-        ? Array.isArray(this.session.permissions)
-          ? this.session.permissions.includes("move")
-          : false
-        : false;
-    },
-  },
-  mounted: function () {
-    this.s_time = this.$dayjs(this.session.date.concat("T", this.session.start))
-      .tz()
-      .format("HH:mm");
-    this.e_time = this.$dayjs(this.session.date.concat("T", this.session.end))
-      .tz()
-      .format("HH:mm");
   },
 };
 </script>

@@ -23,11 +23,13 @@
           <v-card-title>
             Guest Passes
             <v-spacer></v-spacer>
-            <v-text-field v-model="hostmembersearch" append-icon="mdi-magnify" label="Search" single-line
+            <v-text-field
+v-model="hostmembersearch" label="Search" single-line
               hide-details></v-text-field>
           </v-card-title>
           <v-card-text>
-            <v-data-table height="400" :headers="guest_passes_headers" :items="guest_passes_data" item-key="pass_id"
+            <v-data-table
+height="400" :headers="guest_passes_headers" :items="guest_passes_data" item-key="pass_id"
               sort-by="guestname" class="elevation-1" show-group-by hide-default-footer disable-pagination
               mobile-breakpoint="0" fixed-header dense>
               <template #[`item.actions`]>
@@ -35,7 +37,7 @@
                   mdi-pencil
                 </v-icon>
               </template>
-              <template v-slot:no-data>
+              <template #no-data>
                 <v-btn color="primary">
                   Reset
                 </v-btn>
@@ -55,11 +57,13 @@
           <v-card-title>
             Player Activity
             <v-spacer></v-spacer>
-            <v-text-field v-model="matchsearch" append-icon="mdi-magnify" label="Search" single-line
+            <v-text-field
+v-model="matchsearch" label="Search" single-line
               hide-details></v-text-field>
           </v-card-title>
           <v-card-text>
-            <v-data-table height="400" :headers="players_headers" :items="memberactivities" item-key="participant_id"
+            <v-data-table
+height="400" :headers="players_headers" :items="memberactivities" item-key="participant_id"
               class="elevation-1" show-group-by hide-default-footer disable-pagination mobile-breakpoint="0"
               fixed-header sort-by="match_id" :search="matchsearch" dense></v-data-table>
           </v-card-text>

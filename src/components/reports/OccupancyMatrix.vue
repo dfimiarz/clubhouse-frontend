@@ -1,19 +1,19 @@
 <template>
   <v-container v-resize="onResize">
     <v-row justify="start" align="start" dense>
-      <v-col cols="12" ref="settings_row">
+      <v-col ref="settings_row" cols="12">
         <v-row align="center" justify="space-between" no-gutters>
           <v-col cols="10" sm="6" lg="3">
             <date-range-selector
-              v-bind:dates.sync="dates"
+              :dates.sync="dates"
               :show.sync="dateseldialog"
             ></date-range-selector>
           </v-col>
           <v-col cols="2" class="text-right">
             <v-dialog v-model="optionsDialog" width="400" persistent>
-              <template v-slot:activator="{ on, attrs }">
+              <template #activator="{ on, attrs }">
                 <v-btn
-                  v-bind:icon="$vuetify.breakpoint.mobile"
+                  :icon="$vuetify.breakpoint.mobile"
                   v-bind="attrs"
                   v-on="on"
                 >
@@ -61,15 +61,15 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="12" ref="options_row">
+      <v-col ref="options_row" cols="12">
         <v-chip-group>
           <v-chip
             v-for="(type, index) in activityTypes"
-            small
             :key="index"
+            small
             :color="isChipSelected(type.value) ? 'primary' : 'secondary'"
-            @click="toggleChip(type.value)"
             rounded
+            @click="toggleChip(type.value)"
           >
             {{ type.text }} Activity
           </v-chip>
@@ -85,17 +85,17 @@
             :style="{ height: '100%', 'min-width': '600px', width: '100%' }"
           >
             <v-chart
+              ref="matrix"
               autoresize
               :option="option"
-              ref="matrix"
               :init-options="initoptions"
             ></v-chart>
           </div>
         </v-responsive>
       </v-col>
-      <v-col cols="12" ref="actions_row" class="text-right">
+      <v-col ref="actions_row" cols="12" class="text-right">
         <v-menu offset-y>
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-btn v-bind="attrs" v-on="on"> Export </v-btn>
           </template>
           <v-list>
@@ -267,9 +267,9 @@ const computeLastCell = function (end_min, timeframe_len_min) {
 import { notification } from "@/components/mixins/NotificationMixin";
 
 export default {
-  mixins: [notification],
   name: "OccupancyMatrix",
   components: { VChart, DateRangeSelector },
+  mixins: [notification],
   provide: {
     [THEME_KEY]: "dark",
   },
@@ -356,143 +356,6 @@ export default {
         ],
       },
     };
-  },
-  methods: {
-    isChipSelected(type) {
-      return this.selectedTypes.includes(type);
-    },
-    toggleChip(type) {
-      if (this.isChipSelected(type)) {
-        this.selectedTypes = this.selectedTypes.filter((t) => t !== type);
-      } else {
-        this.selectedTypes.push(type);
-      }
-    },
-    resizeGrid() {
-      const container_height = this.$refs["grid_container"].clientHeight;
-
-      const newheight = this.filtered_time_array.length * 20 + 120;
-      this.$refs["matrix"].resize({
-        height: container_height > newheight ? container_height : newheight,
-      });
-    },
-    saveAsCsv() {
-      const fields = ["", ...days];
-      const data = [];
-
-      //Number of rows
-      const num_rows = this.filtered_time_array.length;
-
-      //Number of timeframes
-      const column_count = days.length;
-      //Array of numbers between 0 and row_count
-      const column_indices = Array.from(Array(column_count).keys());
-
-      //Loop through each row
-      this.filtered_time_array.forEach((time, index) => {
-        //Get row data from occupanyData array.
-        const row_data = column_indices.map((column_index) => {
-          return this.occupancyData[
-            //Reverse column indices to get data in correct order
-            column_index * num_rows + (num_rows - 1 - index)
-          ];
-        });
-        //Add each row to data array
-        data.push([time, ...row_data]);
-      });
-
-      this.saveDataToCSV("Occupany_Matrix", { fields: fields, data: data });
-    },
-    saveAsImage() {
-      const imagedata = this.$refs["matrix"].getDataURL({
-        pixelRatio: 1,
-        type: "jpg",
-      });
-
-      saveAs(
-        imagedata,
-        `occupancy-matrix-${this.formattedStartDate}-${this.formattedEndDate}.jpg`
-      );
-    },
-    updateHeatMapData() {
-      let heatmap_array = [];
-      for (let i = 0; i < 7; i++) {
-        for (let j = 0; j < this.filtered_time_array.length; j++) {
-          const index = i * this.filtered_time_array.length + j;
-          heatmap_array.push([
-            i,
-            j,
-            !this.occupancyData[index] ? "-" : this.occupancyData[index],
-          ]);
-        }
-      }
-
-      this.$refs["matrix"].setOption({
-        title: {
-          id: "matrix_title",
-          subtext: `Dates: ${this.formattedStartDate} to ${this.formattedEndDate}`,
-        },
-        yAxis: {
-          data: this.filtered_time_array.slice(0).reverse(),
-        },
-        series: [
-          {
-            name: "Occupancy",
-            data: heatmap_array,
-          },
-        ],
-      });
-    },
-    loadDefaultDates() {
-      /**
-       * Load dates for past seven days
-       */
-      this.dates.push(
-        this.$dayjs().tz().subtract(1, "month").format("YYYY-MM-DD")
-      );
-      this.dates.push(this.$dayjs().tz().format("YYYY-MM-DD"));
-    },
-    setNonGridElementsHeight() {
-      this.nonGridElementsHeight =
-        this.$refs.options_row.clientHeight +
-        this.$refs.settings_row.clientHeight +
-        this.$refs.actions_row.clientHeight +
-        this.$vuetify.application.top +
-        this.$vuetify.application.footer +
-        24;
-    },
-    saveDataToCSV: function (filename, data) {
-      let csv = papaparse.unparse(data);
-      let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      saveAs(
-        blob,
-        `${filename}-${this.formattedStartDate}-${this.formattedEndDate}.csv`,
-        {
-          autoBom: true,
-        }
-      );
-    },
-    onResize: function () {
-      this.$nextTick(() => {
-        this.setNonGridElementsHeight();
-      });
-    },
-    loadActivities() {
-      this.$store.dispatch("setLoading", true);
-
-      apihandler
-        .getActivitiesForDates(this.startdate, this.enddate)
-        .then((data) => {
-          this.activities = data;
-          this.updateHeatMapData();
-        })
-        .catch((error) => {
-          this.showNotification(error.message, "error");
-        })
-        .finally(() => {
-          this.$store.dispatch("setLoading", false);
-        });
-    },
   },
   computed: {
     filteredActivities() {
@@ -652,6 +515,143 @@ export default {
   beforeDestroy() {
     //console.log("destroyed");
     this.$refs["matrix"].dispose();
+  },
+  methods: {
+    isChipSelected(type) {
+      return this.selectedTypes.includes(type);
+    },
+    toggleChip(type) {
+      if (this.isChipSelected(type)) {
+        this.selectedTypes = this.selectedTypes.filter((t) => t !== type);
+      } else {
+        this.selectedTypes.push(type);
+      }
+    },
+    resizeGrid() {
+      const container_height = this.$refs["grid_container"].clientHeight;
+
+      const newheight = this.filtered_time_array.length * 20 + 120;
+      this.$refs["matrix"].resize({
+        height: container_height > newheight ? container_height : newheight,
+      });
+    },
+    saveAsCsv() {
+      const fields = ["", ...days];
+      const data = [];
+
+      //Number of rows
+      const num_rows = this.filtered_time_array.length;
+
+      //Number of timeframes
+      const column_count = days.length;
+      //Array of numbers between 0 and row_count
+      const column_indices = Array.from(Array(column_count).keys());
+
+      //Loop through each row
+      this.filtered_time_array.forEach((time, index) => {
+        //Get row data from occupanyData array.
+        const row_data = column_indices.map((column_index) => {
+          return this.occupancyData[
+            //Reverse column indices to get data in correct order
+            column_index * num_rows + (num_rows - 1 - index)
+          ];
+        });
+        //Add each row to data array
+        data.push([time, ...row_data]);
+      });
+
+      this.saveDataToCSV("Occupany_Matrix", { fields: fields, data: data });
+    },
+    saveAsImage() {
+      const imagedata = this.$refs["matrix"].getDataURL({
+        pixelRatio: 1,
+        type: "jpg",
+      });
+
+      saveAs(
+        imagedata,
+        `occupancy-matrix-${this.formattedStartDate}-${this.formattedEndDate}.jpg`
+      );
+    },
+    updateHeatMapData() {
+      let heatmap_array = [];
+      for (let i = 0; i < 7; i++) {
+        for (let j = 0; j < this.filtered_time_array.length; j++) {
+          const index = i * this.filtered_time_array.length + j;
+          heatmap_array.push([
+            i,
+            j,
+            !this.occupancyData[index] ? "-" : this.occupancyData[index],
+          ]);
+        }
+      }
+
+      this.$refs["matrix"].setOption({
+        title: {
+          id: "matrix_title",
+          subtext: `Dates: ${this.formattedStartDate} to ${this.formattedEndDate}`,
+        },
+        yAxis: {
+          data: this.filtered_time_array.slice(0).reverse(),
+        },
+        series: [
+          {
+            name: "Occupancy",
+            data: heatmap_array,
+          },
+        ],
+      });
+    },
+    loadDefaultDates() {
+      /**
+       * Load dates for past seven days
+       */
+      this.dates.push(
+        this.$dayjs().tz().subtract(1, "month").format("YYYY-MM-DD")
+      );
+      this.dates.push(this.$dayjs().tz().format("YYYY-MM-DD"));
+    },
+    setNonGridElementsHeight() {
+      this.nonGridElementsHeight =
+        this.$refs.options_row.clientHeight +
+        this.$refs.settings_row.clientHeight +
+        this.$refs.actions_row.clientHeight +
+        this.$vuetify.application.top +
+        this.$vuetify.application.footer +
+        24;
+    },
+    saveDataToCSV: function (filename, data) {
+      let csv = papaparse.unparse(data);
+      let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      saveAs(
+        blob,
+        `${filename}-${this.formattedStartDate}-${this.formattedEndDate}.csv`,
+        {
+          autoBom: true,
+        }
+      );
+    },
+    onResize: function () {
+      this.$nextTick(() => {
+        this.setNonGridElementsHeight();
+      });
+    },
+    loadActivities() {
+      this.$store.dispatch("setLoading", true);
+
+      apihandler
+        .getActivitiesForDates(this.startdate, this.enddate)
+        .then((data) => {
+          this.activities = data;
+          this.updateHeatMapData();
+        })
+        .catch((error) => {
+          this.showNotification(error.message, "error");
+        })
+        .finally(() => {
+          this.$store.dispatch("setLoading", false);
+        });
+    },
   },
 };
 </script>

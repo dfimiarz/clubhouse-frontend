@@ -6,9 +6,9 @@
     persistent=""
   >
     <component
-      :session="session"
       :is="selectedType"
-      v-on:update:show="show = false"
+      :session="session"
+      @update:show="show = false"
     ></component>
   </v-dialog>
 </template>
@@ -18,23 +18,16 @@ import timeeditor from "./TimeEditor";
 import courteditor from "./CourtEditor";
 
 export default {
-  props: ["session", "visible", "type"],
   components: {
     timeeditor: timeeditor,
     courteditor: courteditor,
   },
+  props: ["session", "visible", "type"],
   data() {
     return {
       selectedType: null,
     };
   },
-  watch: {
-    show(value) {
-      if (value) this.selectedType = this.type;
-      else this.selectedType = null;
-    },
-  },
-  methods: {},
   computed: {
     show: {
       get() {
@@ -45,7 +38,14 @@ export default {
       },
     },
   },
+  watch: {
+    show(value) {
+      if (value) this.selectedType = this.type;
+      else this.selectedType = null;
+    },
+  },
   mounted: function () {},
+  methods: {},
 };
 </script>
 <style scoped></style>

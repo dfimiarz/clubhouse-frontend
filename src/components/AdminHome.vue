@@ -4,14 +4,14 @@
       <v-col cols="12" sm="10" lg="8">
         <v-container fluid>
           <template v-for="(section, index) in sections">
-            <v-row justify="center" align="center" :key="`header-${index}`">
+            <v-row :key="`header-${index}`" justify="center" align="center">
               <v-col cols="12" class="text-h6"> {{ section.name }} </v-col>
             </v-row>
             <v-row
+              :key="`body-${index}`"
               justify="start"
               align="center"
               no-gutters=""
-              :key="`body-${index}`"
             >
               <v-col
                 v-for="card in section.cards"
@@ -59,8 +59,8 @@
 import { AccessChecker } from "./mixins/AccessCheckerMixin";
 
 export default {
-  mixins: [AccessChecker],
   name: "ReportsHome",
+  mixins: [AccessChecker],
   data: () => {
     return {
       sections: [

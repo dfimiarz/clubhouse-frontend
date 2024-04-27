@@ -1,10 +1,10 @@
 <template>
   <calendar-item
+    :id="booking.id"
+    v-slot="{ height }"
     :start="booking.start_min"
     :end="booking.end_min"
-    :id="booking.id"
-    :calendarStart="calendarStart"
-    v-slot="{ height }"
+    :calendar-start="calendarStart"
     show-details
   >
     <v-row no-gutters class="fill-height brown darken-1 white--text">
@@ -31,10 +31,6 @@ import { itemmixin } from "./ItemMixin";
 
 export default {
   components: { CalendarItem },
-  mixins: [itemmixin],
-  data: function () {
-    return {};
-  },
   filters: {
     capitalize: function (val) {
       if (!val) return "EVENT";
@@ -44,6 +40,7 @@ export default {
       return str_val.toUpperCase();
     },
   },
+  mixins: [itemmixin],
   props: {
     booking: {
       type: Object,
@@ -53,6 +50,9 @@ export default {
       type: Number,
       required: true,
     },
+  },
+  data: function () {
+    return {};
   },
   computed: {
     organizer: function () {

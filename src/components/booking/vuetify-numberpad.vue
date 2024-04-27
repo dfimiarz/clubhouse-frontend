@@ -41,7 +41,7 @@
       </v-row>
       <v-row justify="center">
         <v-col cols="8" class="text-center"
-          ><v-btn @click="increment(0)" width="100%">0</v-btn></v-col
+          ><v-btn width="100%" @click="increment(0)">0</v-btn></v-col
         >
 
         <v-col cols="4" class="text-center"
@@ -58,7 +58,7 @@
 
 <script>
 export default {
-  name: "v-number-pad",
+  name: "VNumberPad",
   props: ["value", "cold"],
   data() {
     return {};

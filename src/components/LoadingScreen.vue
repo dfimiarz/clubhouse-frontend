@@ -31,14 +31,14 @@
         </v-row>
         <v-row dense justify="center" class="text-caption text-lg-body-1">
           <v-col
+            v-if="loading_error"
             cols="10"
             lg="4"
             class="text-center error--text"
-            v-if="loading_error"
           >
             <div>{{ loading_error }}</div>
           </v-col>
-          <v-col cols="10" lg="4" class="text-center" v-else>
+          <v-col v-else cols="10" lg="4" class="text-center">
             Initilizing ...
           </v-col>
         </v-row>
@@ -74,9 +74,11 @@ export default {
   0% {
     opacity: 1;
   }
+
   50% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
