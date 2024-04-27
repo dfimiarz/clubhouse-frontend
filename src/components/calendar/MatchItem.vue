@@ -30,10 +30,10 @@
               <v-icon v-if="player.person_role_type_id === 100" small color="white">
                 {{ gBoxOutlineIcon }}
               </v-icon>
-              <v-icon v-if="player.type === 2000" small color="white">
+              <v-icon v-if="player.type_id === 2000" small color="white">
                 {{ circleHalfFullIcon }}
               </v-icon>
-              <v-icon v-if="player.type === 3000" small color="white">
+              <v-icon v-if="player.type_id === 3000" small color="white">
                 {{ circleIcon }}
               </v-icon>
             </div>
