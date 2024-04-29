@@ -3,15 +3,13 @@
     v-slot="{ height }"
     :start="start"
     :end="end"
-    :calendar-start="calendarStart"
-  >
+    :calendar-start="calendarStart">
     <v-row
       no-gutters
       justify="center"
       align="center"
       class="fill-heigth session_container"
-      @click="showBookingDetails"
-    >
+      @click="showBookingDetails">
       <v-col cols="12" class="fill-height">
         <slot :height="height">
           <v-row class="fill-height" no-gutters>
@@ -60,7 +58,7 @@ export default {
       if (this.showDetails) {
         this.$router.push({
           name: "BookingDetails",
-          params: { id: this.id },
+          params: { id: this.id.toString() },
         });
       }
     },
