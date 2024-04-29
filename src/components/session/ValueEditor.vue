@@ -6,7 +6,7 @@
     persistent=""
   >
     <component
-      :is="selectedType"
+      :is="type"
       :session="session"
       @update:show="show = false"
     ></component>
@@ -22,10 +22,23 @@ export default {
     timeeditor: timeeditor,
     courteditor: courteditor,
   },
-  props: ["session", "visible", "type"],
+  props: {
+    session: {
+      type: Object,
+      required: true,
+    },
+    type: {
+      type: String,
+      default: null,
+    },
+    visible: {
+      type: Boolean,
+      required: true,
+    },
+  },
   data() {
     return {
-      selectedType: null,
+      
     };
   },
   computed: {
@@ -38,14 +51,6 @@ export default {
       },
     },
   },
-  watch: {
-    show(value) {
-      if (value) this.selectedType = this.type;
-      else this.selectedType = null;
-    },
-  },
-  mounted: function () {},
-  methods: {},
 };
 </script>
 <style scoped></style>

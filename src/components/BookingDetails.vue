@@ -7,13 +7,11 @@
           class="fill-height"
           justify="center"
           align="center"
-          no-gutters
-        >
+          no-gutters>
           <v-progress-circular
             :size="70"
             :width="7"
-            indeterminate
-          ></v-progress-circular>
+            indeterminate></v-progress-circular>
         </v-row>
 
         <v-row v-if="error" justify="center" no-gutters>
@@ -30,8 +28,7 @@
                 height="150px"
                 :src="require('@/assets/match.jpg')"
                 :lazy-src="require('@/assets/match_small.jpg')"
-                gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)"
-              >
+                gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)">
                 <v-container class="fill-height" fluid>
                   <v-row no-gutters class="fill-height">
                     <v-col cols="12" align-self="start">
@@ -157,8 +154,7 @@
 
                   <v-list-item
                     v-for="player in sessioninfo.players"
-                    :key="player.id"
-                  >
+                    :key="player.id">
                     <v-list-item-icon>
                       <v-icon>{{ accountIcon }}</v-icon>
                     </v-list-item-icon>
@@ -227,8 +223,7 @@
           <valueeditor
             :visible.sync="showeditor"
             :session="sessioninfo"
-            :type="editortype"
-          ></valueeditor>
+            :type="editortype"></valueeditor>
         </v-row>
       </v-col>
       <v-dialog v-model="canceldialog" max-width="290">
@@ -307,7 +302,12 @@ export default {
   },
   filters: {},
   mixins: [notification],
-  props: ["id"],
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
+  },
   data: function () {
     return {
       chevronLeftIcon: mdiChevronLeft,
@@ -401,6 +401,11 @@ export default {
   watch: {
     //needed to get new data when route changes
     $route: "fetchData",
+    showeditor: function (val) {
+      if (!val) {
+        this.editortype = null;
+      }
+    },
   },
   created() {
     //fetch data here
