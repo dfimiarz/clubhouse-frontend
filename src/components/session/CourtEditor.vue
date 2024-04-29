@@ -47,7 +47,12 @@ import { mdiClose } from "@mdi/js";
 
 export default {
   mixins: [editor],
-  props: ["session"],
+  props: {
+    session: {
+      type: Object,
+      required: true,
+    }
+  },
   data() {
     return {
       closeIcon: mdiClose,
@@ -58,16 +63,6 @@ export default {
     };
   },
   computed: {
-    canChangeCourt: function () {
-      return Object.prototype.hasOwnProperty.call(
-        this.sessioninfo,
-        "permissions"
-      )
-        ? Array.isArray(this.session.permissions)
-          ? this.session.permissions.includes("CHANGE_COURT")
-          : false
-        : false;
-    },
     courts: function () {
       return this.$store.getters["courtstore/getCourts"];
     },

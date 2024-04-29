@@ -110,7 +110,12 @@ import { mdiClose, mdiClockStart, mdiClockEnd } from "@mdi/js";
 
 export default {
   mixins: [editor],
-  props: ["session"],
+  props: {
+    session: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       closeIcon: mdiClose,
