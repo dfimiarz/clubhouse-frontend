@@ -32,7 +32,8 @@
 export default {
   props: {
     message: {
-      required: true,
+      type: String,
+      required: false,
       default: "Error",
     },
     show: {
@@ -50,6 +51,7 @@ export default {
     },
     counter: {
       type: Number,
+      required: true,
     },
   },
   data: function () {

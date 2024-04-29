@@ -51,12 +51,15 @@ export default {
     },
     startTime: {
       type: String,
+      default: "00:00",
     },
     max: {
       type: Number,
+      default: 1440,
     },
     pref: {
       type: Number,
+      default: 60,
     },
     loading: {
       type: Boolean,

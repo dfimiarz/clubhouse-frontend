@@ -7,46 +7,46 @@
         </v-col>
       </v-row>
       <v-row justify="center">
-        <v-col class="text-center"
-          ><v-btn @click="increment(1)">1</v-btn></v-col
-        >
-        <v-col class="text-center"
-          ><v-btn @click="increment(2)">2</v-btn></v-col
-        >
-        <v-col class="text-center"
-          ><v-btn @click="increment(3)">3</v-btn></v-col
-        >
+        <v-col class="text-center">
+          <v-btn @click="increment(1)">1</v-btn>
+        </v-col>
+        <v-col class="text-center">
+          <v-btn @click="increment(2)">2</v-btn>
+        </v-col>
+        <v-col class="text-center">
+          <v-btn @click="increment(3)">3</v-btn>
+        </v-col>
       </v-row>
       <v-row justify="center">
-        <v-col class="text-center"
-          ><v-btn @click="increment(4)">4</v-btn></v-col
-        >
-        <v-col class="text-center"
-          ><v-btn @click="increment(5)">5</v-btn></v-col
-        >
-        <v-col class="text-center"
-          ><v-btn @click="increment(6)">6</v-btn></v-col
-        >
+        <v-col class="text-center">
+          <v-btn @click="increment(4)">4</v-btn>
+        </v-col>
+        <v-col class="text-center">
+          <v-btn @click="increment(5)">5</v-btn>
+        </v-col>
+        <v-col class="text-center">
+          <v-btn @click="increment(6)">6</v-btn>
+        </v-col>
       </v-row>
       <v-row justify="center">
-        <v-col class="text-center"
-          ><v-btn @click="increment(7)">7</v-btn></v-col
-        >
-        <v-col class="text-center"
-          ><v-btn @click="increment(8)">8</v-btn></v-col
-        >
-        <v-col class="text-center"
-          ><v-btn @click="increment(9)">9</v-btn></v-col
-        >
+        <v-col class="text-center">
+          <v-btn @click="increment(7)">7</v-btn>
+        </v-col>
+        <v-col class="text-center">
+          <v-btn @click="increment(8)">8</v-btn>
+        </v-col>
+        <v-col class="text-center">
+          <v-btn @click="increment(9)">9</v-btn>
+        </v-col>
       </v-row>
       <v-row justify="center">
-        <v-col cols="8" class="text-center"
-          ><v-btn width="100%" @click="increment(0)">0</v-btn></v-col
-        >
+        <v-col cols="8" class="text-center">
+          <v-btn width="100%" @click="increment(0)">0</v-btn>
+        </v-col>
 
-        <v-col cols="4" class="text-center"
-          ><v-btn color="secondary" @click="clear">C</v-btn></v-col
-        >
+        <v-col cols="4" class="text-center">
+          <v-btn color="secondary" @click="clear">C</v-btn>
+        </v-col>
       </v-row>
     </v-container>
 
@@ -59,7 +59,16 @@
 <script>
 export default {
   name: "VNumberPad",
-  props: ["value", "cold"],
+  props: {
+    value: {
+      type: Number,
+      required: true,
+    },
+    cold: {
+      type: Boolean,
+      required: true,
+    },
+  },
   data() {
     return {};
   },
