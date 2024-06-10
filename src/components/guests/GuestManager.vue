@@ -6,9 +6,10 @@
           <v-img
             class="white--text"
             height="150px"
-            :src="require(`@/assets/guestsbg.jpg`)"
-            :lazy-src="require(`@/assets/guestsbg_small.jpg`)"
+            :src="getImageSrcByName('GUESTS_COVER')"
+            :lazy-src="require(`@/assets/lazyloader.jpg`)"
             gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)"
+            position="top center"
           >
             <v-container class="fill-height" fluid>
               <v-row no-gutters class="fill-height">
@@ -43,8 +44,11 @@
 </template>
 
 <script>
+import { ImageProvider } from '../mixins/ImageProviderMixin';
+
 export default {
   name: "GuestManager",
+  mixins: [ImageProvider],
   data: function () {
     return {
       tab: null,

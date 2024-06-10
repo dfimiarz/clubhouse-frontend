@@ -1,14 +1,15 @@
 <template>
-  <v-container fluid class="fill-height">
+  <v-container fluid>
     <v-row justify="center">
       <v-col cols="12" sm="8" md="6" lg="4" xl="3">
         <v-card>
           <v-img
             class="white--text"
             height="150px"
-            :src="require('@/assets/specialevent.jpg')"
-            :lazy-src="require('@/assets/specialevent_small.jpg')"
+            :src="getImageSrcByName('EVENTS_COVER')"
+            :lazy-src="require('@/assets/lazyloader.jpg')"
             gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)"
+            position="top center"
           >
             <v-container class="fill-height" fluid>
               <v-row no-gutters class="fill-height">
@@ -182,6 +183,7 @@ import apihandler from "./../services/db";
 import utils from "./../services/utils";
 import processAxiosError from "../utils/AxiosErrorHandler";
 import { notification } from "@/components/mixins/NotificationMixin";
+import { ImageProvider } from "./mixins/ImageProviderMixin";
 
 import {
   mdiAccount,
@@ -196,7 +198,7 @@ const HOST_TYPE_ID = 4000;
 export default {
   name: "EventBooking",
   components: {},
-  mixins: [notification],
+  mixins: [ImageProvider,notification],
   data: function () {
     return {
       accountIcon: mdiAccount,

@@ -60,11 +60,12 @@
 
 <script>
 import { AccessChecker } from "./mixins/AccessCheckerMixin";
+import { ImageProvider } from "./mixins/ImageProviderMixin";
 import { mdiLock } from "@mdi/js";
 
 export default {
   name: "HomePage",
-  mixins: [AccessChecker],
+  mixins: [AccessChecker, ImageProvider],
   data: () => {
     return {
       lockIcon: mdiLock,
@@ -138,16 +139,8 @@ export default {
         : { "display-1": true };
     },
   },
-  methods: {
-    getImageSrcByName: function(name) {
-      /**
-       * @type {name: string, src: string}
-       */
-      const image = this.$store.getters['getImageByName'](name);
-      //Return the image.src if src is define, null otherwise
-      return image ? `${this.$store.state.cdn}/${image.src}` : null;
-    }
-  },
+  methods: {},
+    
 };
 </script>
 
