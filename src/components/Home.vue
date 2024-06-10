@@ -140,8 +140,12 @@ export default {
   },
   methods: {
     getImageSrcByName: function(name) {
+      /**
+       * @type {name: string, src: string}
+       */
       const image = this.$store.getters['getImageByName'](name);
-      return `${this.$store.state.cdn}/${image.src}`;
+      //Return the image.src if src is define, null otherwise
+      return image ? `${this.$store.state.cdn}/${image.src}` : null;
     }
   },
 };
