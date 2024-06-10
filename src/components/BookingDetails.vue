@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="fill-height">
+  <v-container fluid>
     <v-row justify="center">
       <v-col cols="12" sm="10" md="6" lg="4" xl="3" class="fill-height">
         <v-row
@@ -26,9 +26,10 @@
               <v-img
                 class="white--text"
                 height="150px"
-                :src="require('@/assets/match.jpg')"
-                :lazy-src="require('@/assets/match_small.jpg')"
-                gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)">
+                :src="getImageSrcByName('SCHEDULE_COVER')"
+                :lazy-src="require('@/assets/lazyloader.jpg')"
+                gradient="to top right, rgba(128,128,128,.33), rgba(0,0,0,.7)"
+                position="top center">
                 <v-container class="fill-height" fluid>
                   <v-row no-gutters class="fill-height">
                     <v-col cols="12" align-self="start">
@@ -281,6 +282,7 @@ import processAxiosError from "../utils/AxiosErrorHandler";
 
 import { BOOKING_TYPE_MATCH } from "../constants/constants";
 import { notification } from "@/components/mixins/NotificationMixin";
+import { ImageProvider } from "./mixins/ImageProviderMixin";
 
 import {
   mdiChevronLeft,
@@ -301,7 +303,7 @@ export default {
     valueeditor: valueeditor,
   },
   filters: {},
-  mixins: [notification],
+  mixins: [notification, ImageProvider],
   props: {
     id: {
       type: String,
