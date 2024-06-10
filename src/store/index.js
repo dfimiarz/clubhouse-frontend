@@ -24,6 +24,7 @@ const store = new Vuex.Store({
         default: "DESKTOP",
       },
     },
+    cdn: process.env.VUE_APP_CDN,
     data_loaded: null,
     displaymodes: ["DESKTOP", "TV"],
     connected: true,
@@ -48,6 +49,10 @@ const store = new Vuex.Store({
     default_cal_end_min: null,
     opentime: "00:00",
     closetime: "23:00",
+    /**
+    * @type {Array<{name: string, src: string}>}
+    */
+    images: [],
     repeaterTypes: [
       { id: 1000, label: "Non-repeater" },
       { id: 2000, label: "First Repeater" },
@@ -126,12 +131,13 @@ const store = new Vuex.Store({
     },
     SET_CLUB_INFO(
       state,
-      { name, default_cal_start_min, default_cal_end_min, time_zone }
+      { name, default_cal_start_min, default_cal_end_min, time_zone, images }
     ) {
       state.clubName = name;
       state.default_cal_end_min = default_cal_end_min;
       state.default_cal_start_min = default_cal_start_min;
       state.clubtz = time_zone;
+      state.images = images;
     },
   },
   actions: {
@@ -319,6 +325,13 @@ const store = new Vuex.Store({
         });
       };
     },
+    getImageByName(state) {
+      return (name) => {
+        return state.images.find((image) => {
+          return image.name === name;
+        });
+      };
+    }
   },
 });
 

@@ -17,8 +17,8 @@
                 :disabled="!canAccess(card.dest)"
               >
                 <v-img
-                  :src="require(`@/assets/${card.img}`)"
-                  :lazy-src="require(`@/assets/${card.img_small}`)"
+                  :src="getImageSrcByName(card.image)"
+                  :lazy-src="require(`@/assets/lazyloader.jpg`)"
                   min-height="100"
                   max-height="325"
                   aspect-ratio="1.5"
@@ -70,10 +70,9 @@ export default {
       lockIcon: mdiLock,
       cards: [
         {
+          image: "SCHEDULE_COVER",
           title: "Club Schedule",
           text: "View full schedule",
-          img: "players.jpg",
-          img_small: "players_small.jpg",
           xs: 12,
           sm: 6,
           md: 6,
@@ -81,10 +80,9 @@ export default {
           enabled: true,
         },
         {
+          image: "BOOKING_COVER",
           title: "Booking",
           text: "Member bookings",
-          img: "tennisracquet.jpg",
-          img_small: "tennisracquet_small.jpg",
           xs: 12,
           sm: 6,
           md: 6,
@@ -92,10 +90,9 @@ export default {
           enabled: true,
         },
         {
+          image: "GUESTS_COVER",
           title: "Guests",
           text: "Club guests",
-          img: "guests_btn_bg.jpg",
-          img_small: "clubhouse_small.jpg",
           xs: 12,
           sm: 6,
           md: 3,
@@ -103,10 +100,9 @@ export default {
           enabled: true,
         },
         {
+          image: "EVENTS_COVER",
           title: "Events",
           text: "Event booking",
-          img: "specialevent.jpg",
-          img_small: "specialevent_small.jpg",
           xs: 12,
           sm: 6,
           md: 3,
@@ -114,10 +110,9 @@ export default {
           enabled: true,
         },
         {
+          image: "MANAGEMENT_COVER",
           title: "Management",
           text: "System Administration",
-          img: "manager.jpg",
-          img_small: "manager_small.jpg",
           xs: 12,
           sm: 6,
           md: 3,
@@ -125,10 +120,9 @@ export default {
           enabled: true,
         },
         {
+          image: "CLUB_COVER",
           title: "The Knick",
           text: "More about the club",
-          img: "curr_matches.jpg",
-          img_small: "curr_matches_small.jpg",
           xs: 12,
           sm: 6,
           md: 3,
@@ -144,7 +138,12 @@ export default {
         : { "display-1": true };
     },
   },
-  methods: {},
+  methods: {
+    getImageSrcByName: function(name) {
+      const image = this.$store.getters['getImageByName'](name);
+      return `${this.$store.state.cdn}/${image.src}`;
+    }
+  },
 };
 </script>
 
