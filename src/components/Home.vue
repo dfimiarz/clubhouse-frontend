@@ -23,29 +23,22 @@
                   max-height="325"
                   aspect-ratio="1.5"
                   :transition="false"
+                  class="white--text align-end"
+                  gradient="to bottom, rgba(0,0,0,0.0) 30%, rgba(0,0,0,.7) 100%"
                 >
-                  <v-row
-                    justify="center"
-                    align="end"
-                    no-gutters
-                    class="fill-height"
-                  >
-                    <v-col
-                      v-if="!canAccess(card.dest)"
-                      cols="12"
-                      class="text-center"
-                    >
-                      <v-icon x-large>{{ lockIcon }}</v-icon>
+                  <v-row no-gutters>
+                    <v-col cols="8">
+                      <v-card-title class="text-h4">
+                        {{ card.title }}
+                      </v-card-title>
+                      <v-card-subtitle class="text-subtitle-2">
+                        {{ card.text }}
+                      </v-card-subtitle>
                     </v-col>
-                    <v-col cols="12">
-                      <div class="tile-text-container">
-                        <h3 class="text-h6 text-xl-h4">
-                          {{ card.title }}
-                        </h3>
-                        <div class="caption">
-                          {{ card.text }}
-                        </div>
-                      </div>
+                    <v-col cols="4" class="d-flex align-end justify-end pa-2">
+                      <v-icon v-if="!canAccess(card.dest)">
+                        {{ lockIcon }}
+                      </v-icon>
                     </v-col>
                   </v-row>
                 </v-img>
@@ -72,7 +65,7 @@ export default {
       cards: [
         {
           image: "SCHEDULE_COVER",
-          title: "Club Schedule",
+          title: "SCHEDULE",
           text: "View full schedule",
           xs: 12,
           sm: 6,
@@ -82,8 +75,8 @@ export default {
         },
         {
           image: "BOOKING_COVER",
-          title: "Booking",
-          text: "Member bookings",
+          title: "BOOKING",
+          text: "Book a court",
           xs: 12,
           sm: 6,
           md: 6,
@@ -92,8 +85,8 @@ export default {
         },
         {
           image: "GUESTS_COVER",
-          title: "Guests",
-          text: "Club guests",
+          title: "GUESTS",
+          text: "Guest Management",
           xs: 12,
           sm: 6,
           md: 3,
@@ -102,7 +95,7 @@ export default {
         },
         {
           image: "EVENTS_COVER",
-          title: "Events",
+          title: "EVENTS",
           text: "Event booking",
           xs: 12,
           sm: 6,
@@ -112,8 +105,8 @@ export default {
         },
         {
           image: "MANAGEMENT_COVER",
-          title: "Management",
-          text: "System Administration",
+          title: "MANAGE",
+          text: "Club Administration",
           xs: 12,
           sm: 6,
           md: 3,
@@ -140,7 +133,6 @@ export default {
     },
   },
   methods: {},
-    
 };
 </script>
 
