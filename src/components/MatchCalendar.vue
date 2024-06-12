@@ -393,7 +393,7 @@ export default {
     },
     club_schedule: function () {
       return this.$store.getters["getScheduleForDate"](
-        this.$dayjs(this.date).tz().unix()
+        this.$dayjs(this.date).tz().unix(),
       );
     },
     closed_time_frames: function () {
@@ -401,7 +401,7 @@ export default {
       if (!!this.club_schedule && !!this.club_schedule["closed_time_frames"]) {
         //Find closed time frames for a given day
         const closedTimeFrames = this.club_schedule["closed_time_frames"].find(
-          (item) => item.dayofweek === dayNum + 1
+          (item) => item.dayofweek === dayNum + 1,
         );
 
         return closedTimeFrames["time_frames"];
@@ -414,7 +414,7 @@ export default {
       if (!!this.club_schedule && !!this.club_schedule["calTimes"]) {
         //Find an item for a given day of week
         const item = this.club_schedule["calTimes"].find(
-          (item) => item.dayofweek === dayNum + 1
+          (item) => item.dayofweek === dayNum + 1,
         );
 
         return item.calEndMin;
@@ -427,7 +427,7 @@ export default {
       if (!!this.club_schedule && !!this.club_schedule["calTimes"]) {
         //Find an item for a given day of week
         const item = this.club_schedule["calTimes"].find(
-          (item) => item.dayofweek === dayNum + 1
+          (item) => item.dayofweek === dayNum + 1,
         );
 
         return item.calStartMin;
@@ -501,7 +501,7 @@ export default {
   methods: {
     getClosedTimes(court_id) {
       return this.closed_time_frames.filter(
-        (timeFrame) => timeFrame.court_id == court_id
+        (timeFrame) => timeFrame.court_id == court_id,
       );
     },
     showRetrySnackBar(message, color = "info") {
@@ -614,13 +614,13 @@ export default {
         curr_min <= this.calStartMin
           ? this.calStartMin
           : curr_min >= this.calEndMin
-          ? this.calEndMin
-          : curr_min;
+            ? this.calEndMin
+            : curr_min;
 
       //Calculate scroll distance. Scrolling from calStartHour NOT calStartMin
       var initScrollDistance = Math.ceil(
         ((adj_curr_min - this.calStartHour * 60) / day_len) *
-          this.$refs.tcontainer.scrollHeight
+          this.$refs.tcontainer.scrollHeight,
       );
 
       /**
