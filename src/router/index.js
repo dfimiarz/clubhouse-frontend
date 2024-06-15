@@ -29,7 +29,7 @@ const CourtReports = () =>
   import(/* webpackChunkName: "reports" */ "@/components/reports/CourtReports");
 const PlayerReports = () =>
   import(
-    /* webpackChunkName: "reports" */ "@/components/reports/PlayerReports"
+    /* webpackChunkName: "reports-players" */ "@/components/reports/PlayerReports"
   );
 const OccupancyMatrix = () =>
   import(

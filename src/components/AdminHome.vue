@@ -1,17 +1,16 @@
 <template>
   <v-container fluid>
     <v-row justify="center" align="center" no-gutters="">
-      <v-col cols="12" sm="10" lg="8">
+      <v-col cols="12" sm="10" lg="6">
         <v-container fluid>
           <template v-for="(section, index) in sections">
             <v-row :key="`header-${index}`" justify="center" align="center">
-              <v-col cols="12" class="text-h6"> {{ section.name }} </v-col>
+              <v-col cols="12" class="text-h4"> {{ section.name }} </v-col>
             </v-row>
             <v-row
               :key="`body-${index}`"
               justify="start"
               align="center"
-              no-gutters=""
             >
               <v-col
                 v-for="card in section.cards"
@@ -25,8 +24,34 @@
                   :disabled="!card.enabled || !canAccess(card.dest)"
                 >
                   <v-img
-                    :src="require(`@/assets/${card.img}`)"
-                    :lazy-src="require(`@/assets/${card.img_small}`)"
+                    :src="getImageSrcByName(card.image)"
+                    :lazy-src="require(`@/assets/lazyloader.jpg`)"
+                    min-height="100"
+                    max-height="325"
+                    aspect-ratio="1.5"
+                    :transition="false"
+                    class="white--text align-end"
+                    gradient="to bottom, rgba(0,0,0,0.0) 30%, rgba(0,0,0,.7) 100%"
+                  >
+                    <v-row no-gutters>
+                      <v-col cols="8">
+                        <v-card-title class="text-h5">
+                          {{ card.title }}
+                        </v-card-title>
+                        <v-card-subtitle class="text-subtitle-2">
+                          {{ card.text }}
+                        </v-card-subtitle>
+                      </v-col>
+                      <v-col cols="4" class="d-flex align-end justify-end pa-2">
+                        <v-icon v-if="!canAccess(card.dest)">
+                          {{ lockIcon }}
+                        </v-icon>
+                      </v-col>
+                    </v-row>
+                  </v-img>
+                  <!-- <v-img
+                    src="http://34.120.210.49/players.jpg"
+                    :lazy-src="require(`@/assets/lazyloader.jpg`)"
                     min-height="100"
                     max-height="325"
                     aspect-ratio="1.5"
@@ -44,7 +69,7 @@
                         </div>
                       </v-col>
                     </v-row>
-                  </v-img>
+                  </v-img> -->
                 </v-card>
               </v-col>
             </v-row>
@@ -57,10 +82,11 @@
 
 <script>
 import { AccessChecker } from "./mixins/AccessCheckerMixin";
+import { ImageProvider } from "./mixins/ImageProviderMixin";
 
 export default {
   name: "ReportsHome",
-  mixins: [AccessChecker],
+  mixins: [AccessChecker, ImageProvider],
   data: () => {
     return {
       sections: [
@@ -69,8 +95,7 @@ export default {
           cards: [
             {
               title: "Players",
-              img: "players.jpg",
-              img_small: "players_small.jpg",
+              image: "BOOKING_COVER",
               xs: 12,
               sm: 6,
               md: 4,
@@ -79,8 +104,7 @@ export default {
             },
             {
               title: "Courts",
-              img: "tennisracquet.jpg",
-              img_small: "tennisracquet_small.jpg",
+              image: "BOOKING_COVER",
               xs: 12,
               sm: 6,
               md: 4,
@@ -89,8 +113,7 @@ export default {
             },
             {
               title: "Occupancy",
-              img: "occupancy.jpg",
-              img_small: "occupancy_small.jpg",
+              image: "BOOKING_COVER",
               xs: 12,
               sm: 6,
               md: 4,
