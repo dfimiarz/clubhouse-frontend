@@ -140,6 +140,7 @@
 <script>
 /**
  * @typedef {import("@/types/guest_passes").GuestPass } GuestPass;
+ * @typedef {import("@/types/memberactivity").MemberActivity } MemberActivity;
  */
 
 import apihandler from "./../../services/db";
@@ -161,17 +162,47 @@ import { saveAs } from "file-saver";
 import { notification } from "@/components/mixins/NotificationMixin";
 import { mdiPencil } from "@mdi/js";
 
-import { object, date, array, number } from "yup";
+import { object, date, array, number, string } from "yup";
 
 //Set up schema for player stats.
 
-const playerStatsSchema = array().of(
-  object({
-    date: date().required().typeError('Invalid date format. Expected "YYYY-MM-DD'),
-    time_played: number().required().min(0).typeError("Invalid time played value"),
-    player_count: number().required().min(0).typeError("Invalid player count value"),
-  }),
-).min(1, "No data available");
+const playerStatsSchema = array()
+  .of(
+    object({
+      date: date()
+        .required()
+        .typeError('Invalid date format. Expected "YYYY-MM-DD'),
+      time_played: number()
+        .required()
+        .min(0)
+        .typeError("Invalid time played value"),
+      player_count: number()
+        .required()
+        .min(0)
+        .typeError("Invalid player count value"),
+    }),
+  )
+  .min(1, "No data available");
+
+const memberActvitySchema = array()
+  .of(
+    object({
+      activity_id: number()
+        .required()
+        .positive()
+        .typeError("Invalid activity ID"),
+      player: string().required().typeError("Invalid player name"),
+      member_role: string().required().typeError("Invalid member role"),
+      date: date()
+        .required()
+        .typeError('Invalid date format. Expected "YYYY-MM-DD'),
+      court: string().required().typeError("Invalid court name"),
+      start: string().required().typeError("Invalid start time"),
+      dur_min: number().required().min(0).typeError("Invalid duration"),
+      player_type: string().required().typeError("Invalid player type"),
+    }),
+  )
+  .typeError("Invalid data format");
 
 use([
   CanvasRenderer,
@@ -198,6 +229,8 @@ export default {
       slidersync: true,
       sliderStart: null,
       sliderEnd: null,
+      playerListDateStart: null,
+      playerListDateEnd: null,
       dates: [],
       hostmembersearch: "",
       matchsearch: "",
@@ -305,18 +338,10 @@ export default {
           width: 150,
         },
       ],
-      memberactivities: [
-        // {
-        //   row_id: "100_1",
-        //   match_id: 1,
-        //   name: "Laurent Mars",
-        //   person_type: "Member",
-        //   date: "2022-06-01",
-        //   time: "13:00",
-        //   duration: 60,
-        //   playertype: "Non-Repeater",
-        // },
-      ],
+      /**
+       * @type {Array<MemberActivity>}
+       */
+      memberactivities: [],
       playersChartOptions: {
         dataZoom: [
           {
@@ -334,10 +359,6 @@ export default {
         //   axisPointer: { type: "line" },
         // },
         legend: {},
-        // title: {
-        //  text: "Players statistics",
-        //  left: "center",
-        // },
         xAxis: [
           {
             type: "category",
@@ -387,53 +408,43 @@ export default {
     };
   },
   computed: {
-    startdate() {
-      //if this.date is not an array, return null
-      if (!Array.isArray(this.dates)) {
-        return null;
-      }
-
-      //if this.dates has one element, return it
-      if (this.dates.length == 1) {
-        return this.dates[0];
-      }
-      //if this.dates has two elements, compare them and return the earliest
-      if (this.dates.length == 2) {
+    orderedDates() {
+      if (Array.isArray(this.dates) && this.dates.length == 2) {
         let d1 = new Date(this.dates[0] + "T00:00:00Z");
         let d2 = new Date(this.dates[1] + "T00:00:00Z");
         if (d1 < d2) {
-          return this.dates[0];
+          return [this.dates[0], this.dates[1]];
         } else {
-          return this.dates[1];
+          return [this.dates[1], this.dates[0]];
         }
       }
 
-      //otherwise return null
-      return null;
+      //If there is only one date, return it
+      if (Array.isArray(this.dates) && this.dates.length == 1) {
+        return [this.dates[0], this.dates[0]];
+      }
+
+      return [null, null];
     },
+
+    startdate() {
+      return this.orderedDates[0];
+    },
+
     enddate() {
-      //if this.date is not an array, return null
-      if (!Array.isArray(this.dates)) {
-        return null;
-      }
-
-      //if this.dates has one element, return it
-      if (this.dates.length == 1) {
-        return this.dates[0];
-      }
-      //if this.dates has two elements, compare them and return the earliest
-      if (this.dates.length == 2) {
-        let d1 = new Date(this.dates[0] + "T00:00:00Z");
-        let d2 = new Date(this.dates[1] + "T00:00:00Z");
-        if (d1 > d2) {
-          return this.dates[0];
-        } else {
-          return this.dates[1];
-        }
-      }
-
-      //otherwise return null
-      return null;
+      return this.orderedDates[1];
+    },
+    /**
+     * Get the start date for the activity filter
+     */
+    ativityFilterStart() {
+      return this.sliderStart || this.startdate;
+    },
+    /**
+     * Get the end date for the activity filter
+     */
+    activityFilterEnd() {
+      return this.sliderEnd || this.enddate;
     },
   },
   watch: {
@@ -449,14 +460,17 @@ export default {
       this.$dayjs().tz().subtract(1, "month").format("YYYY-MM-DD"),
     );
     this.dates.push(this.$dayjs().tz().format("YYYY-MM-DD"));
-    this.$nextTick(() => {
-      this.loadData();
-    });
   },
   beforeDestroy() {
     this.$refs["playerchart"].dispose();
   },
   methods: {
+
+    //TO DO: Add JSDoc type definitions
+    /**
+     * Populate the player chart with data
+     * @param {Array<PlayerStats>} playerdata
+     */
     populatePlayerChart(playerdata) {
       this.validatePlayerStats(playerdata)
         .then(() => {
@@ -473,6 +487,22 @@ export default {
         .catch((error) => {
           this.showNotification(error.message, "error");
         });
+    },
+    /**
+     * Set the member activity data
+     * @param {Array<MemberActivity>} data
+     */
+    setMemberActivity(data) {
+      this.validateMemberActivity(data)
+        .then(() => {
+          this.memberactivities = data;
+        })
+        .catch((error) => {
+          this.showNotification(error.message, "error");
+        });
+    },
+    async validateMemberActivity(data) {
+      await memberActvitySchema.validate(data);
     },
     async validatePlayerStats(data) {
       await playerStatsSchema.validate(data);
@@ -535,7 +565,7 @@ export default {
       ])
         .then((responses) => {
           this.populatePlayerChart(responses[0].data.result);
-          this.memberactivities = responses[1].data.result;
+          this.setMemberActivity(responses[1].data.result);
           //this.guest_passes_data = responses[2].data.result;
         })
         .catch((error) => {
