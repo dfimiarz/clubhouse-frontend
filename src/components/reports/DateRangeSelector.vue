@@ -9,7 +9,7 @@
     <template #activator="{ on, attrs }">
       <v-text-field
         :value="dateRangeText"
-        label="Report date range"
+        label="Date range"
         :prepend-icon="calendarIcon"
         readonly
         v-bind="attrs"
@@ -51,7 +51,10 @@ export default {
       },
     },
     dateRangeText() {
-      return this.dates ? this.dates.join(" ~ ") : null;
+      const formatedDates = this.dates.map((date) =>
+        this.$dayjs(date).tz().format("MMM DD, YYYY")
+      );
+      return formatedDates.join(" - ");
     },
   },
   watch: {
