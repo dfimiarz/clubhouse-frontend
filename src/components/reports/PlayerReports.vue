@@ -1,25 +1,28 @@
 <template>
   <v-container v-resize="onResize">
-    <v-row justify="center" align="start">
-      <v-col cols="12" lg="8">
-        <v-row justify="start" align="start" dense>
+    <v-row justify="center">
+      <v-col cols="12">
+        <v-row justify="center">
           <v-col cols="12">
             <v-card raised>
-              <v-card-title class="text-h5"> Player Reports </v-card-title>
-              <v-card-text>
-                <v-row no-gutters>
-                  <v-col cols="12" md="6" lg="3">
+              <v-card-title>
+                <v-row dense>
+                  <v-col cols="12" sm="6" md="8" xl="10"> Booking Time </v-col>
+                  <v-col cols="12" sm="6" md="4" xl="2">
                     <date-range-selector
                       :dates.sync="dates"
                       :show.sync="dateseldialog"
                     ></date-range-selector>
                   </v-col>
+                </v-row>
+              </v-card-title>
+              <v-card-text>
+                <v-row no-gutters>
                   <v-col cols="12">
                     <v-responsive height="400px">
                       <v-chart
                         ref="playerchart"
                         :option="playersChartOptions"
-                        @datazoom="onSliderChange"
                       ></v-chart>
                     </v-responsive>
                   </v-col>
@@ -77,23 +80,8 @@
           </v-col> -->
           <v-col cols="12">
             <v-card>
-              <v-card-title class="text-h5"> Player Data </v-card-title>
+              <v-card-title> Players </v-card-title>
               <v-card-text>
-                <v-row>
-                  <v-col cols="6">
-                    Date Range: {{ sliderStart }} - {{ sliderEnd }}
-                  </v-col>
-                  <v-col cols="6">
-                    <div class="d-flex justify-end align-start">
-                      <v-checkbox
-                        v-model="slidersync"
-                        label="Slider Sync"
-                        hide-details
-                        desnse
-                      ></v-checkbox>
-                    </div>
-                  </v-col>
-                </v-row>
                 <v-row justify="end" no-gutters>
                   <v-col cols="6" md="4">
                     <v-text-field
@@ -109,7 +97,6 @@
                   :items="memberactivities"
                   item-key="participant_id"
                   class="elevation-1"
-                  show-group-by
                   hide-default-footer
                   disable-pagination
                   mobile-breakpoint="0"
@@ -141,6 +128,7 @@
 /**
  * @typedef {import("@/types/guest_passes").GuestPass } GuestPass;
  * @typedef {import("@/types/memberactivity").MemberActivity } MemberActivity;
+ * @typedef {import("@/types/playerstats").PlayerStats } PlayerStats;
  */
 
 import apihandler from "./../../services/db";
@@ -153,7 +141,6 @@ import {
   GridComponent,
   LegendComponent,
   TooltipComponent,
-  DataZoomComponent,
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
 
@@ -212,7 +199,6 @@ use([
   LineChart,
   LegendComponent,
   TooltipComponent,
-  DataZoomComponent,
 ]);
 
 export default {
@@ -226,69 +212,59 @@ export default {
     return {
       pencilIcon: mdiPencil,
       dateseldialog: false,
-      slidersync: true,
-      sliderStart: null,
-      sliderEnd: null,
-      playerListDateStart: null,
-      playerListDateEnd: null,
       dates: [],
       hostmembersearch: "",
       matchsearch: "",
-      guest_passes_headers: [
-        {
-          text: "Purchased",
-          align: "start",
-          value: "created",
-          groupable: false,
-          width: 200,
-        },
-        {
-          text: "Guest",
-          align: "start",
-          value: "guest",
-          width: 150,
-        },
-        {
-          text: "Host",
-          align: "start",
-          value: "host",
-          width: 150,
-        },
-        {
-          text: "Pass Type",
-          align: "start",
-          value: "pass_type_label",
-          width: 150,
-          groupable: false,
-        },
+      // guest_passes_headers: [
+      //   {
+      //     text: "Purchased",
+      //     align: "start",
+      //     value: "created",
+      //     width: 200,
+      //   },
+      //   {
+      //     text: "Guest",
+      //     align: "start",
+      //     value: "guest",
+      //     width: 150,
+      //   },
+      //   {
+      //     text: "Host",
+      //     align: "start",
+      //     value: "host",
+      //     width: 150,
+      //   },
+      //   {
+      //     text: "Pass Type",
+      //     align: "start",
+      //     value: "pass_type_label",
+      //     width: 150,
+      //   },
 
-        {
-          text: "Valid From",
-          align: "start",
-          value: "valid_from",
-          width: 200,
-          sortable: false,
-          groupable: false,
-        },
-        {
-          text: "Valid To",
-          align: "start",
-          value: "valid_to",
-          width: 200,
-          sortable: false,
-          groupable: false,
-        },
-        {
-          text: "Actions",
-          value: "actions",
-          sortable: false,
-          groupable: false,
-        },
-      ],
+      //   {
+      //     text: "Valid From",
+      //     align: "start",
+      //     value: "valid_from",
+      //     width: 200,
+      //     sortable: false,
+      //   },
+      //   {
+      //     text: "Valid To",
+      //     align: "start",
+      //     value: "valid_to",
+      //     width: 200,
+      //     sortable: false,
+      //   },
+      //   {
+      //     text: "Actions",
+      //     value: "actions",
+      //     sortable: false,
+      //   },
+      // ],
       /**
        * @type {Array<GuestPass>}
        */
-      guest_passes_data: [],
+      // guest_passes_data: [],
       players_headers: [
         {
           text: "Match ID",
@@ -321,14 +297,12 @@ export default {
           text: "Start",
           align: "start",
           value: "start",
-          groupable: false,
           sortable: false,
         },
         {
           text: "Duration",
           align: "start",
           value: "dur_min",
-          groupable: false,
           sortable: false,
         },
         {
@@ -343,17 +317,18 @@ export default {
        */
       memberactivities: [],
       playersChartOptions: {
-        dataZoom: [
-          {
-            id: "dataZoomX",
-            type: "slider",
-            xAxisIndex: [0],
-            zoomLock: false,
-            start: 0,
-            end: 100,
-            filterMode: "none",
-          },
-        ],
+        // dataZoom: [
+        //   {
+        //     id: "dataZoomX",
+        //     type: "slider",
+        //     xAxisIndex: [0],
+        //     zoomLock: false,
+        //     start: 0,
+        //     end: 100,
+        //     filterMode: "none",
+        //     realtime: false,
+        //   },
+        // ],
         // tooltip: {
         //   trigger: "axis",
         //   axisPointer: { type: "line" },
@@ -427,24 +402,12 @@ export default {
       return [null, null];
     },
 
-    startdate() {
+    startDate() {
       return this.orderedDates[0];
     },
 
-    enddate() {
+    endDate() {
       return this.orderedDates[1];
-    },
-    /**
-     * Get the start date for the activity filter
-     */
-    ativityFilterStart() {
-      return this.sliderStart || this.startdate;
-    },
-    /**
-     * Get the end date for the activity filter
-     */
-    activityFilterEnd() {
-      return this.sliderEnd || this.enddate;
     },
   },
   watch: {
@@ -465,13 +428,11 @@ export default {
     this.$refs["playerchart"].dispose();
   },
   methods: {
-
-    //TO DO: Add JSDoc type definitions
     /**
      * Populate the player chart with data
      * @param {Array<PlayerStats>} playerdata
      */
-    populatePlayerChart(playerdata) {
+    setPlayerChartData(playerdata) {
       this.validatePlayerStats(playerdata)
         .then(() => {
           this.playersChartOptions.xAxis[0].data = playerdata.map(
@@ -507,51 +468,72 @@ export default {
     async validatePlayerStats(data) {
       await playerStatsSchema.validate(data);
     },
-    onSliderChange: function () {
-      const startIndex =
-        this.$refs["playerchart"].getOption().dataZoom[0].startValue;
-      const endIndex =
-        this.$refs["playerchart"].getOption().dataZoom[0].endValue;
-
-      this.sliderStart = this.playersChartOptions.xAxis[0].data[startIndex];
-      this.sliderEnd = this.playersChartOptions.xAxis[0].data[endIndex];
+    async getMemberActivityData() {
+      return this.memberactivities;
+    },
+    async getPlayerStatsData() {
+      return this.playersChartOptions.xAxis[0].data.map((date, index) => {
+        return {
+          date: date,
+          time_played: this.playersChartOptions.series[0].data[index],
+          player_count: this.playersChartOptions.series[1].data[index],
+        };
+      });
     },
     saveData: function (op_type) {
       //A list of available save functions
       const SUPPORTED_OPS = {
-        guest_players: {
-          filename: "guest_players",
-          data: this.guest_passes_data,
-        },
         member_activities: {
           filename: "member_activities",
-          data: this.memberactivities,
+          datafunc: "getMemberActivityData",
         },
-        // player_stats: {
-        //   filename: "player_stats",
-        //   data: this.playerStats,
-        // },
+        player_stats: {
+          filename: "player_stats",
+          datafunc: "getPlayerStatsData",
+        },
       };
 
       //Check if type is set and it is a valid save function
       if (
         op_type &&
-        Object.prototype.hasOwnProperty.call(SUPPORTED_OPS, op_type) &&
-        SUPPORTED_OPS[op_type].data.length > 0
+        Object.prototype.hasOwnProperty.call(SUPPORTED_OPS, op_type)
       ) {
         //If so, use that save function
         this.saveDataToCSV(
           SUPPORTED_OPS[op_type].filename,
-          SUPPORTED_OPS[op_type].data,
+          SUPPORTED_OPS[op_type].datafunc,
         );
+      } else {
+        this.showNotification("Invalid data function config", "error");
       }
     },
-    saveDataToCSV: function (filename, data) {
-      let csv = papaparse.unparse(data);
-      let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      saveAs(blob, `${filename}-${this.startdate}-${this.enddate}.csv`, {
-        autoBom: true,
-      });
+    saveDataToCSV: function (filename, datafunc) {
+      //Check if datafunc is a function
+      if (typeof this[datafunc] !== "function") {
+        this.showNotification("Invalid data function config", "error");
+        return;
+      }
+
+      //Get the data
+      this[datafunc]()
+        .then((data) => {
+          //Check if data is an array
+          if (Array.isArray(data) && data.length > 0) {
+            let csv = papaparse.unparse(data);
+            let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            saveAs(blob, `${filename}-${this.startDate}-${this.endDate}.csv`, {
+              autoBom: true,
+            });
+          } else {
+            this.showNotification("No data available", "error");
+          }
+        })
+        .catch((error) => {
+          this.showNotification(
+            error.message || "Unable to load data",
+            "error",
+          );
+        });
     },
     onResize: function () {
       this.$refs["playerchart"].resize();
@@ -559,14 +541,12 @@ export default {
     loadData() {
       this.$store.dispatch("setLoading", true);
       Promise.all([
-        apihandler.runReport("playerstats", this.startdate, this.enddate),
-        apihandler.runReport("memberactivities", this.startdate, this.enddate),
-        //apihandler.runReport("guestpasses", this.startdate, this.enddate),
+        apihandler.runReport("playerstats", this.startDate, this.endDate),
+        apihandler.runReport("memberactivities", this.startDate, this.endDate),
       ])
         .then((responses) => {
-          this.populatePlayerChart(responses[0].data.result);
+          this.setPlayerChartData(responses[0].data.result);
           this.setMemberActivity(responses[1].data.result);
-          //this.guest_passes_data = responses[2].data.result;
         })
         .catch((error) => {
           this.showNotification(
