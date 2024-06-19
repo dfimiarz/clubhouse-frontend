@@ -1,13 +1,13 @@
 <template>
   <v-container fluid class="fill-height">
     <v-row justify="center" align="center" no-gutters="" class="fill-height">
-      <v-col cols="12" md="10" lg="8" xl="6">
+      <v-col cols="12" md="10" xl="8">
         <v-container fluid>
           <v-row justify="start" align="start" no-gutters="">
             <v-col
               v-for="card in cards"
               :key="card.title"
-              v-bind="{ cols: card.xs, sm: card.sm, md: card.md }"
+              v-bind="{ cols: card.xs, sm: card.sm, lg: card.lg }"
               class="pa-2"
             >
               <v-card
@@ -27,15 +27,15 @@
                   gradient="to bottom, rgba(0,0,0,0.0) 30%, rgba(0,0,0,.7) 100%"
                 >
                   <v-row no-gutters>
-                    <v-col cols="8">
-                      <v-card-title class="text-h4">
+                    <v-col cols="10">
+                      <v-card-title class="text-lg-h4 text-md-h5">
                         {{ card.title }}
                       </v-card-title>
                       <v-card-subtitle class="text-subtitle-2">
                         {{ card.text }}
                       </v-card-subtitle>
                     </v-col>
-                    <v-col cols="4" class="d-flex align-end justify-end pa-2">
+                    <v-col cols="2" class="d-flex align-end justify-end pa-2">
                       <v-icon v-if="!canAccess(card.dest)">
                         {{ lockIcon }}
                       </v-icon>
@@ -69,7 +69,7 @@ export default {
           text: "View full schedule",
           xs: 12,
           sm: 6,
-          md: 6,
+          lg: 6,
           dest: "calendar",
           enabled: true,
         },
@@ -79,7 +79,7 @@ export default {
           text: "Book a court",
           xs: 12,
           sm: 6,
-          md: 6,
+          lg: 6,
           dest: "MatchBooking",
           enabled: true,
         },
@@ -89,7 +89,7 @@ export default {
           text: "Guest Management",
           xs: 12,
           sm: 6,
-          md: 3,
+          lg: 3,
           dest: "guestregistration",
           enabled: true,
         },
@@ -99,7 +99,7 @@ export default {
           text: "Event booking",
           xs: 12,
           sm: 6,
-          md: 3,
+          lg: 3,
           dest: "EventBooking",
           enabled: true,
         },
@@ -109,7 +109,7 @@ export default {
           text: "Club Administration",
           xs: 12,
           sm: 6,
-          md: 3,
+          lg: 3,
           dest: "admin",
           enabled: true,
         },
@@ -119,7 +119,7 @@ export default {
           text: "More about the club",
           xs: 12,
           sm: 6,
-          md: 3,
+          lg: 3,
           enabled: false,
         },
       ],
