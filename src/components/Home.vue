@@ -115,8 +115,8 @@ export default {
         },
         {
           image: "CLUB_COVER",
-          title: "The Knick",
-          text: "More about the club",
+          title: "CLUB",
+          text: "About The Knick",
           xs: 12,
           sm: 6,
           lg: 3,

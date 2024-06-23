@@ -1,14 +1,51 @@
 <template>
   <v-dialog
     v-model="show"
-    width="auto"
-    :max-width="isSmallScreen ? 290 : 580"
+    :fullscreen="isSmallScreen"
+    :max-width="dialogMaxWidth"
     persistent
   >
     <v-card>
-      <v-card-title class="text-h6">Guest Pass Purchase</v-card-title>
+      <v-toolbar v-if="isSmallScreen">
+        <v-btn icon @click="close()">
+          <v-icon>{{ dialogCloseIcon }}</v-icon>
+        </v-btn>
+        <v-toolbar-title>Guest Pass</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-toolbar-items>
+          <v-btn text :disabled="!initlized" @click="activatePass" >
+            <v-icon left small>{{ cartCheckIcon }}</v-icon>
+            Buy
+          </v-btn>
+        </v-toolbar-items>
+      </v-toolbar>
+      <v-card-title v-else>
+        <span class="headline">Guest Pass</span>
+      </v-card-title>
       <v-card-text>
-        <v-form ref="passForm" autocomplete="off" lazy-validation>
+        <v-container v-if="!initlized">
+          <v-row>
+            <v-col cols="12" sm="6">
+              <v-row no-gutters>
+                <v-col cols="12">
+                  <v-skeleton-loader
+                    type="card-heading, list-item-two-line@3, list-item-three-line"
+                    :loading="!initlized"
+                  ></v-skeleton-loader>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-skeleton-loader
+                v-if="!initlized"
+                type="card-heading, list-item-two-line@3, list-item-three-line"
+                :loading="!initlized"
+              >
+              </v-skeleton-loader>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-form v-else ref="passForm" autocomplete="off" lazy-validation>
           <v-container fluid>
             <v-row>
               <v-col cols="12" sm="6">
@@ -110,7 +147,7 @@
         </v-form>
       </v-card-text>
 
-      <v-card-actions>
+      <v-card-actions v-if="!isSmallScreen">
         <v-btn text @click="close">Close</v-btn>
         <v-spacer></v-spacer>
         <v-btn outlined color="primary" @click="activatePass">
@@ -126,8 +163,9 @@
 import apiHandler from "@/services/db";
 import processAxiosError from "@/utils/AxiosErrorHandler";
 import { notification } from "@/components/mixins/NotificationMixin";
-import { mdiCartCheck } from "@mdi/js";
+import { mdiCartCheck, mdiClose } from "@mdi/js";
 import dbservice from "@/services/db";
+import DirectTransferProcessor from "./PaymentProcessors/DirectTransferProcessor.vue";
 
 /**
  * @typedef {import('@/types/guest_passes').PassInfo } PassInfo
@@ -136,8 +174,7 @@ import dbservice from "@/services/db";
 export default {
   name: "PassActivator",
   components: {
-    DirectTransferProcessor: () =>
-      import("./PaymentProcessors/DirectTransferProcessor.vue"),
+    DirectTransferProcessor,
   },
   mixins: [notification],
   props: {
@@ -157,6 +194,7 @@ export default {
   data: () => ({
     selectedHostId: null,
     cartCheckIcon: mdiCartCheck,
+    dialogCloseIcon: mdiClose,
     passes: [],
     selectedPass: null,
     paymentInfo: null,
@@ -168,6 +206,20 @@ export default {
     confirmed: false,
   }),
   computed: {
+    dialogMaxWidth() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+          return "100%";
+        case "sm":
+          return "70%";
+        case "md":
+          return "60%";
+        case "lg":
+          return "40%";
+        default:
+          return "50%";
+      }
+    },
     processor() {
       return this.selectedProcessor
         ? `${this.selectedProcessor.processor}Processor`
@@ -233,6 +285,8 @@ export default {
         this.confirmed = false;
 
         this.$refs.passForm.resetValidation();
+
+        //this.initlized = false;
       } else {
         if (this.initlized) {
           this.setupForm();
@@ -241,7 +295,6 @@ export default {
 
         this.init()
           .then((data) => {
-            console.log(data);
             this.passes = data.passes;
             this.paymentTypes = data.paymentTypes;
 
@@ -250,7 +303,6 @@ export default {
             this.initlized = true;
           })
           .catch((err) => {
-            console.log(err);
             const error = processAxiosError(err);
             this.showNotification("Error initializing: " + error, "error");
           });
@@ -295,6 +347,7 @@ export default {
     },
     activatePass() {
       if (this.$refs.passForm.validate() === false) {
+        this.showNotification("Please correct form errors", "error");
         return;
       }
 
