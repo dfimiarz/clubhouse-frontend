@@ -3,10 +3,10 @@
     v-model="show"
     :fullscreen="isSmallScreen"
     :max-width="dialogMaxWidth"
-    persistent
+    :scrollable="isSmallScreen"
   >
     <v-card>
-      <v-toolbar v-if="isSmallScreen">
+      <v-toolbar v-if="isSmallScreen" class="flex-grow-0">
         <v-btn icon @click="close()">
           <v-icon>{{ dialogCloseIcon }}</v-icon>
         </v-btn>
