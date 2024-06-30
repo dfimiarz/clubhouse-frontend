@@ -64,7 +64,7 @@
       </v-card>
     </v-dialog>
     <pass-activator
-      v-model="showPassActivation"
+      v-model="passDialogVisible"
       :persons="activePersons"
       :guest-id="activatedGuestId"
       @passactivated="onPassActivated"
@@ -608,7 +608,7 @@ export default {
       loading: false,
       overlappingBooking: null,
       showOverlapInfo: false,
-      showPassActivation: false,
+      passDialogVisible: false,
       error: null,
       errors: {
         note: null,
@@ -651,8 +651,8 @@ export default {
               ? { start: Rs, end: Re }
               : { start: Rs, end: Oe }
             : Oe > Re
-            ? { start: Os, end: Re }
-            : { start: Os, end: Oe };
+              ? { start: Os, end: Re }
+              : { start: Os, end: Oe };
 
         //console.log("Overlap",overlap);
 
@@ -735,7 +735,7 @@ export default {
     prefDuration: function () {
       return Object.prototype.hasOwnProperty.call(
         this.bookingRules,
-        "maxduration"
+        "maxduration",
       )
         ? this.bookingRules.maxduration / 60000
         : null;
@@ -782,7 +782,7 @@ export default {
         const person = this.findActivePersonByID(player.id);
 
         const repeaterDetails = this.$store.getters["getRepeaterType"](
-          player.repeater
+          player.repeater,
         );
 
         if (person && repeaterDetails) {
@@ -832,7 +832,7 @@ export default {
     },
     current_schedule: function () {
       return this.$store.getters["getScheduleForDate"](
-        this.$dayjs(this.date).tz().unix()
+        this.$dayjs(this.date).tz().unix(),
       );
     },
     open_time_frames: function () {
@@ -849,7 +849,7 @@ export default {
       const dayNum = this.$dayjs(this.date).tz().day();
 
       return this.current_schedule["open_time_frames"].filter(
-        (item) => item.dayofweek === dayNum + 1
+        (item) => item.dayofweek === dayNum + 1,
       );
     },
     courtOpenTimeFrames: function () {
@@ -870,6 +870,7 @@ export default {
     this.getActivePersons();
   },
   mounted: function () {
+
     if (Array.isArray(this.players)) {
       this.players.forEach((player, index) => {
         if (typeof player === "number") {
@@ -880,14 +881,13 @@ export default {
       });
     }
   },
-  beforeDestroy() {},
   methods: {
     onPassActivated(data) {
       const { pass, guestId } = data;
 
       //Find index of the guest in activePersons
       const gindex = this.activePersons.findIndex(
-        (person) => person.id === guestId
+        (person) => person.id === guestId,
       );
       if (gindex !== -1) {
         this.activePersons[gindex].pass = pass;
@@ -902,6 +902,7 @@ export default {
       }
 
       this.validatePlayers(true);
+      this.passDialogVisible = false;
 
       this.showNotification("Pass activated successfully", "success");
     },
@@ -919,7 +920,7 @@ export default {
     },
     activatePass(index) {
       this.activatedGuestId = this.selplayers[index].id;
-      this.showPassActivation = true;
+      this.passDialogVisible = true;
     },
     courtSelected: function () {
       this.setMatchParams();
@@ -949,7 +950,7 @@ export default {
         this.date,
         this.s_time,
         this.e_time,
-        this.court
+        this.court,
       );
 
       if (Array.isArray(data) && data.length > 0) {
@@ -1008,7 +1009,7 @@ export default {
        * Find the next time frame that ends after final_start_minutes
        */
       const temp_time_frame = this.courtOpenTimeFrames.find(
-        (item) => item.close_min > final_start_minutes
+        (item) => item.close_min > final_start_minutes,
       );
 
       /**

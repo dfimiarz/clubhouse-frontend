@@ -4,16 +4,17 @@
     :fullscreen="isSmallScreen"
     :max-width="dialogMaxWidth"
     :scrollable="isSmallScreen"
+    persistent
   >
     <v-card>
       <v-toolbar v-if="isSmallScreen" class="flex-grow-0">
-        <v-btn icon @click="close()">
+        <v-btn icon @click="show = false">
           <v-icon>{{ dialogCloseIcon }}</v-icon>
         </v-btn>
         <v-toolbar-title>Guest Pass</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn text :disabled="!initlized" @click="activatePass" >
+          <v-btn text :disabled="!initlized" @click="activatePass">
             <v-icon left small>{{ cartCheckIcon }}</v-icon>
             Buy
           </v-btn>
@@ -148,7 +149,7 @@
       </v-card-text>
 
       <v-card-actions v-if="!isSmallScreen">
-        <v-btn text @click="close">Close</v-btn>
+        <v-btn text @click="show = false">Close</v-btn>
         <v-spacer></v-spacer>
         <v-btn outlined color="primary" @click="activatePass">
           <v-icon left>{{ cartCheckIcon }}</v-icon>
@@ -156,6 +157,19 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+    <v-snackbar
+      v-model="sbOpen"
+      elevation="24"
+      outlined
+      :color="sbColor"
+      :app="!isSmallScreen"
+    >
+      {{ sbMessage }}
+
+      <template #action="{ attrs }">
+        <v-btn text v-bind="attrs" @click="sbOpen = false">Close</v-btn>
+      </template>
+    </v-snackbar>
   </v-dialog>
 </template>
 
@@ -192,6 +206,9 @@ export default {
     },
   },
   data: () => ({
+    sbOpen: false,
+    sbMessage: null,
+    sbColor: null,
     selectedHostId: null,
     cartCheckIcon: mdiCartCheck,
     dialogCloseIcon: mdiClose,
@@ -285,8 +302,6 @@ export default {
         this.confirmed = false;
 
         this.$refs.passForm.resetValidation();
-
-        //this.initlized = false;
       } else {
         if (this.initlized) {
           this.setupForm();
@@ -304,12 +319,34 @@ export default {
           })
           .catch((err) => {
             const error = processAxiosError(err);
-            this.showNotification("Error initializing: " + error, "error");
+            //this.showNotification("Error initializing: " + error, "error");
+            this.showMessage("Error initializing:" + error, "error")
           });
       }
     },
   },
   methods: {
+    showMessage: function (text, type) {
+      this.sbMessage = text;
+
+      switch (type) {
+        case "success":
+          this.sbColor = "success";
+          break;
+        case "warning":
+          this.sbColor = "warning";
+          break;
+        case "error":
+          this.sbColor = "error";
+          break;
+
+        default:
+          this.sbColor = null;
+          break;
+      }
+
+      this.sbOpen = true;
+    },
     setupForm() {
       if (this.paymentTypes.length > 0) {
         this.selectedProcessor = this.paymentTypes[0];
@@ -330,9 +367,6 @@ export default {
       console.log(info);
       this.paymentInfo = info;
     },
-    close() {
-      this.show = false;
-    },
     handleFieldErrors(errors) {
       //Loop through each error and add it to array of error for specific field
       if (Array.isArray(errors)) {
@@ -347,7 +381,8 @@ export default {
     },
     activatePass() {
       if (this.$refs.passForm.validate() === false) {
-        this.showNotification("Please correct form errors", "error");
+        //this.showNotification("Please correct form errors", "error");
+        this.showMessage("Please correct form errors", "error");
         return;
       }
 
@@ -362,14 +397,14 @@ export default {
             guestId: this.guestId,
             pass: res.data,
           });
-          this.close();
         })
         .catch((err) => {
           const error = processAxiosError(err);
           if (error.fielderrors) {
             this.handleFieldErrors(error.fielderrors);
           } else {
-            this.showNotification("Error: " + error, "error");
+            this.showMessage("Error: " + error, "error");
+            //this.showNotification("Error: " + error, "error");
           }
         });
     },
