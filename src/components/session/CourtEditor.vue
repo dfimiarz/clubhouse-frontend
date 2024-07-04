@@ -1,12 +1,7 @@
 <template>
-  <v-card tile="" height="100%">
+  <v-card>
     <v-toolbar flat dense>
-      <v-btn icon dark @click="close">
-        <v-icon>{{ closeIcon }}</v-icon>
-      </v-btn>
       <v-toolbar-title>Change Court</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-toolbar-items> </v-toolbar-items>
     </v-toolbar>
     <v-card-text>
       <v-row v-if="error" class="my-2" no-gutters>
@@ -30,6 +25,7 @@
       </v-row>
     </v-card-text>
     <v-card-actions>
+      <v-btn text @click="close">Cancel</v-btn>
       <v-spacer></v-spacer>
       <v-btn color="primary" text :loading="loading" @click="changeCourt">
         Save
